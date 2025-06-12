@@ -38,13 +38,29 @@ const LaceChatOutputSchema = z.object({
 });
 export type LaceChatOutput = z.infer<typeof LaceChatOutputSchema>;
 
+// Internal schema for the prompt, with processed history
+const InternalLacePromptInputSchema = z.object({
+  userInput: z.string().describe('The message sent by the user.'),
+  language: z.string().describe('The language code (e.g., "en", "es") for the conversation.'),
+  processedHistory: z.array(z.object({
+    isUser: z.boolean().optional(),
+    isModel: z.boolean().optional(),
+    text: z.string().optional(),
+    mediaText: z.string().optional().describe("Textual representation if media was present, e.g., '[User sent an image]'"),
+  })).optional().describe('The processed conversation history with boolean flags and simplified text parts.'),
+  imageDataUri: z.string().optional().describe("An optional image provided by the user, as a data URI."),
+  toolsSummary: z.string(),
+  categoriesSummary: z.string(),
+});
+
+
 export async function chatWithLace(input: LaceChatInput): Promise<LaceChatOutput> {
   return laceChatContinuationFlow(input);
 }
 
 const lacePrompt = ai.definePrompt({
-  name: 'laceChatPrompt', // Renamed
-  input: { schema: LaceChatInputSchema },
+  name: 'laceChatPrompt',
+  input: { schema: InternalLacePromptInputSchema }, // Use the internal schema
   output: { schema: LaceChatOutputSchema },
   prompt: `You are Lace, a friendly, knowledgeable, and highly capable AI assistant for World AI, a website dedicated to discovering and learning about AI tools. You also function as a general-purpose AI assistant, much like ChatGPT.
 The user is conversing in language: {{{language}}}. Please respond comprehensively and naturally in this language.
@@ -64,11 +80,11 @@ Available AI Tools on World AI (summary):
 {{{toolsSummary}}}
 
 ---
-{{#if history}}
+{{#if processedHistory}}
 Conversation History (respect this context and language):
-{{#each history}}
-  {{#eq role "user"}}User: {{#if parts.[0].text}}{{parts.[0].text}}{{/if}}{{#if parts.[0].media}} [User sent an image]{{/if}}{{/eq}}
-  {{#eq role "model"}}Lace: {{#if parts.[0].text}}{{parts.[0].text}}{{/if}}{{/eq}}
+{{#each processedHistory}}
+  {{#if isUser}}User: {{#if text}}{{text}}{{/if}}{{#if mediaText}} {{mediaText}}{{/if}}{{/if}}
+  {{#if isModel}}Lace: {{#if text}}{{text}}{{/if}}{{/if}}
 {{/each}}
 {{/if}}
 
@@ -90,17 +106,34 @@ Respond to "{{userInput}}" now.
 
 const laceChatContinuationFlow = ai.defineFlow(
   {
-    name: 'laceChatContinuationFlow', // Renamed
-    inputSchema: LaceChatInputSchema,
+    name: 'laceChatContinuationFlow',
+    inputSchema: LaceChatInputSchema, // Flow input uses the original LaceChatInputSchema
     outputSchema: LaceChatOutputSchema,
   },
-  async (input) => {
-    const promptInput = {
-      ...input,
+  async (input: LaceChatInput) => { // input is LaceChatInput
+    let processedHistoryForPrompt;
+    if (input.history) {
+      processedHistoryForPrompt = input.history.map(msg => {
+        const firstPart = msg.parts[0];
+        return {
+          isUser: msg.role === 'user',
+          isModel: msg.role === 'model',
+          text: firstPart?.text,
+          mediaText: firstPart?.media ? "[User sent an image]" : undefined,
+        };
+      });
+    }
+
+    const promptDataForInternalSchema = {
+      userInput: input.userInput,
+      language: input.language,
+      processedHistory: processedHistoryForPrompt,
+      imageDataUri: input.imageDataUri,
       toolsSummary,
       categoriesSummary,
     };
-    const { output } = await lacePrompt(promptInput);
+    
+    const { output } = await lacePrompt(promptDataForInternalSchema);
     return output!;
   }
 );
