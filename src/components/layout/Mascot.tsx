@@ -55,21 +55,18 @@ const Mascot = () => {
         setCurrentChatBubbleText('');
       }
     } else {
-      // Chat closed, reset chat bubble sequence
+      // Chat closed, reset chat bubble sequence and ensure default bubble is set to show
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
-      // Default bubble visibility is handled by showDefaultBubble state now
+      setShowDefaultBubble(true); // <<<< MODIFICACIÓN: Forzar que el globo de saludo se muestre
     }
 
     return () => clearTimeout(bubbleTimer);
-  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]);
+  }, [isChatOpen, currentChatBubbleIndex, t, language]); // chatBubbleMessagesKeys is stable
 
 
   const handleMascotClick = () => {
     // Clicking the mascot only toggles the default bubble if chat is NOT open
-    // and the chat-specific sequence is not active.
-    // Or, more simply, let it always toggle showDefaultBubble.
-    // The rendering logic will decide what to show.
     if (!isChatOpen) {
       setShowDefaultBubble(prev => !prev);
     }
