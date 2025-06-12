@@ -49,12 +49,12 @@ export default function CategoryDetailPage() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-10 w-48" />
+              <Skeleton className="h-8 w-8 sm:h-10 sm:w-10 rounded-full" />
+              <Skeleton className="h-8 w-36 sm:h-10 sm:w-48" />
             </div>
-            <Skeleton className="h-6 w-72" />
+            <Skeleton className="h-5 w-60 sm:h-6 sm:w-72" />
           </div>
-          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-9 w-32 sm:h-10 sm:w-40" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1,2,3].map(i => <Skeleton key={i} className="h-96 w-full rounded-lg" />)}
@@ -75,14 +75,14 @@ export default function CategoryDetailPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-10 w-10 text-primary" />
-            <h1 className="text-4xl font-headline font-bold text-primary">{localizedCategoryName}</h1>
+            <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold text-primary">{localizedCategoryName}</h1>
           </div>
-          <p className="text-lg text-muted-foreground">{localizedCategoryDescription}</p>
+          <p className="text-base sm:text-lg text-muted-foreground">{localizedCategoryDescription}</p>
         </div>
-        <Button variant="outline" asChild>
+        <Button variant="outline" asChild className="text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
           <Link href="/categories" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
             {t('allCategoriesButton', 'All Categories')}
           </Link>
         </Button>
@@ -96,7 +96,7 @@ export default function CategoryDetailPage() {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-xl text-muted-foreground mb-4">
+          <p className="text-lg sm:text-xl text-muted-foreground mb-4">
             {t('noToolsInCategory', 'No AI tools found in the "{categoryName}" category yet.', {categoryName: localizedCategoryName})}
           </p>
           <p className="text-muted-foreground">

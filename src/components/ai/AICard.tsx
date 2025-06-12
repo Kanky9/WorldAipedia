@@ -33,19 +33,19 @@ const AICard: FC<AICardProps> = ({ aiTool }) => {
         />
       </div>
       <CardHeader className="pt-4">
-        <CardTitle className="font-headline text-xl group-hover:text-primary transition-colors">{t(aiTool.title)}</CardTitle>
+        <CardTitle className="font-headline text-lg sm:text-xl group-hover:text-primary transition-colors">{t(aiTool.title)}</CardTitle>
         {category && (
-          <Badge variant="secondary" className="w-fit mt-1">
-            <CategoryIcon categoryName={aiTool.category} className="h-4 w-4 mr-1.5" />
+          <Badge variant="secondary" className="w-fit mt-1 text-xs sm:text-sm">
+            <CategoryIcon categoryName={aiTool.category} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5" />
             {localizedCategoryName}
           </Badge>
         )}
       </CardHeader>
       <CardContent className="flex-grow pt-2">
-        <CardDescription>{t(aiTool.shortDescription)}</CardDescription>
+        <CardDescription className="text-sm sm:text-base">{t(aiTool.shortDescription)}</CardDescription>
       </CardContent>
       <CardFooter>
-        <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 hover:text-primary-foreground hover:shadow-md">
+        <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary/10 hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
           <Link href={`/ai/${aiTool.id}`}>{t('learnMoreButton', 'Learn More')}</Link>
         </Button>
       </CardFooter>

@@ -67,33 +67,31 @@ export default function HomePage() {
         )}
         
         <div className="relative z-10 p-4 container mx-auto">
-          <Sparkles className="h-8 w-8 md:h-12 md:w-12 text-primary mx-auto mb-2 md:mb-3 animate-pulse drop-shadow-lg" /> {/* Reduced icon size and margin */}
-          <h1 className="text-3xl md:text-4xl font-headline font-bold mb-3 md:mb-4 leading-tight 
+          <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-primary mx-auto mb-1 md:mb-2 animate-pulse drop-shadow-lg" /> {/* Reduced icon size and margin */}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-2 md:mb-3 leading-tight 
                          bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
                          bg-clip-text text-transparent animate-gradient-flow-fast"> {/* Reduced font size and margin */}
             {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground mb-5 md:mb-6 max-w-md md:max-w-xl mx-auto leading-relaxed"> {/* Reduced font size and margin */}
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-3 md:mb-4 max-w-md md:max-w-xl mx-auto leading-relaxed"> {/* Reduced font size and margin */}
             {t('homeSubtitle', 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.')}
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-2 md:gap-3"> {/* Reduced gap */}
             <Button 
-              size="default" 
               asChild 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-5 py-2 md:px-6 md:py-2.5 text-sm md:text-base rounded-lg group animate-pulse-glow" /* Reduced padding, size and font size */
+              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group animate-pulse-glow" /* Reduced padding, size and font size */
             >
               <Link href="/categories">
                 {t('homeExploreButton', 'Explore AI Categories')}
-                <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}
+                <ArrowRight className="ml-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}
               </Link>
             </Button>
             <Button 
-              size="default" 
               variant="outline" 
               onClick={() => setIsChatOpen(true)} 
-              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-5 py-2 md:px-6 md:py-2.5 text-sm md:text-base rounded-lg group" /* Reduced padding, size and font size */
+              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group" /* Reduced padding, size and font size */
             >
-              <MessageCircle className="mr-1.5 h-4 w-4 transition-transform group-hover:rotate-[15deg]" /> {/* Reduced icon size */}
+              <MessageCircle className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:rotate-[15deg]" /> {/* Reduced icon size */}
               {t('homeChatButton', 'Chat with AI Guide')}
             </Button>
           </div>
@@ -102,7 +100,7 @@ export default function HomePage() {
 
       {/* Featured AI Tools Section */}
       <section className="container mx-auto">
-        <h2 className="text-3xl md:text-4xl font-headline font-semibold mb-8 md:mb-10 text-center text-primary/90">{t('featuredAITools', 'Featured AI Innovations')}</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredAITools', 'Featured AI Innovations')}</h2>
         {aiTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {aiTools.slice(0, 8).map((tool) => ( 
@@ -115,11 +113,11 @@ export default function HomePage() {
       </section>
 
       {/* View All Button Section */}
-       <section className="text-center py-8 md:py-10">
-         <Button size="lg" asChild variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary/80 text-base md:text-lg px-6 md:px-8 py-3 group">
+       <section className="text-center py-6 md:py-8">
+         <Button asChild variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary/80 text-sm px-4 py-2 sm:text-base sm:px-6 sm:py-2.5 md:px-8 md:py-3 rounded-lg group">
            <Link href="/categories">
             {t('viewAllButton', 'View All AI Tools & Categories')}
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </Link>
          </Button>
        </section>
@@ -129,4 +127,3 @@ export default function HomePage() {
     </div>
   );
 }
-

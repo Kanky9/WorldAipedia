@@ -14,8 +14,8 @@ export default function CategoriesPage() {
   return (
     <div className="space-y-8">
       <section className="text-center">
-        <h1 className="text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore AI by Category')}</h1>
-        <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore AI by Category')}</h1>
+        <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
           {t('categoriesSubtitle', 'Find AI tools tailored to your needs, organized into relevant categories for easy browsing.')}
         </p>
       </section>
@@ -33,8 +33,8 @@ export default function CategoriesPage() {
                 <Card className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl">
                   <CardHeader>
                     <div className="flex items-center gap-3 mb-2">
-                      <CategoryIcon categoryName={iconKeyCategoryName} className="h-8 w-8 text-primary" />
-                      <CardTitle className="font-headline text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
+                      <CategoryIcon categoryName={iconKeyCategoryName} className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                      <CardTitle className="font-headline text-xl sm:text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
                     </div>
                   </CardHeader>
                   <CardContent className="flex-grow">

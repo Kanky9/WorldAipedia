@@ -39,21 +39,21 @@ export default function AIPage() {
   if (aiTool === undefined) { 
     return (
       <div className="space-y-8">
-        <Skeleton className="h-10 w-32 mb-6" />
+        <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-6" />
         <Card className="overflow-hidden shadow-lg rounded-xl">
           <CardHeader className="p-0">
-            <Skeleton className="relative w-full h-72 md:h-96" />
+            <Skeleton className="relative w-full h-60 sm:h-72 md:h-96" />
           </CardHeader>
           <CardContent className="p-6">
-            <Skeleton className="h-10 w-3/4 mb-4" />
+            <Skeleton className="h-8 w-3/4 sm:h-10 mb-4" />
             <div className="flex items-center gap-4 mb-6">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" />
+              <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" />
             </div>
-            <Skeleton className="h-8 w-1/4 mt-8 mb-3" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-full mb-2" />
-            <Skeleton className="h-6 w-5/6" />
+            <Skeleton className="h-7 w-1/3 sm:h-8 sm:w-1/4 mt-8 mb-3" />
+            <Skeleton className="h-5 w-full sm:h-6 mb-2" />
+            <Skeleton className="h-5 w-full sm:h-6 mb-2" />
+            <Skeleton className="h-5 w-5/6 sm:h-6" />
           </CardContent>
         </Card>
       </div>
@@ -70,16 +70,16 @@ export default function AIPage() {
 
   return (
     <div className={`space-y-8 ${pageAnimationClass}`}>
-      <Button variant="outline" asChild className="mb-6">
+      <Button variant="outline" asChild className="mb-6 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
           {t('backToHomeButton', 'Back to Home')}
         </Link>
       </Button>
 
       <Card className="overflow-hidden shadow-lg rounded-xl">
         <CardHeader className="p-0">
-          <div className="relative w-full h-72 md:h-96">
+          <div className="relative w-full h-60 sm:h-72 md:h-96">
             <Image
               src={aiTool.imageUrl}
               alt={localizedToolTitle}
@@ -93,12 +93,12 @@ export default function AIPage() {
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          <h1 className="text-4xl font-headline font-bold mb-4 text-primary">{localizedToolTitle}</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{localizedToolTitle}</h1>
           
           <div className="flex flex-wrap items-center gap-4 mb-6">
             {category && (
-              <Badge variant="default" className="text-lg px-4 py-2 rounded-lg">
-                <CategoryIcon categoryName={aiTool.category} className="h-5 w-5 mr-2" />
+              <Badge variant="default" className="text-sm px-3 py-1 sm:text-base sm:px-4 sm:py-2 rounded-md">
+                <CategoryIcon categoryName={aiTool.category} className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                 {localizedCategoryName}
               </Badge>
             )}
@@ -110,8 +110,8 @@ export default function AIPage() {
             />
           </div>
           
-          <h2 className="text-2xl font-headline font-semibold mt-8 mb-3">{t('aboutSectionTitle', 'About {toolTitle}', {toolTitle: localizedToolTitle})}</h2>
-          <p className="text-lg text-foreground/80 leading-relaxed whitespace-pre-wrap">
+          <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('aboutSectionTitle', 'About {toolTitle}', {toolTitle: localizedToolTitle})}</h2>
+          <p className="text-base sm:text-lg text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {t(aiTool.longDescription)}
           </p>
         </CardContent>
