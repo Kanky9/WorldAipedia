@@ -8,6 +8,7 @@ import { Star } from 'lucide-react';
 import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale'; // Import locales directly
 import { useLanguage } from '@/hooks/useLanguage';
+import type { Timestamp } from 'firebase/firestore';
 
 interface CommentCardProps {
   comment: UserComment;
@@ -18,7 +19,6 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
   const displayName = comment.isAnonymous ? "Anonymous" : comment.username;
   const displayInitials = comment.isAnonymous ? "AN" : comment.username.substring(0, 2).toUpperCase();
   
-  // Fallback for profile image for anonymous or if not provided
   const profileImage = comment.isAnonymous ? undefined : comment.profileImageUrl;
 
   const getLocale = () => {
@@ -29,6 +29,16 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
         return enUS;
     }
   };
+
+  // Ensure timestamp is a Date object for formatting
+  let commentDate: Date | null = null;
+  if (comment.timestamp) {
+    if (comment.timestamp instanceof Date) {
+      commentDate = comment.timestamp;
+    } else if (typeof (comment.timestamp as Timestamp).toDate === 'function') {
+      commentDate = (comment.timestamp as Timestamp).toDate();
+    }
+  }
 
   return (
     <div className="flex space-x-3 p-4 border-b border-border/50">
@@ -43,9 +53,11 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
           <h4 className="text-sm font-semibold text-foreground">
             {displayName}
           </h4>
-          <time dateTime={comment.timestamp.toISOString()} className="text-xs text-muted-foreground">
-            {format(comment.timestamp, 'PPp', { locale: getLocale() })}
-          </time>
+          {commentDate && (
+            <time dateTime={commentDate.toISOString()} className="text-xs text-muted-foreground">
+              {format(commentDate, 'PPp', { locale: getLocale() })}
+            </time>
+          )}
         </div>
         <div className="flex items-center">
           {Array.from({ length: 5 }, (_, i) => (
