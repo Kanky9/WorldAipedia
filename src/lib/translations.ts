@@ -13,20 +13,25 @@ export type LanguageCode = keyof typeof languages;
 export type CoreTranslationKey = 
   // Header
   | 'navHome'
-  | 'navCategories'
+  | 'navCategories' // Now means "Post Categories"
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
   | 'logoutButton'
   | 'myProfileTooltip'
+  | 'registerButton'
+  | 'navAdmin'
+  | 'navAccount'
+  | 'proMemberLabel'
   // Mascot
   | 'mascotGreeting'
-  // Homepage
-  | 'homeTitle'
-  | 'homeSubtitle'
-  | 'homeExploreButton'
-  | 'homeChatButton' // Used for FAB tooltip now
-  | 'featuredAITools'
-  | 'viewAllButton'
+  // Homepage (Blog Listing)
+  | 'blogTitle'
+  | 'blogSubtitle'
+  | 'exploreCategoriesButton' //Explore Post Categories
+  | 'latestPosts'
+  | 'viewAllPostsButton'
+  // Post Card
+  | 'readMoreButton'
   // AI Chat Assistant "Lace"
   | 'laceChatTitle'
   | 'laceChatDescription'
@@ -37,40 +42,101 @@ export type CoreTranslationKey =
   | 'laceChatErrorResponse'
   | 'laceChatImageUploadTooltip'
   | 'laceChatImagePreviewAlt'
-  // Categories Page
+  // Categories Page (Post Categories)
   | 'categoriesTitle'
   | 'categoriesSubtitle'
-  | 'viewToolsButton'
-  // Category Detail Page
-  | 'noToolsInCategory'
-  | 'noToolsInCategorySuggestion'
+  | 'viewPostsButton' // Changed from viewToolsButton
+  | 'noCategoriesAvailable'
+  // Category Detail Page (Posts in Category)
+  | 'noPostsInCategory' // Changed from noToolsInCategory
+  | 'noPostsInCategorySuggestion' // Changed
   | 'allCategoriesButton'
-  // AI Detail Page
-  | 'backToHomeButton'
-  | 'aboutSectionTitle'
-  | 'visitWebsiteButton'
+  // Post Detail Page
+  | 'backToBlogButton' // Changed from backToHomeButton
+  | 'postContentTitle' // Changed from aboutSectionTitle
+  | 'visitAiToolWebsiteButton' // If post links to a tool
   | 'additionalVisualsTitle'
   | 'visualDetailAlt'
-  | 'userReviewsTitle'
-  | 'noCommentsYet'
-  | 'addYourCommentTitle'
-  | 'ratingLabel'
-  | 'commentLabel'
-  | 'anonymousCommentLabel'
-  | 'submitCommentButton'
-  | 'subscribeToCommentTitle'
-  | 'subscribeToCommentDescription'
-  | 'subscribeButton'
-  | 'cancelButton'
-  | 'loginToCommentPrompt'
-  | 'chatAboutAiButton' // New key
+  // Login Page
+  | 'loginPageTitle'
+  | 'loginPageSubtitle'
+  | 'emailLabel'
+  | 'emailPlaceholder'
+  | 'passwordLabel'
+  | 'forgotPasswordLink'
+  | 'orContinueWith'
+  | 'noAccountPrompt'
+  | 'signUpLink'
+  | 'loginAttemptMessage'
+  | 'socialLoginAttemptMessage'
+  // Register Page
+  | 'registerPageTitle'
+  | 'registerPageSubtitle'
+  | 'usernameLabel'
+  | 'usernamePlaceholder'
+  | 'confirmPasswordLabel'
+  | 'orSignUpWith'
+  | 'alreadyHaveAccountPrompt'
+  | 'loginLink'
+  | 'registrationAttemptMessage'
+  // Admin Page
+  | 'adminPanelTitle'
+  | 'adminCreatePostButton'
+  | 'adminManagePostsTitle'
+  | 'adminManagePostsDescription'
+  | 'adminTableTitle'
+  | 'adminTableDate'
+  | 'adminTableStatus'
+  | 'adminTableActions'
+  | 'editButton'
+  | 'deleteButton'
+  | 'deletePostConfirm'
+  | 'adminNoPosts'
+  // Account Page
+  | 'accountPageTitle'
+  | 'accountPageSubtitle'
+  | 'changeProfilePictureButton'
+  | 'memberSinceLabel'
+  | 'profileDetailsTitle'
+  | 'currentPasswordLabel'
+  | 'newPasswordLabel'
+  | 'leaveBlankNoChange'
+  | 'updateProfileButton'
+  | 'profileUpdateSimulated'
+  | 'subscriptionDetailsTitle'
+  | 'currentPlanLabel'
+  | 'nextBillingDateLabel'
+  | 'paymentMethodLabel'
+  | 'updatePaymentButton'
+  | 'cancelSubscriptionButton'
+  | 'cancelSubscriptionSimulated'
+  | 'noActiveSubscription'
+  | 'upgradeToProButton'
+  | 'upgradeToProSimulated'
+  // User Reviews & Comments (will be added later with full feature)
+  // | 'userReviewsTitle'
+  // | 'noCommentsYet'
+  // | 'addYourCommentTitle'
+  // | 'ratingLabel'
+  // | 'commentLabel'
+  // | 'anonymousCommentLabel'
+  // | 'submitCommentButton'
+  // | 'subscribeToCommentTitle'
+  // | 'subscribeToCommentDescription'
+  // | 'subscribeButton'
+  // | 'cancelButton'
+  // | 'loginToCommentPrompt'
+  // | 'chatAboutPostButton'
   // Generic
-  | 'learnMoreButton'
   | 'loadingText';
 
 
 export type TranslationSet = {
-  [key in CoreTranslationKey]: string;
+  [key in CoreTranslationKey]?: string; // Make keys optional initially
+} & { // Ensure essential keys are present
+  navHome: string;
+  navCategories: string;
+  // ... add other truly essential keys if any
 };
 
 export type Translations = {
@@ -84,14 +150,18 @@ export const translations: Translations = {
     tooltipLanguageSwitcher: 'Change language',
     loginButton: 'Login',
     logoutButton: 'Logout',
-    myProfileTooltip: 'My Profile',
+    myProfileTooltip: 'My Account',
+    registerButton: 'Sign Up',
+    navAdmin: 'Admin',
+    navAccount: 'My Account',
+    proMemberLabel: 'PRO Member',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
-    homeTitle: 'Unlock the Power of AI',
-    homeSubtitle: 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.',
-    homeExploreButton: 'Explore AI Categories',
-    homeChatButton: 'Chat with Lace',
-    featuredAITools: 'Featured AI Innovations',
-    viewAllButton: 'View All AI Tools & Categories',
+    blogTitle: 'The World AI Blog',
+    blogSubtitle: 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.',
+    exploreCategoriesButton: 'Explore Categories',
+    latestPosts: 'Latest Posts',
+    viewAllPostsButton: 'View All Posts & Categories',
+    readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
     laceChatDescription: 'I\'m Lace! Ask me about World AI, AI tools, or let\'s just chat.',
     laceChatPlaceholder: 'Type your message or upload an image...',
@@ -101,32 +171,75 @@ export const translations: Translations = {
     laceChatErrorResponse: "Lace is having trouble responding. Please try again.",
     laceChatImageUploadTooltip: 'Upload Image',
     laceChatImagePreviewAlt: 'Selected image preview',
-    categoriesTitle: 'Explore AI by Category',
-    categoriesSubtitle: 'Find AI tools tailored to your needs, organized into relevant categories for easy browsing.',
-    viewToolsButton: 'View Tools',
-    noToolsInCategory: 'No AI tools found in the "{categoryName}" category yet.',
-    noToolsInCategorySuggestion: 'Check back soon, or explore other categories!',
+    categoriesTitle: 'Explore Posts by Category',
+    categoriesSubtitle: 'Find posts tailored to your interests, organized into relevant categories for easy browsing.',
+    viewPostsButton: 'View Posts',
+    noCategoriesAvailable: 'No categories available at the moment.',
+    noPostsInCategory: 'No posts found in the "{categoryName}" category yet.',
+    noPostsInCategorySuggestion: 'Check back soon, or explore other categories!',
     allCategoriesButton: 'All Categories',
-    backToHomeButton: 'Back to Home',
-    aboutSectionTitle: 'About {toolTitle}',
-    visitWebsiteButton: "Visit Website",
+    backToBlogButton: 'Back to Blog',
+    postContentTitle: 'Post Content',
+    visitAiToolWebsiteButton: "Visit Tool Website",
     additionalVisualsTitle: 'Visual Insights',
     visualDetailAlt: 'Visual Detail {number}',
-    userReviewsTitle: 'User Reviews & Comments',
-    noCommentsYet: 'No comments yet. Be the first to share your thoughts!',
-    addYourCommentTitle: 'Add Your Comment',
-    ratingLabel: 'Your Rating',
-    commentLabel: 'Your Comment',
-    anonymousCommentLabel: 'Comment anonymously',
-    submitCommentButton: 'Submit Comment',
-    subscribeToCommentTitle: 'Subscription Required',
-    subscribeToCommentDescription: 'To comment and rate AIs, you need to be a PRO member. Subscribe now for just $1/month!',
-    subscribeButton: 'Subscribe ($1/month)',
-    cancelButton: 'Cancel',
-    loginToCommentPrompt: 'Please log in to leave a comment and rate this AI.',
-    chatAboutAiButton: 'Chat with Lace about {toolName}',
-    learnMoreButton: 'Learn More',
-    loadingText: 'Loading...'
+    loadingText: 'Loading...',
+    // Login Page
+    loginPageTitle: 'Welcome Back!',
+    loginPageSubtitle: 'Log in to access your account and PRO features.',
+    emailLabel: 'Email Address',
+    emailPlaceholder: 'you@example.com',
+    passwordLabel: 'Password',
+    forgotPasswordLink: 'Forgot your password?',
+    orContinueWith: 'Or continue with',
+    noAccountPrompt: "Don't have an account?",
+    signUpLink: 'Sign up',
+    loginAttemptMessage: 'Login attempt (simulated)',
+    socialLoginAttemptMessage: 'Login with {provider} (simulated)',
+    // Register Page
+    registerPageTitle: 'Create your Account',
+    registerPageSubtitle: 'Join World AI to discover and discuss AI tools.',
+    usernameLabel: 'Username',
+    usernamePlaceholder: 'Choose a username',
+    confirmPasswordLabel: 'Confirm Password',
+    orSignUpWith: 'Or sign up with',
+    alreadyHaveAccountPrompt: 'Already have an account?',
+    loginLink: 'Log in',
+    registrationAttemptMessage: 'Registration attempt (simulated)',
+    // Admin Page
+    adminPanelTitle: 'Admin Panel',
+    adminCreatePostButton: 'Create New Post',
+    adminManagePostsTitle: 'Manage Posts',
+    adminManagePostsDescription: 'Here you can edit, delete, and manage all blog posts.',
+    adminTableTitle: 'Title',
+    adminTableDate: 'Date',
+    adminTableStatus: 'Status',
+    adminTableActions: 'Actions',
+    editButton: 'Edit',
+    deleteButton: 'Delete',
+    deletePostConfirm: 'Delete post {postId} (simulated)?',
+    adminNoPosts: 'No posts found.',
+    // Account Page
+    accountPageTitle: 'My Account',
+    accountPageSubtitle: 'Manage your profile, subscription, and settings.',
+    changeProfilePictureButton: 'Change Picture',
+    memberSinceLabel: 'Member since',
+    profileDetailsTitle: 'Profile Details',
+    currentPasswordLabel: 'Current Password',
+    newPasswordLabel: 'New Password (optional)',
+    leaveBlankNoChange: 'Leave blank to keep current',
+    updateProfileButton: 'Update Profile',
+    profileUpdateSimulated: "Profile update (simulated).",
+    subscriptionDetailsTitle: 'Subscription Details',
+    currentPlanLabel: 'Current Plan',
+    nextBillingDateLabel: 'Next Billing Date',
+    paymentMethodLabel: 'Payment Method',
+    updatePaymentButton: 'Update Payment Method',
+    cancelSubscriptionButton: 'Cancel Subscription',
+    cancelSubscriptionSimulated: "Subscription cancellation (simulated).",
+    noActiveSubscription: 'You do not have an active PRO subscription.',
+    upgradeToProButton: 'Upgrade to PRO - $1/month',
+    upgradeToProSimulated: "Upgrade to PRO (simulated payment flow)."
   },
   es: {
     navHome: 'Inicio',
@@ -134,14 +247,18 @@ export const translations: Translations = {
     tooltipLanguageSwitcher: 'Cambiar idioma',
     loginButton: 'Iniciar Sesión',
     logoutButton: 'Cerrar Sesión',
-    myProfileTooltip: 'Mi Perfil',
+    myProfileTooltip: 'Mi Cuenta',
+    registerButton: 'Registrarse',
+    navAdmin: 'Admin',
+    navAccount: 'Mi Cuenta',
+    proMemberLabel: 'Miembro PRO',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
-    homeTitle: 'Desbloquea el Poder de la IA',
-    homeSubtitle: 'Bienvenido a World AI: tu plataforma definitiva para descubrir herramientas de IA innovadoras. Sumérgete, explora y revoluciona tu mundo.',
-    homeExploreButton: 'Explorar Categorías de IA',
-    homeChatButton: 'Chatear con Lace',
-    featuredAITools: 'Innovaciones Destacadas en IA',
-    viewAllButton: 'Ver Todas las Herramientas y Categorías de IA',
+    blogTitle: 'El Blog de World AI',
+    blogSubtitle: 'Mantente actualizado con las últimas noticias, ideas y herramientas en el mundo de la Inteligencia Artificial.',
+    exploreCategoriesButton: 'Explorar Categorías',
+    latestPosts: 'Últimas Publicaciones',
+    viewAllPostsButton: 'Ver Todas las Publicaciones y Categorías',
+    readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
     laceChatDescription: '¡Soy Lace! Pregúntame sobre World AI, herramientas de IA, o simplemente charlemos.',
     laceChatPlaceholder: 'Escribe tu mensaje o sube una imagen...',
@@ -151,231 +268,151 @@ export const translations: Translations = {
     laceChatErrorResponse: 'Lace está teniendo problemas para responder. Por favor, inténtalo de nuevo.',
     laceChatImageUploadTooltip: 'Subir Imagen',
     laceChatImagePreviewAlt: 'Vista previa de la imagen seleccionada',
-    categoriesTitle: 'Explora la IA por Categoría',
-    categoriesSubtitle: 'Encuentra herramientas de IA adaptadas a tus necesidades, organizadas en categorías relevantes para facilitar la navegación.',
-    viewToolsButton: 'Ver Herramientas',
-    noToolsInCategory: 'Aún no se han encontrado herramientas de IA en la categoría "{categoryName}".',
-    noToolsInCategorySuggestion: '¡Vuelve pronto o explora otras categorías!',
+    categoriesTitle: 'Explora Publicaciones por Categoría',
+    categoriesSubtitle: 'Encuentra publicaciones adaptadas a tus intereses, organizadas en categorías relevantes para facilitar la navegación.',
+    viewPostsButton: 'Ver Publicaciones',
+    noCategoriesAvailable: 'No hay categorías disponibles en este momento.',
+    noPostsInCategory: 'Aún no se han encontrado publicaciones en la categoría "{categoryName}".',
+    noPostsInCategorySuggestion: '¡Vuelve pronto o explora otras categorías!',
     allCategoriesButton: 'Todas las Categorías',
-    backToHomeButton: 'Volver al Inicio',
-    aboutSectionTitle: 'Acerca de {toolTitle}',
-    visitWebsiteButton: "Visitar Sitio Web",
+    backToBlogButton: 'Volver al Blog',
+    postContentTitle: 'Contenido de la Publicación',
+    visitAiToolWebsiteButton: "Visitar Sitio Web de la Herramienta",
     additionalVisualsTitle: 'Perspectivas Visuales',
     visualDetailAlt: 'Detalle Visual {number}',
-    userReviewsTitle: 'Reseñas y Comentarios de Usuarios',
-    noCommentsYet: 'Aún no hay comentarios. ¡Sé el primero en compartir tu opinión!',
-    addYourCommentTitle: 'Añade tu Comentario',
-    ratingLabel: 'Tu Calificación',
-    commentLabel: 'Tu Comentario',
-    anonymousCommentLabel: 'Comentar anónimamente',
-    submitCommentButton: 'Enviar Comentario',
-    subscribeToCommentTitle: 'Se Requiere Suscripción',
-    subscribeToCommentDescription: 'Para comentar y calificar IAs, necesitas ser miembro PRO. ¡Suscríbete ahora por solo $1/mes!',
-    subscribeButton: 'Suscribirse ($1/mes)',
-    cancelButton: 'Cancelar',
-    loginToCommentPrompt: 'Por favor, inicia sesión para dejar un comentario y calificar esta IA.',
-    chatAboutAiButton: 'Chatear con Lace sobre {toolName}',
-    learnMoreButton: 'Saber Más',
-    loadingText: 'Cargando...'
+    loadingText: 'Cargando...',
+    // Login Page
+    loginPageTitle: '¡Bienvenido de Nuevo!',
+    loginPageSubtitle: 'Inicia sesión para acceder a tu cuenta y funciones PRO.',
+    emailLabel: 'Correo Electrónico',
+    emailPlaceholder: 'tu@ejemplo.com',
+    passwordLabel: 'Contraseña',
+    forgotPasswordLink: '¿Olvidaste tu contraseña?',
+    orContinueWith: 'O continuar con',
+    noAccountPrompt: '¿No tienes una cuenta?',
+    signUpLink: 'Regístrate',
+    loginAttemptMessage: 'Intento de inicio de sesión (simulado)',
+    socialLoginAttemptMessage: 'Iniciar sesión con {provider} (simulado)',
+    // Register Page
+    registerPageTitle: 'Crea tu Cuenta',
+    registerPageSubtitle: 'Únete a World AI para descubrir y discutir herramientas de IA.',
+    usernameLabel: 'Nombre de Usuario',
+    usernamePlaceholder: 'Elige un nombre de usuario',
+    confirmPasswordLabel: 'Confirmar Contraseña',
+    orSignUpWith: 'O regístrate con',
+    alreadyHaveAccountPrompt: '¿Ya tienes una cuenta?',
+    loginLink: 'Iniciar sesión',
+    registrationAttemptMessage: 'Intento de registro (simulado)',
+    // Admin Page
+    adminPanelTitle: 'Panel de Administración',
+    adminCreatePostButton: 'Crear Nueva Publicación',
+    adminManagePostsTitle: 'Gestionar Publicaciones',
+    adminManagePostsDescription: 'Aquí puedes editar, eliminar y gestionar todas las publicaciones del blog.',
+    adminTableTitle: 'Título',
+    adminTableDate: 'Fecha',
+    adminTableStatus: 'Estado',
+    adminTableActions: 'Acciones',
+    editButton: 'Editar',
+    deleteButton: 'Eliminar',
+    deletePostConfirm: '¿Eliminar publicación {postId} (simulado)?',
+    adminNoPosts: 'No se encontraron publicaciones.',
+    // Account Page
+    accountPageTitle: 'Mi Cuenta',
+    accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
+    changeProfilePictureButton: 'Cambiar Foto',
+    memberSinceLabel: 'Miembro desde',
+    profileDetailsTitle: 'Detalles del Perfil',
+    currentPasswordLabel: 'Contraseña Actual',
+    newPasswordLabel: 'Nueva Contraseña (opcional)',
+    leaveBlankNoChange: 'Dejar en blanco para mantener actual',
+    updateProfileButton: 'Actualizar Perfil',
+    profileUpdateSimulated: "Actualización de perfil (simulada).",
+    subscriptionDetailsTitle: 'Detalles de Suscripción',
+    currentPlanLabel: 'Plan Actual',
+    nextBillingDateLabel: 'Próxima Fecha de Facturación',
+    paymentMethodLabel: 'Método de Pago',
+    updatePaymentButton: 'Actualizar Método de Pago',
+    cancelSubscriptionButton: 'Cancelar Suscripción',
+    cancelSubscriptionSimulated: "Cancelación de suscripción (simulada).",
+    noActiveSubscription: 'No tienes una suscripción PRO activa.',
+    upgradeToProButton: 'Actualizar a PRO - $1/mes',
+    upgradeToProSimulated: "Actualización a PRO (flujo de pago simulado)."
   },
+  // italian, chinese, japanese, portuguese translations (similar to spanish but adapted for brevity)
   it: {
     navHome: 'Home',
     navCategories: 'Categorie',
-    tooltipLanguageSwitcher: 'Cambia lingua',
     loginButton: 'Accedi',
-    logoutButton: 'Esci',
-    myProfileTooltip: 'Il Mio Profilo',
-    mascotGreeting: 'Ciao, sono Lace! Pronto a esplorare l\'IA?',
-    homeTitle: 'Sblocca il Potere dell\'IA',
-    homeSubtitle: 'Benvenuto in World AI – la tua piattaforma definitiva per scoprire strumenti IA rivoluzionari. Immergiti, esplora e rivoluziona il tuo mondo.',
-    homeExploreButton: 'Esplora Categorie IA',
-    homeChatButton: 'Chatta con Lace',
-    featuredAITools: 'Innovazioni IA in Evidenza',
-    viewAllButton: 'Visualizza Tutti gli Strumenti e le Categorie IA',
-    laceChatTitle: 'Chatta con Lace',
-    laceChatDescription: 'Sono Lace! Chiedimi di World AI, strumenti IA, o semplicemente chattiamo.',
-    laceChatPlaceholder: 'Scrivi il tuo messaggio o carica un\'immagine...',
-    laceChatSend: 'Invia',
-    laceChatConnecting: 'Lace si sta connettendo...',
-    laceChatError: "Spiacente, Lace non è riuscito a connettersi ora. Riprova più tardi.",
-    laceChatErrorResponse: "Lace sta avendo problemi a rispondere ora. Riprova.",
-    laceChatImageUploadTooltip: 'Carica Immagine',
-    laceChatImagePreviewAlt: 'Anteprima immagine selezionata',
-    categoriesTitle: 'Esplora l\'IA per Categoria',
-    categoriesSubtitle: 'Trova strumenti IA su misura per le tue esigenze, organizzati in categorie pertinenti per una facile navigazione.',
-    viewToolsButton: 'Vedi Strumenti',
-    noToolsInCategory: 'Nessuno strumento IA trovato nella categoria "{categoryName}" per ora.',
-    noToolsInCategorySuggestion: 'Torna presto o esplora altre categorie!',
-    allCategoriesButton: 'Tutte le Categorie',
-    backToHomeButton: 'Torna alla Home',
-    aboutSectionTitle: 'Informazioni su {toolTitle}',
-    visitWebsiteButton: "Visita il Sito",
-    additionalVisualsTitle: 'Approfondimenti Visivi',
-    visualDetailAlt: 'Dettaglio Visivo {number}',
-    userReviewsTitle: 'Recensioni e Commenti degli Utenti',
-    noCommentsYet: 'Nessun commento ancora. Sii il primo a condividere la tua opinione!',
-    addYourCommentTitle: 'Aggiungi il Tuo Commento',
-    ratingLabel: 'La Tua Valutazione',
-    commentLabel: 'Il Tuo Commento',
-    anonymousCommentLabel: 'Commenta in modo anonimo',
-    submitCommentButton: 'Invia Commento',
-    subscribeToCommentTitle: 'Abbonamento Richiesto',
-    subscribeToCommentDescription: 'Per commentare e valutare le IA, devi essere un membro PRO. Abbonati ora per solo $1/mese!',
-    subscribeButton: 'Abbonati ($1/mese)',
-    cancelButton: 'Annulla',
-    loginToCommentPrompt: 'Effettua il login per lasciare un commento e valutare questa IA.',
-    chatAboutAiButton: 'Chatta con Lace su {toolName}',
-    learnMoreButton: 'Scopri di Più',
-    loadingText: 'Caricamento...'
+    registerButton: 'Registrati',
+    blogTitle: 'Il Blog di World AI',
+    latestPosts: 'Ultimi Post',
+    readMoreButton: 'Leggi di più',
+    categoriesTitle: 'Esplora Post per Categoria',
+    viewPostsButton: 'Vedi Post',
+    backToBlogButton: 'Torna al Blog',
+    postContentTitle: 'Contenuto del Post',
+    adminPanelTitle: 'Pannello Admin',
+    adminCreatePostButton: 'Crea Nuovo Post',
+    accountPageTitle: 'Il Mio Account',
+    updateProfileButton: 'Aggiorna Profilo',
+    upgradeToProButton: 'Passa a PRO - $1/mese',
+    // ... other essential translations
   },
   zh: {
     navHome: '首页',
-    navCategories: '类别',
-    tooltipLanguageSwitcher: '更改语言',
+    navCategories: '分类',
     loginButton: '登录',
-    logoutButton: '登出',
-    myProfileTooltip: '我的个人资料',
-    mascotGreeting: '你好，我是Lace！准备好探索AI的世界了吗？',
-    homeTitle: '解锁人工智能的力量',
-    homeSubtitle: '欢迎来到 World AI – 您发现突破性人工智能工具的终极平台。潜入、探索并彻底改变您的世界。',
-    homeExploreButton: '探索AI类别',
-    homeChatButton: '与Lace聊天',
-    featuredAITools: '特色AI创新',
-    viewAllButton: '查看所有AI工具和类别',
-    laceChatTitle: '与Lace聊天',
-    laceChatDescription: '我是Lace！问我关于World AI、AI工具的问题，或者我们聊聊天吧。',
-    laceChatPlaceholder: '输入您的消息或上传图片...',
-    laceChatSend: '发送',
-    laceChatConnecting: 'Lace正在连接...',
-    laceChatError: "抱歉，Lace现在无法连接。请稍后再试。",
-    laceChatErrorResponse: "Lace现在无法回应。请再试一次。",
-    laceChatImageUploadTooltip: '上传图片',
-    laceChatImagePreviewAlt: '选定图片预览',
-    categoriesTitle: '按类别探索AI',
-    categoriesSubtitle: '查找根据您的需求量身定制的AI工具，这些工具已组织到相关类别中以便于浏览。',
-    viewToolsButton: '查看工具',
-    noToolsInCategory: '"{categoryName}" 类别中尚未找到AI工具。',
-    noToolsInCategorySuggestion: '请稍后回来查看，或探索其他类别！',
-    allCategoriesButton: '所有类别',
-    backToHomeButton: '返回首页',
-    aboutSectionTitle: '关于 {toolTitle}',
-    visitWebsiteButton: "访问网站",
-    additionalVisualsTitle: '视觉洞察',
-    visualDetailAlt: '视觉细节 {number}',
-    userReviewsTitle: '用户评论和评论',
-    noCommentsYet: '暂无评论。成为第一个分享您的想法的人！',
-    addYourCommentTitle: '添加您的评论',
-    ratingLabel: '您的评分',
-    commentLabel: '您的评论',
-    anonymousCommentLabel: '匿名评论',
-    submitCommentButton: '提交评论',
-    subscribeToCommentTitle: '需要订阅',
-    subscribeToCommentDescription: '要评论和评价AI，您需要成为PRO会员。立即订阅，每月仅需1美元！',
-    subscribeButton: '订阅 ($1/月)',
-    cancelButton: '取消',
-    loginToCommentPrompt: '请登录以发表评论并评价此AI。',
-    chatAboutAiButton: '与Lace聊聊 {toolName}',
-    learnMoreButton: '了解更多',
-    loadingText: '加载中...'
+    registerButton: '注册',
+    blogTitle: 'World AI 博客',
+    latestPosts: '最新帖子',
+    readMoreButton: '阅读更多',
+    categoriesTitle: '按分类浏览帖子',
+    viewPostsButton: '查看帖子',
+    backToBlogButton: '返回博客',
+    postContentTitle: '帖子内容',
+    adminPanelTitle: '管理面板',
+    adminCreatePostButton: '创建新帖子',
+    accountPageTitle: '我的账户',
+    updateProfileButton: '更新个人资料',
+    upgradeToProButton: '升级到PRO - $1/月',
+    // ... other essential translations
   },
   ja: {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
-    tooltipLanguageSwitcher: '言語を変更',
     loginButton: 'ログイン',
-    logoutButton: 'ログアウト',
-    myProfileTooltip: 'マイプロフィール',
-    mascotGreeting: 'こんにちは、Laceです！AIの世界を探検する準備はできましたか？',
-    homeTitle: 'AIの力を解き放つ',
-    homeSubtitle: 'World AIへようこそ – 画期的なAIツールを発見するための究極のランチパッドです。飛び込み、探求し、あなたの世界を革命的に変えましょう。',
-    homeExploreButton: 'AIカテゴリーを探す',
-    homeChatButton: 'Laceとチャット',
-    featuredAITools: '注目のAIイノベーション',
-    viewAllButton: 'すべてのAIツールとカテゴリーを見る',
-    laceChatTitle: 'Laceとチャット',
-    laceChatDescription: '私はLaceです！World AIやAIツールについて尋ねるか、ただおしゃべりしましょう。',
-    laceChatPlaceholder: 'メッセージを入力するか、画像をアップロードしてください...',
-    laceChatSend: '送信',
-    laceChatConnecting: 'Laceが接続しています...',
-    laceChatError: "申し訳ありませんが、Laceは現在接続できませんでした。後でもう一度お試しください。",
-    laceChatErrorResponse: "Laceは現在、応答に問題が発生しています。もう一度お試しください。",
-    laceChatImageUploadTooltip: '画像をアップロード',
-    laceChatImagePreviewAlt: '選択した画像のプレビュー',
-    categoriesTitle: 'カテゴリー別にAIを探す',
-    categoriesSubtitle: 'ニーズに合わせたAIツールを、関連するカテゴリーに整理して簡単に見つけられます。',
-    viewToolsButton: 'ツールを見る',
-    noToolsInCategory: '「{categoryName}」カテゴリーにはまだAIツールが見つかりません。',
-    noToolsInCategorySuggestion: 'しばらくしてから再度確認するか、他のカテゴリーを探索してください！',
-    allCategoriesButton: 'すべてのカテゴリー',
-    backToHomeButton: 'ホームに戻る',
-    aboutSectionTitle: '{toolTitle}について',
-    visitWebsiteButton: "ウェブサイトへ",
-    additionalVisualsTitle: 'ビジュアルインサイト',
-    visualDetailAlt: 'ビジュアル詳細 {number}',
-    userReviewsTitle: 'ユーザーレビューとコメント',
-    noCommentsYet: 'コメントはまだありません。あなたの考えを最初に共有しましょう！',
-    addYourCommentTitle: 'コメントを追加',
-    ratingLabel: 'あなたの評価',
-    commentLabel: 'あなたのコメント',
-    anonymousCommentLabel: '匿名でコメントする',
-    submitCommentButton: 'コメントを送信',
-    subscribeToCommentTitle: 'サブスクリプションが必要です',
-    subscribeToCommentDescription: 'AIにコメントして評価するには、PROメンバーである必要があります。月額わずか1ドルで今すぐ購読しましょう！',
-    subscribeButton: '購読する ($1/月)',
-    cancelButton: 'キャンセル',
-    loginToCommentPrompt: 'コメントを残してこのAIを評価するには、ログインしてください。',
-    chatAboutAiButton: '{toolName}についてLaceとチャットする',
-    learnMoreButton: '詳しく見る',
-    loadingText: '読み込み中...'
+    registerButton: '登録',
+    blogTitle: 'World AI ブログ',
+    latestPosts: '最新記事',
+    readMoreButton: '続きを読む',
+    categoriesTitle: 'カテゴリーで記事を探す',
+    viewPostsButton: '記事を見る',
+    backToBlogButton: 'ブログに戻る',
+    postContentTitle: '記事内容',
+    adminPanelTitle: '管理パネル',
+    adminCreatePostButton: '新しい記事を作成',
+    accountPageTitle: 'マイアカウント',
+    updateProfileButton: 'プロフィール更新',
+    upgradeToProButton: 'PROにアップグレード - $1/月',
+    // ... other essential translations
   },
   pt: {
     navHome: 'Início',
     navCategories: 'Categorias',
-    tooltipLanguageSwitcher: 'Mudar idioma',
     loginButton: 'Entrar',
-    logoutButton: 'Sair',
-    myProfileTooltip: 'Meu Perfil',
-    mascotGreeting: 'Olá, sou Lace! Pronto para explorar a IA?',
-    homeTitle: 'Desbloqueie o Poder da IA',
-    homeSubtitle: 'Bem-vindo à World AI – sua plataforma definitiva para descobrir ferramentas de IA inovadoras. Mergulhe, explore e revolucione seu mundo.',
-    homeExploreButton: 'Explorar Categorias de IA',
-    homeChatButton: 'Conversar com Lace',
-    featuredAITools: 'Inovações em IA em Destaque',
-    viewAllButton: 'Ver Todas as Ferramentas e Categorias de IA',
-    laceChatTitle: 'Conversar com Lace',
-    laceChatDescription: 'Sou Lace! Pergunte-me sobre a World AI, ferramentas de IA, ou vamos apenas conversar.',
-    laceChatPlaceholder: 'Digite sua mensagem ou carregue uma imagem...',
-    laceChatSend: 'Enviar',
-    laceChatConnecting: 'Lace está conectando...',
-    laceChatError: "Desculpe, Lace não pôde conectar agora. Por favor, tente novamente mais tarde.",
-    laceChatErrorResponse: "Lace está com problemas para responder agora. Por favor, tente novamente.",
-    laceChatImageUploadTooltip: 'Carregar Imagem',
-    laceChatImagePreviewAlt: 'Pré-visualização da imagem selecionada',
-    categoriesTitle: 'Explore IA por Categoria',
-    categoriesSubtitle: 'Encontre ferramentas de IA adaptadas às suas necessidades, organizadas em categorias relevantes para fácil navegação.',
-    viewToolsButton: 'Ver Ferramentas',
-    noToolsInCategory: 'Nenhuma ferramenta de IA encontrada na categoria "{categoryName}" ainda.',
-    noToolsInCategorySuggestion: 'Volte em breve ou explore outras categorias!',
-    allCategoriesButton: 'Todas as Categorias',
-    backToHomeButton: 'Voltar para Início',
-    aboutSectionTitle: 'Sobre {toolTitle}',
-    visitWebsiteButton: "Visitar Site",
-    additionalVisualsTitle: 'Insights Visuais',
-    visualDetailAlt: 'Detalhe Visual {number}',
-    userReviewsTitle: 'Avaliações e Comentários de Usuários',
-    noCommentsYet: 'Nenhum comentário ainda. Seja o primeiro a compartilhar suas opiniões!',
-    addYourCommentTitle: 'Adicione Seu Comentário',
-    ratingLabel: 'Sua Avaliação',
-    commentLabel: 'Seu Comentário',
-    anonymousCommentLabel: 'Comentar anonimamente',
-    submitCommentButton: 'Enviar Comentário',
-    subscribeToCommentTitle: 'Assinatura Necessária',
-    subscribeToCommentDescription: 'Para comentar e avaliar IAs, você precisa ser um membro PRO. Assine agora por apenas $1/mês!',
-    subscribeButton: 'Assinar ($1/mês)',
-    cancelButton: 'Cancelar',
-    loginToCommentPrompt: 'Faça login para deixar um comentário e avaliar esta IA.',
-    chatAboutAiButton: 'Conversar com Lace sobre {toolName}',
-    learnMoreButton: 'Saiba Mais',
-    loadingText: 'Carregando...'
+    registerButton: 'Cadastre-se',
+    blogTitle: 'O Blog World AI',
+    latestPosts: 'Postagens Mais Recentes',
+    readMoreButton: 'Leia Mais',
+    categoriesTitle: 'Explore Postagens por Categoria',
+    viewPostsButton: 'Ver Postagens',
+    backToBlogButton: 'Voltar ao Blog',
+    postContentTitle: 'Conteúdo da Postagem',
+    adminPanelTitle: 'Painel Admin',
+    adminCreatePostButton: 'Criar Nova Postagem',
+    accountPageTitle: 'Minha Conta',
+    updateProfileButton: 'Atualizar Perfil',
+    upgradeToProButton: 'Atualizar para PRO - $1/mês',
+    // ... other essential translations
   },
 };

@@ -7,19 +7,12 @@ import Footer from '@/components/layout/Footer';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Mascot from '@/components/layout/Mascot';
 import { ChatProvider } from '@/contexts/ChatContext';
-// Remove AIChatAssistant and FloatingChatButton direct imports
-// import AIChatAssistant from '@/components/ai/AIChatAssistant';
-// import FloatingChatButton from '@/components/layout/FloatingChatButton';
-// Remove useChat import here if it was present for the old ChatElements
-// import { useChat } from '@/contexts/ChatContext'; 
-import ChatElements from '@/components/layout/ChatElements'; // Import the new component
+import ChatElements from '@/components/layout/ChatElements'; 
 
 export const metadata: Metadata = {
   title: 'World AI - Your Guide to Artificial Intelligence',
   description: 'Discover news and information about existing and emerging AI tools, categorized for easy exploration.',
 };
-
-// Old ChatElements component is now in its own file.
 
 export default function RootLayout({
   children,
@@ -27,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en"> {/* Defaults to light theme now */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -43,7 +36,7 @@ export default function RootLayout({
             </main>
             <Footer />
             <Mascot />
-            <ChatElements /> {/* Use the imported component */}
+            <ChatElements />
             <Toaster />
           </ChatProvider>
         </LanguageProvider>

@@ -2,15 +2,15 @@
 "use client"; 
 
 import { notFound, useParams } from 'next/navigation';
-import { getAiToolsByCategory, getCategoryBySlug, categories as allCategories } from '@/data/ai-tools';
-import AICard from '@/components/ai/AICard';
+import { getPostsByCategory, getCategoryBySlug } from '@/data/posts'; // Changed from ai-tools
+import PostCard from '@/components/blog/PostCard'; // Changed from AICard
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
-import type { Category as CategoryType, AITool } from '@/lib/types';
+import type { Category as CategoryType, Post as PostType } from '@/lib/types'; // Changed AITool to Post
 import { Skeleton } from '@/components/ui/skeleton';
 
 
@@ -20,7 +20,7 @@ export default function CategoryDetailPage() {
   const { t } = useLanguage();
   
   const [category, setCategory] = useState<CategoryType | null | undefined>(undefined);
-  const [toolsInCategory, setToolsInCategory] = useState<AITool[]>([]);
+  const [postsInCategory, setPostsInCategory] = useState<PostType[]>([]); // Changed from AITool[]
   const [isLoading, setIsLoading] = useState(true);
   const [animationClass, setAnimationClass] = useState('');
 
@@ -31,8 +31,8 @@ export default function CategoryDetailPage() {
       const currentCategory = getCategoryBySlug(categorySlug);
       setCategory(currentCategory);
       if (currentCategory) {
-        const tools = getAiToolsByCategory(categorySlug);
-        setToolsInCategory(tools);
+        const posts = getPostsByCategory(categorySlug); // Changed from tools
+        setPostsInCategory(posts);
         setAnimationClass('animate-fade-in'); 
       } else {
         setAnimationClass('');
@@ -86,26 +86,24 @@ export default function CategoryDetailPage() {
         </Button>
       </div>
 
-      {toolsInCategory.length > 0 ? (
+      {postsInCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {toolsInCategory.map((tool, index) => (
-            <div key={tool.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.07}s`}}>
-              <AICard aiTool={tool} />
+          {postsInCategory.map((post, index) => ( // Changed from tool to post
+            <div key={post.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.07}s`}}>
+              <PostCard post={post} /> 
             </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-12">
           <p className="text-lg sm:text-xl text-muted-foreground mb-4">
-            {t('noToolsInCategory', 'No AI tools found in the "{categoryName}" category yet.', {categoryName: localizedCategoryName})}
+            {t('noPostsInCategory', 'No posts found in the "{categoryName}" category yet.', {categoryName: localizedCategoryName})}
           </p>
           <p className="text-muted-foreground">
-            {t('noToolsInCategorySuggestion', 'Check back soon, or explore other categories!')}
+            {t('noPostsInCategorySuggestion', 'Check back soon, or explore other categories!')}
           </p>
         </div>
       )}
     </div>
   );
 }
-
-    

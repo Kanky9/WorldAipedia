@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { BrainCircuit, Menu, X, UserCircle, LogOut, Star } from 'lucide-react';
+import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -18,25 +18,24 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-
-interface MockUser {
-  username: string;
-  isSubscribed: boolean;
-  profileImageUrl?: string; // For PRO users
-}
+import type { User } from '@/lib/types'; // Import User type
 
 const Header = () => {
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<MockUser | null>(null);
+  const [user, setUser] = useState<User | null>(null); // Use User type
 
-  // Simulate login/logout (in a real app, this would use an auth provider)
+  // Simulate login/logout
   const handleLogin = () => {
-    // Simulate a PRO user for demonstration
-    setUser({ username: "UsuarioDemo", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }); 
+    setUser({ 
+      id: "simulated-user-pro", 
+      username: "UsuarioDemo", 
+      email: "demo@example.com", 
+      isSubscribed: true, 
+      profileImageUrl: "https://placehold.co/40x40.png?text=UD" 
+    });
     // To simulate a non-PRO user:
-    // setUser({ username: "UsuarioComun", isSubscribed: false });
+    // setUser({ id: "simulated-user-basic", username: "UsuarioComun", email: "comun@example.com", isSubscribed: false });
   };
 
   const handleLogout = () => {
@@ -44,9 +43,14 @@ const Header = () => {
   };
 
   useEffect(() => {
-    // Close mobile menu if user state changes (e.g., logs in/out while mobile menu is open)
     setIsMobileMenuOpen(false);
   }, [user]);
+
+  const navLinks = [
+    { href: "/", labelKey: "navHome", icon: ListOrdered },
+    { href: "/categories", labelKey: "navCategories", icon: Settings },
+    // { href: "/pricing", labelKey: "navPricing", icon: Star }, // Example for later
+  ];
 
   return (
     <header className="bg-card/80 backdrop-blur-md border-b border-border/50 shadow-sm sticky top-0 z-50">
@@ -56,17 +60,19 @@ const Header = () => {
           <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80">World AI</h1>
         </Link>
         
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
-
+        <div className="flex items-center gap-1 sm:gap-2">
           <nav className="hidden sm:flex items-center gap-1">
-            <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
-              <Link href="/">{t('navHome', 'Home')}</Link>
-            </Button>
-            <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
-              <Link href="/categories">{t('navCategories', 'Categories')}</Link>
-            </Button>
+            {navLinks.map(link => (
+              <Button variant="ghost" asChild key={link.href} className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
+                <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
+              </Button>
+            ))}
+             <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
+                <Link href="/admin">{t('navAdmin', 'Admin')}</Link>
+              </Button>
           </nav>
+
+          <LanguageSwitcher />
 
           {user ? (
             <DropdownMenu>
@@ -76,15 +82,12 @@ const Header = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
                         <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-                          {user.isSubscribed && user.profileImageUrl ? (
+                          {user.profileImageUrl ? (
                             <AvatarImage src={user.profileImageUrl} alt={user.username} data-ai-hint="user profile avatar"/>
-                          ) : null}
-                          <AvatarFallback className="bg-muted text-muted-foreground text-xs sm:text-sm">
-                            {user.username.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
+                          ) : <AvatarFallback className="bg-muted text-muted-foreground text-xs sm:text-sm">{user.username.substring(0, 2).toUpperCase()}</AvatarFallback>}
                         </Avatar>
                         {user.isSubscribed && (
-                          <Badge variant="default" className="absolute bottom-0 right-0 text-[8px] px-1 py-0.5 leading-none border-2 border-background bg-primary text-primary-foreground">
+                          <Badge variant="default" className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 leading-none border-2 border-background bg-primary text-primary-foreground shadow-md">
                             PRO
                           </Badge>
                         )}
@@ -92,7 +95,7 @@ const Header = () => {
                     </DropdownMenuTrigger>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{t('myProfileTooltip', 'My Profile')}</p>
+                    <p>{t('myProfileTooltip', 'My Account')}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -101,22 +104,36 @@ const Header = () => {
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user.username}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user.isSubscribed ? "PRO Account" : "Standard Account"}
+                      {user.email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {/* Future items: My Profile, Settings */}
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/account"><UserCircle className="mr-2 h-4 w-4" />{t('navAccount', 'My Account')}</Link>
+                </DropdownMenuItem>
+                {user.isSubscribed && (
+                  <DropdownMenuItem className="cursor-default text-accent">
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                    <span>{t('proMemberLabel', 'PRO Member')}</span>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive-foreground focus:bg-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>{t('logoutButton', 'Logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleLogin} variant="outline" size="sm" className="text-xs sm:text-sm">
-              {t('loginButton', 'Login')}
-            </Button>
+            <div className="hidden sm:flex items-center gap-2">
+              <Button asChild variant="ghost" size="sm" className="text-xs sm:text-sm">
+                <Link href="/login">{t('loginButton', 'Login')}</Link>
+              </Button>
+              <Button asChild variant="default" size="sm" className="text-xs sm:text-sm bg-primary text-primary-foreground hover:bg-primary/90">
+                 <Link href="/register">{t('registerButton', 'Sign Up')}</Link>
+              </Button>
+            </div>
           )}
 
           <div className="sm:hidden">
@@ -134,21 +151,44 @@ const Header = () => {
 
       {isMobileMenuOpen && (
         <div className="sm:hidden absolute top-20 left-0 right-0 w-full bg-card shadow-lg p-4 z-40 border-b border-t border-border">
-          <nav className="flex flex-col gap-4">
+          <nav className="flex flex-col gap-2">
+            {navLinks.map(link => (
+               <Link 
+                href={link.href} 
+                key={link.href} 
+                className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <link.icon className="h-4 w-4"/>{t(link.labelKey as any, link.labelKey)}
+              </Link>
+            ))}
             <Link 
-              href="/" 
-              className="text-lg font-medium hover:text-primary py-2 text-center" 
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {t('navHome', 'Home')}
+                href="/admin" 
+                className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Settings className="h-4 w-4"/>{t('navAdmin', 'Admin')}
             </Link>
-            <Link 
-              href="/categories" 
-              className="text-lg font-medium hover:text-primary py-2 text-center" 
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {t('navCategories', 'Categories')}
-            </Link>
+            <DropdownMenuSeparator />
+            {user ? (
+              <>
+                <Link href="/account" className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                  <UserCircle className="h-4 w-4"/>{t('navAccount', 'My Account')}
+                </Link>
+                <Button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} variant="ghost" className="w-full justify-start text-base font-medium text-destructive hover:text-destructive-foreground hover:bg-destructive py-2 px-3 flex items-center gap-2">
+                  <LogOut className="h-4 w-4"/>{t('logoutButton', 'Logout')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
+                  <LogIn className="h-4 w-4"/>{t('loginButton', 'Login')}
+                </Link>
+                <Link href="/register" className="text-base font-medium bg-primary text-primary-foreground hover:bg-primary/90 py-2 px-3 rounded-md flex items-center gap-2 justify-center" onClick={() => setIsMobileMenuOpen(false)}>
+                  <UserPlus className="h-4 w-4"/>{t('registerButton', 'Sign Up')}
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

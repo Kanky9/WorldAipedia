@@ -4,22 +4,25 @@ import type { LanguageCode } from '@/lib/translations';
 
 export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; }; // Ensure 'en' is always present as a fallback
 
-export interface AITool {
+// Renamed AITool to Post, added publishedDate and tags
+export interface Post {
   id: string;
   title: LocalizedString;
   shortDescription: LocalizedString;
   longDescription: LocalizedString;
   imageUrl: string;
   imageHint?: string;
-  logoUrl?: string;
-  logoHint?: string;
-  category: string; 
+  logoUrl?: string; // Still relevant if post is about a specific tool
+  logoHint?: string; // Still relevant
+  category: string; // Main category/tag
   categorySlug: string; 
-  link: string;
-  detailImageUrl1?: string;
-  detailImageHint1?: string;
-  detailImageUrl2?: string;
-  detailImageHint2?: string;
+  tags: string[]; // Additional tags
+  publishedDate: Date;
+  link: string; // Link to the AI tool if the post is about one
+  detailImageUrl1?: string; // Still relevant
+  detailImageHint1?: string; // Still relevant
+  detailImageUrl2?: string; // Still relevant
+  detailImageHint2?: string; // Still relevant
 }
 
 export interface Category {
@@ -29,9 +32,18 @@ export interface Category {
   description: LocalizedString;
 }
 
+// Simplified User type for UI simulation
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  profileImageUrl?: string;
+  isSubscribed: boolean; // PRO status
+}
+
 export interface UserComment {
   id: string;
-  aiToolId: string;
+  postId: string; // Changed from aiToolId
   username: string;
   isAnonymous: boolean;
   rating: number; 
@@ -40,9 +52,8 @@ export interface UserComment {
   profileImageUrl?: string; 
 }
 
-// Context for opening chat with specific AI tool information
 export interface AiToolChatContext {
-  title: string; // Resolved, localized title
-  shortDescription: string; // Resolved, localized description
+  title: string; 
+  shortDescription: string; 
   link: string;
 }

@@ -2,7 +2,7 @@
 "use client"; 
 
 import Link from 'next/link';
-import { categories } from '@/data/ai-tools';
+import { categories } from '@/data/posts'; // Changed from ai-tools
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
@@ -20,9 +20,9 @@ export default function CategoriesPage() {
   return (
     <div className={`space-y-8 ${animationClass}`}>
       <section className="text-center">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore AI by Category')}</h1>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore Posts by Category')}</h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-          {t('categoriesSubtitle', 'Find AI tools tailored to your needs, organized into relevant categories for easy browsing.')}
+          {t('categoriesSubtitle', 'Find posts tailored to your interests, organized into relevant categories for easy browsing.')}
         </p>
       </section>
       
@@ -36,7 +36,7 @@ export default function CategoriesPage() {
             return (
               <Link href={`/categories/${category.slug}`} key={category.slug} className="block group">
                 <Card 
-                  className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl animate-fadeInUp"
+                  className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl animate-fadeInUp bg-card"
                   style={{animationDelay: `${index * 0.05}s`}}
                 >
                   <CardHeader>
@@ -50,7 +50,7 @@ export default function CategoriesPage() {
                   </CardContent>
                   <CardContent>
                      <p className="text-sm text-primary font-semibold flex items-center">
-                       {t('viewToolsButton', 'View Tools')} <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+                       {t('viewPostsButton', 'View Posts')} <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                      </p>
                   </CardContent>
                 </Card>
@@ -59,10 +59,8 @@ export default function CategoriesPage() {
           })}
         </div>
       ) : (
-        <p className="text-center text-muted-foreground">No categories available at the moment.</p>
+        <p className="text-center text-muted-foreground">{t('noCategoriesAvailable', 'No categories available at the moment.')}</p>
       )}
     </div>
   );
 }
-
-    
