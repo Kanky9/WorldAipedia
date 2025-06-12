@@ -43,7 +43,7 @@ export default function PostPage() {
 
   // Comment State
   const [comments, setComments] = useState<UserComment[]>([]);
-  const [commentsLoading, setCommentsLoading] = useState(true);
+  const [commentsLoading, setCommentsLoading] = useState(true); // Set to true initially
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentRating, setNewCommentRating] = useState(0);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
@@ -53,7 +53,10 @@ export default function PostPage() {
 
 
   const fetchComments = useCallback(async (postId: string) => {
-    if (!postId) return;
+    if (!postId) {
+      setCommentsLoading(false); // Ensure loading state is cleared
+      return;
+    }
     setCommentsLoading(true);
     try {
       const commentsRef = collection(db, 'posts', postId, 'comments');
@@ -64,9 +67,15 @@ export default function PostPage() {
         fetchedComments.push({ id: doc.id, ...doc.data() } as UserComment);
       });
       setComments(fetchedComments);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching comments: ", error);
-      toast({ variant: "destructive", title: "Error", description: "Could not load comments." });
+      // If it's a permission error, we'll show "No comments" or an empty state, rather than blocking the page.
+      if (error.code === 'permission-denied' || error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+        toast({ variant: "destructive", title: "Comments Disabled", description: "Could not load comments due to permissions. Please check Firestore rules." });
+      } else {
+        toast({ variant: "destructive", title: "Error Loading Comments", description: "Could not load comments at this time." });
+      }
+      setComments([]); // Set to empty array on error to allow page to render
     } finally {
       setCommentsLoading(false);
     }
@@ -82,7 +91,10 @@ export default function PostPage() {
         setPageAnimationClass('animate-scale-up-fade-in');
       } else {
         setPageAnimationClass(''); 
+        setCommentsLoading(false); // Ensure loading stops if no post
       }
+    } else {
+       setCommentsLoading(false); // Ensure loading stops if no id
     }
   }, [id, fetchComments]); 
 
@@ -134,9 +146,13 @@ export default function PostPage() {
       setNewCommentRating(0);
       setIsAnonymousComment(false);
       toast({ title: "Comment Submitted", description: "Your comment has been posted." });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting comment: ", error);
-      toast({ variant: "destructive", title: "Submission Error", description: "Could not post your comment."});
+      if (error.code === 'permission-denied' || error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
+         toast({ variant: "destructive", title: "Submission Failed", description: "You do not have permission to post comments. Please check Firestore rules."});
+      } else {
+         toast({ variant: "destructive", title: "Submission Error", description: "Could not post your comment."});
+      }
     } finally {
       setIsSubmittingComment(false);
     }
@@ -172,8 +188,8 @@ export default function PostPage() {
     notFound();
   }
   
-  // Display loader if post or auth state is still loading
-  if (authLoading || post === undefined) {
+  // Display loader if post or auth state is still loading OR if post is undefined and comments are still attempting to load (edge case)
+  if (authLoading || post === undefined || (post === undefined && commentsLoading) ) {
      return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -389,3 +405,4 @@ export default function PostPage() {
     </div>
   );
 }
+
