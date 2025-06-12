@@ -9,58 +9,58 @@ body {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    --background: 0 0% 100%; /* White */
+    --foreground: 20 14.3% 4.1%; /* Dark Gray */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 20 14.3% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 262.1 83.3% 57.8%; /* Muted Purple */
-    --primary-foreground: 0 0% 98%; /* White text on primary */
+    --popover-foreground: 20 14.3% 4.1%;
+    --primary: 25 90% 50%; /* Orange */
+    --primary-foreground: 0 0% 98%; /* White text on orange */
     --secondary: 240 4.8% 95.9%; /* Light Gray */
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%; /* Lighter gray for muted elements */
+    --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 346.8 77.2% 49.8%; /* Muted Pink/Red */
-    --accent-foreground: 0 0% 98%; /* White text on accent */
+    --accent: 35 80% 58%; /* Lighter/complementary Orange */
+    --accent-foreground: 0 0% 98%; /* White text on accent orange */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%; /* Input fields */
-    --ring: 346.8 77.2% 49.8%; /* Accent color for ring */
-    --chart-1: 262.1 83.3% 57.8%;
-    --chart-2: 346.8 77.2% 49.8%;
-    --chart-3: 25 95% 53.1%;
-    --chart-4: 240 5.9% 10%;
-    --chart-5: 180 4.1% 96.1%;
+    --input: 240 5.9% 90%;
+    --ring: 25 90% 50%; /* Primary orange for ring */
+    --chart-1: 25 90% 50%;
+    --chart-2: 35 80% 58%;
+    --chart-3: 45 75% 62%; /* Another orange/yellow tone */
+    --chart-4: 240 5.9% 10%; /* Dark text for charts */
+    --chart-5: 180 4.1% 96.1%; /* Very light gray for chart backgrounds */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
-    --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
+    --background: 20 14.3% 4.1%; /* Very dark gray */
+    --foreground: 0 0% 95%; /* Light gray / Off-white */
+    --card: 24 9.8% 10%; /* Slightly lighter dark gray for cards */
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
-    --primary: 263.4 70% 50.4%; /* Muted Purple - Dark */
-    --primary-foreground: 0 0% 100%;
+    --primary: 25 95% 53.1%; /* Vibrant Orange */
+    --primary-foreground: 0 0% 98%; /* White text on orange */
     --secondary: 240 3.7% 15.9%; /* Darker Gray */
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 346.8 77.2% 49.8%; /* Muted Pink/Red */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --accent: 35 90% 55%; /* Lighter/complementary Orange */
+    --accent-foreground: 0 0% 98%; /* White text on accent orange */
+    --destructive: 0 72.2% 50.6%; /* Suitable red for dark mode */
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 346.8 77.2% 49.8%;
-    --chart-1: 263.4 70% 50.4%;
-    --chart-2: 346.8 77.2% 49.8%;
-    --chart-3: 25 85% 43.1%;
-    --chart-4: 0 0% 80%;
-    --chart-5: 240 3.7% 25.9%;
+    --ring: 25 95% 53.1%; /* Primary orange for rings */
+    --chart-1: 25 95% 53.1%;
+    --chart-2: 35 90% 55%;
+    --chart-3: 45 85% 60%; /* Another orange/yellow tone */
+    --chart-4: 0 0% 80%; /* Light gray for chart text/lines */
+    --chart-5: 240 3.7% 25.9%; /* Darker gray for chart backgrounds */
   }
 }
 
