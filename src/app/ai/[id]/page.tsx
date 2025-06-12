@@ -6,7 +6,7 @@ import { notFound, useParams } from 'next/navigation';
 import { getAiToolById, getCategoryByName } from '@/data/ai-tools';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge'; // No longer using Badge for category display
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -47,8 +47,8 @@ export default function AIPage() {
           <CardContent className="p-6">
             <Skeleton className="h-8 w-3/4 sm:h-10 mb-4" />
             <div className="flex items-center gap-4 mb-6">
-              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" />
-              <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" />
+              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" /> {/* Placeholder for category */}
+              <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" /> {/* Placeholder for AILink */}
             </div>
             <Skeleton className="h-7 w-1/3 sm:h-8 sm:w-1/4 mt-8 mb-3" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
@@ -97,10 +97,10 @@ export default function AIPage() {
           
           <div className="flex flex-wrap items-center gap-4 mb-6">
             {category && (
-              <Badge variant="default" className="text-sm px-3 py-1 sm:text-base sm:px-4 sm:py-2 rounded-md">
-                <CategoryIcon categoryName={aiTool.category} className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                {localizedCategoryName}
-              </Badge>
+              <div className="flex items-center text-muted-foreground text-xs sm:text-sm">
+                <CategoryIcon categoryName={aiTool.category} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 text-primary" />
+                <span>{localizedCategoryName}</span>
+              </div>
             )}
             <AILink 
               href={aiTool.link} 
