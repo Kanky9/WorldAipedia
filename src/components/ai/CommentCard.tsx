@@ -6,6 +6,7 @@ import type { UserComment } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Star } from 'lucide-react';
 import { format } from 'date-fns';
+import { es, enUS } from 'date-fns/locale'; // Import locales directly
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface CommentCardProps {
@@ -19,6 +20,15 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
   
   // Fallback for profile image for anonymous or if not provided
   const profileImage = comment.isAnonymous ? undefined : comment.profileImageUrl;
+
+  const getLocale = () => {
+    switch (language) {
+      case 'es':
+        return es;
+      default:
+        return enUS;
+    }
+  };
 
   return (
     <div className="flex space-x-3 p-4 border-b border-border/50">
@@ -34,7 +44,7 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
             {displayName}
           </h4>
           <time dateTime={comment.timestamp.toISOString()} className="text-xs text-muted-foreground">
-            {format(comment.timestamp, 'PPp', { locale: language === 'es' ? require('date-fns/locale/es') : require('date-fns/locale/en-US') })}
+            {format(comment.timestamp, 'PPp', { locale: getLocale() })}
           </time>
         </div>
         <div className="flex items-center">
