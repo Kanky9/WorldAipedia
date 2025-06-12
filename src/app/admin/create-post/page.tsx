@@ -17,12 +17,12 @@ import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2 } from 'l
 import { categories as allCategories } from '@/data/posts';
 import type { Post as PostType, LocalizedString } from '@/lib/types';
 import { addPostToFirestore, getPostFromFirestore, updatePostInFirestore, db } from '@/lib/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { doc, collection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 
 const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
   if (!value) return '';
-  if (typeof value === 'string') return value; // Should ideally not happen if LocalizedString is consistently an object
+  if (typeof value === 'string') return value;
   return value[lang as keyof LocalizedString] || value.en || '';
 };
 
@@ -130,7 +130,13 @@ export default function CreatePostPage() {
 
           setCategory(existingPost.categorySlug);
           setTags(existingPost.tags.join(', '));
-          setPublishedDate(existingPost.publishedDate instanceof Date ? existingPost.publishedDate.toISOString().split('T')[0] : new Date(existingPost.publishedDate).toISOString().split('T')[0]);
+          
+          let pDate = existingPost.publishedDate;
+          if (pDate instanceof Timestamp) {
+            pDate = pDate.toDate();
+          }
+          setPublishedDate(pDate instanceof Date ? pDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+          
           setLinkTool(existingPost.link || '');
         } else {
           toast({
@@ -206,14 +212,26 @@ export default function CreatePostPage() {
 
     const currentEditingLanguage = language as LanguageCode;
 
+    type UpdatedLocalizedFieldReturnType = {
+      [key in LanguageCode]?: string;
+      en: string; // Ensure 'en' is always present
+    };
+
     const getUpdatedLocalizedField = (
       existingFieldData: LocalizedString | undefined,
       newValue: string
-    ): { [key in LanguageCode]?: string; en: string; } => {
-      const base = typeof existingFieldData === 'object' ? { ...existingFieldData } : { en: '' };
-      base[currentEditingLanguage] = newValue;
-      if (!base.en) base.en = newValue; // Ensure 'en' always has a value
-      return base as { [key in LanguageCode]?: string; en: string; };
+    ): UpdatedLocalizedFieldReturnType => {
+      const base = typeof existingFieldData === 'object' && existingFieldData !== null
+        ? { ...existingFieldData }
+        : { en: '' }; // Default to an object with 'en' key
+      
+      const typedBase = base as UpdatedLocalizedFieldReturnType;
+
+      typedBase[currentEditingLanguage] = newValue;
+      if (!typedBase.en) { // Ensure 'en' always has a value, defaulting to the current new value if 'en' wasn't set
+           typedBase.en = newValue;
+      }
+      return typedBase;
     };
     
     const postDetailsToSave = {
@@ -227,7 +245,7 @@ export default function CreatePostPage() {
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      publishedDate: new Date(publishedDate),
+      publishedDate: new Date(publishedDate), // Ensure this is a Date object for Firestore functions
       link: linkTool,
       detailImageUrl1: detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl),
       detailImageHint1: detailImageHint1,
@@ -244,11 +262,16 @@ export default function CreatePostPage() {
           action: <CheckCircle className="text-green-500" />,
         });
       } else {
-        const newPostId = doc(collection(db, 'posts')).id;
-        await addPostToFirestore({ ...postDetailsToSave, id: newPostId });
+        // For new posts, ensure publishedDate is correctly passed if `addPostToFirestore` expects a non-optional Date
+        const newPostData = { 
+            ...postDetailsToSave, 
+            publishedDate: postDetailsToSave.publishedDate || new Date() // Fallback if somehow null, though form validates
+        };
+        const newPostId = doc(collection(db, 'posts')).id; // Generate ID client-side for consistency with PostType
+        await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
-          description: `${getLocalizedStringDefault(postDetailsToSave.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
+          description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
         // Clear form only if creating a new post and successful
@@ -260,7 +283,7 @@ export default function CreatePostPage() {
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
         setExistingPostDataForForm(null); // Reset existing data
       }
-      router.push('/admin'); // Navigate to admin list after successful save/update
+      router.push('/admin'); 
     } catch (error) {
       console.error("Error saving post to Firestore:", error);
       toast({
@@ -312,7 +335,7 @@ export default function CreatePostPage() {
             height={previewSize.height}
             className="object-cover w-full h-full"
             data-ai-hint={hintValue || (imageDataUri ? "uploaded image" : "placeholder")}
-            unoptimized={!!imageDataUri} // Useful for Data URIs if optimization causes issues
+            unoptimized={!!imageDataUri} 
           />
         </div>
       )}
@@ -468,3 +491,5 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+    
