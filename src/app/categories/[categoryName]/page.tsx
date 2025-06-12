@@ -17,7 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export default function CategoryDetailPage() {
   const params = useParams();
-  const categorySlug = typeof params.categoryName === 'string' ? params.categoryName : '';
+  const categorySlugFromUrl = typeof params.categoryName === 'string' ? params.categoryName : '';
   const { t } = useLanguage();
 
   const [category, setCategory] = useState<CategoryType | null | undefined>(undefined);
@@ -28,15 +28,17 @@ export default function CategoryDetailPage() {
 
 
   const fetchCategoryData = useCallback(async () => {
-    if (categorySlug) {
+    if (categorySlugFromUrl) {
       setIsLoading(true);
       setError(null);
-      const currentCategory = getCategoryBySlug(categorySlug); // Category definition is local
+      // Use getCategoryBySlug (which is now case-insensitive) to find the category definition
+      const currentCategory = getCategoryBySlug(categorySlugFromUrl);
       setCategory(currentCategory);
 
       if (currentCategory) {
         try {
-          const posts = await getPostsByCategorySlugFromFirestore(categorySlug);
+          // Use the canonical slug from currentCategory for Firestore query
+          const posts = await getPostsByCategorySlugFromFirestore(currentCategory.slug);
           setPostsInCategory(posts);
           setAnimationClass('animate-fade-in');
         } catch (err) {
@@ -46,11 +48,11 @@ export default function CategoryDetailPage() {
           setAnimationClass('');
         }
       } else {
-        setAnimationClass(''); // No category found
+        setAnimationClass(''); // No category found, will lead to notFound()
       }
       setIsLoading(false);
     }
-  }, [categorySlug]);
+  }, [categorySlugFromUrl]);
 
   useEffect(() => {
     fetchCategoryData();
@@ -134,3 +136,6 @@ export default function CategoryDetailPage() {
     </div>
   );
 }
+
+
+    
