@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">{/* Added className="dark" here */}
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -27,7 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
           <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow container mx-auto px-4 py-4"> {/* Reduced py-8 to py-4 */}
             {children}
           </main>
           <Footer />

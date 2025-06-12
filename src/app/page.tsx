@@ -52,7 +52,7 @@ export default function HomePage() {
   return (
     <div className="space-y-8"> {/* Reduced overall page spacing */}
       {/* Hero Section */}
-      <section className="relative py-6 md:py-10 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Further reduced padding */}
+      <section className="relative py-2 md:py-4 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Further reduced padding py-6 md:py-10 to py-2 md:py-4 */}
         {/* Animated Particle Background */}
         {mounted && particles.length > 0 && (
           <div className="hero-particles">
