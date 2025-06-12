@@ -175,7 +175,7 @@ export const posts: Post[] = [
     ),
     longDescription: LS(
       'ChatGPT, developed by OpenAI, has revolutionized how we interact with AI. This post explores its underlying technology (GPT models), showcases its ability to generate human-like text, answer complex questions, write code, and more. We delve into its applications in customer service, content creation, education, and its potential future developments. While powerful, we also discuss the ethical considerations and limitations of such advanced conversational AI. This tool has set a new benchmark for language models, paving the way for more sophisticated AI interactions.',
-      'ChatGPT, desarrollado por OpenAI, ha revolucionado la forma en que interactuamos con la IA. Esta publicación explora su tecnología subyacente (modelos GPT), muestra su capacidad para generar texto similar al humano, responder preguntas complejas, escribir código y más. Profundizamos en sus aplicaciones en servicio al cliente, creación de contenido, educación y sus posibles desarrollos futuros. Si bien es poderoso, también discutimos las consideraciones éticas y las limitaciones de una IA conversacional tan avanzada. Esta herramienta ha establecido un nuevo punto de referencia para los modelos de lenguaje, allanando el camino para interacciones de IA más sofisticadas.'
+      'ChatGPT, creado por OpenAI, ha revolucionado nuestra interacción con la IA. Este artículo explora su tecnología subyacente (modelos GPT), demostrando su habilidad para generar texto similar al humano, responder preguntas complejas, escribir código y más. Investigamos sus aplicaciones en servicio al cliente, creación de contenido, educación y sus posibles evoluciones. Aunque potente, también analizamos las consideraciones éticas y las limitaciones de esta avanzada IA conversacional. Esta herramienta marca un nuevo estándar para los modelos lingüísticos, abriendo camino a interacciones de IA más sofisticadas.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI conversation interface',
@@ -197,11 +197,11 @@ export const posts: Post[] = [
     title: LS('Midjourney: Crafting Visual Dreams with AI', 'Midjourney: Creando Sueños Visuales con IA'),
     shortDescription: LS(
       'Discover how Midjourney transforms text prompts into stunning, artistic images.',
-      'Descubre cómo Midjourney transforma prompts de texto en imágenes artísticas e impresionantes.'
+      'Descubre cómo Midjourney transforma indicaciones de texto en imágenes artísticas e impresionantes.'
     ),
     longDescription: LS(
       'Midjourney stands out in the AI art generation space with its unique artistic interpretations. This post covers how to get started with Midjourney (often via Discord), crafting effective prompts, and understanding its stylistic nuances. We showcase examples of its capabilities, from fantasy landscapes to abstract designs. It\'s a tool that empowers artists and hobbyists alike to explore visual creativity in unprecedented ways. We also touch upon the community around Midjourney and how users share and iterate on their creations.',
-      'Midjourney se destaca en el espacio de generación de arte con IA por sus interpretaciones artísticas únicas. Esta publicación cubre cómo comenzar con Midjourney (a menudo a través de Discord), la creación de prompts efectivos y la comprensión de sus matices estilísticos. Mostramos ejemplos de sus capacidades, desde paisajes de fantasía hasta diseños abstractos. Es una herramienta que capacita tanto a artistas como a aficionados para explorar la creatividad visual de maneras sin precedentes. También mencionamos la comunidad en torno a Midjourney y cómo los usuarios comparten e iteran en sus creaciones.'
+      'Midjourney se distingue en el campo de la generación de arte por IA gracias a sus interpretaciones artísticas únicas. Este artículo explica cómo empezar con Midjourney (usualmente vía Discord), cómo crear prompts efectivos y entender sus matices estilísticos. Presentamos ejemplos de sus capacidades, desde paisajes fantásticos hasta diseños abstractos. Es una herramienta que permite a artistas y aficionados explorar la creatividad visual de formas innovadoras. También abordamos la comunidad de Midjourney y cómo los usuarios comparten y refinan sus creaciones.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI generated art gallery',
@@ -220,14 +220,14 @@ export const posts: Post[] = [
   },
   {
     id: 'github-copilot-review',
-    title: LS('GitHub Copilot: Your AI Pair Programmer In-Depth', 'GitHub Copilot: Tu Programador IA a Fondo'),
+    title: LS('GitHub Copilot: Your AI Pair Programmer In-Depth', 'GitHub Copilot: Tu Programador IA Compañero a Fondo'),
     shortDescription: LS(
       'A comprehensive review of GitHub Copilot and its impact on developer productivity.',
       'Una revisión exhaustiva de GitHub Copilot y su impacto en la productividad del desarrollador.'
     ),
     longDescription: LS(
       'GitHub Copilot has changed the game for many developers. This post examines its features, how it integrates into IDEs like VS Code, and the quality of its code suggestions. We explore real-world use cases, from speeding up boilerplate code to learning new programming patterns. The post also discusses the training data behind Copilot (OpenAI Codex) and the ongoing debates about AI-assisted coding, including licensing and originality. Is it a helpful assistant or a replacement? We explore the nuances.',
-      'GitHub Copilot ha cambiado el juego para muchos desarrolladores. Esta publicación examina sus características, cómo se integra en IDEs como VS Code y la calidad de sus sugerencias de código. Exploramos casos de uso del mundo real, desde acelerar el código repetitivo hasta aprender nuevos patrones de programación. La publicación también discute los datos de entrenamiento detrás de Copilot (OpenAI Codex) y los debates en curso sobre la codificación asistida por IA, incluyendo licencias y originalidad. ¿Es un asistente útil o un reemplazo? Exploramos los matices.'
+      'GitHub Copilot ha transformado la experiencia de muchos desarrolladores. Este artículo analiza sus funciones, su integración en IDEs como VS Code y la calidad de sus sugerencias de código. Exploramos casos de uso reales, desde acelerar la escritura de código repetitivo hasta aprender nuevos patrones de programación. También se discuten los datos de entrenamiento de Copilot (OpenAI Codex) y los debates actuales sobre la codificación asistida por IA, incluyendo licencias y originalidad. ¿Es un asistente útil o un sustituto? Profundizamos en estos matices.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI coding assistant interface',
@@ -249,11 +249,11 @@ export const posts: Post[] = [
     title: LS('Canva Magic Design: AI for Effortless Creativity', 'Canva Diseño Mágico: IA para Creatividad sin Esfuerzo'),
     shortDescription: LS(
       'Exploring Canva\'s AI-powered tools like Magic Write and Magic Edit.',
-      'Explorando las herramientas de IA de Canva como Magic Write y Magic Edit.'
+      'Explorando las herramientas de IA de Canva como Escritura Mágica y Edición Mágica.'
     ),
     longDescription: LS(
       'Canva continues to democratize design, and its "Magic" AI features are a testament to this. This post dives into Magic Design, Magic Write (for text generation), Magic Edit (for image manipulation), and Magic Presentations. We provide examples of how these tools can accelerate the creation of social media posts, marketing materials, and presentations, even for users with no prior design experience. The focus is on ease of use and the quick generation of visually appealing content.',
-      'Canva continúa democratizando el diseño, y sus funciones de IA "Mágicas" son un testimonio de esto. Esta publicación se sumerge en Magic Design, Magic Write (para generación de texto), Magic Edit (para manipulación de imágenes) y Magic Presentations. Proporcionamos ejemplos de cómo estas herramientas pueden acelerar la creación de publicaciones en redes sociales, materiales de marketing y presentaciones, incluso para usuarios sin experiencia previa en diseño. El enfoque está en la facilidad de uso y la rápida generación de contenido visualmente atractivo.'
+      'Canva sigue democratizando el diseño, y sus funciones de IA "Mágicas" son prueba de ello. Este artículo se enfoca en Diseño Mágico, Escritura Mágica (para generación de texto), Edición Mágica (para manipulación de imágenes) y Presentaciones Mágicas. Ofrecemos ejemplos de cómo estas herramientas aceleran la creación de publicaciones para redes sociales, materiales de marketing y presentaciones, incluso para usuarios sin experiencia en diseño. El énfasis está en la facilidad de uso y la rápida generación de contenido visualmente atractivo.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI design tool interface',
@@ -283,14 +283,14 @@ export const posts: Post[] = [
   },
   {
     id: 'synthesia-video-generation',
-    title: LS('Synthesia: AI Video Avatars for Business', 'Synthesia: Avatares de Video IA para Empresas'),
+    title: LS('Synthesia: AI Video Avatars for Business', 'Synthesia: Avatares de Video con IA para Negocios'),
     shortDescription: LS(
       'How Synthesia enables quick creation of professional videos with AI presenters.',
-      'Cómo Synthesia permite la creación rápida de videos profesionales con presentadores IA.'
+      'Cómo Synthesia permite la creación rápida de videos profesionales con presentadores de IA.'
     ),
     longDescription: LS(
       'Synthesia.io is revolutionizing video production by allowing users to create videos with AI-generated avatars from text. This post explores its features, including a wide selection of stock avatars, custom avatar creation, multi-language support, and various video templates. We discuss use cases such as corporate training, product explainers, and personalized marketing messages. The ease of updating video content by simply editing text is a significant advantage. Ethical considerations around AI avatars are also briefly touched upon.',
-      'Synthesia.io está revolucionando la producción de video al permitir a los usuarios crear videos con avatares generados por IA a partir de texto. Esta publicación explora sus características, incluida una amplia selección de avatares de stock, creación de avatares personalizados, soporte multilingüe y diversas plantillas de video. Discutimos casos de uso como capacitación corporativa, explicadores de productos y mensajes de marketing personalizados. La facilidad para actualizar el contenido de video simplemente editando texto es una ventaja significativa. También se mencionan brevemente las consideraciones éticas en torno a los avatares de IA.'
+      'Synthesia.io está revolucionando la producción de video al permitir a los usuarios crear videos con avatares generados por IA a partir de texto. Este artículo explora sus características, incluyendo una amplia selección de avatares de stock, creación de avatares personalizados, soporte multilingüe y diversas plantillas de video. Discutimos casos de uso como capacitación corporativa, explicaciones de productos y mensajes de marketing personalizados. La facilidad para actualizar el contenido del video simplemente editando el texto es una ventaja significativa. También se abordan brevemente las consideraciones éticas sobre los avatares de IA.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI avatar speaking',
@@ -308,14 +308,14 @@ export const posts: Post[] = [
   },
   {
     id: 'elevenlabs-voice-synthesis',
-    title: LS('ElevenLabs: The Future of AI Voice Synthesis', 'ElevenLabs: El Futuro de la Síntesis de Voz IA'),
+    title: LS('ElevenLabs: The Future of AI Voice Synthesis', 'ElevenLabs: El Futuro de la Síntesis de Voz con IA'),
     shortDescription: LS(
       'Exploring the capabilities of ElevenLabs for realistic text-to-speech and voice cloning.',
       'Explorando las capacidades de ElevenLabs para texto a voz realista y clonación de voz.'
     ),
     longDescription: LS(
       'ElevenLabs has gained significant attention for its highly realistic and expressive AI-generated voices. This post delves into its text-to-speech technology, voice cloning features, and the quality of its output across different languages and emotional tones. We look at applications in audiobooks, podcasting, gaming, and accessibility. The ethical implications of advanced voice cloning technology are also discussed, highlighting the company\'s approach to responsible AI development.',
-      'ElevenLabs ha ganado una atención significativa por sus voces generadas por IA altamente realistas y expresivas. Esta publicación profundiza en su tecnología de texto a voz, características de clonación de voz y la calidad de su salida en diferentes idiomas y tonos emocionales. Analizamos aplicaciones en audiolibros, podcasting, juegos y accesibilidad. También se discuten las implicaciones éticas de la tecnología avanzada de clonación de voz, destacando el enfoque de la compañía hacia el desarrollo responsable de la IA.'
+      'ElevenLabs ha captado una atención considerable por sus voces generadas por IA, altamente realistas y expresivas. Este artículo profundiza en su tecnología de texto a voz, funciones de clonación de voz y la calidad de su producción en diferentes idiomas y tonos emocionales. Analizamos sus aplicaciones en audiolibros, podcasts, videojuegos y accesibilidad. También se discuten las implicaciones éticas de la tecnología avanzada de clonación de voz, destacando el enfoque de la empresa hacia un desarrollo responsable de la IA.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'sound wave audio',
@@ -336,11 +336,11 @@ export const posts: Post[] = [
     title: LS('Grammarly: More Than Just a Spell Checker', 'Grammarly: Más que un Simple Corrector Ortográfico'),
     shortDescription: LS(
       'A deep dive into how Grammarly\'s AI helps improve clarity, tone, and style in writing.',
-      'Una inmersión profunda en cómo la IA de Grammarly ayuda a mejorar la claridad, el tono y el estilo en la escritura.'
+      'Un análisis profundo de cómo la IA de Grammarly ayuda a mejorar la claridad, el tono y el estilo en la escritura.'
     ),
     longDescription: LS(
       'Grammarly has become an indispensable tool for writers of all levels. This post goes beyond its well-known grammar and spell-checking features to explore its AI-powered suggestions for clarity, conciseness, engagement, and delivery. We examine its tone detector, style guide adherence, and plagiarism checker. The post also covers its various integrations (browser extensions, desktop app, mobile keyboard) and how it adapts to different writing goals (academic, business, casual).',
-      'Grammarly se ha convertido en una herramienta indispensable para escritores de todos los niveles. Esta publicación va más allá de sus conocidas funciones de corrección gramatical y ortográfica para explorar sus sugerencias impulsadas por IA para la claridad, concisión, compromiso y entrega. Examinamos su detector de tono, la adherencia a guías de estilo y el verificador de plagio. La publicación también cubre sus diversas integraciones (extensiones de navegador, aplicación de escritorio, teclado móvil) y cómo se adapta a diferentes objetivos de escritura (académico, empresarial, informal).'
+      'Grammarly se ha convertido en una herramienta esencial para escritores de todos los niveles. Este artículo va más allá de sus conocidas funciones de corrección gramatical y ortográfica para explorar sus sugerencias impulsadas por IA sobre claridad, concisión, atractivo y entrega. Examinamos su detector de tono, la adherencia a guías de estilo y el verificador de plagio. También cubre sus diversas integraciones (extensiones de navegador, aplicación de escritorio, teclado móvil) y cómo se adapta a diferentes objetivos de escritura (académica, de negocios, informal).'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'text editing software',
@@ -365,7 +365,7 @@ export const posts: Post[] = [
     ),
     longDescription: LS(
       'Stable Diffusion, released by Stability AI, has significantly democratized AI image generation due to its open-source nature. This post explains its core technology (latent diffusion models) and how it differs from other models like DALL-E or Midjourney. We explore its capabilities beyond simple text-to-image, including inpainting, outpainting, and image-to-image transformations. The vibrant community around Stable Diffusion, with its custom models (checkpoints/LoRAs) and user interfaces (e.g., Automatic1111), is a key focus.',
-      'Stable Diffusion, lanzado por Stability AI, ha democratizado significativamente la generación de imágenes con IA debido a su naturaleza de código abierto. Esta publicación explica su tecnología central (modelos de difusión latente) y cómo difiere de otros modelos como DALL-E o Midjourney. Exploramos sus capacidades más allá del simple texto a imagen, incluyendo inpainting, outpainting y transformaciones de imagen a imagen. La vibrante comunidad en torno a Stable Diffusion, con sus modelos personalizados (checkpoints/LoRAs) e interfaces de usuario (p. ej., Automatic1111), es un enfoque clave.'
+      'Stable Diffusion, lanzado por Stability AI, ha democratizado notablemente la generación de imágenes por IA gracias a su naturaleza de código abierto. Este artículo explica su tecnología central (modelos de difusión latente) y en qué se diferencia de otros modelos como DALL-E o Midjourney. Exploramos sus capacidades más allá del simple texto a imagen, incluyendo el rellenado (inpainting), la extensión de imagen (outpainting) y las transformaciones de imagen a imagen. La activa comunidad en torno a Stable Diffusion, con sus modelos personalizados (checkpoints/LoRAs) e interfaces de usuario (p. ej., Automatic1111), es un punto central.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'abstract generative art',
@@ -383,14 +383,14 @@ export const posts: Post[] = [
   },
   {
     id: 'runwayml-gen2-video',
-    title: LS('Runway Gen-2: Text-to-Video and Beyond', 'Runway Gen-2: De Texto a Video y Más Allá'),
+    title: LS('Runway Gen-2: Text-to-Video and Beyond', 'Runway Gen-2: De Texto a Video y Mucho Más'),
     shortDescription: LS(
       'A look at RunwayML\'s Gen-2 model for AI video generation from text and images.',
-      'Una mirada al modelo Gen-2 de RunwayML para la generación de video IA a partir de texto e imágenes.'
+      'Un vistazo al modelo Gen-2 de RunwayML para la generación de video con IA a partir de texto e imágenes.'
     ),
     longDescription: LS(
       'RunwayML continues to push the boundaries of AI-driven creative tools, and their Gen-2 model is a prime example. This post focuses on its text-to-video and image-to-video capabilities, allowing creators to bring dynamic scenes to life from simple prompts. We explore the quality of generated videos, control parameters, and potential applications in filmmaking, advertising, and art. The post also touches on other "AI Magic Tools" offered by Runway that complement video generation.',
-      'RunwayML continúa empujando los límites de las herramientas creativas impulsadas por IA, y su modelo Gen-2 es un excelente ejemplo. Esta publicación se centra en sus capacidades de texto a video e imagen a video, permitiendo a los creadores dar vida a escenas dinámicas a partir de simples prompts. Exploramos la calidad de los videos generados, los parámetros de control y las posibles aplicaciones en cine, publicidad y arte. La publicación también menciona otras "Herramientas Mágicas de IA" ofrecidas por Runway que complementan la generación de video.'
+      'RunwayML sigue ampliando las fronteras de las herramientas creativas impulsadas por IA, y su modelo Gen-2 es un claro ejemplo. Este artículo se centra en sus capacidades de texto a video y de imagen a video, permitiendo a los creadores dar vida a escenas dinámicas a partir de simples indicaciones. Exploramos la calidad de los videos generados, los parámetros de control y las posibles aplicaciones en cine, publicidad y arte. El artículo también menciona otras "Herramientas Mágicas de IA" que ofrece Runway y que complementan la generación de video.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI video sequence',

@@ -31,7 +31,7 @@ export default function RootLayout({
         <LanguageProvider>
           <ChatProvider>
             <Header />
-            <main className="flex-grow container mx-auto px-4 py-4">
+            <main className="flex-grow container mx-auto px-4 py-3"> {/* Reduced py-4 to py-3 */}
               {children}
             </main>
             <Footer />
