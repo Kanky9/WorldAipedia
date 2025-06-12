@@ -69,7 +69,7 @@ export default function HomePage() {
         <div className="relative z-10 p-4 container mx-auto">
           <Sparkles className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-5 animate-pulse drop-shadow-lg" />
           <h1 className="text-5xl md:text-6xl font-headline font-bold mb-6 md:mb-7 leading-tight 
-                         bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 
+                         bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
                          bg-clip-text text-transparent animate-gradient-flow-fast">
             {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
@@ -91,7 +91,7 @@ export default function HomePage() {
               size="lg" 
               variant="outline" 
               onClick={() => setIsChatOpen(true)} 
-              className="border-accent text-accent hover:bg-accent/10 hover:text-accent-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group"
+              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group"
             >
               <MessageCircle className="mr-2 h-5 w-5 transition-transform group-hover:rotate-[15deg]" />
               {t('homeChatButton', 'Chat with AI Guide')}
