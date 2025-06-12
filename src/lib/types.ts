@@ -1,21 +1,26 @@
+
 import type { LucideIcon } from 'lucide-react';
+import type { LanguageCode } from '@/lib/translations';
+
+export type LocalizedString = string | { [key in LanguageCode]?: string };
 
 export interface AITool {
   id: string;
-  title: string;
-  shortDescription: string;
-  longDescription: string;
+  title: LocalizedString;
+  shortDescription: LocalizedString;
+  longDescription: LocalizedString;
   imageUrl: string;
   imageHint?: string;
   logoUrl?: string;
   logoHint?: string;
-  category: string;
+  category: string; // This refers to the category *name* (which itself can be localized in Category type)
+  categorySlug: string; // Keep slug non-localized for routing
   link: string;
 }
 
 export interface Category {
-  name: string;
-  slug: string;
-  iconName: keyof typeof import('lucide-react'); // Allows type-checking for icon names
-  description: string;
+  name: LocalizedString;
+  slug: string; // Slugs should remain consistent and typically non-localized
+  iconName: keyof typeof import('lucide-react');
+  description: LocalizedString;
 }

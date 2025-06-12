@@ -1,3 +1,4 @@
+
 import type { FC } from 'react';
 import Image from 'next/image';
 import { Link as LinkIcon } from 'lucide-react';
@@ -7,12 +8,13 @@ interface AILinkProps {
   href: string;
   logoUrl?: string;
   logoHint?: string;
-  text?: string;
+  text?: string; // Already supports text override
 }
 
 const AILink: FC<AILinkProps> = ({ href, logoUrl, logoHint, text = "Visit Website" }) => {
+  // Text prop is already used, no change needed to support t('visitWebsiteButton')
   return (
-    <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+    <Button asChild variant="default" className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-md transition-transform hover:scale-105">
       <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
         {logoUrl ? (
           <Image 
