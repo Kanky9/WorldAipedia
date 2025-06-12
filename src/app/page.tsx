@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -7,9 +8,11 @@ import { aiTools } from '@/data/ai-tools';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-12">
@@ -18,26 +21,25 @@ export default function HomePage() {
         <div className="relative z-10 p-6">
           <Sparkles className="h-16 w-16 text-primary mx-auto mb-4 animate-pulse" />
           <h1 className="text-5xl md:text-6xl font-headline font-bold mb-6 text-primary">
-            Unlock the Power of AI
+            {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
           <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-            Welcome to <span className="font-semibold text-primary/90">WorldAIpedia</span> – your ultimate launchpad for discovering groundbreaking AI tools. 
-            Dive in, explore, and revolutionize your world.
+            {t('homeSubtitle', 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.')}
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/80 shadow-lg transform hover:scale-105 transition-transform duration-200">
-              <Link href="/categories">Explore AI Categories</Link>
+              <Link href="/categories">{t('homeExploreButton', 'Explore AI Categories')}</Link>
             </Button>
             <Button size="lg" variant="outline" onClick={() => setIsChatOpen(true)} className="border-accent text-accent-foreground hover:bg-accent/20 shadow-lg transform hover:scale-105 transition-transform duration-200">
               <MessageCircle className="mr-2 h-5 w-5" />
-              Chat with AI Guide
+              {t('homeChatButton', 'Chat with AI Guide')}
             </Button>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="text-3xl font-headline font-semibold mb-8 text-center text-primary/90">Featured AI Innovations</h2>
+        <h2 className="text-3xl font-headline font-semibold mb-8 text-center text-primary/90">{t('featuredAITools', 'Featured AI Innovations')}</h2>
         {aiTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {aiTools.slice(0, 8).map((tool) => ( 
@@ -50,7 +52,7 @@ export default function HomePage() {
       </section>
        <section className="text-center py-8">
          <Button size="lg" asChild variant="ghost" className="text-primary hover:bg-primary/10">
-           <Link href="/categories">View All AI Tools & Categories</Link>
+           <Link href="/categories">{t('viewAllButton', 'View All AI Tools & Categories')}</Link>
          </Button>
        </section>
        <AIChatAssistant open={isChatOpen} onOpenChange={setIsChatOpen} />

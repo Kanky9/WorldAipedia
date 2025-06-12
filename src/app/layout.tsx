@@ -3,9 +3,11 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import Mascot from '@/components/layout/Mascot';
 
 export const metadata: Metadata = {
-  title: 'WorldAIpedia - Your Guide to Artificial Intelligence',
+  title: 'World AI - Your Guide to Artificial Intelligence',
   description: 'Discover news and information about existing and emerging AI tools, categorized for easy exploration.',
 };
 
@@ -23,12 +25,15 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow container mx-auto px-4 py-8">
-          {children}
-        </main>
-        <Footer />
-        <Toaster />
+        <LanguageProvider>
+          <Header />
+          <main className="flex-grow container mx-auto px-4 py-8">
+            {children}
+          </main>
+          <Footer />
+          <Mascot />
+          <Toaster />
+        </LanguageProvider>
       </body>
     </html>
   );
