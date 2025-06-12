@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from 'react';
 import type React from 'react';
-import PostCard from '@/components/blog/PostCard'; // Changed from AICard
-import { posts as allPosts } from '@/data/posts'; // Changed from aiTools
+import PostCard from '@/components/blog/PostCard';
+import { posts as allPosts } from '@/data/posts';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { BookOpen, ArrowRight } from 'lucide-react';
@@ -87,7 +87,7 @@ export default function HomePage() {
       </section>
 
       <section className="container mx-auto animate-fadeInUp">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('latestPosts', 'Latest Posts')}</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredPostsTitle', 'Featured Posts')}</h2>
         {displayedPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
             {displayedPosts.slice(0, 6).map((post) => ( // Display up to 6 posts

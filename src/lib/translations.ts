@@ -28,7 +28,7 @@ export type CoreTranslationKey =
   | 'blogTitle'
   | 'blogSubtitle'
   | 'exploreCategoriesButton' //Explore Post Categories
-  | 'latestPosts'
+  | 'featuredPostsTitle' // Changed from latestPosts
   | 'viewAllPostsButton'
   // Post Card
   | 'readMoreButton'
@@ -136,6 +136,7 @@ export type TranslationSet = {
 } & { // Ensure essential keys are present
   navHome: string;
   navCategories: string;
+  featuredPostsTitle: string; 
   // ... add other truly essential keys if any
 };
 
@@ -159,7 +160,7 @@ export const translations: Translations = {
     blogTitle: 'The World AI Blog',
     blogSubtitle: 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.',
     exploreCategoriesButton: 'Explore Categories',
-    latestPosts: 'Latest Posts',
+    featuredPostsTitle: 'Featured Posts',
     viewAllPostsButton: 'View All Posts & Categories',
     readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
@@ -256,7 +257,7 @@ export const translations: Translations = {
     blogTitle: 'El Blog de World AI',
     blogSubtitle: 'Mantente actualizado con las últimas noticias, ideas y herramientas en el mundo de la Inteligencia Artificial.',
     exploreCategoriesButton: 'Explorar Categorías',
-    latestPosts: 'Últimas Publicaciones',
+    featuredPostsTitle: 'Publicaciones Destacadas',
     viewAllPostsButton: 'Ver Todas las Publicaciones y Categorías',
     readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
@@ -345,7 +346,7 @@ export const translations: Translations = {
     loginButton: 'Accedi',
     registerButton: 'Registrati',
     blogTitle: 'Il Blog di World AI',
-    latestPosts: 'Ultimi Post',
+    featuredPostsTitle: 'Post in Evidenza',
     readMoreButton: 'Leggi di più',
     categoriesTitle: 'Esplora Post per Categoria',
     viewPostsButton: 'Vedi Post',
@@ -364,7 +365,7 @@ export const translations: Translations = {
     loginButton: '登录',
     registerButton: '注册',
     blogTitle: 'World AI 博客',
-    latestPosts: '最新帖子',
+    featuredPostsTitle: '精选帖子',
     readMoreButton: '阅读更多',
     categoriesTitle: '按分类浏览帖子',
     viewPostsButton: '查看帖子',
@@ -383,7 +384,7 @@ export const translations: Translations = {
     loginButton: 'ログイン',
     registerButton: '登録',
     blogTitle: 'World AI ブログ',
-    latestPosts: '最新記事',
+    featuredPostsTitle: 'おすすめ記事',
     readMoreButton: '続きを読む',
     categoriesTitle: 'カテゴリーで記事を探す',
     viewPostsButton: '記事を見る',
@@ -402,7 +403,7 @@ export const translations: Translations = {
     loginButton: 'Entrar',
     registerButton: 'Cadastre-se',
     blogTitle: 'O Blog World AI',
-    latestPosts: 'Postagens Mais Recentes',
+    featuredPostsTitle: 'Postagens em Destaque',
     readMoreButton: 'Leia Mais',
     categoriesTitle: 'Explore Postagens por Categoria',
     viewPostsButton: 'Ver Postagens',

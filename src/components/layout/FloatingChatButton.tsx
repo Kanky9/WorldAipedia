@@ -17,15 +17,15 @@ export default function FloatingChatButton() {
           <Button
             variant="default"
             size="icon"
-            className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-xl animate-pulse-glow group hover:scale-110 transition-transform duration-300" // Adjusted size and position slightly
-            onClick={() => openChat()} // Opens chat with no specific AI context
-            aria-label={t('homeChatButton', 'Chat with Lace')}
+            className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-xl group hover:scale-110 transition-transform duration-300 animate-fab-attention" // Smaller, new animation
+            onClick={() => openChat()} 
+            aria-label={t('laceChatTitle', 'Chat with Lace')} // Using laceChatTitle for consistency
           >
-            <MessageCircle className="h-8 w-8 transition-transform group-hover:rotate-[15deg] duration-300" />
+            <MessageCircle className="h-7 w-7 transition-transform group-hover:rotate-[15deg] duration-300" /> {/* Smaller icon */}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="left" className="mr-2">
-          <p>{t('homeChatButton', 'Chat with Lace')}</p>
+          <p>{t('laceChatTitle', 'Chat with Lace')}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

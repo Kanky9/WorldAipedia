@@ -93,7 +93,7 @@ body {
 }
 
 
-/* General pulse for primary elements */
+/* General pulse for primary elements (used by Hero button) */
 @keyframes pulse-glow {
   0%, 100% {
     box-shadow: 0 0 5px hsl(var(--primary)/0.5), 0 0 10px hsl(var(--primary)/0.4);
@@ -104,6 +104,10 @@ body {
     transform: scale(1.03);
   }
 }
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
 
 /* Subtle particle background for hero */
 .hero-particles {
@@ -198,4 +202,24 @@ body {
   animation: bounce-subtle 2s infinite;
 }
 
+/* Animation for Floating Action Button (Chat) */
+@keyframes fab-attention-pulse {
+  0%, 100% { /* Start and end of 5.5s cycle: normal state */
+    transform: scale(1);
+    box-shadow: 0 0 6px hsl(var(--primary)/0.3); /* Slightly less intense default shadow */
+  }
+  2.5% { /* Brief, more intense pulse */
+    transform: scale(1.12); /* Slightly larger scale for more "pop" */
+    box-shadow: 0 0 12px hsl(var(--primary)/0.6), 0 0 20px hsl(var(--primary)/0.4);
+  }
+  5% { /* End of pulse, back to normal for the rest of the 5s */
+     transform: scale(1);
+     box-shadow: 0 0 6px hsl(var(--primary)/0.3);
+  }
+  /* from 5% to 100%, it stays normal */
+}
+
+.animate-fab-attention {
+  animation: fab-attention-pulse 5.5s infinite ease-in-out;
+}
     
