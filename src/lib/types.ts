@@ -28,3 +28,14 @@ export interface Category {
   iconName: keyof typeof import('lucide-react');
   description: LocalizedString;
 }
+
+export interface UserComment {
+  id: string;
+  aiToolId: string;
+  username: string;
+  isAnonymous: boolean;
+  rating: number; // 1-5 stars
+  text: string;
+  timestamp: Date;
+  profileImageUrl?: string; // Optional: for users with custom profile pics
+}

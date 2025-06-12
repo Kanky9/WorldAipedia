@@ -15,6 +15,9 @@ export type CoreTranslationKey =
   | 'navHome'
   | 'navCategories'
   | 'tooltipLanguageSwitcher'
+  | 'loginButton'
+  | 'logoutButton'
+  | 'myProfileTooltip'
   // Mascot
   | 'mascotGreeting'
   // Homepage
@@ -48,6 +51,17 @@ export type CoreTranslationKey =
   | 'visitWebsiteButton'
   | 'additionalVisualsTitle'
   | 'visualDetailAlt'
+  | 'userReviewsTitle'
+  | 'noCommentsYet'
+  | 'addYourCommentTitle'
+  | 'ratingLabel'
+  | 'commentLabel'
+  | 'anonymousCommentLabel'
+  | 'submitCommentButton'
+  | 'subscribeToCommentTitle'
+  | 'subscribeToCommentDescription'
+  | 'subscribeButton'
+  | 'cancelButton'
   // Generic
   | 'learnMoreButton'
   | 'loadingText';
@@ -66,6 +80,9 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categories',
     tooltipLanguageSwitcher: 'Change language',
+    loginButton: 'Login',
+    logoutButton: 'Logout',
+    myProfileTooltip: 'My Profile',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
     homeTitle: 'Unlock the Power of AI',
     homeSubtitle: 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.',
@@ -93,6 +110,17 @@ export const translations: Translations = {
     visitWebsiteButton: "Visit Website",
     additionalVisualsTitle: 'Visual Insights',
     visualDetailAlt: 'Visual Detail {number}',
+    userReviewsTitle: 'User Reviews & Comments',
+    noCommentsYet: 'No comments yet. Be the first to share your thoughts!',
+    addYourCommentTitle: 'Add Your Comment',
+    ratingLabel: 'Your Rating',
+    commentLabel: 'Your Comment',
+    anonymousCommentLabel: 'Comment anonymously',
+    submitCommentButton: 'Submit Comment',
+    subscribeToCommentTitle: 'Subscription Required',
+    subscribeToCommentDescription: 'To comment and rate AIs, you need to be a PRO member. Subscribe now for just $1/month!',
+    subscribeButton: 'Subscribe ($1/month)',
+    cancelButton: 'Cancel',
     learnMoreButton: 'Learn More',
     loadingText: 'Loading...'
   },
@@ -100,6 +128,9 @@ export const translations: Translations = {
     navHome: 'Inicio',
     navCategories: 'Categorías',
     tooltipLanguageSwitcher: 'Cambiar idioma',
+    loginButton: 'Iniciar Sesión',
+    logoutButton: 'Cerrar Sesión',
+    myProfileTooltip: 'Mi Perfil',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
     homeTitle: 'Desbloquea el Poder de la IA',
     homeSubtitle: 'Bienvenido a World AI: tu plataforma definitiva para descubrir herramientas de IA innovadoras. Sumérgete, explora y revoluciona tu mundo.',
@@ -127,6 +158,17 @@ export const translations: Translations = {
     visitWebsiteButton: "Visitar Sitio Web",
     additionalVisualsTitle: 'Perspectivas Visuales',
     visualDetailAlt: 'Detalle Visual {number}',
+    userReviewsTitle: 'Reseñas y Comentarios de Usuarios',
+    noCommentsYet: 'Aún no hay comentarios. ¡Sé el primero en compartir tu opinión!',
+    addYourCommentTitle: 'Añade tu Comentario',
+    ratingLabel: 'Tu Calificación',
+    commentLabel: 'Tu Comentario',
+    anonymousCommentLabel: 'Comentar anónimamente',
+    submitCommentButton: 'Enviar Comentario',
+    subscribeToCommentTitle: 'Se Requiere Suscripción',
+    subscribeToCommentDescription: 'Para comentar y calificar IAs, necesitas ser miembro PRO. ¡Suscríbete ahora por solo $1/mes!',
+    subscribeButton: 'Suscribirse ($1/mes)',
+    cancelButton: 'Cancelar',
     learnMoreButton: 'Saber Más',
     loadingText: 'Cargando...'
   },
@@ -134,6 +176,9 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categorie',
     tooltipLanguageSwitcher: 'Cambia lingua',
+    loginButton: 'Accedi',
+    logoutButton: 'Esci',
+    myProfileTooltip: 'Il Mio Profilo',
     mascotGreeting: 'Ciao, sono Lace! Pronto a esplorare l\'IA?',
     homeTitle: 'Sblocca il Potere dell\'IA',
     homeSubtitle: 'Benvenuto in World AI – la tua piattaforma definitiva per scoprire strumenti IA rivoluzionari. Immergiti, esplora e rivoluziona il tuo mondo.',
@@ -161,6 +206,17 @@ export const translations: Translations = {
     visitWebsiteButton: "Visita il Sito",
     additionalVisualsTitle: 'Approfondimenti Visivi',
     visualDetailAlt: 'Dettaglio Visivo {number}',
+    userReviewsTitle: 'Recensioni e Commenti degli Utenti',
+    noCommentsYet: 'Nessun commento ancora. Sii il primo a condividere la tua opinione!',
+    addYourCommentTitle: 'Aggiungi il Tuo Commento',
+    ratingLabel: 'La Tua Valutazione',
+    commentLabel: 'Il Tuo Commento',
+    anonymousCommentLabel: 'Commenta in modo anonimo',
+    submitCommentButton: 'Invia Commento',
+    subscribeToCommentTitle: 'Abbonamento Richiesto',
+    subscribeToCommentDescription: 'Per commentare e valutare le IA, devi essere un membro PRO. Abbonati ora per solo $1/mese!',
+    subscribeButton: 'Abbonati ($1/mese)',
+    cancelButton: 'Annulla',
     learnMoreButton: 'Scopri di Più',
     loadingText: 'Caricamento...'
   },
@@ -168,6 +224,9 @@ export const translations: Translations = {
     navHome: '首页',
     navCategories: '类别',
     tooltipLanguageSwitcher: '更改语言',
+    loginButton: '登录',
+    logoutButton: '登出',
+    myProfileTooltip: '我的个人资料',
     mascotGreeting: '你好，我是Lace！准备好探索AI的世界了吗？',
     homeTitle: '解锁人工智能的力量',
     homeSubtitle: '欢迎来到 World AI – 您发现突破性人工智能工具的终极平台。潜入、探索并彻底改变您的世界。',
@@ -195,6 +254,17 @@ export const translations: Translations = {
     visitWebsiteButton: "访问网站",
     additionalVisualsTitle: '视觉洞察',
     visualDetailAlt: '视觉细节 {number}',
+    userReviewsTitle: '用户评论和评论',
+    noCommentsYet: '暂无评论。成为第一个分享您的想法的人！',
+    addYourCommentTitle: '添加您的评论',
+    ratingLabel: '您的评分',
+    commentLabel: '您的评论',
+    anonymousCommentLabel: '匿名评论',
+    submitCommentButton: '提交评论',
+    subscribeToCommentTitle: '需要订阅',
+    subscribeToCommentDescription: '要评论和评价AI，您需要成为PRO会员。立即订阅，每月仅需1美元！',
+    subscribeButton: '订阅 ($1/月)',
+    cancelButton: '取消',
     learnMoreButton: '了解更多',
     loadingText: '加载中...'
   },
@@ -202,6 +272,9 @@ export const translations: Translations = {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
     tooltipLanguageSwitcher: '言語を変更',
+    loginButton: 'ログイン',
+    logoutButton: 'ログアウト',
+    myProfileTooltip: 'マイプロフィール',
     mascotGreeting: 'こんにちは、Laceです！AIの世界を探検する準備はできましたか？',
     homeTitle: 'AIの力を解き放つ',
     homeSubtitle: 'World AIへようこそ – 画期的なAIツールを発見するための究極のランチパッドです。飛び込み、探求し、あなたの世界を革命的に変えましょう。',
@@ -229,6 +302,17 @@ export const translations: Translations = {
     visitWebsiteButton: "ウェブサイトへ",
     additionalVisualsTitle: 'ビジュアルインサイト',
     visualDetailAlt: 'ビジュアル詳細 {number}',
+    userReviewsTitle: 'ユーザーレビューとコメント',
+    noCommentsYet: 'コメントはまだありません。あなたの考えを最初に共有しましょう！',
+    addYourCommentTitle: 'コメントを追加',
+    ratingLabel: 'あなたの評価',
+    commentLabel: 'あなたのコメント',
+    anonymousCommentLabel: '匿名でコメントする',
+    submitCommentButton: 'コメントを送信',
+    subscribeToCommentTitle: 'サブスクリプションが必要です',
+    subscribeToCommentDescription: 'AIにコメントして評価するには、PROメンバーである必要があります。月額わずか1ドルで今すぐ購読しましょう！',
+    subscribeButton: '購読する ($1/月)',
+    cancelButton: 'キャンセル',
     learnMoreButton: '詳しく見る',
     loadingText: '読み込み中...'
   },
@@ -236,6 +320,9 @@ export const translations: Translations = {
     navHome: 'Início',
     navCategories: 'Categorias',
     tooltipLanguageSwitcher: 'Mudar idioma',
+    loginButton: 'Entrar',
+    logoutButton: 'Sair',
+    myProfileTooltip: 'Meu Perfil',
     mascotGreeting: 'Olá, sou Lace! Pronto para explorar a IA?',
     homeTitle: 'Desbloqueie o Poder da IA',
     homeSubtitle: 'Bem-vindo à World AI – sua plataforma definitiva para descobrir ferramentas de IA inovadoras. Mergulhe, explore e revolucione seu mundo.',
@@ -263,9 +350,18 @@ export const translations: Translations = {
     visitWebsiteButton: "Visitar Site",
     additionalVisualsTitle: 'Insights Visuais',
     visualDetailAlt: 'Detalhe Visual {number}',
+    userReviewsTitle: 'Avaliações e Comentários de Usuários',
+    noCommentsYet: 'Nenhum comentário ainda. Seja o primeiro a compartilhar suas opiniões!',
+    addYourCommentTitle: 'Adicione Seu Comentário',
+    ratingLabel: 'Sua Avaliação',
+    commentLabel: 'Seu Comentário',
+    anonymousCommentLabel: 'Comentar anonimamente',
+    submitCommentButton: 'Enviar Comentário',
+    subscribeToCommentTitle: 'Assinatura Necessária',
+    subscribeToCommentDescription: 'Para comentar e avaliar IAs, você precisa ser um membro PRO. Assine agora por apenas $1/mês!',
+    subscribeButton: 'Assinar ($1/mês)',
+    cancelButton: 'Cancelar',
     learnMoreButton: 'Saiba Mais',
     loadingText: 'Carregando...'
   },
 };
-
-    

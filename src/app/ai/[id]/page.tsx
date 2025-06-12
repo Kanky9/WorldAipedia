@@ -6,15 +6,27 @@ import { notFound, useParams } from 'next/navigation';
 import { getAiToolById, getCategoryByName } from '@/data/ai-tools';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
-// import { Badge } from '@/components/ui/badge'; // No longer using Badge for category display
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Star, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
-import type { AITool } from '@/lib/types';
+import type { AITool, UserComment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import StarRatingInput from '@/components/ai/StarRatingInput';
+import CommentCard from '@/components/ai/CommentCard';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+
+// Mock user state - in a real app, this would come from an auth context/provider
+interface MockUser {
+  username: string;
+  isSubscribed: boolean;
+  profileImageUrl?: string;
+}
 
 export default function AIPage() {
   const params = useParams();
@@ -23,18 +35,67 @@ export default function AIPage() {
   const [aiTool, setAiTool] = useState<AITool | null | undefined>(undefined); 
   const [pageAnimationClass, setPageAnimationClass] = useState('');
 
+  // Mock user for comment simulation
+  // Set to a PRO user: { username: "DemoUserPRO", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }
+  // Set to a non-PRO user: { username: "DemoUserBasic", isSubscribed: false }
+  // Set to null for logged-out user
+  const [mockUser, setMockUser] = useState<MockUser | null>({ username: "DemoUserPRO", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }); 
+
+  const [comments, setComments] = useState<UserComment[]>([]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [newCommentRating, setNewCommentRating] = useState(0);
+  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [showSubscriptionAlert, setShowSubscriptionAlert] = useState(false);
+
+
   useEffect(() => {
     if (id) {
       const tool = getAiToolById(id);
       setAiTool(tool);
       if (tool) {
-        // Apply animation class once data is loaded
         setPageAnimationClass('animate-scale-up-fade-in');
+        // Mock loading some comments for this tool
+        setComments([
+          { id: '1', aiToolId: id, username: 'AliceWonder', rating: 5, text: t('noCommentsYet', 'Great tool, very intuitive!'), timestamp: new Date(Date.now() - 86400000), isAnonymous: false, profileImageUrl: "https://placehold.co/40x40.png?text=AW"},
+          { id: '2', aiToolId: id, username: 'BobTheBuilder', rating: 4, text: t('noCommentsYet','Good, but could use more features.'), timestamp: new Date(Date.now() - 172800000), isAnonymous: false, profileImageUrl: "https://placehold.co/40x40.png?text=BB"},
+          { id: '3', aiToolId: id, username: 'AnonymousUser', rating: 3, text: t('noCommentsYet','It is okay.'), timestamp: new Date(Date.now() - 259200000), isAnonymous: true},
+        ]);
       } else {
-        setPageAnimationClass(''); // Reset if tool not found or during loading
+        setPageAnimationClass(''); 
       }
     }
-  }, [id]);
+  }, [id, t]);
+
+  const handleCommentSubmit = () => {
+    if (!mockUser) { // Not logged in, ideally prompt to login first
+        setShowSubscriptionAlert(true); // Or a "login required" alert
+        return;
+    }
+    if (!mockUser.isSubscribed) {
+      setShowSubscriptionAlert(true);
+      return;
+    }
+    if (!newCommentText.trim() || newCommentRating === 0) {
+      // Add some validation feedback to the user here if desired
+      return;
+    }
+
+    const newComment: UserComment = {
+      id: crypto.randomUUID(),
+      aiToolId: id,
+      username: mockUser.username,
+      isAnonymous,
+      rating: newCommentRating,
+      text: newCommentText,
+      timestamp: new Date(),
+      profileImageUrl: mockUser.profileImageUrl,
+    };
+    setComments(prevComments => [newComment, ...prevComments]);
+    setNewCommentText('');
+    setNewCommentRating(0);
+    setIsAnonymous(false);
+  };
+
 
   if (aiTool === undefined) { 
     return (
@@ -47,8 +108,8 @@ export default function AIPage() {
           <CardContent className="p-6">
             <Skeleton className="h-8 w-3/4 sm:h-10 mb-4" />
             <div className="flex items-center gap-4 mb-6">
-              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" /> {/* Placeholder for category */}
-              <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" /> {/* Placeholder for AILink */}
+              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" /> 
+              <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" />
             </div>
             <Skeleton className="h-7 w-1/3 sm:h-8 sm:w-1/4 mt-8 mb-3" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
@@ -69,7 +130,7 @@ export default function AIPage() {
   const localizedToolTitle = t(aiTool.title);
 
   return (
-    <div className={`space-y-8 ${pageAnimationClass}`}>
+    <div className={`space-y-10 ${pageAnimationClass}`}> {/* Increased space-y */}
       <Button variant="outline" asChild className="mb-6 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">
           <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -77,7 +138,7 @@ export default function AIPage() {
         </Link>
       </Button>
 
-      <Card className="overflow-hidden shadow-lg rounded-xl">
+      <Card className="overflow-hidden shadow-xl rounded-xl">
         <CardHeader className="p-0">
           <div className="relative w-full h-60 sm:h-72 md:h-96">
             <Image
@@ -150,6 +211,87 @@ export default function AIPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Comments Section */}
+      <section className="space-y-6 py-8">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-headline font-semibold text-primary flex items-center gap-2">
+          <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
+          {t('userReviewsTitle')}
+        </h2>
+
+        {/* Comment Form */}
+        {mockUser && (
+            <Card className="shadow-lg rounded-xl">
+            <CardHeader>
+                <CardTitle className="text-lg sm:text-xl">{t('addYourCommentTitle')}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div>
+                <Label htmlFor="rating" className="text-sm font-medium">{t('ratingLabel')}</Label>
+                <StarRatingInput value={newCommentRating} onChange={setNewCommentRating} />
+                </div>
+                <div>
+                <Label htmlFor="comment" className="text-sm font-medium">{t('commentLabel')}</Label>
+                <Textarea
+                    id="comment"
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                    placeholder={t('laceChatPlaceholder', 'Share your thoughts...')}
+                    rows={3}
+                    className="mt-1"
+                />
+                </div>
+                <div className="flex items-center space-x-2">
+                <Checkbox id="anonymous" checked={isAnonymous} onCheckedChange={(checked) => setIsAnonymous(checked as boolean)} />
+                <Label htmlFor="anonymous" className="text-sm font-medium text-muted-foreground">
+                    {t('anonymousCommentLabel')}
+                </Label>
+                </div>
+                <Button onClick={handleCommentSubmit} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
+                    {t('submitCommentButton')}
+                </Button>
+            </CardContent>
+            </Card>
+        )}
+         {!mockUser && ( // Show login prompt if not logged in
+            <Card className="shadow-lg rounded-xl p-6 text-center">
+                <p className="text-muted-foreground">{t('noCommentsYet','Login to leave a comment and rate this AI.')}</p>
+                 <Button onClick={() => { /* Simulate opening login modal or redirecting */ alert("Redirecting to login page (simulation)..."); }} className="mt-4">
+                    {t('loginButton')}
+                </Button>
+            </Card>
+        )}
+
+
+        {/* Comments List */}
+        <div className="space-y-4">
+          {comments.length > 0 ? (
+            comments.map(comment => <CommentCard key={comment.id} comment={comment} />)
+          ) : (
+            <p className="text-muted-foreground text-center py-4">{t('noCommentsYet')}</p>
+          )}
+        </div>
+      </section>
+
+      <AlertDialog open={showSubscriptionAlert} onOpenChange={setShowSubscriptionAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('subscribeToCommentTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('subscribeToCommentDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowSubscriptionAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              // Simulate redirect to subscription page
+              alert("Redirecting to subscription page (simulation)...");
+              setShowSubscriptionAlert(false);
+            }}>{t('subscribeButton')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </div>
   );
 }
