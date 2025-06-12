@@ -9,60 +9,59 @@ body {
 
 @layer base {
   :root {
-    /* Firebase Studio Inspired Light Theme (Conceptual - actual values might differ) */
-    /* Using a base light theme as a starting point, then will define dark theme */
-    --background: 0 0% 97%; /* Light Grey */
-    --foreground: 220 10% 20%; /* Dark Blue-Grey */
-    --card: 0 0% 100%; /* White */
+    /* Default Light Theme (Fallback, currently unused as dark is default) */
+    --background: 0 0% 97%;
+    --foreground: 220 10% 20%;
+    --card: 0 0% 100%;
     --card-foreground: 220 10% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 10% 20%;
-    --primary: 205 75% 45%; /* Firebase Blue */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 215 20% 65%; /* Medium Grey */
-    --secondary-foreground: 220 10% 10%; /* Darker Blue-Grey */
-    --muted: 215 25% 90%; /* Lighter Grey */
+    --primary: 25 100% 50%; /* Orange */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 20% 65%;
+    --secondary-foreground: 220 10% 10%;
+    --muted: 215 25% 90%;
     --muted-foreground: 215 15% 45%;
-    --accent: 30 90% 55%; /* Firebase Orange/Yellow */
-    --accent-foreground: 0 0% 100%; /* White text on Accent */
+    --accent: 320 100% 55%; /* Pink/Magenta */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 215 20% 85%; /* Light Grey Border */
-    --input: 0 0% 100%; /* White input background */
-    --ring: 205 70% 55%; /* Slightly lighter Firebase Blue for ring */
-    --chart-1: 205 70% 50%;
-    --chart-2: 25 80% 55%;
+    --border: 215 20% 85%;
+    --input: 0 0% 100%;
+    --ring: 25 100% 55%; /* Primary Orange for ring */
+    --chart-1: 25 90% 55%;
+    --chart-2: 320 80% 60%;
     --chart-3: 150 60% 45%;
     --chart-4: 280 65% 60%;
     --chart-5: 50 75% 55%;
-    --radius: 0.5rem; /* Standard radius */
+    --radius: 0.75rem; /* Slightly larger radius for modern feel */
   }
   .dark {
-    /* Firebase Studio Inspired Dark Theme */
-    --background: 220 15% 12%; /* Very Dark Blue-Grey */
-    --foreground: 0 0% 95%; /* Light Grey / Off-white */
-    --card: 220 15% 18%; /* Darker Card Background */
-    --card-foreground: 0 0% 95%;
-    --popover: 220 15% 18%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 205 70% 55%; /* Vibrant Firebase Blue (good contrast on dark) */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 220 15% 30%; /* Darker Grey */
-    --secondary-foreground: 0 0% 80%; /* Lighter Grey for text on secondary */
-    --muted: 220 15% 22%; /* Very Dark Muted Grey */
-    --muted-foreground: 0 0% 60%;
-    --accent: 30 90% 60%; /* Vibrant Firebase Orange/Yellow (good contrast) */
-    --accent-foreground: 220 10% 10%; /* Dark text on Accent for contrast */
+    /* "Hello, Joaco" Inspired Dark Theme */
+    --background: 220 10% 8%; /* Very Dark Blue-Grey, almost black */
+    --foreground: 0 0% 92%; /* Off-white / Very Light Grey for text */
+    --card: 220 10% 13%; /* Slightly lighter than background for cards */
+    --card-foreground: 0 0% 92%;
+    --popover: 220 10% 13%;
+    --popover-foreground: 0 0% 92%;
+    --primary: 25 100% 50%; /* Vibrant Orange from "Joaco" middle */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+    --secondary: 220 10% 25%; /* Darker Grey for secondary elements */
+    --secondary-foreground: 0 0% 80%; /* Lighter Grey text on secondary */
+    --muted: 220 10% 20%; /* Dark Muted Grey */
+    --muted-foreground: 0 0% 65%; /* Lighter muted text */
+    --accent: 320 100% 55%; /* Vibrant Pink/Magenta from "Joaco" end */
+    --accent-foreground: 0 0% 100%; /* White text on Accent */
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 15% 25%; /* Dark Border */
-    --input: 220 15% 20%; /* Dark Input Background */
-    --ring: 205 70% 60%; /* Ring color */
-    --chart-1: 205 65% 60%;
-    --chart-2: 30 85% 65%;
-    --chart-3: 150 55% 50%;
-    --chart-4: 280 60% 65%;
-    --chart-5: 50 70% 60%;
+    --border: 220 10% 18%; /* Dark Border, subtle */
+    --input: 220 10% 16%; /* Dark Input Background */
+    --ring: 25 100% 55%; /* Orange for ring, matching primary */
+    --chart-1: 25 90% 55%; /* Orange for charts */
+    --chart-2: 320 80% 60%; /* Pink for charts */
+    --chart-3: 38 100% 50%;  /* Yellow-Orange */
+    --chart-4: 12 100% 50%;   /* Orange-Red */
+    --chart-5: 200 80% 60%; /* A contrasting blue for variety if needed */
   }
 }
 
@@ -71,9 +70,8 @@ body {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased; /* Added antialiased */
+    @apply bg-background text-foreground antialiased;
   }
-  /* Add global smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
@@ -91,41 +89,31 @@ body {
   }
 }
 
+/* General pulse for primary elements */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 5px hsl(var(--primary)/0.4), 0 0 10px hsl(var(--primary)/0.3);
+    box-shadow: 0 0 5px hsl(var(--primary)/0.5), 0 0 10px hsl(var(--primary)/0.4);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 15px hsl(var(--primary)/0.6), 0 0 25px hsl(var(--primary)/0.5);
+    box-shadow: 0 0 15px hsl(var(--primary)/0.7), 0 0 25px hsl(var(--primary)/0.6);
     transform: scale(1.03);
   }
 }
 
-/* Specific pulse for chat button */
-@keyframes pulse-chat-button {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 3px hsl(var(--accent)/0.5);
-  }
-  50% {
-    transform: scale(1.05);
-    box-shadow: 0 0 10px hsl(var(--accent)/0.7), 0 0 15px hsl(var(--accent)/0.5);
-  }
-}
+/* Removed pulse-chat-button as it's no longer needed */
 
-
-/* Subtle particle background for hero - example */
+/* Subtle particle background for hero */
 .hero-particles {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: 0; /* Ensure it's behind content */
+  z-index: 0;
 }
 
 .particle {
   position: absolute;
-  background-color: hsl(var(--primary)/0.2); /* Use primary color for particles */
+  background-color: hsl(var(--primary)/0.15); /* Particles use primary color, slightly more visible */
   border-radius: 50%;
   animation: float 25s infinite ease-in-out;
   opacity: 0;
@@ -133,14 +121,25 @@ body {
 
 @keyframes float {
   0% { transform: translateY(0px) translateX(0px) scale(0.3); opacity: 0; }
-  10% { opacity: 0.7; } /* Max opacity */
+  10% { opacity: 0.6; }
   50% { transform: translateY(-150px) translateX(80px) scale(0.8); }
-  90% { opacity: 0.7; }
+  90% { opacity: 0.6; }
   100% { transform: translateY(-300px) translateX(-80px) scale(0.3); opacity: 0; }
 }
 
-/* Ensure dark mode is applied if the system preference is dark or class is set */
-/* Default to light mode, apply dark if .dark class is present on html/body */
+/* Ensure dark mode is applied */
 .dark {
   /* Dark theme variables are already defined within :root.dark */
+}
+
+/* Gradient flow animation for title */
+@keyframes gradient-flow-fast {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-flow-fast {
+  background-size: 300% 300%;
+  animation: gradient-flow-fast 8s ease infinite;
 }

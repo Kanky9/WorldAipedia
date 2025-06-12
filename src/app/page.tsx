@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import type React from 'react';
 import AICard from '@/components/ai/AICard';
 import AIChatAssistant from '@/components/ai/AIChatAssistant';
 import { aiTools } from '@/data/ai-tools';
@@ -10,52 +11,76 @@ import { Button } from '@/components/ui/button';
 import { MessageCircle, Sparkles, ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 
+interface ParticleStyle {
+  width: string;
+  height: string;
+  left: string;
+  top: string;
+  animationDelay: string;
+  animationDuration: string;
+}
+
+interface Particle {
+  key: number;
+  style: ParticleStyle;
+}
+
 export default function HomePage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
     setMounted(true);
+
+    // Generate particle data on the client after mount
+    const generatedParticles = Array.from({ length: 15 }).map((_, i) => ({
+      key: i,
+      style: {
+        width: `${Math.random() * 3 + 1}px`,
+        height: `${Math.random() * 3 + 1}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 10}s`,
+        animationDuration: `${Math.random() * 15 + 10}s`,
+      },
+    }));
+    setParticles(generatedParticles);
   }, []);
 
   return (
-    <div className="space-y-12"> {/* Slightly reduced spacing */}
+    <div className="space-y-10"> {/* Adjusted spacing slightly */}
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 text-center rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-primary/10 via-background to-accent/10">
+      <section className="relative py-12 md:py-20 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Reduced padding, subtle gradient */}
         {/* Animated Particle Background */}
-        {mounted && (
+        {mounted && particles.length > 0 && (
           <div className="hero-particles">
-            {Array.from({ length: 15 }).map((_, i) => (
+            {particles.map((particle) => (
               <div
-                key={i}
+                key={particle.key}
                 className="particle"
-                style={{
-                  width: `${Math.random() * 3 + 1}px`,
-                  height: `${Math.random() * 3 + 1}px`,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 10}s`,
-                  animationDuration: `${Math.random() * 15 + 10}s`,
-                }}
+                style={particle.style}
               />
             ))}
           </div>
         )}
         
-        <div className="relative z-10 p-4 md:p-6 container mx-auto"> {/* Reduced padding */}
-          <Sparkles className="h-16 w-16 md:h-20 md:w-20 text-primary mx-auto mb-4 md:mb-6 animate-pulse drop-shadow-lg" /> {/* Slightly smaller sparkles */}
-          <h1 className="text-4xl md:text-6xl font-headline font-bold mb-6 md:mb-8 text-primary leading-tight"> {/* Slightly smaller heading */}
+        <div className="relative z-10 p-4 container mx-auto">
+          <Sparkles className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-5 animate-pulse drop-shadow-lg" />
+          <h1 className="text-5xl md:text-6xl font-headline font-bold mb-6 md:mb-7 leading-tight 
+                         bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 
+                         bg-clip-text text-transparent animate-gradient-flow-fast">
             {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-2xl md:max-w-3xl mx-auto leading-relaxed"> {/* Slightly smaller paragraph */}
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 md:mb-9 max-w-2xl md:max-w-3xl mx-auto leading-relaxed">
             {t('homeSubtitle', 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.')}
           </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-5">
             <Button 
               size="lg" 
               asChild 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-6 md:px-10 md:py-7 text-base md:text-lg rounded-lg group animate-pulse-glow" // Added pulse-glow
+              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group animate-pulse-glow"
             >
               <Link href="/categories">
                 {t('homeExploreButton', 'Explore AI Categories')}
@@ -66,8 +91,7 @@ export default function HomePage() {
               size="lg" 
               variant="outline" 
               onClick={() => setIsChatOpen(true)} 
-              className="border-accent text-accent-foreground hover:bg-accent/10 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-6 md:px-10 md:py-7 text-base md:text-lg rounded-lg group"
-              style={{ animation: 'pulse-chat-button 2s infinite ease-in-out' }} // Applied pulse animation
+              className="border-accent text-accent hover:bg-accent/10 hover:text-accent-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group"
             >
               <MessageCircle className="mr-2 h-5 w-5 transition-transform group-hover:rotate-[15deg]" />
               {t('homeChatButton', 'Chat with AI Guide')}
@@ -102,17 +126,6 @@ export default function HomePage() {
 
        <AIChatAssistant open={isChatOpen} onOpenChange={setIsChatOpen} />
 
-       <style jsx global>{`
-        @keyframes gradient-flow {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient-flow {
-          background-size: 400% 400%;
-          animation: gradient-flow 15s ease infinite;
-        }
-       `}</style>
     </div>
   );
 }
