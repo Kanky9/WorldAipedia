@@ -5,27 +5,24 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
 import { useChat } from '@/contexts/ChatContext'; // Import useChat
 import type { CoreTranslationKey } from '@/lib/translations';
+import { cn } from '@/lib/utils';
 
 
 const Mascot = () => {
   const { t, language } = useLanguage();
-  const { isChatOpen } = useChat(); // Get chat state
+  const { isChatOpen } = useChat(); 
 
   const [initialGreeting, setInitialGreeting] = useState('');
   const [isMascotVisible, setIsMascotVisible] = useState(false);
   const [showDefaultBubble, setShowDefaultBubble] = useState(true);
 
-  // New state for chat-specific bubbles
   const chatBubbleMessagesKeys: CoreTranslationKey[] = ['mascotChatGreeting1', 'mascotChatGreeting2'];
-  const [currentChatBubbleIndex, setCurrentChatBubbleIndex] = useState(-1); // -1 means sequence is not active
+  const [currentChatBubbleIndex, setCurrentChatBubbleIndex] = useState(-1); 
   const [currentChatBubbleText, setCurrentChatBubbleText] = useState('');
 
 
-  // Effect for initial mascot visibility and default greeting
   useEffect(() => {
     setInitialGreeting(t('mascotGreeting'));
-    // setShowDefaultBubble(true); // Default bubble shows initially, managed by its own state
-
     const visibilityTimer = setTimeout(() => {
       setIsMascotVisible(true);
     }, 700);
@@ -33,17 +30,16 @@ const Mascot = () => {
     return () => {
       clearTimeout(visibilityTimer);
     };
-  }, [t]); // t changes when language changes, re-fetch default greeting
+  }, [t]); 
 
-  // Effect for handling chat-specific bubble sequence
   useEffect(() => {
     let bubbleTimer: NodeJS.Timeout;
 
     if (isChatOpen) {
-      setIsMascotVisible(true); // Ensure mascot is visible when chat opens
-      setShowDefaultBubble(false); // Hide default bubble when chat is open
+      setIsMascotVisible(true); 
+      setShowDefaultBubble(false); 
 
-      if (currentChatBubbleIndex === -1) { // Chat just opened, or sequence reset, start sequence
+      if (currentChatBubbleIndex === -1) { 
         setCurrentChatBubbleIndex(0);
       } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
         setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
@@ -51,49 +47,60 @@ const Mascot = () => {
           setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
         }, 3000);
       } else {
-        // Sequence finished, chat is still open, hide chat bubble text
         setCurrentChatBubbleText('');
       }
     } else {
-      // Chat closed, reset chat bubble sequence and ensure default bubble is set to show
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
       setShowDefaultBubble(true); 
     }
 
     return () => clearTimeout(bubbleTimer);
-  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]); // Added chatBubbleMessagesKeys to dependencies
+  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]);
 
 
   const handleMascotClick = () => {
-    // Clicking the mascot only toggles the default bubble if chat is NOT open
     if (!isChatOpen) {
       setShowDefaultBubble(prev => !prev);
     }
   };
 
-  if (!isMascotVisible) return null;
+  if (!isMascotVisible && !isChatOpen) return null; // Only hide if chat is closed AND initial delay not passed
 
-  // Determine what to display in the bubble
   let bubbleContent = '';
   let shouldShowSpeechBubble = false;
 
   if (isChatOpen && currentChatBubbleIndex >= 0 && currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
-    // Chat is open and chat-specific sequence is active
     bubbleContent = currentChatBubbleText;
-    shouldShowSpeechBubble = !!currentChatBubbleText; // Only show if there's text (handles end of sequence)
+    shouldShowSpeechBubble = !!currentChatBubbleText; 
   } else if (!isChatOpen && showDefaultBubble) {
-    // Chat is closed, and default bubble is allowed to show
     bubbleContent = initialGreeting;
     shouldShowSpeechBubble = true;
   }
+  
+  const mascotPositionStyle: React.CSSProperties = {};
+  if (isChatOpen) {
+    // Dialog max-width 525px, mascot width 90px, offset 20px
+    // Left edge of mascot = 50vw - (dialog_half_width) - mascot_width - offset
+    // Left edge of mascot = 50vw - 262.5px - 90px - 20px = 50vw - 372.5px
+    // Fallback to 1.25rem (20px) from left if calc is too small
+    mascotPositionStyle.left = `max(1.25rem, calc(50vw - 372.5px))`;
+  } else {
+    mascotPositionStyle.right = '1.25rem'; // Default: bottom-5 right-5 ( Tailwind: right-5 -> 1.25rem)
+  }
+
 
   return (
-    <div 
-      className={`fixed bottom-5 z-50 flex flex-col items-center group transition-all duration-500 ease-in-out ${
-        isChatOpen ? 'left-5' : 'right-5'
-      }`}
-      style={{ animation: isMascotVisible ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none' }}
+    <div
+      className={cn(
+        "fixed bottom-5 z-50 flex flex-col items-center group transition-all duration-500 ease-in-out"
+      )}
+      style={{
+        ...mascotPositionStyle,
+        // Ensure mascot is visible if chat opens, overriding initial visibility timer for this case
+        animation: (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none',
+        opacity: (isMascotVisible || isChatOpen) ? 1 : 0, // Control opacity based on visibility logic
+      }}
     >
       {/* Speech Bubble */}
       {shouldShowSpeechBubble && (
@@ -163,7 +170,7 @@ const Mascot = () => {
         <rect x="30" y="88" width="30" height="12" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5"/>
 
         <style jsx>{`
-          @keyframes mascotAppearAnimation { /* Renamed from fadeInUp to be specific */
+          @keyframes mascotAppearAnimation { 
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
           }
@@ -189,16 +196,16 @@ const Mascot = () => {
           }
           @keyframes eye-scan {
             0%, 100% { transform: translateX(0px); }
-            50% { transform: translateX(22px); } /* 30 (visor width) - 4 (light width) - 3 (padding x2 from visor edge) */
+            50% { transform: translateX(22px); } 
           }
           
           .robot-arm-left-animation {
-            transform-origin: 50% 0%; /* Pivot from top-center of arm */
+            transform-origin: 50% 0%; 
             animation: arm-wave 4s ease-in-out infinite;
           }
           .robot-arm-right-animation {
             transform-origin: 50% 0%;
-            animation: arm-wave 4s ease-in-out infinite reverse; /* Reverse for opposite motion */
+            animation: arm-wave 4s ease-in-out infinite reverse; 
           }
           @keyframes arm-wave {
             0%, 100% { transform: rotate(0deg) translateY(0px); }
@@ -206,7 +213,6 @@ const Mascot = () => {
             75% { transform: rotate(5deg) translateY(0px); }
           }
 
-          /* Speech bubble animations */
           .speech-bubble-enter {
             opacity: 1;
             transform: translateY(0) scale(1);
