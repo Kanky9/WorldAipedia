@@ -16,6 +16,7 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc, // Added updateDoc to imports
   Timestamp,
   type FirebaseUser as AuthFirebaseUser,
 } from '@/lib/firebase';

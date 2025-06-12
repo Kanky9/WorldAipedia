@@ -10,12 +10,13 @@ import { cn } from '@/lib/utils';
 const DIALOG_MAX_WIDTH_PX = 525; // Max width of the chat dialog
 const MASCOT_SVG_HEIGHT_PX = 110;
 const MASCOT_SVG_WIDTH_PX = 90;
-const CHAT_BUTTON_SIZE_REM = 3; // w-12 h-12
-const CHAT_BUTTON_OFFSET_REM = 1.5; // bottom-6 right-6
+const CHAT_BUTTON_SIZE_REM = 3; // w-12 h-12 (48px)
+const CHAT_BUTTON_OFFSET_REM = 1.5; // bottom-6 right-6 (24px)
 
 const Mascot = () => {
   const { t, language } = useLanguage();
   const { isChatOpen } = useChat();
+  const [mounted, setMounted] = useState(false);
 
   const [initialGreeting, setInitialGreeting] = useState('');
   const [isMascotVisible, setIsMascotVisible] = useState(false);
@@ -30,15 +31,16 @@ const Mascot = () => {
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
 
-  const isSmallScreen = windowSize.width < 640; // Tailwind 'sm' breakpoint
+  const isSmallScreen = windowSize.width < 640; // Tailwind 'sm' breakpoint (640px)
 
   useEffect(() => {
+    setMounted(true);
     function handleResize() {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     }
     if (typeof window !== 'undefined') {
         window.addEventListener('resize', handleResize);
-        handleResize(); // Initial size
+        // Initial size set directly in useState, no need for handleResize() here if default is fine
         return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
@@ -61,23 +63,24 @@ const Mascot = () => {
     let bubbleTimer: NodeJS.Timeout | undefined;
 
     if (isChatOpen) {
-      setIsMascotVisible(true);
-      setShowDefaultBubble(false);
+      setIsMascotVisible(true); // Ensure mascot is visible when chat opens
+      setShowDefaultBubble(false); // Hide default greeting bubble
 
-      if (currentChatBubbleIndex === -1) {
+      if (currentChatBubbleIndex === -1) { // Start sequence if not started
         setCurrentChatBubbleIndex(0);
       } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
         setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
         bubbleTimer = setTimeout(() => {
           setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
-        }, 4000);
+        }, 4000); // 4 seconds per bubble
       } else {
-        setCurrentChatBubbleText('');
+        setCurrentChatBubbleText(''); // Clear bubble after sequence
       }
     } else {
+      // When chat closes, reset for next opening, and show default greeting bubble
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
-      setShowDefaultBubble(true);
+      setShowDefaultBubble(true); 
     }
 
     return () => {
@@ -87,11 +90,15 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen) {
+    if (!isChatOpen) { // Only toggle default bubble if chat is closed
       setShowDefaultBubble(prev => !prev);
     }
   };
 
+  // Only render after client-side mount to ensure windowSize is accurate
+  if (!mounted) {
+    return null;
+  }
 
   if (!isMascotVisible && !isChatOpen) return null;
 
@@ -129,18 +136,20 @@ const Mascot = () => {
       mascotPositionStyle = {
         ...mascotPositionStyle,
         top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`, // Vertically center mascot with dialog center
-        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`, // To the right of the dialog
+        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`, // To the right of the dialog (525px/2 + 20px)
         right: 'auto',
         bottom: 'auto',
-        transform: 'none',
+        transform: 'none', // Clear transform if set by small screen logic
       };
     }
   } else { // Chat closed
-    const rightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1; // 1rem gap
+    // Position to the left of the chat button (right-6 / 1.5rem) + button width (w-12 / 3rem) + gap (1rem)
+    // So, right edge of mascot is at 1.5rem + 3rem + 1rem = 5.5rem from right of screen
+    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1; // 1.5 + 3 + 1 = 5.5rem
     mascotPositionStyle = {
       ...mascotPositionStyle,
-      bottom: '1.25rem', // Equivalent to bottom-5 (20px)
-      right: `${rightOffsetRem}rem`, // approx right-22 (5.5rem or 88px)
+      bottom: '1.25rem', // Tailwind's bottom-5 (20px)
+      right: `${mascotRightOffsetRem}rem`, // approx 88px or right-22
       top: 'auto',
       left: 'auto',
       transform: 'none',
@@ -156,7 +165,7 @@ const Mascot = () => {
         <div
           className={cn(
             "absolute left-1/2 -translate-x-1/2 w-max max-w-[180px] z-10",
-            "bottom-[115px]",
+            "bottom-[115px]", // Position bubble above mascot's head
             shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'
           )}
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
