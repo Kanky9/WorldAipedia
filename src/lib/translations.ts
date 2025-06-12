@@ -10,10 +10,10 @@ export const languages = {
 
 export type LanguageCode = keyof typeof languages;
 
-export type CoreTranslationKey = 
+export type CoreTranslationKey =
   // Header
   | 'navHome'
-  | 'navCategories' 
+  | 'navCategories'
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
   | 'logoutButton'
@@ -32,9 +32,9 @@ export type CoreTranslationKey =
   // Homepage (Blog Listing)
   | 'blogTitle'
   | 'blogSubtitle'
-  | 'exploreCategoriesButton' 
-  | 'featuredPostsTitle' 
-  | 'viewAllPostsButton'
+  | 'exploreCategoriesButton'
+  | 'featuredPostsTitle'
+  | 'viewAllPostsButton' // Kept for potential other uses, but homepage button changed
   | 'viewAllPostsArchiveButton'
   // All Posts Page (/blog)
   | 'allPostsTitle'
@@ -56,17 +56,17 @@ export type CoreTranslationKey =
   // Categories Page (Post Categories)
   | 'categoriesTitle'
   | 'categoriesSubtitle'
-  | 'viewPostsButton' 
+  | 'viewPostsButton'
   | 'noCategoriesAvailable'
   | 'newPostsInCategoryTooltip'
   // Category Detail Page (Posts in Category)
-  | 'noPostsInCategory' 
-  | 'noPostsInCategorySuggestion' 
+  | 'noPostsInCategory'
+  | 'noPostsInCategorySuggestion'
   | 'allCategoriesButton'
   // Post Detail Page
-  | 'backToBlogButton' 
-  | 'postContentTitle' 
-  | 'visitAiToolWebsiteButton' 
+  | 'backToBlogButton'
+  | 'postContentTitle'
+  | 'visitAiToolWebsiteButton'
   | 'additionalVisualsTitle'
   | 'visualDetailAlt'
   // Login Page
@@ -113,28 +113,28 @@ export type CoreTranslationKey =
   | 'adminPostShortDescPlaceholder'
   | 'adminPostLongDescLabel'
   | 'adminPostLongDescPlaceholder'
-  | 'adminPostMainImageLabel' 
-  | 'adminPostMainImageUrlLabel'
-  | 'adminPostMainImageUrlPlaceholder'
+  | 'adminPostMainImageLabel'
+  | 'adminPostMainImageUrlLabel' // Deprecated by file upload
+  | 'adminPostMainImageUrlPlaceholder' // Deprecated
   | 'adminPostMainImageHintLabel'
   | 'adminPostMainImageHintPlaceholder'
-  | 'adminPostLogoLabel' 
-  | 'adminPostLogoUrlLabel'
-  | 'adminPostLogoUrlPlaceholder'
+  | 'adminPostLogoLabel'
+  | 'adminPostLogoUrlLabel' // Deprecated
+  | 'adminPostLogoUrlPlaceholder' // Deprecated
   | 'adminPostLogoHintLabel'
   | 'adminPostLogoHintPlaceholder'
-  | 'adminPostDetailImage1Label' 
-  | 'adminPostDetailImageUrl1Label'
-  | 'adminPostDetailImageUrl1Placeholder'
+  | 'adminPostDetailImage1Label'
+  | 'adminPostDetailImageUrl1Label' // Deprecated
+  | 'adminPostDetailImageUrl1Placeholder' // Deprecated
   | 'adminPostDetailImageHint1Label'
   | 'adminPostDetailImageHint1Placeholder'
-  | 'adminPostDetailImage2Label' 
-  | 'adminPostDetailImageUrl2Label'
-  | 'adminPostDetailImageUrl2Placeholder'
+  | 'adminPostDetailImage2Label'
+  | 'adminPostDetailImageUrl2Label' // Deprecated
+  | 'adminPostDetailImageUrl2Placeholder' // Deprecated
   | 'adminPostDetailImageHint2Label'
   | 'adminPostDetailImageHint2Placeholder'
-  | 'uploadImageButton' 
-  | 'clearImageButton' 
+  | 'uploadImageButton'
+  | 'clearImageButton'
   | 'adminPostCategoryLabel'
   | 'adminPostSelectCategoryPlaceholder'
   | 'adminPostTagsLabel'
@@ -148,8 +148,8 @@ export type CoreTranslationKey =
   | 'adminPostCreatedSuccess'
   | 'adminPostUpdatedSuccess'
   | 'adminPostError'
-  | 'updatedInSession'
-  | 'createdInSession'
+  | 'updatedInSession' // Now reflects DB
+  | 'createdInSession' // Now reflects DB
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -191,11 +191,11 @@ export type CoreTranslationKey =
 
 
 export type TranslationSet = {
-  [key in CoreTranslationKey]?: string; 
-} & { 
+  [key in CoreTranslationKey]?: string;
+} & {
   navHome: string;
   navCategories: string;
-  featuredPostsTitle: string; 
+  featuredPostsTitle: string;
   userReviewsTitle: string;
   loginToCommentPrompt: string;
   viewAllPostsArchiveButton: string;
@@ -295,7 +295,7 @@ export const translations: Translations = {
     adminTableActions: 'Actions',
     editButton: 'Edit',
     deleteButton: 'Delete',
-    deletePostConfirm: 'Delete post {postId} (simulated)?',
+    deletePostConfirm: 'Are you sure you want to delete the post "{postId}"? This action cannot be undone.',
     adminNoPosts: 'No posts found.',
     adminCreateTitle: 'Create New Post',
     adminEditTitle: 'Edit Post',
@@ -306,23 +306,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: 'Long Description (Content)',
     adminPostLongDescPlaceholder: 'Write the full content of the post here...',
     adminPostMainImageLabel: 'Main Image',
-    adminPostMainImageUrlLabel: 'Main Image URL',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: 'Main Image AI Hint',
     adminPostMainImageHintPlaceholder: 'e.g., abstract technology',
     adminPostLogoLabel: 'Tool Logo (Optional)',
-    adminPostLogoUrlLabel: 'Tool Logo URL (Optional)',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'Logo AI Hint',
     adminPostLogoHintPlaceholder: 'e.g., brand logo',
     adminPostDetailImage1Label: 'Visual Insight Image 1',
-    adminPostDetailImageUrl1Label: 'Visual Insight Image 1 URL',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: 'Visual Insight 1 AI Hint',
     adminPostDetailImageHint1Placeholder: 'e.g., interface screenshot',
     adminPostDetailImage2Label: 'Visual Insight Image 2',
-    adminPostDetailImageUrl2Label: 'Visual Insight Image 2 URL',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: 'Visual Insight 2 AI Hint',
     adminPostDetailImageHint2Placeholder: 'e.g., concept art',
     uploadImageButton: 'Upload Image',
@@ -337,11 +329,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Create Post',
     adminPostButtonUpdate: 'Update Post',
     adminPostButtonBack: 'Back to Admin',
-    adminPostCreatedSuccess: 'Post created successfully.',
-    adminPostUpdatedSuccess: 'Post updated successfully.',
-    adminPostError: 'An error occurred.',
-    updatedInSession: 'updated in current session data.',
-    createdInSession: 'created in current session data.',
+    adminPostCreatedSuccess: 'Post Created',
+    adminPostUpdatedSuccess: 'Post Updated',
+    adminPostError: 'Error Saving Post',
+    updatedInSession: "has been updated in the database.",
+    createdInSession: "has been saved to the database.",
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -458,7 +450,7 @@ export const translations: Translations = {
     adminTableActions: 'Acciones',
     editButton: 'Editar',
     deleteButton: 'Eliminar',
-    deletePostConfirm: '¿Eliminar publicación {postId} (simulado)?',
+    deletePostConfirm: '¿Estás seguro de que quieres eliminar la publicación "{postId}"? Esta acción no se puede deshacer.',
     adminNoPosts: 'No se encontraron publicaciones.',
     adminCreateTitle: 'Crear Nueva Publicación',
     adminEditTitle: 'Editar Publicación',
@@ -469,23 +461,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: 'Descripción Larga (Contenido)',
     adminPostLongDescPlaceholder: 'Escribe el contenido completo de la publicación aquí...',
     adminPostMainImageLabel: 'Imagen Principal',
-    adminPostMainImageUrlLabel: 'URL Imagen Principal',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: 'Pista IA Imagen Principal',
     adminPostMainImageHintPlaceholder: 'ej: tecnología abstracta',
     adminPostLogoLabel: 'Logo Herramienta (Opcional)',
-    adminPostLogoUrlLabel: 'URL Logo Herramienta (Opcional)',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'Pista IA Logo',
     adminPostLogoHintPlaceholder: 'ej: logo de marca',
     adminPostDetailImage1Label: 'Imagen Perspectiva Visual 1',
-    adminPostDetailImageUrl1Label: 'URL Imagen Perspectiva Visual 1',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: 'Pista IA Perspectiva Visual 1',
     adminPostDetailImageHint1Placeholder: 'ej: captura de interfaz',
     adminPostDetailImage2Label: 'Imagen Perspectiva Visual 2',
-    adminPostDetailImageUrl2Label: 'URL Imagen Perspectiva Visual 2',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: 'Pista IA Perspectiva Visual 2',
     adminPostDetailImageHint2Placeholder: 'ej: arte conceptual',
     uploadImageButton: 'Subir Imagen',
@@ -500,11 +484,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Crear Publicación',
     adminPostButtonUpdate: 'Actualizar Publicación',
     adminPostButtonBack: 'Volver a Admin',
-    adminPostCreatedSuccess: 'Publicación creada con éxito.',
-    adminPostUpdatedSuccess: 'Publicación actualizada con éxito.',
-    adminPostError: 'Ocurrió un error.',
-    updatedInSession: 'actualizado en los datos de la sesión actual.',
-    createdInSession: 'creado en los datos de la sesión actual.',
+    adminPostCreatedSuccess: 'Publicación Creada',
+    adminPostUpdatedSuccess: 'Publicación Actualizada',
+    adminPostError: 'Error al Guardar Publicación',
+    updatedInSession: "ha sido actualizado en la base de datos.",
+    createdInSession: "ha sido guardado en la base de datos.",
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -621,7 +605,7 @@ export const translations: Translations = {
     adminTableActions: 'Azioni',
     editButton: 'Modifica',
     deleteButton: 'Elimina',
-    deletePostConfirm: 'Eliminare il post {postId} (simulato)?',
+    deletePostConfirm: 'Sei sicuro di voler eliminare il post "{postId}"? Questa azione non può essere annullata.',
     adminNoPosts: 'Nessun post trovato.',
     adminCreateTitle: 'Crea Nuovo Post',
     adminEditTitle: 'Modifica Post',
@@ -632,23 +616,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: 'Descrizione Lunga (Contenuto)',
     adminPostLongDescPlaceholder: 'Scrivi qui il contenuto completo del post...',
     adminPostMainImageLabel: 'Immagine Principale',
-    adminPostMainImageUrlLabel: 'URL Immagine Principale',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: 'Suggerimento IA Immagine Principale',
     adminPostMainImageHintPlaceholder: 'es. tecnologia astratta',
     adminPostLogoLabel: 'Logo Strumento (Opzionale)',
-    adminPostLogoUrlLabel: 'URL Logo Strumento (Opzionale)',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'Suggerimento IA Logo',
     adminPostLogoHintPlaceholder: 'es. logo marchio',
     adminPostDetailImage1Label: 'Immagine Dettaglio Visivo 1',
-    adminPostDetailImageUrl1Label: 'URL Immagine Dettaglio Visivo 1',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: 'Suggerimento IA Dettaglio Visivo 1',
     adminPostDetailImageHint1Placeholder: 'es. screenshot interfaccia',
     adminPostDetailImage2Label: 'Immagine Dettaglio Visivo 2',
-    adminPostDetailImageUrl2Label: 'URL Immagine Dettaglio Visivo 2',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: 'Suggerimento IA Dettaglio Visivo 2',
     adminPostDetailImageHint2Placeholder: 'es. arte concettuale',
     uploadImageButton: 'Carica Immagine',
@@ -663,11 +639,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Crea Post',
     adminPostButtonUpdate: 'Aggiorna Post',
     adminPostButtonBack: 'Torna ad Admin',
-    adminPostCreatedSuccess: 'Post creato con successo.',
-    adminPostUpdatedSuccess: 'Post aggiornato con successo.',
-    adminPostError: 'Si è verificato un errore.',
-    updatedInSession: 'aggiornato nei dati della sessione corrente.',
-    createdInSession: 'creato nei dati della sessione corrente.',
+    adminPostCreatedSuccess: 'Post Creato',
+    adminPostUpdatedSuccess: 'Post Aggiornato',
+    adminPostError: 'Errore nel Salvataggio del Post',
+    updatedInSession: "è stato aggiornato nel database.",
+    createdInSession: "è stato salvato nel database.",
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -784,7 +760,7 @@ export const translations: Translations = {
     adminTableActions: '操作',
     editButton: '编辑',
     deleteButton: '删除',
-    deletePostConfirm: '删除帖子 {postId} (模拟)?',
+    deletePostConfirm: '您确定要删除帖子“{postId}”吗？此操作无法撤销。',
     adminNoPosts: '未找到帖子。',
     adminCreateTitle: '创建新帖子',
     adminEditTitle: '编辑帖子',
@@ -795,23 +771,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: '详细描述（内容）',
     adminPostLongDescPlaceholder: '在此处撰写帖子的完整内容...',
     adminPostMainImageLabel: '主图片',
-    adminPostMainImageUrlLabel: '主图片URL',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: '主图片AI提示',
     adminPostMainImageHintPlaceholder: '例如：抽象技术',
     adminPostLogoLabel: '工具Logo（可选）',
-    adminPostLogoUrlLabel: '工具Logo URL（可选）',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'Logo AI提示',
     adminPostLogoHintPlaceholder: '例如：品牌logo',
     adminPostDetailImage1Label: '视觉见解图片1',
-    adminPostDetailImageUrl1Label: '视觉见解图片1 URL',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: '视觉见解1 AI提示',
     adminPostDetailImageHint1Placeholder: '例如：界面截图',
     adminPostDetailImage2Label: '视觉见解图片2',
-    adminPostDetailImageUrl2Label: '视觉见解图片2 URL',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: '视觉见解2 AI提示',
     adminPostDetailImageHint2Placeholder: '例如：概念艺术',
     uploadImageButton: '上传图片',
@@ -826,11 +794,11 @@ export const translations: Translations = {
     adminPostButtonCreate: '创建帖子',
     adminPostButtonUpdate: '更新帖子',
     adminPostButtonBack: '返回管理后台',
-    adminPostCreatedSuccess: '帖子创建成功。',
-    adminPostUpdatedSuccess: '帖子更新成功。',
-    adminPostError: '发生错误。',
-    updatedInSession: '已在当前会话数据中更新。',
-    createdInSession: '已在当前会话数据中创建。',
+    adminPostCreatedSuccess: '帖子已创建',
+    adminPostUpdatedSuccess: '帖子已更新',
+    adminPostError: '保存帖子时出错',
+    updatedInSession: "已在数据库中更新。",
+    createdInSession: "已保存到数据库。",
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -947,7 +915,7 @@ export const translations: Translations = {
     adminTableActions: 'アクション',
     editButton: '編集',
     deleteButton: '削除',
-    deletePostConfirm: '記事 {postId} を削除しますか（シミュレート）？',
+    deletePostConfirm: '記事「{postId}」を削除してもよろしいですか？この操作は元に戻せません。',
     adminNoPosts: '記事が見つかりません。',
     adminCreateTitle: '新しい記事を作成',
     adminEditTitle: '記事を編集',
@@ -958,23 +926,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: '長い説明（コンテンツ）',
     adminPostLongDescPlaceholder: '記事の全文をここに書いてください...',
     adminPostMainImageLabel: 'メイン画像',
-    adminPostMainImageUrlLabel: 'メイン画像のURL',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: 'メイン画像AIヒント',
     adminPostMainImageHintPlaceholder: '例：抽象技術',
     adminPostLogoLabel: 'ツールロゴ（オプション）',
-    adminPostLogoUrlLabel: 'ツールロゴURL（オプション）',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'ロゴAIヒント',
     adminPostLogoHintPlaceholder: '例：ブランドロゴ',
     adminPostDetailImage1Label: '視覚的洞察画像1',
-    adminPostDetailImageUrl1Label: '視覚的洞察画像1 URL',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: '視覚的洞察1 AIヒント',
     adminPostDetailImageHint1Placeholder: '例：インターフェースのスクリーンショット',
     adminPostDetailImage2Label: '視覚的洞察画像2',
-    adminPostDetailImageUrl2Label: '視覚的洞察画像2 URL',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: '視覚的洞察2 AIヒント',
     adminPostDetailImageHint2Placeholder: '例：コンセプトアート',
     uploadImageButton: '画像をアップロード',
@@ -989,11 +949,11 @@ export const translations: Translations = {
     adminPostButtonCreate: '記事を作成',
     adminPostButtonUpdate: '記事を更新',
     adminPostButtonBack: '管理に戻る',
-    adminPostCreatedSuccess: '記事が正常に作成されました。',
-    adminPostUpdatedSuccess: '記事が正常に更新されました。',
-    adminPostError: 'エラーが発生しました。',
-    updatedInSession: '現在のセッションデータで更新されました。',
-    createdInSession: '現在のセッションデータで作成されました。',
+    adminPostCreatedSuccess: '記事が作成されました',
+    adminPostUpdatedSuccess: '記事が更新されました',
+    adminPostError: '記事の保存中にエラーが発生しました',
+    updatedInSession: "データベースで更新されました。",
+    createdInSession: "データベースに保存されました。",
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -1110,7 +1070,7 @@ export const translations: Translations = {
     adminTableActions: 'Ações',
     editButton: 'Editar',
     deleteButton: 'Excluir',
-    deletePostConfirm: 'Excluir postagem {postId} (simulado)?',
+    deletePostConfirm: 'Tem certeza de que deseja excluir a postagem "{postId}"? Esta ação não pode ser desfeita.',
     adminNoPosts: 'Nenhuma postagem encontrada.',
     adminCreateTitle: 'Criar Nova Postagem',
     adminEditTitle: 'Editar Postagem',
@@ -1121,23 +1081,15 @@ export const translations: Translations = {
     adminPostLongDescLabel: 'Descrição Longa (Conteúdo)',
     adminPostLongDescPlaceholder: 'Escreva o conteúdo completo da postagem aqui...',
     adminPostMainImageLabel: 'Imagem Principal',
-    adminPostMainImageUrlLabel: 'URL da Imagem Principal',
-    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
     adminPostMainImageHintLabel: 'Dica de IA para Imagem Principal',
     adminPostMainImageHintPlaceholder: 'ex: tecnologia abstrata',
     adminPostLogoLabel: 'Logo da Ferramenta (Opcional)',
-    adminPostLogoUrlLabel: 'URL do Logo da Ferramenta (Opcional)',
-    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
     adminPostLogoHintLabel: 'Dica de IA para Logo',
     adminPostLogoHintPlaceholder: 'ex: logo da marca',
     adminPostDetailImage1Label: 'Imagem Insight Visual 1',
-    adminPostDetailImageUrl1Label: 'URL Imagem Insight Visual 1',
-    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint1Label: 'Dica IA Insight Visual 1',
     adminPostDetailImageHint1Placeholder: 'ex: captura de tela da interface',
     adminPostDetailImage2Label: 'Imagem Insight Visual 2',
-    adminPostDetailImageUrl2Label: 'URL Imagem Insight Visual 2',
-    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
     adminPostDetailImageHint2Label: 'Dica IA Insight Visual 2',
     adminPostDetailImageHint2Placeholder: 'ex: arte conceitual',
     uploadImageButton: 'Carregar Imagem',
@@ -1152,11 +1104,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Criar Postagem',
     adminPostButtonUpdate: 'Atualizar Postagem',
     adminPostButtonBack: 'Voltar para Admin',
-    adminPostCreatedSuccess: 'Postagem criada com sucesso.',
-    adminPostUpdatedSuccess: 'Postagem atualizada com sucesso.',
-    adminPostError: 'Ocorreu um erro.',
-    updatedInSession: 'atualizado nos dados da sessão atual.',
-    createdInSession: 'criado nos dados da sessão atual.',
+    adminPostCreatedSuccess: 'Postagem Criada',
+    adminPostUpdatedSuccess: 'Postagem Atualizada',
+    adminPostError: 'Erro ao Salvar Postagem',
+    updatedInSession: "foi atualizado no banco de dados.",
+    createdInSession: "foi salvo no banco de dados.",
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',
@@ -1193,5 +1145,3 @@ export const translations: Translations = {
     loginToCommentPrompt: "Faça login para deixar um comentário.",
   },
 };
-
-    

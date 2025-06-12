@@ -1,23 +1,24 @@
 
-"use client"; 
+"use client";
 
 import Image from 'next/image';
 import { notFound, useParams, useRouter } from 'next/navigation';
-import { getPostById as getMockPostById, getCategoryByName } from '@/data/posts'; // getPostById is now for mock data
-import AILink from '@/components/ai/AILink'; 
+import { getCategoryByName } from '@/data/posts'; // getCategoryByName is still useful for display
+import { getPostFromFirestore } from '@/lib/firebase'; // Use Firestore version
+import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
-import { Card, CardContent, CardHeader } from '@/components/ui/card'; 
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
-import { useAuth } from '@/contexts/AuthContext'; // Import useAuth
+import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
-import type { Post, UserComment } from '@/lib/types'; 
+import type { Post as PostType, UserComment } from '@/lib/types'; // Renamed Post to PostType to avoid conflict
 import { Skeleton } from '@/components/ui/skeleton';
-import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator'; 
+import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator';
 import { format } from 'date-fns';
-import { enUS, es } from 'date-fns/locale'; 
+import { enUS, es } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -26,24 +27,23 @@ import StarRatingInput from '@/components/ai/StarRatingInput';
 import CommentCard from '@/components/ai/CommentCard';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase'; // Firebase imports
+import { db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import { useToast } from "@/hooks/use-toast";
 
 
-export default function PostPage() { 
+export default function PostPage() {
   const params = useParams();
-  const router = useRouter(); 
+  const router = useRouter();
   const id = typeof params.id === 'string' ? params.id : '';
-  const { t, language } = useLanguage(); 
+  const { t, language } = useLanguage();
   const { currentUser, loading: authLoading } = useAuth();
   const { toast } = useToast();
 
-  const [post, setPost] = useState<Post | null | undefined>(undefined); // Post data (still from mock)
+  const [post, setPost] = useState<PostType | null | undefined>(undefined);
   const [pageAnimationClass, setPageAnimationClass] = useState('');
 
-  // Comment State
   const [comments, setComments] = useState<UserComment[]>([]);
-  const [commentsLoading, setCommentsLoading] = useState(true); // Set to true initially
+  const [commentsLoading, setCommentsLoading] = useState(true);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentRating, setNewCommentRating] = useState(0);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
@@ -54,7 +54,7 @@ export default function PostPage() {
 
   const fetchComments = useCallback(async (postId: string) => {
     if (!postId) {
-      setCommentsLoading(false); // Ensure loading state is cleared
+      setCommentsLoading(false);
       return;
     }
     setCommentsLoading(true);
@@ -69,13 +69,12 @@ export default function PostPage() {
       setComments(fetchedComments);
     } catch (error: any) {
       console.error("Error fetching comments: ", error);
-      // If it's a permission error, we'll show "No comments" or an empty state, rather than blocking the page.
       if (error.code === 'permission-denied' || error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
         toast({ variant: "destructive", title: "Comments Disabled", description: "Could not load comments due to permissions. Please check Firestore rules." });
       } else {
         toast({ variant: "destructive", title: "Error Loading Comments", description: "Could not load comments at this time." });
       }
-      setComments([]); // Set to empty array on error to allow page to render
+      setComments([]);
     } finally {
       setCommentsLoading(false);
     }
@@ -83,20 +82,30 @@ export default function PostPage() {
 
   useEffect(() => {
     if (id) {
-      window.scrollTo(0, 0); 
-      const currentPost = getMockPostById(id); // Get main post data from mock
-      setPost(currentPost);
-      if (currentPost) {
-        fetchComments(currentPost.id); // Fetch comments from Firestore
-        setPageAnimationClass('animate-scale-up-fade-in');
-      } else {
-        setPageAnimationClass(''); 
-        setCommentsLoading(false); // Ensure loading stops if no post
-      }
+      window.scrollTo(0, 0);
+      setPost(undefined); // Reset post state while loading
+      setCommentsLoading(true); // Ensure comments loading state is also reset
+
+      getPostFromFirestore(id).then(currentPost => {
+        if (currentPost) {
+          setPost(currentPost);
+          fetchComments(currentPost.id);
+          setPageAnimationClass('animate-scale-up-fade-in');
+        } else {
+          setPost(null); // Explicitly set to null if not found
+          setCommentsLoading(false); // Stop comments loading if no post
+          setPageAnimationClass('');
+        }
+      }).catch(err => {
+        console.error("Error fetching post from Firestore:", err);
+        setPost(null);
+        setCommentsLoading(false);
+        toast({variant: "destructive", title: "Error", description: "Failed to load post."})
+      });
     } else {
-       setCommentsLoading(false); // Ensure loading stops if no id
+      setCommentsLoading(false);
     }
-  }, [id, fetchComments]); 
+  }, [id, fetchComments, toast]);
 
   const getPostDateLocale = () => {
     switch (language) {
@@ -131,17 +140,13 @@ export default function PostPage() {
       isAnonymous: isAnonymousComment,
       rating: newCommentRating,
       text: newCommentText,
-      timestamp: serverTimestamp(), // Use serverTimestamp for Firestore
+      timestamp: serverTimestamp(),
     };
 
     try {
       const commentCollectionRef = collection(db, 'posts', post.id, 'comments');
       await addDoc(commentCollectionRef, newCommentData);
-      
-      // Optimistically add to local state or re-fetch
-      // For simplicity, we re-fetch. Better UX might be optimistic update.
-      fetchComments(post.id); 
-
+      fetchComments(post.id);
       setNewCommentText('');
       setNewCommentRating(0);
       setIsAnonymousComment(false);
@@ -159,10 +164,10 @@ export default function PostPage() {
   };
 
 
-  if (post === undefined && !authLoading) { // Show skeleton if post data not yet loaded
+  if (post === undefined && !authLoading) {
     return (
-      <div className="space-y-6"> 
-        <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" /> 
+      <div className="space-y-6">
+        <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" />
         <Card className="overflow-hidden shadow-lg rounded-xl bg-card">
           <CardHeader className="p-0">
             <Skeleton className="relative w-full h-60 sm:h-72 md:h-96" />
@@ -170,10 +175,10 @@ export default function PostPage() {
           <CardContent className="p-6">
             <Skeleton className="h-8 w-3/4 sm:h-10 mb-4" />
             <div className="flex items-center gap-4 mb-6">
-              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" /> 
+              <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" />
               <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" />
             </div>
-            <Skeleton className="h-5 w-1/4 mb-2" /> 
+            <Skeleton className="h-5 w-1/4 mb-2" />
             <Skeleton className="h-7 w-1/3 sm:h-8 sm:w-1/4 mt-8 mb-3" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
@@ -184,11 +189,10 @@ export default function PostPage() {
     )
   }
 
-  if (!post && !authLoading) { // If loading is done and post is still null
+  if (!post && !authLoading) { // If loading is done and post is still null (not found)
     notFound();
   }
-  
-  // Display loader if post or auth state is still loading OR if post is undefined and comments are still attempting to load (edge case)
+
   if (authLoading || post === undefined || (post === undefined && commentsLoading) ) {
      return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
@@ -197,16 +201,15 @@ export default function PostPage() {
     );
   }
 
-  // Post is loaded by this point
-  const category = getCategoryByName(post.category);
-  const localizedCategoryName = category ? t(category.name) : post.category;
+  const categoryData = getCategoryByName(post.category);
+  const localizedCategoryName = categoryData ? t(categoryData.name) : post.category;
   const localizedPostTitle = t(post.title);
 
 
   return (
-    <div className={`relative space-y-8 ${pageAnimationClass}`}> 
+    <div className={`relative space-y-8 ${pageAnimationClass}`}>
       <ScrollDownIndicator />
-      <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md"> 
+      <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">
           <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
           {t('backToBlogButton', 'Back to Blog')}
@@ -225,21 +228,22 @@ export default function PostPage() {
               data-ai-hint={post.imageHint || "technology banner"}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
               className="rounded-t-xl"
+              unoptimized={post.imageUrl.startsWith('data:image')} // Add unoptimized for Data URIs
             />
           </div>
         </CardHeader>
         <CardContent className="p-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-2 text-primary">{localizedPostTitle}</h1>
-          
+
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4" />
-              <span>{postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
+              <span>{post.publishedDate instanceof Date && postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate as Date).toLocaleDateString()}</span>
             </div>
-            {category && (
+            {categoryData && (
               <div className="flex items-center gap-1.5">
-                <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-4 w-4 text-primary" />
-                <Link href={`/categories/${category.slug}`} className="hover:underline">{localizedCategoryName}</Link>
+                <CategoryIcon categoryName={typeof categoryData.name === 'string' ? categoryData.name : categoryData.name.en!} className="h-4 w-4 text-primary" />
+                <Link href={`/categories/${categoryData.slug}`} className="hover:underline">{localizedCategoryName}</Link>
               </div>
             )}
           </div>
@@ -250,16 +254,16 @@ export default function PostPage() {
               ))}
             </div>
           )}
-          
+
           {post.link && (
-             <AILink 
-              href={post.link} 
-              logoUrl={post.logoUrl} 
+             <AILink
+              href={post.link}
+              logoUrl={post.logoUrl}
               logoHint={post.logoHint}
-              text={t('visitAiToolWebsiteButton', 'Visit Tool Website')} 
+              text={t('visitAiToolWebsiteButton', 'Visit Tool Website')}
             />
           )}
-          
+
           <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('postContentTitle', 'Post Content')}</h2>
           <article className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {t(post.longDescription)}
@@ -279,6 +283,7 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint1 || "AI concept"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
+                      unoptimized={post.detailImageUrl1.startsWith('data:image')}
                     />
                   </div>
                 )}
@@ -292,6 +297,7 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint2 || "AI technology"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
+                      unoptimized={post.detailImageUrl2.startsWith('data:image')}
                     />
                   </div>
                 )}
@@ -301,7 +307,6 @@ export default function PostPage() {
         </CardContent>
       </Card>
 
-      {/* Comments Section */}
       <section className="space-y-6 py-8">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-headline font-semibold text-primary flex items-center gap-2">
           <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
@@ -316,8 +321,8 @@ export default function PostPage() {
             <form onSubmit={handleCommentSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="rating" className="mb-1 block">{t('ratingLabel', "Your Rating")}</Label>
-                <StarRatingInput 
-                  value={newCommentRating} 
+                <StarRatingInput
+                  value={newCommentRating}
                   onChange={setNewCommentRating}
                   disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
                 />
@@ -334,8 +339,8 @@ export default function PostPage() {
                 />
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="anonymous" 
+                <Checkbox
+                  id="anonymous"
                   checked={isAnonymousComment}
                   onCheckedChange={(checked) => setIsAnonymousComment(Boolean(checked))}
                   disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
@@ -344,8 +349,8 @@ export default function PostPage() {
                   {t('anonymousCommentLabel', "Comment Anonymously")}
                 </Label>
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="bg-primary hover:bg-primary/90"
                 disabled={isSubmittingComment || authLoading || (!currentUser || (!currentUser.isSubscribed && newCommentText !== ''))}
               >
@@ -355,7 +360,7 @@ export default function PostPage() {
             </form>
           </CardContent>
         </Card>
-        
+
         {commentsLoading ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -405,4 +410,3 @@ export default function PostPage() {
     </div>
   );
 }
-

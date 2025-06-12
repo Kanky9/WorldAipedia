@@ -4,11 +4,12 @@
 import { useEffect, useState } from 'react';
 import type React from 'react';
 import PostCard from '@/components/blog/PostCard';
-import { posts as allPosts } from '@/data/posts';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { BookOpen, ArrowRight } from 'lucide-react';
+import { BookOpen, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import type { Post } from '@/lib/types';
+import { getAllPostsFromFirestore } from '@/lib/firebase';
 
 const MAX_POSTS_ON_HOMEPAGE = 9;
 
@@ -30,11 +31,9 @@ export default function HomePage() {
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  
-  const recentPosts = allPosts
-    .sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime())
-    .slice(0, MAX_POSTS_ON_HOMEPAGE);
-
+  const [recentPosts, setRecentPosts] = useState<Post[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [errorLoadingPosts, setErrorLoadingPosts] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -50,6 +49,26 @@ export default function HomePage() {
       },
     }));
     setParticles(generatedParticles);
+
+    const fetchPosts = async () => {
+      setIsLoadingPosts(true);
+      setErrorLoadingPosts(null);
+      try {
+        const allPosts = await getAllPostsFromFirestore();
+        // Sorting should ideally be done by Firestore query, but client-side sort is fine for now
+        const sorted = allPosts.sort((a, b) =>
+          (b.publishedDate instanceof Date ? b.publishedDate.getTime() : 0) -
+          (a.publishedDate instanceof Date ? a.publishedDate.getTime() : 0)
+        );
+        setRecentPosts(sorted.slice(0, MAX_POSTS_ON_HOMEPAGE));
+      } catch (error) {
+        console.error("Error fetching posts for homepage:", error);
+        setErrorLoadingPosts("Failed to load posts.");
+      } finally {
+        setIsLoadingPosts(false);
+      }
+    };
+    fetchPosts();
   }, []);
 
   return (
@@ -66,10 +85,10 @@ export default function HomePage() {
             ))}
           </div>
         )}
-        
+
         <div className="relative z-10 p-4 container mx-auto">
           <BookOpen className="h-10 w-10 md:h-12 md:w-12 text-primary mx-auto mb-2 md:mb-3 animate-pulse drop-shadow-lg" />
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold mb-3 md:mb-4 leading-tight 
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold mb-3 md:mb-4 leading-tight
                          bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-gradient-flow-fast">
             {t('blogTitle', 'The World AI Blog')}
           </h1>
@@ -77,8 +96,8 @@ export default function HomePage() {
             {t('blogSubtitle', 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.')}
           </p>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4">
-            <Button 
-              asChild 
+            <Button
+              asChild
               className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-sm px-5 py-2.5 sm:text-base sm:px-6 sm:py-3 rounded-lg group animate-pulse-glow"
             >
               <Link href="/categories">
@@ -92,21 +111,31 @@ export default function HomePage() {
 
       <section className="container mx-auto animate-fadeInUp">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredPostsTitle', 'Featured Posts')}</h2>
-        {recentPosts.length > 0 ? (
+        {isLoadingPosts ? (
+          <div className="flex justify-center items-center py-10">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+          </div>
+        ) : errorLoadingPosts ? (
+           <div className="text-center py-10">
+            <AlertTriangle className="h-10 w-10 text-destructive mx-auto mb-3" />
+            <p className="text-destructive">{errorLoadingPosts}</p>
+            <p className="text-muted-foreground mt-1">Please try again later.</p>
+          </div>
+        ) : recentPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
-            {recentPosts.map((post) => ( 
+            {recentPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
           </div>
         ) : (
-          <p className="text-center text-muted-foreground">{t('loadingText', 'Loading posts...')}</p>
+          <p className="text-center text-muted-foreground py-10">{t('adminNoPosts', 'No posts found.')}</p>
         )}
       </section>
 
        <section className="text-center py-6 md:py-8 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
          <Button asChild variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary/80 text-sm px-4 py-2 sm:text-base sm:px-6 sm:py-2.5 md:px-8 md:py-3 rounded-lg group">
-           <Link href="/blog"> {/* Changed link to /blog */}
-            {t('viewAllPostsArchiveButton', 'View All Posts')} {/* Changed translation key */}
+           <Link href="/blog">
+            {t('viewAllPostsArchiveButton', 'View All Posts')}
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </Link>
          </Button>

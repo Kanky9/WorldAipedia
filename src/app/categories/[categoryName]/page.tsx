@@ -1,16 +1,17 @@
 
-"use client"; 
+"use client";
 
 import { notFound, useParams } from 'next/navigation';
-import { getPostsByCategory, getCategoryBySlug } from '@/data/posts'; // Changed from ai-tools
-import PostCard from '@/components/blog/PostCard'; // Changed from AICard
+import { getCategoryBySlug } from '@/data/posts'; // Categories are still from mock
+import { getPostsByCategorySlugFromFirestore } from '@/lib/firebase'; // Posts from Firestore
+import PostCard from '@/components/blog/PostCard';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { useEffect, useState } from 'react';
-import type { Category as CategoryType, Post as PostType } from '@/lib/types'; // Changed AITool to Post
+import { useEffect, useState, useCallback } from 'react';
+import type { Category as CategoryType, Post as PostType } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
@@ -18,30 +19,44 @@ export default function CategoryDetailPage() {
   const params = useParams();
   const categorySlug = typeof params.categoryName === 'string' ? params.categoryName : '';
   const { t } = useLanguage();
-  
+
   const [category, setCategory] = useState<CategoryType | null | undefined>(undefined);
-  const [postsInCategory, setPostsInCategory] = useState<PostType[]>([]); // Changed from AITool[]
+  const [postsInCategory, setPostsInCategory] = useState<PostType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [animationClass, setAnimationClass] = useState('');
 
 
-  useEffect(() => {
+  const fetchCategoryData = useCallback(async () => {
     if (categorySlug) {
       setIsLoading(true);
-      const currentCategory = getCategoryBySlug(categorySlug);
+      setError(null);
+      const currentCategory = getCategoryBySlug(categorySlug); // Category definition is local
       setCategory(currentCategory);
+
       if (currentCategory) {
-        const posts = getPostsByCategory(categorySlug); // Changed from tools
-        setPostsInCategory(posts);
-        setAnimationClass('animate-fade-in'); 
+        try {
+          const posts = await getPostsByCategorySlugFromFirestore(categorySlug);
+          setPostsInCategory(posts);
+          setAnimationClass('animate-fade-in');
+        } catch (err) {
+          console.error("Error fetching posts for category:", err);
+          setError("Failed to load posts for this category.");
+          setPostsInCategory([]);
+          setAnimationClass('');
+        }
       } else {
-        setAnimationClass('');
+        setAnimationClass(''); // No category found
       }
       setIsLoading(false);
     }
   }, [categorySlug]);
 
-  if (isLoading || category === undefined) { 
+  useEffect(() => {
+    fetchCategoryData();
+  }, [fetchCategoryData]);
+
+  if (isLoading || category === undefined) {
      return (
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -61,9 +76,21 @@ export default function CategoryDetailPage() {
     );
   }
 
-  if (!category) {
+  if (!category) { // Category not found after loading attempt
     notFound();
   }
+  
+  if (error && !isLoading) { // Error fetching posts
+    return (
+      <div className="container mx-auto py-8 px-4 text-center">
+        <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+        <h2 className="text-xl font-semibold text-destructive mb-2">Error Loading Posts</h2>
+        <p className="text-muted-foreground mb-4">{error}</p>
+        <Button onClick={fetchCategoryData}>Try Again</Button>
+      </div>
+    );
+  }
+
 
   const localizedCategoryName = t(category.name);
   const localizedCategoryDescription = t(category.description);
@@ -88,9 +115,9 @@ export default function CategoryDetailPage() {
 
       {postsInCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsInCategory.map((post, index) => ( // Changed from tool to post
+          {postsInCategory.map((post, index) => (
             <div key={post.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.07}s`}}>
-              <PostCard post={post} /> 
+              <PostCard post={post} />
             </div>
           ))}
         </div>

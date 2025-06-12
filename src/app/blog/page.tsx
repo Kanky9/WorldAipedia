@@ -2,25 +2,40 @@
 "use client";
 
 import PostCard from '@/components/blog/PostCard';
-import { posts as allPosts } from '@/data/posts';
 import { useLanguage } from '@/hooks/useLanguage';
-import { BookCopy } from 'lucide-react';
+import { BookCopy, Loader2, AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import type { Post } from '@/lib/types';
+import { getAllPostsFromFirestore } from '@/lib/firebase';
 
 export default function AllPostsPage() {
   const { t } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-
-  const sortedPosts = allPosts.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const fetchPosts = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const fetchedPosts = await getAllPostsFromFirestore();
+        // Sorting should ideally be by Firestore query, but client-side is fallback
+         const sorted = fetchedPosts.sort((a, b) =>
+          (b.publishedDate instanceof Date ? b.publishedDate.getTime() : 0) -
+          (a.publishedDate instanceof Date ? a.publishedDate.getTime() : 0)
+        );
+        setPosts(sorted);
+      } catch (err) {
+        console.error("Error fetching all posts:", err);
+        setError("Failed to load posts. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPosts();
     window.scrollTo(0, 0);
   }, []);
-
-  if (!mounted) {
-    return null; // Or a loading skeleton
-  }
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -37,9 +52,18 @@ export default function AllPostsPage() {
       </section>
 
       <section className="container mx-auto">
-        {sortedPosts.length > 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <p className="text-destructive text-lg">{error}</p>
+          </div>
+        ) : posts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {sortedPosts.map((post, index) => (
+            {posts.map((post, index) => (
               <div key={post.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
                 <PostCard post={post} />
               </div>
