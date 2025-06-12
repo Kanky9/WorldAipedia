@@ -24,7 +24,7 @@ export default function FloatingChatButton() {
             <MessageCircle className="h-6 w-6 transition-transform group-hover:rotate-[15deg] duration-300" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="left" className="mr-2">
+        <TooltipContent side="left" className="mr-2 z-[80]">
           <p>{t('laceChatTitle', 'Chat with Lace')}</p>
         </TooltipContent>
       </Tooltip>
