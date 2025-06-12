@@ -103,6 +103,32 @@ export const categories: Category[] = [
       'Ferramentas de IA para criação de conteúdo e assistência à escrita.'
     )
   },
+  {
+    name: LS('Productivity', 'Productividad', 'Produttività', '生产力', '生産性', 'Produtividade'),
+    slug: 'productivity',
+    iconName: 'Briefcase',
+    description: LS(
+      'AI tools to enhance productivity and organization.',
+      'Herramientas de IA para mejorar la productividad y la organización.',
+      'Strumenti IA per migliorare produttività e organizzazione.',
+      '提高生产力和组织能力的人工智能工具。',
+      '生産性と組織を向上させるためのAIツール。',
+      'Ferramentas de IA para aumentar a produtividade e organização.'
+    )
+  },
+  {
+    name: LS('Education', 'Educación', 'Educazione', '教育', '教育', 'Educação'),
+    slug: 'education',
+    iconName: 'BookOpen',
+    description: LS(
+      'AI tools for learning, teaching, and educational purposes.',
+      'Herramientas de IA para aprendizaje, enseñanza y fines educativos.',
+      'Strumenti IA per apprendimento, insegnamento e scopi educativi.',
+      '用于学习、教学和教育目的的人工智能工具。',
+      '学習、教育、および教育目的のためのAIツール。',
+      'Ferramentas de IA para aprendizado, ensino e fins educacionais.'
+    )
+  },
 ];
 
 export const aiTools: AITool[] = [
@@ -551,7 +577,7 @@ export const aiTools: AITool[] = [
     ),
     longDescription: LS(
       'StoryWeaver AI is a specialized tool for writers and developers creating interactive fiction, role-playing games, and other narrative-driven experiences. It assists in designing complex branching narratives, generating dynamic character dialogues that respond to player choices, and maintaining narrative consistency across multiple plot paths. Users can define characters, settings, and plot points, and StoryWeaver AI can then suggest dialogue options, story developments, and even help balance the narrative impact of different choices. It aims to empower creators to build richer, more replayable interactive stories.',
-      'StoryWeaver AI es una herramienta especializada para escritores y desarrolladores que crean ficción interactiva, juegos de rol y otras experiencias narrativas. Ayuda a diseñar narrativas ramificadas complejas, generar diálogos de personajes dinámicos que responden a las elecciones del jugador y mantener la coherencia narrativa a través de múltiples caminos argumentales. Los usuarios pueden definir personajes, escenarios y puntos de la trama, y StoryWeaver AI puede sugerir opciones de diálogo, desarrollos de la historia e incluso ayudar a equilibrar el impacto narrativo de diferentes elecciones. Su objetivo es capacitar a los creadores para construir historias interactivas más ricas y rejugables.'
+      'StoryWeaver AI es una herramienta especializada para escritores y desarrolladores que crean ficción interactiva, juegos de rol y otras experiencias narrativas. Ayuda a diseñar narrativas ramificadas complexas, generar diálogos de personajes dinámicos que responden a las elecciones del jugador y mantener la coherencia narrativa a través de múltiples caminos argumentales. Los usuarios pueden definir personajes, escenarios y puntos de la trama, y StoryWeaver AI puede sugerir opciones de diálogo, desarrollos de la historia e incluso ayudar a equilibrar el impacto narrativo de diferentes elecciones. Su objetivo es capacitar a los creadores para construir historias interactivas más ricas y rejugables.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'interactive story map',
@@ -565,8 +591,6 @@ export const aiTools: AITool[] = [
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'game dialogue editor'
   },
-  // --- NEW AI TOOLS (Added previously) ---
-  // --- Adding 4 more new AI tools as requested ---
   {
     id: 'artisan-canvas',
     title: LS('Artisan Canvas', 'Lienzo Artesano'),
@@ -658,6 +682,98 @@ export const aiTools: AITool[] = [
     detailImageHint1: 'code profiler dashboard',
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'cloud cost optimization'
+  },
+  {
+    id: 'taskmaster-ai',
+    title: LS('TaskMaster AI', 'IA Gestor de Tareas'),
+    shortDescription: LS(
+      'Intelligent task management and project planning for teams and individuals.',
+      'Gestión inteligente de tareas y planificación de proyectos para equipos e individuos.'
+    ),
+    longDescription: LS(
+      'TaskMaster AI helps you organize your projects, prioritize tasks, and collaborate with your team efficiently. It uses AI to suggest optimal workflows, predict task durations based on historical data, and identify potential bottlenecks before they impact your deadlines. With integrations for popular calendars and communication tools, TaskMaster AI streamlines your entire project lifecycle, from initial planning to final delivery, ensuring everyone stays on track and informed.',
+      'TaskMaster AI te ayuda a organizar tus proyectos, priorizar tareas y colaborar con tu equipo de manera eficiente. Utiliza IA para sugerir flujos de trabajo óptimos, predecir la duración de las tareas basándose en datos históricos e identificar posibles cuellos de botella antes de que afecten tus plazos. Con integraciones para calendarios y herramientas de comunicación populares, TaskMaster AI optimiza todo el ciclo de vida de tu proyecto, desde la planificación inicial hasta la entrega final, asegurando que todos se mantengan encaminados e informados.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'project management dashboard tasks',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'checkmark list icon',
+    category: 'Productivity',
+    categorySlug: 'productivity',
+    link: '#taskmaster-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'gantt chart project planning',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'team collaboration interface kanban'
+  },
+  {
+    id: 'inboxzero-ai',
+    title: LS('InboxZero AI', 'IA Bandeja Cero'),
+    shortDescription: LS(
+      'AI-powered email management to keep your inbox organized and decluttered.',
+      'Gestión de correo electrónico impulsada por IA para mantener tu bandeja de entrada organizada y despejada.'
+    ),
+    longDescription: LS(
+      'InboxZero AI analyzes your incoming emails, intelligently categorizes them based on content and sender, drafts smart replies for common queries, and helps you achieve the elusive inbox zero. It learns your email habits and preferences to prioritize important messages, snooze less critical ones, and effectively filter out spam or promotional content, saving you significant time each week and reducing email-related stress.',
+      'InboxZero AI analiza tus correos entrantes, los categoriza inteligentemente según el contenido y el remitente, redacta respuestas inteligentes para consultas comunes y te ayuda a alcanzar la esquiva bandeja de entrada cero. Aprende tus hábitos y preferencias de correo electrónico para priorizar mensajes importantes, posponer los menos críticos y filtrar eficazmente el spam o contenido promocional, ahorrándote tiempo significativo cada semana y reduciendo el estrés relacionado con el correo electrónico.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'clean organized email inbox',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'email envelope shield',
+    category: 'Productivity',
+    categorySlug: 'productivity',
+    link: '#inboxzero-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'email categorization filters',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'AI smart reply suggestion'
+  },
+  {
+    id: 'learnsphere-ai',
+    title: LS('LearnSphere AI', 'IA Esfera de Aprendizaje'),
+    shortDescription: LS(
+      'Personalized AI learning platform with adaptive courses and skill tracking.',
+      'Plataforma de aprendizaje personalizada con IA, cursos adaptativos y seguimiento de habilidades.'
+    ),
+    longDescription: LS(
+      'LearnSphere AI offers a vast library of courses across numerous disciplines that dynamically adapt to your individual learning pace and style. The AI engine identifies your existing knowledge, strengths, and areas needing improvement, then crafts a personalized learning path with interactive exercises, multimedia content, and real-time feedback. This ensures you master new skills effectively and efficiently, making learning more engaging and impactful.',
+      'LearnSphere AI ofrece una vasta biblioteca de cursos en numerosas disciplinas que se adaptan dinámicamente a tu ritmo y estilo de aprendizaje individual. El motor de IA identifica tus conocimientos existentes, fortalezas y áreas que necesitan mejora, luego crea una ruta de aprendizaje personalizada con ejercicios interactivos, contenido multimedia y retroalimentación en tiempo real. Esto asegura que domines nuevas habilidades de manera efectiva y eficiente, haciendo el aprendizaje más atractivo e impactante.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'interactive online learning platform',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'graduation cap atom',
+    category: 'Education',
+    categorySlug: 'education',
+    link: '#learnsphere-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'adaptive learning module',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'skill progress dashboard'
+  },
+  {
+    id: 'tutorbot-ai',
+    title: LS('TutorBot AI', 'IA TutorBot'),
+    shortDescription: LS(
+      'AI tutor providing instant, step-by-step help and explanations for various academic subjects.',
+      'Tutor de IA que proporciona ayuda instantánea y explicaciones paso a paso para diversas materias académicas.'
+    ),
+    longDescription: LS(
+      'TutorBot AI acts as your personal 24/7 academic assistant. You can ask questions on a wide range of subjects, from math and science to history and literature, and receive clear, step-by-step explanations. It can help with homework problems, explain complex concepts through interactive dialogue, and offer practice quizzes to reinforce learning, making education more accessible and personalized.',
+      'TutorBot AI actúa como tu asistente académico personal 24/7. Puedes hacer preguntas sobre una amplia gama de materias, desde matemáticas y ciencias hasta historia y literatura, y recibir explicaciones claras y paso a paso. Puede ayudar con problemas de tarea, explicar conceptos complejos a través del diálogo interactivo y ofrecer cuestionarios de práctica para reforzar el aprendizaje, haciendo la educación más accesible y personalizada.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'student AI tutor interaction',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'robot teacher book',
+    category: 'Education',
+    categorySlug: 'education',
+    link: '#tutorbot-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'math problem explanation',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'interactive learning chat'
   }
 ];
 
