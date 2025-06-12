@@ -12,14 +12,14 @@ import { Loader2, Send, User, Bot, Paperclip, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { explainPage } from '@/ai/flows/pageExplainerFlow';
 import { chatWithLace } from '@/ai/flows/chatFlow';
-import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow'; // New import
+import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow';
 import { useLanguage } from '@/hooks/useLanguage';
-import type { AiToolChatContext } from '@/lib/types'; // Import the context type
+import type { AiToolChatContext } from '@/lib/types';
 
 interface AIChatAssistantProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialContext: AiToolChatContext | null; // New prop for AI tool context
+  initialContext: AiToolChatContext | null;
 }
 
 interface MessagePart {
@@ -60,7 +60,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
         })
         .catch(error => {
           console.error("Error fetching AI tool welcome:", error);
-          setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatError') }], timestamp: new Date() }]);
+          setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatErrorWelcomeTool', "I'm having a bit of trouble introducing this tool, but feel free to ask me anything about it or other topics!") }], timestamp: new Date() }]);
         })
         .finally(() => {
           setIsInitialLoading(false);
@@ -72,7 +72,8 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           })
           .catch(error => {
             console.error("Error fetching initial explanation:", error);
-            setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatError') }], timestamp: new Date() }]);
+            // Fallback message if the initial explanation fails
+            setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatErrorWelcomeGeneral', "Hi there! I'm Lace, your AI assistant. How can I help you today?") }], timestamp: new Date() }]);
           })
           .finally(() => {
             setIsInitialLoading(false);
@@ -82,7 +83,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       setMessages([]);
       clearSelectedImage();
     }
-  }, [open, initialContext, language, t]);
+  }, [open, initialContext, language, t, messages.length]); // Added messages.length to dependencies to re-trigger if chat is closed and reopened.
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -140,9 +141,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       parts: msg.parts.map(part => {
         const genkitPart: any = {};
         if (part.text) genkitPart.text = part.text;
-        // For history, Genkit expects a simplified representation or just text for images
-        // to avoid resending large data or complex structures in history.
-        if (part.media) genkitPart.media = { url: "User sent an image previously" }; // Placeholder or simple indicator
+        if (part.media) genkitPart.media = { url: "User sent an image previously" }; 
         return genkitPart;
       }),
     }));
@@ -289,3 +288,5 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
 };
 
 export default AIChatAssistant;
+
+    
