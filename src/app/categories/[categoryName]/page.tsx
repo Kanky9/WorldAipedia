@@ -1,5 +1,5 @@
 
-"use client"; // Needs to be client for useLanguage hook
+"use client"; 
 
 import { notFound, useParams } from 'next/navigation';
 import { getAiToolsByCategory, getCategoryBySlug, categories as allCategories } from '@/data/ai-tools';
@@ -14,13 +14,6 @@ import type { Category as CategoryType, AITool } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
 
-// Remove generateStaticParams if page is client rendered based on dynamic param
-// export async function generateStaticParams() {
-//   return allCategories.map((category) => ({
-//     categoryName: category.slug, // categoryName is the slug
-//   }));
-// }
-
 export default function CategoryDetailPage() {
   const params = useParams();
   const categorySlug = typeof params.categoryName === 'string' ? params.categoryName : '';
@@ -29,6 +22,8 @@ export default function CategoryDetailPage() {
   const [category, setCategory] = useState<CategoryType | null | undefined>(undefined);
   const [toolsInCategory, setToolsInCategory] = useState<AITool[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [animationClass, setAnimationClass] = useState('');
+
 
   useEffect(() => {
     if (categorySlug) {
@@ -38,12 +33,15 @@ export default function CategoryDetailPage() {
       if (currentCategory) {
         const tools = getAiToolsByCategory(categorySlug);
         setToolsInCategory(tools);
+        setAnimationClass('animate-fade-in'); 
+      } else {
+        setAnimationClass('');
       }
       setIsLoading(false);
     }
   }, [categorySlug]);
 
-  if (isLoading || category === undefined) { // Loading state
+  if (isLoading || category === undefined) { 
      return (
       <div className="space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -71,7 +69,7 @@ export default function CategoryDetailPage() {
   const localizedCategoryDescription = t(category.description);
 
   return (
-    <div className="space-y-8">
+    <div className={`space-y-8 ${animationClass}`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
@@ -90,8 +88,10 @@ export default function CategoryDetailPage() {
 
       {toolsInCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {toolsInCategory.map((tool) => (
-            <AICard key={tool.id} aiTool={tool} />
+          {toolsInCategory.map((tool, index) => (
+            <div key={tool.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.07}s`}}>
+              <AICard aiTool={tool} />
+            </div>
           ))}
         </div>
       ) : (
@@ -107,3 +107,5 @@ export default function CategoryDetailPage() {
     </div>
   );
 }
+
+    

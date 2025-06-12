@@ -10,12 +10,11 @@ export const languages = {
 
 export type LanguageCode = keyof typeof languages;
 
-// Defines keys for general UI strings that are not part of dynamic data like AI tools/categories
 export type CoreTranslationKey = 
   // Header
   | 'navHome'
   | 'navCategories'
-  | 'tooltipLanguageSwitcher' // Added new key
+  | 'tooltipLanguageSwitcher'
   // Mascot
   | 'mascotGreeting'
   // Homepage
@@ -25,14 +24,16 @@ export type CoreTranslationKey =
   | 'homeChatButton'
   | 'featuredAITools'
   | 'viewAllButton'
-  // AI Chat Assistant
-  | 'aiChatTitle'
-  | 'aiChatDescription'
-  | 'aiChatPlaceholder'
-  | 'aiChatSend'
-  | 'aiChatConnecting'
-  | 'aiChatError'
-  | 'aiChatErrorResponse'
+  // AI Chat Assistant "Lace"
+  | 'laceChatTitle'
+  | 'laceChatDescription'
+  | 'laceChatPlaceholder'
+  | 'laceChatSend'
+  | 'laceChatConnecting'
+  | 'laceChatError'
+  | 'laceChatErrorResponse'
+  | 'laceChatImageUploadTooltip'
+  | 'laceChatImagePreviewAlt'
   // Categories Page
   | 'categoriesTitle'
   | 'categoriesSubtitle'
@@ -45,8 +46,8 @@ export type CoreTranslationKey =
   | 'backToHomeButton'
   | 'aboutSectionTitle'
   | 'visitWebsiteButton'
-  | 'additionalVisualsTitle' // New key for visual insights section
-  | 'visualDetailAlt' // New key for alt text of detail images
+  | 'additionalVisualsTitle'
+  | 'visualDetailAlt'
   // Generic
   | 'learnMoreButton'
   | 'loadingText';
@@ -65,20 +66,22 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categories',
     tooltipLanguageSwitcher: 'Change language',
-    mascotGreeting: 'Hello! Explore the world of AI with me!',
+    mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?', // Updated for Lace
     homeTitle: 'Unlock the Power of AI',
     homeSubtitle: 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.',
     homeExploreButton: 'Explore AI Categories',
-    homeChatButton: 'Chat with AI Guide',
+    homeChatButton: 'Chat with Lace', // Updated for Lace
     featuredAITools: 'Featured AI Innovations',
     viewAllButton: 'View All AI Tools & Categories',
-    aiChatTitle: 'AI Assistant',
-    aiChatDescription: 'Ask me about WorldAIpedia or general AI topics!',
-    aiChatPlaceholder: 'Type your message...',
-    aiChatSend: 'Send',
-    aiChatConnecting: 'Connecting to assistant...',
-    aiChatError: "Sorry, I couldn't connect right now. Please try again later.",
-    aiChatErrorResponse: "I'm having trouble responding right now. Please try again.",
+    laceChatTitle: 'Chat with Lace', // Updated for Lace
+    laceChatDescription: 'I\'m Lace! Ask me about WorldAIpedia, AI tools, or let\'s just chat.', // Updated for Lace
+    laceChatPlaceholder: 'Type your message or upload an image...',
+    laceChatSend: 'Send',
+    laceChatConnecting: 'Lace is connecting...', // Updated for Lace
+    laceChatError: "Sorry, Lace couldn't connect right now. Please try again later.", // Updated for Lace
+    laceChatErrorResponse: "Lace is having trouble responding. Please try again.", // Updated for Lace
+    laceChatImageUploadTooltip: 'Upload Image',
+    laceChatImagePreviewAlt: 'Selected image preview',
     categoriesTitle: 'Explore AI by Category',
     categoriesSubtitle: 'Find AI tools tailored to your needs, organized into relevant categories for easy browsing.',
     viewToolsButton: 'View Tools',
@@ -97,20 +100,22 @@ export const translations: Translations = {
     navHome: 'Inicio',
     navCategories: 'Categorías',
     tooltipLanguageSwitcher: 'Cambiar idioma',
-    mascotGreeting: '¡Hola! ¡Explora el mundo de la IA conmigo!',
+    mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?', // Updated for Lace
     homeTitle: 'Desbloquea el Poder de la IA',
     homeSubtitle: 'Bienvenido a World AI: tu plataforma definitiva para descubrir herramientas de IA innovadoras. Sumérgete, explora y revoluciona tu mundo.',
     homeExploreButton: 'Explorar Categorías de IA',
-    homeChatButton: 'Chatear con Guía IA',
+    homeChatButton: 'Chatear con Lace', // Updated for Lace
     featuredAITools: 'Innovaciones Destacadas en IA',
     viewAllButton: 'Ver Todas las Herramientas y Categorías de IA',
-    aiChatTitle: 'Asistente IA',
-    aiChatDescription: '¡Pregúntame sobre WorldAIpedia o temas generales de IA!',
-    aiChatPlaceholder: 'Escribe tu mensaje...',
-    aiChatSend: 'Enviar',
-    aiChatConnecting: 'Conectando con el asistente...',
-    aiChatError: 'Lo siento, no pude conectarme en este momento. Por favor, inténtalo de nuevo más tarde.',
-    aiChatErrorResponse: 'Estoy teniendo problemas para responder en este momento. Por favor, inténtalo de nuevo.',
+    laceChatTitle: 'Chatear con Lace', // Updated for Lace
+    laceChatDescription: '¡Soy Lace! Pregúntame sobre WorldAIpedia, herramientas de IA, o simplemente charlemos.', // Updated for Lace
+    laceChatPlaceholder: 'Escribe tu mensaje o sube una imagen...',
+    laceChatSend: 'Enviar',
+    laceChatConnecting: 'Lace se está conectando...', // Updated for Lace
+    laceChatError: 'Lo siento, Lace no pudo conectarse en este momento. Por favor, inténtalo de nuevo más tarde.', // Updated for Lace
+    laceChatErrorResponse: 'Lace está teniendo problemas para responder. Por favor, inténtalo de nuevo.', // Updated for Lace
+    laceChatImageUploadTooltip: 'Subir Imagen',
+    laceChatImagePreviewAlt: 'Vista previa de la imagen seleccionada',
     categoriesTitle: 'Explora la IA por Categoría',
     categoriesSubtitle: 'Encuentra herramientas de IA adaptadas a tus necesidades, organizadas en categorías relevantes para facilitar la navegación.',
     viewToolsButton: 'Ver Herramientas',
@@ -129,20 +134,22 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categorie',
     tooltipLanguageSwitcher: 'Cambia lingua',
-    mascotGreeting: 'Ciao! Esplora il mondo dell\'IA con me!',
+    mascotGreeting: 'Ciao, sono Lace! Pronto a esplorare l\'IA?', // Updated for Lace
     homeTitle: 'Sblocca il Potere dell\'IA',
     homeSubtitle: 'Benvenuto in World AI – la tua piattaforma definitiva per scoprire strumenti IA rivoluzionari. Immergiti, esplora e rivoluziona il tuo mondo.',
     homeExploreButton: 'Esplora Categorie IA',
-    homeChatButton: 'Chatta con la Guida IA',
+    homeChatButton: 'Chatta con Lace', // Updated for Lace
     featuredAITools: 'Innovazioni IA in Evidenza',
     viewAllButton: 'Visualizza Tutti gli Strumenti e le Categorie IA',
-    aiChatTitle: 'Assistente IA',
-    aiChatDescription: 'Chiedimi di WorldAIpedia o argomenti generali sull\'IA!',
-    aiChatPlaceholder: 'Scrivi il tuo messaggio...',
-    aiChatSend: 'Invia',
-    aiChatConnecting: 'Connessione all\'assistente...',
-    aiChatError: "Spiacente, non sono riuscito a connettermi ora. Riprova più tardi.",
-    aiChatErrorResponse: "Sto avendo problemi a rispondere ora. Riprova.",
+    laceChatTitle: 'Chatta con Lace', // Updated for Lace
+    laceChatDescription: 'Sono Lace! Chiedimi di WorldAIpedia, strumenti IA, o semplicemente chattiamo.', // Updated for Lace
+    laceChatPlaceholder: 'Scrivi il tuo messaggio o carica un\'immagine...',
+    laceChatSend: 'Invia',
+    laceChatConnecting: 'Lace si sta connettendo...', // Updated for Lace
+    laceChatError: "Spiacente, Lace non è riuscito a connettersi ora. Riprova più tardi.", // Updated for Lace
+    laceChatErrorResponse: "Lace sta avendo problemi a rispondere ora. Riprova.", // Updated for Lace
+    laceChatImageUploadTooltip: 'Carica Immagine',
+    laceChatImagePreviewAlt: 'Anteprima immagine selezionata',
     categoriesTitle: 'Esplora l\'IA per Categoria',
     categoriesSubtitle: 'Trova strumenti IA su misura per le tue esigenze, organizzati in categorie pertinenti per una facile navigazione.',
     viewToolsButton: 'Vedi Strumenti',
@@ -161,20 +168,22 @@ export const translations: Translations = {
     navHome: '首页',
     navCategories: '类别',
     tooltipLanguageSwitcher: '更改语言',
-    mascotGreeting: '你好！和我一起探索AI的世界吧！',
+    mascotGreeting: '你好，我是Lace！准备好探索AI的世界了吗？', // Updated for Lace
     homeTitle: '解锁人工智能的力量',
     homeSubtitle: '欢迎来到 World AI – 您发现突破性人工智能工具的终极平台。潜入、探索并彻底改变您的世界。',
     homeExploreButton: '探索AI类别',
-    homeChatButton: '与AI指南聊天',
+    homeChatButton: '与Lace聊天', // Updated for Lace
     featuredAITools: '特色AI创新',
     viewAllButton: '查看所有AI工具和类别',
-    aiChatTitle: 'AI助手',
-    aiChatDescription: '问我关于WorldAIpedia或一般AI主题的问题！',
-    aiChatPlaceholder: '输入您的消息...',
-    aiChatSend: '发送',
-    aiChatConnecting: '正在连接到助手...',
-    aiChatError: "抱歉，我现在无法连接。请稍后再试。",
-    aiChatErrorResponse: "我现在无法回应。请再试一次。",
+    laceChatTitle: '与Lace聊天', // Updated for Lace
+    laceChatDescription: '我是Lace！问我关于WorldAIpedia、AI工具的问题，或者我们聊聊天吧。', // Updated for Lace
+    laceChatPlaceholder: '输入您的消息或上传图片...',
+    laceChatSend: '发送',
+    laceChatConnecting: 'Lace正在连接...', // Updated for Lace
+    laceChatError: "抱歉，Lace现在无法连接。请稍后再试。", // Updated for Lace
+    laceChatErrorResponse: "Lace现在无法回应。请再试一次。", // Updated for Lace
+    laceChatImageUploadTooltip: '上传图片',
+    laceChatImagePreviewAlt: '选定图片预览',
     categoriesTitle: '按类别探索AI',
     categoriesSubtitle: '查找根据您的需求量身定制的AI工具，这些工具已组织到相关类别中以便于浏览。',
     viewToolsButton: '查看工具',
@@ -193,20 +202,22 @@ export const translations: Translations = {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
     tooltipLanguageSwitcher: '言語を変更',
-    mascotGreeting: 'こんにちは！私と一緒にAIの世界を探検しましょう！',
+    mascotGreeting: 'こんにちは、Laceです！AIの世界を探検する準備はできましたか？', // Updated for Lace
     homeTitle: 'AIの力を解き放つ',
     homeSubtitle: 'World AIへようこそ – 画期的なAIツールを発見するための究極のランチパッドです。飛び込み、探求し、あなたの世界を革命的に変えましょう。',
     homeExploreButton: 'AIカテゴリーを探す',
-    homeChatButton: 'AIガイドとチャット',
+    homeChatButton: 'Laceとチャット', // Updated for Lace
     featuredAITools: '注目のAIイノベーション',
     viewAllButton: 'すべてのAIツールとカテゴリーを見る',
-    aiChatTitle: 'AIアシスタント',
-    aiChatDescription: 'WorldAIpediaや一般的なAIのトピックについて私に尋ねてください！',
-    aiChatPlaceholder: 'メッセージを入力してください...',
-    aiChatSend: '送信',
-    aiChatConnecting: 'アシスタントに接続しています...',
-    aiChatError: "申し訳ありませんが、現在接続できませんでした。後でもう一度お試しください。",
-    aiChatErrorResponse: "現在、応答に問題が発生しています。もう一度お試しください。",
+    laceChatTitle: 'Laceとチャット', // Updated for Lace
+    laceChatDescription: '私はLaceです！WorldAIpediaやAIツールについて尋ねるか、ただおしゃべりしましょう。', // Updated for Lace
+    laceChatPlaceholder: 'メッセージを入力するか、画像をアップロードしてください...',
+    laceChatSend: '送信',
+    laceChatConnecting: 'Laceが接続しています...', // Updated for Lace
+    laceChatError: "申し訳ありませんが、Laceは現在接続できませんでした。後でもう一度お試しください。", // Updated for Lace
+    laceChatErrorResponse: "Laceは現在、応答に問題が発生しています。もう一度お試しください。", // Updated for Lace
+    laceChatImageUploadTooltip: '画像をアップロード',
+    laceChatImagePreviewAlt: '選択した画像のプレビュー',
     categoriesTitle: 'カテゴリー別にAIを探す',
     categoriesSubtitle: 'ニーズに合わせたAIツールを、関連するカテゴリーに整理して簡単に見つけられます。',
     viewToolsButton: 'ツールを見る',
@@ -225,20 +236,22 @@ export const translations: Translations = {
     navHome: 'Início',
     navCategories: 'Categorias',
     tooltipLanguageSwitcher: 'Mudar idioma',
-    mascotGreeting: 'Olá! Explore o mundo da IA comigo!',
+    mascotGreeting: 'Olá, sou Lace! Pronto para explorar a IA?', // Updated for Lace
     homeTitle: 'Desbloqueie o Poder da IA',
     homeSubtitle: 'Bem-vindo à World AI – sua plataforma definitiva para descobrir ferramentas de IA inovadoras. Mergulhe, explore e revolucione seu mundo.',
     homeExploreButton: 'Explorar Categorias de IA',
-    homeChatButton: 'Conversar com o Guia de IA',
+    homeChatButton: 'Conversar com Lace', // Updated for Lace
     featuredAITools: 'Inovações em IA em Destaque',
     viewAllButton: 'Ver Todas as Ferramentas e Categorias de IA',
-    aiChatTitle: 'Assistente de IA',
-    aiChatDescription: 'Pergunte-me sobre a WorldAIpedia ou tópicos gerais de IA!',
-    aiChatPlaceholder: 'Digite sua mensagem...',
-    aiChatSend: 'Enviar',
-    aiChatConnecting: 'Conectando ao assistente...',
-    aiChatError: "Desculpe, não consegui conectar agora. Por favor, tente novamente mais tarde.",
-    aiChatErrorResponse: "Estou com problemas para responder agora. Por favor, tente novamente.",
+    laceChatTitle: 'Conversar com Lace', // Updated for Lace
+    laceChatDescription: 'Sou Lace! Pergunte-me sobre a WorldAIpedia, ferramentas de IA, ou vamos apenas conversar.', // Updated for Lace
+    laceChatPlaceholder: 'Digite sua mensagem ou carregue uma imagem...',
+    laceChatSend: 'Enviar',
+    laceChatConnecting: 'Lace está conectando...', // Updated for Lace
+    laceChatError: "Desculpe, Lace não pôde conectar agora. Por favor, tente novamente mais tarde.", // Updated for Lace
+    laceChatErrorResponse: "Lace está com problemas para responder agora. Por favor, tente novamente.", // Updated for Lace
+    laceChatImageUploadTooltip: 'Carregar Imagem',
+    laceChatImagePreviewAlt: 'Pré-visualização da imagem selecionada',
     categoriesTitle: 'Explore IA por Categoria',
     categoriesSubtitle: 'Encontre ferramentas de IA adaptadas às suas necessidades, organizadas em categorias relevantes para fácil navegação.',
     viewToolsButton: 'Ver Ferramentas',
@@ -254,3 +267,5 @@ export const translations: Translations = {
     loadingText: 'Carregando...'
   },
 };
+
+    

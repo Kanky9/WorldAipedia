@@ -34,7 +34,6 @@ export default function HomePage() {
   useEffect(() => {
     setMounted(true);
 
-    // Generate particle data on the client after mount
     const generatedParticles = Array.from({ length: 15 }).map((_, i) => ({
       key: i,
       style: {
@@ -50,10 +49,8 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-8"> {/* Reduced overall page spacing */}
-      {/* Hero Section */}
-      <section className="relative py-2 md:py-4 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Further reduced padding py-6 md:py-10 to py-2 md:py-4 */}
-        {/* Animated Particle Background */}
+    <div className="space-y-8">
+      <section className="relative py-2 md:py-4 text-center rounded-xl overflow-hidden shadow-2xl animate-hero-background-gradient">
         {mounted && particles.length > 0 && (
           <div className="hero-particles">
             {particles.map((particle) => (
@@ -67,39 +64,38 @@ export default function HomePage() {
         )}
         
         <div className="relative z-10 p-4 container mx-auto">
-          <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-primary mx-auto mb-1 md:mb-2 animate-pulse drop-shadow-lg" /> {/* Reduced icon size and margin */}
+          <Sparkles className="h-8 w-8 md:h-10 md:w-10 text-primary mx-auto mb-1 md:mb-2 animate-pulse drop-shadow-lg" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-2 md:mb-3 leading-tight 
                          bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
-                         bg-clip-text text-transparent animate-gradient-flow-fast"> {/* Reduced font size and margin */}
+                         bg-clip-text text-transparent animate-gradient-flow-fast">
             {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-3 md:mb-4 max-w-md md:max-w-xl mx-auto leading-relaxed"> {/* Reduced font size and margin */}
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-3 md:mb-4 max-w-md md:max-w-xl mx-auto leading-relaxed">
             {t('homeSubtitle', 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.')}
           </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 md:gap-3"> {/* Reduced gap */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-2 md:gap-3">
             <Button 
               asChild 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group animate-pulse-glow" /* Reduced padding, size and font size */
+              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group animate-pulse-glow"
             >
               <Link href="/categories">
                 {t('homeExploreButton', 'Explore AI Categories')}
-                <ArrowRight className="ml-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}
+                <ArrowRight className="ml-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
             <Button 
               variant="outline" 
               onClick={() => setIsChatOpen(true)} 
-              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group" /* Reduced padding, size and font size */
+              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out text-xs px-4 py-2 sm:text-sm sm:px-5 sm:py-2.5 rounded-lg group"
             >
-              <MessageCircle className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:rotate-[15deg]" /> {/* Reduced icon size */}
-              {t('homeChatButton', 'Chat with AI Guide')}
+              <MessageCircle className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:rotate-[15deg]" />
+              {t('homeChatButton', 'Chat with Lace')}
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Featured AI Tools Section */}
-      <section className="container mx-auto">
+      <section className="container mx-auto animate-fadeInUp">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredAITools', 'Featured AI Innovations')}</h2>
         {aiTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
@@ -112,8 +108,7 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* View All Button Section */}
-       <section className="text-center py-6 md:py-8">
+       <section className="text-center py-6 md:py-8 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
          <Button asChild variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary/80 text-sm px-4 py-2 sm:text-base sm:px-6 sm:py-2.5 md:px-8 md:py-3 rounded-lg group">
            <Link href="/categories">
             {t('viewAllButton', 'View All AI Tools & Categories')}
@@ -127,3 +122,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+    

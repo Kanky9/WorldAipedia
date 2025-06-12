@@ -1,5 +1,5 @@
 
-"use client"; // For useLanguage hook
+"use client"; 
 
 import Link from 'next/link';
 import { categories } from '@/data/ai-tools';
@@ -7,12 +7,18 @@ import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useEffect, useState } from 'react';
 
 export default function CategoriesPage() {
   const { t } = useLanguage();
+  const [animationClass, setAnimationClass] = useState('');
+
+  useEffect(() => {
+    setAnimationClass('animate-fade-in');
+  }, []);
 
   return (
-    <div className="space-y-8">
+    <div className={`space-y-8 ${animationClass}`}>
       <section className="text-center">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore AI by Category')}</h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
@@ -22,15 +28,17 @@ export default function CategoriesPage() {
       
       {categories.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category) => {
+          {categories.map((category, index) => {
             const localizedCategoryName = t(category.name);
             const localizedCategoryDescription = t(category.description);
-            // The category name used for CategoryIcon should be the original English key if icon mapping depends on it.
             const iconKeyCategoryName = typeof category.name === 'string' ? category.name : category.name.en!;
 
             return (
               <Link href={`/categories/${category.slug}`} key={category.slug} className="block group">
-                <Card className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl">
+                <Card 
+                  className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl animate-fadeInUp"
+                  style={{animationDelay: `${index * 0.05}s`}}
+                >
                   <CardHeader>
                     <div className="flex items-center gap-3 mb-2">
                       <CategoryIcon categoryName={iconKeyCategoryName} className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
@@ -56,3 +64,5 @@ export default function CategoriesPage() {
     </div>
   );
 }
+
+    
