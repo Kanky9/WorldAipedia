@@ -3,48 +3,112 @@
 
 import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
+import { useChat } from '@/contexts/ChatContext'; // Import useChat
+import type { CoreTranslationKey } from '@/lib/translations';
+
 
 const Mascot = () => {
-  const { t } = useLanguage();
-  const [greeting, setGreeting] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-  const [showBubble, setShowBubble] = useState(true);
+  const { t, language } = useLanguage();
+  const { isChatOpen } = useChat(); // Get chat state
 
+  const [initialGreeting, setInitialGreeting] = useState('');
+  const [isMascotVisible, setIsMascotVisible] = useState(false);
+  const [showDefaultBubble, setShowDefaultBubble] = useState(true);
+
+  // New state for chat-specific bubbles
+  const chatBubbleMessagesKeys: CoreTranslationKey[] = ['mascotChatGreeting1', 'mascotChatGreeting2'];
+  const [currentChatBubbleIndex, setCurrentChatBubbleIndex] = useState(-1); // -1 means sequence is not active
+  const [currentChatBubbleText, setCurrentChatBubbleText] = useState('');
+
+
+  // Effect for initial mascot visibility and default greeting
   useEffect(() => {
-    setGreeting(t('mascotGreeting'));
-    setShowBubble(true); // Re-show bubble with new greeting or on language change
+    setInitialGreeting(t('mascotGreeting'));
+    // setShowDefaultBubble(true); // Default bubble shows initially, managed by its own state
 
     const visibilityTimer = setTimeout(() => {
-      setIsVisible(true);
+      setIsMascotVisible(true);
     }, 700);
 
     return () => {
       clearTimeout(visibilityTimer);
     };
-  }, [t]); // t changes when language changes, triggering this effect
+  }, [t]); // t changes when language changes, re-fetch default greeting
+
+  // Effect for handling chat-specific bubble sequence
+  useEffect(() => {
+    let bubbleTimer: NodeJS.Timeout;
+
+    if (isChatOpen) {
+      setIsMascotVisible(true); // Ensure mascot is visible when chat opens
+      setShowDefaultBubble(false); // Hide default bubble when chat is open
+
+      if (currentChatBubbleIndex === -1) { // Chat just opened, or sequence reset, start sequence
+        setCurrentChatBubbleIndex(0);
+      } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
+        setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
+        bubbleTimer = setTimeout(() => {
+          setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
+        }, 3000);
+      } else {
+        // Sequence finished, chat is still open, hide chat bubble text
+        setCurrentChatBubbleText('');
+      }
+    } else {
+      // Chat closed, reset chat bubble sequence
+      setCurrentChatBubbleIndex(-1);
+      setCurrentChatBubbleText('');
+      // Default bubble visibility is handled by showDefaultBubble state now
+    }
+
+    return () => clearTimeout(bubbleTimer);
+  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]);
+
 
   const handleMascotClick = () => {
-    setShowBubble(prev => !prev);
+    // Clicking the mascot only toggles the default bubble if chat is NOT open
+    // and the chat-specific sequence is not active.
+    // Or, more simply, let it always toggle showDefaultBubble.
+    // The rendering logic will decide what to show.
+    if (!isChatOpen) {
+      setShowDefaultBubble(prev => !prev);
+    }
   };
 
-  if (!isVisible) return null;
+  if (!isMascotVisible) return null;
+
+  // Determine what to display in the bubble
+  let bubbleContent = '';
+  let shouldShowSpeechBubble = false;
+
+  if (isChatOpen && currentChatBubbleIndex >= 0 && currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
+    // Chat is open and chat-specific sequence is active
+    bubbleContent = currentChatBubbleText;
+    shouldShowSpeechBubble = !!currentChatBubbleText; // Only show if there's text (handles end of sequence)
+  } else if (!isChatOpen && showDefaultBubble) {
+    // Chat is closed, and default bubble is allowed to show
+    bubbleContent = initialGreeting;
+    shouldShowSpeechBubble = true;
+  }
 
   return (
     <div 
       className="fixed bottom-5 right-5 z-50 flex flex-col items-center group"
-      style={{ animation: isVisible ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none' }}
+      style={{ animation: isMascotVisible ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none' }}
     >
       {/* Speech Bubble */}
-      <div 
-        className={`relative mb-2 ${showBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'}`}
-        style={{ pointerEvents: showBubble ? 'auto' : 'none' }}
-      >
-        <div className="bg-card text-card-foreground p-3 rounded-lg shadow-xl text-sm max-w-[180px] text-center border border-border">
-          {greeting}
+      {shouldShowSpeechBubble && (
+        <div 
+          className={`relative mb-2 ${shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'}`}
+          style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
+        >
+          <div className="bg-card text-card-foreground p-3 rounded-lg shadow-xl text-sm max-w-[180px] text-center border border-border">
+            {bubbleContent}
+          </div>
+          {/* Speech bubble tail */}
+          <div className="absolute left-1/2 bottom-[-7px] transform -translate-x-1/2 w-3.5 h-3.5 bg-card rotate-45 shadow-sm border-b border-r border-border"></div>
         </div>
-        {/* Speech bubble tail */}
-        <div className="absolute left-1/2 bottom-[-7px] transform -translate-x-1/2 w-3.5 h-3.5 bg-card rotate-45 shadow-sm border-b border-r border-border"></div>
-      </div>
+      )}
       
       {/* New Robot Mascot SVG */}
       <svg
@@ -170,5 +234,3 @@ const Mascot = () => {
 };
 
 export default Mascot;
-
-    
