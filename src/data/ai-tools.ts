@@ -121,7 +121,7 @@ export const aiTools: AITool[] = [
     imageHint: 'AI conversation chat interface',
     logoUrl: 'https://placehold.co/50x50.png',
     logoHint: 'OpenAI logo symbol',
-    category: 'Information', 
+    category: 'Information',
     categorySlug: 'information',
     link: 'https://openai.com/chatgpt',
     detailImageUrl1: 'https://placehold.co/400x300.png',
@@ -473,7 +473,6 @@ export const aiTools: AITool[] = [
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'video timeline effects'
   },
-  // --- NEW AI TOOLS ---
   {
     id: 'insightfinder',
     title: LS('InsightFinder', 'BuscadorDeIdeas'),
@@ -565,6 +564,100 @@ export const aiTools: AITool[] = [
     detailImageHint1: 'narrative flowchart tool',
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'game dialogue editor'
+  },
+  // --- NEW AI TOOLS (Added previously) ---
+  // --- Adding 4 more new AI tools as requested ---
+  {
+    id: 'artisan-canvas',
+    title: LS('Artisan Canvas', 'Lienzo Artesano'),
+    shortDescription: LS(
+      'AI for generating unique textures, patterns, and artistic backgrounds for digital design.',
+      'IA para generar texturas, patrones y fondos artísticos únicos para diseño digital.'
+    ),
+    longDescription: LS(
+      'Artisan Canvas empowers digital artists and designers by providing an AI-driven platform to create bespoke textures and intricate patterns. Users can guide the AI with style prompts, color palettes, or even by uploading reference images. The tool then generates seamless, high-resolution materials suitable for 3D rendering, graphic design, game development, and web backgrounds. It features controls for adjusting complexity, randomness, and an "evolution" feature to iterate on generated designs, pushing creative boundaries.',
+      'Artisan Canvas empodera a artistas digitales y diseñadores proporcionando una plataforma impulsada por IA para crear texturas a medida y patrones intrincados. Los usuarios pueden guiar la IA con prompts de estilo, paletas de colores o incluso subiendo imágenes de referencia. La herramienta luego genera materiales sin costuras y de alta resolución adecuados para renderizado 3D, diseño gráfico, desarrollo de juegos y fondos web. Cuenta con controles para ajustar la complejidad, la aleatoriedad y una función de "evolución" para iterar sobre los diseños generados, superando los límites creativos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'abstract texture generation',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'paintbrush palette icon',
+    category: 'Design',
+    categorySlug: 'design',
+    link: '#artisan-canvas',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'texture detail showcase',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'pattern design options'
+  },
+  {
+    id: 'lingo-link',
+    title: LS('LingoLink', 'LingoEnlace'),
+    shortDescription: LS(
+      'Advanced AI for translating complex documents and cross-referencing information across languages.',
+      'IA avanzada para traducir documentos complejos y cruzar información entre idiomas.'
+    ),
+    longDescription: LS(
+      'LingoLink goes beyond simple text translation. It is designed for professionals and researchers working with dense, technical, or extensive multilingual documentation. The AI not only translates accurately, preserving context and nuance, but also identifies and links related concepts, definitions, and citations across different language versions of documents. This facilitates deeper understanding and comparative analysis of information, making it invaluable for legal, academic, and international business contexts. It supports version control for translations and collaborative annotation.',
+      'LingoLink va más allá de la simple traducción de texto. Está diseñado para profesionales e investigadores que trabajan con documentación multilingüe densa, técnica o extensa. La IA no solo traduce con precisión, preservando el contexto y los matices, sino que también identifica y enlaza conceptos relacionados, definiciones y citas entre diferentes versiones lingüísticas de los documentos. Esto facilita una comprensión más profunda y un análisis comparativo de la información, haciéndolo invaluable para contextos legales, académicos y de negocios internacionales. Admite control de versiones para traducciones y anotación colaborativa.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'document translation network',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'connected globe icon',
+    category: 'Information',
+    categorySlug: 'information',
+    link: '#lingo-link',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'multilingual document view',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'concept linking interface'
+  },
+  {
+    id: 'audiosculpt',
+    title: LS('AudioSculpt', 'AudioEsculpir'),
+    shortDescription: LS(
+      'AI-powered sound effect generation and ambient music creation for immersive experiences.',
+      'Generación de efectos de sonido y creación de música ambiental impulsada por IA para experiencias inmersivas.'
+    ),
+    longDescription: LS(
+      'AudioSculpt allows game developers, filmmakers, and content creators to generate unique sound effects and adaptive ambient music. Users can describe the desired sound (e.g., "footsteps on gravel," "futuristic spaceship hum") or mood for music (e.g., "tense and mysterious," "calm and uplifting"), and the AI synthesizes audio accordingly. It offers parameters to fine-tune the generated sounds, such as duration, intensity, and variation. The music generation can adapt to in-game events or video pacing, creating truly dynamic soundscapes.',
+      'AudioSculpt permite a desarrolladores de juegos, cineastas y creadores de contenido generar efectos de sonido únicos y música ambiental adaptativa. Los usuarios pueden describir el sonido deseado (p. ej., "pasos sobre grava", "zumbido de nave espacial futurista") o el ambiente para la música (p. ej., "tenso y misterioso", "calmado y edificante"), y la IA sintetiza el audio en consecuencia. Ofrece parámetros para ajustar los sonidos generados, como duración, intensidad y variación. La generación de música puede adaptarse a eventos del juego o al ritmo del video, creando paisajes sonoros verdaderamente dinámicos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'sound waveform design',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'sound wave icon',
+    category: 'Audio',
+    categorySlug: 'audio',
+    link: '#audiosculpt',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'sound effect editor',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'ambient music generator'
+  },
+  {
+    id: 'devoptimizer',
+    title: LS('DevOptimizer', 'OptimizadorDev'),
+    shortDescription: LS(
+      'AI analyzes code for performance bottlenecks and suggests cloud deployment optimizations.',
+      'IA analiza código en busca de cuellos de botella de rendimiento y sugiere optimizaciones de implementación en la nube.'
+    ),
+    longDescription: LS(
+      'DevOptimizer is a tool for software engineers and DevOps teams focused on maximizing application performance and efficiency. It integrates with code repositories and CI/CD pipelines to perform deep static and dynamic analysis, identifying performance bottlenecks, memory leaks, and inefficient algorithms. Furthermore, it provides tailored recommendations for optimizing cloud resource allocation (e.g., instance types, scaling policies) based on the application\'s profile, potentially leading to significant cost savings and improved user experience. It supports various programming languages and cloud providers.',
+      'DevOptimizer es una herramienta para ingenieros de software y equipos de DevOps enfocada en maximizar el rendimiento y la eficiencia de las aplicaciones. Se integra con repositorios de código y pipelines de CI/CD para realizar análisis estáticos y dinámicos profundos, identificando cuellos de botella de rendimiento, fugas de memoria y algoritmos ineficientes. Además, proporciona recomendaciones personalizadas para optimizar la asignación de recursos en la nube (p. ej., tipos de instancia, políticas de escalado) basadas en el perfil de la aplicación, lo que podría generar ahorros de costos significativos y una mejor experiencia de usuario. Admite varios lenguajes de programación y proveedores de nube.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'performance graph code',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'rocket gear icon',
+    category: 'Programming',
+    categorySlug: 'programming',
+    link: '#devoptimizer',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'code profiler dashboard',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'cloud cost optimization'
   }
 ];
 
@@ -598,3 +691,4 @@ export const getCategoryByName = (nameEN: string): Category | undefined => {
     return catName === nameEN;
   });
 };
+
