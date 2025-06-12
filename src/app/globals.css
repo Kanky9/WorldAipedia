@@ -31,9 +31,9 @@ body {
     --ring: 25 100% 55%; /* Primary Orange for ring */
     --chart-1: 25 90% 55%;
     --chart-2: 30 90% 55%; /* Orange Accent for charts */
-    --chart-3: 150 60% 45%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 50 75% 55%;
+    --chart-3: 38 100% 50%;  /* Yellow-Orange */
+    --chart-4: 12 100% 50%;   /* Orange-Red */
+    --chart-5: 200 80% 60%; /* A contrasting blue for variety if needed */
     --radius: 0.75rem; /* Slightly larger radius for modern feel */
   }
   .dark {
@@ -50,7 +50,7 @@ body {
     --secondary-foreground: 0 0% 80%; /* Lighter Grey text on secondary */
     --muted: 220 10% 20%; /* Dark Muted Grey */
     --muted-foreground: 0 0% 65%; /* Lighter muted text */
-    --accent: 30 100% 50%; /* Vibrant Orange Accent (was Pink/Magenta) */
+    --accent: 30 100% 50%; /* Vibrant Orange Accent */
     --accent-foreground: 0 0% 100%; /* White text on Accent */
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -58,7 +58,7 @@ body {
     --input: 220 10% 16%; /* Dark Input Background */
     --ring: 25 100% 55%; /* Orange for ring, matching primary */
     --chart-1: 25 90% 55%; /* Orange for charts */
-    --chart-2: 30 90% 55%; /* Orange Accent for charts (was Pink) */
+    --chart-2: 30 90% 55%; /* Orange Accent for charts */
     --chart-3: 38 100% 50%;  /* Yellow-Orange */
     --chart-4: 12 100% 50%;   /* Orange-Red */
     --chart-5: 200 80% 60%; /* A contrasting blue for variety if needed */
@@ -140,4 +140,20 @@ body {
 .animate-gradient-flow-fast {
   background-size: 300% 300%;
   animation: gradient-flow-fast 8s ease infinite;
+}
+
+/* Balloon/Scale-up fade-in animation for AI detail page */
+@keyframes scaleUpFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-scale-up-fade-in {
+  animation: scaleUpFadeIn 0.5s ease-out forwards;
 }

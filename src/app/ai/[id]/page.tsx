@@ -1,9 +1,9 @@
 
-"use client"; // Needs to be client for useLanguage hook
+"use client"; 
 
 import Image from 'next/image';
-import { notFound, useParams } from 'next/navigation'; // useParams for client component
-import { getAiToolById, aiTools, getCategoryByName } from '@/data/ai-tools';
+import { notFound, useParams } from 'next/navigation'; 
+import { getAiToolById, getCategoryByName } from '@/data/ai-tools';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Badge } from '@/components/ui/badge';
@@ -16,32 +16,31 @@ import { useEffect, useState } from 'react';
 import type { AITool } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 
-
-// Remove generateStaticParams if page is client rendered based on dynamic param
-// export async function generateStaticParams() {
-//   return aiTools.map((tool) => ({
-//     id: tool.id,
-//   }));
-// }
-
 export default function AIPage() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
   const { t } = useLanguage();
-  const [aiTool, setAiTool] = useState<AITool | null | undefined>(undefined); // undefined for loading state
+  const [aiTool, setAiTool] = useState<AITool | null | undefined>(undefined); 
+  const [pageAnimationClass, setPageAnimationClass] = useState('');
 
   useEffect(() => {
     if (id) {
       const tool = getAiToolById(id);
       setAiTool(tool);
+      if (tool) {
+        // Apply animation class once data is loaded
+        setPageAnimationClass('animate-scale-up-fade-in');
+      } else {
+        setPageAnimationClass(''); // Reset if tool not found or during loading
+      }
     }
   }, [id]);
 
-  if (aiTool === undefined) { // Loading state
+  if (aiTool === undefined) { 
     return (
       <div className="space-y-8">
         <Skeleton className="h-10 w-32 mb-6" />
-        <Card className="overflow-hidden shadow-lg">
+        <Card className="overflow-hidden shadow-lg rounded-xl">
           <CardHeader className="p-0">
             <Skeleton className="relative w-full h-72 md:h-96" />
           </CardHeader>
@@ -70,7 +69,7 @@ export default function AIPage() {
   const localizedToolTitle = t(aiTool.title);
 
   return (
-    <div className="space-y-8">
+    <div className={`space-y-8 ${pageAnimationClass}`}>
       <Button variant="outline" asChild className="mb-6">
         <Link href="/" className="flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
@@ -89,6 +88,7 @@ export default function AIPage() {
               priority
               data-ai-hint={aiTool.imageHint || "technology banner"}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+              className="rounded-t-xl"
             />
           </div>
         </CardHeader>
