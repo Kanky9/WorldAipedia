@@ -554,7 +554,7 @@ export const aiTools: AITool[] = [
     ),
     longDescription: LS(
       'DevMate AI integrates into your software development lifecycle, particularly within CI/CD pipelines, to automate critical aspects of quality assurance. It intelligently generates comprehensive test cases based on your codebase and specifications, identifies potential bugs and security vulnerabilities with high accuracy, and offers suggestions for fixes and code optimizations. DevMate learns from your project\'s coding patterns and historical bug data to provide context-aware testing solutions, significantly reducing manual QA effort and helping teams deliver more robust and reliable software faster. It provides detailed reports and integrates with popular issue trackers.',
-      'DevMate AI se integra en tu ciclo de vida de desarrollo de software, particularmente dentro de los pipelines de CI/CD, para automatizar aspectos críticos del aseguramiento de la calidad. Genera inteligentemente casos de prueba exhaustivos basados en tu base de código y especificaciones, identifica posibles errores y vulnerabilidades de seguridad con alta precisión, y ofrece sugerencias para correcciones y optimizaciones de código. DevMate aprende de los patrones de codificación de tu proyecto y de los datos históricos de errores para proporcionar soluciones de prueba conscientes del contexto, reduciendo significativamente el esfuerzo manual de QA y ayudando a los equipos a entregar software más robusto y confiable más rápido. Proporciona informes detallados y se integra con los populares rastreadores de problemas.'
+      'DevMate AI se integra en tu ciclo de vida de desarrollo de software, particularly dentro de los pipelines de CI/CD, para automatizar aspectos críticos del aseguramiento de la calidad. Genera inteligentemente casos de prueba exhaustivos basados en tu base de código y especificaciones, identifica posibles errores y vulnerabilidades de seguridad con alta precisión, y ofrece sugerencias para correcciones y optimizaciones de código. DevMate aprende de los patrones de codificación de tu proyecto y de los datos históricos de errores para proporcionar soluciones de prueba conscientes del contexto, reduciendo significativamente el esfuerzo manual de QA y ayudando a los equipos a entregar software más robusto y confiable más rápido. Proporciona informes detallados y se integra con los populares rastreadores de problemas.'
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'code bug analysis',
@@ -774,6 +774,144 @@ export const aiTools: AITool[] = [
     detailImageHint1: 'math problem explanation',
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'interactive learning chat'
+  },
+  {
+    id: 'scholarai',
+    title: LS('ScholarAI', 'IA Académico'),
+    shortDescription: LS(
+      'AI for academic research, summarizing papers, and finding citations.',
+      'IA para investigación académica, resumen de artículos y búsqueda de citas.'
+    ),
+    longDescription: LS(
+      'ScholarAI assists researchers and students by quickly summarizing academic papers, extracting key findings, and identifying relevant citations. It can help navigate complex scientific literature, track research trends, and build bibliographies more efficiently. Its natural language processing capabilities allow it to understand the context of research papers and provide concise, accurate summaries.',
+      'ScholarAI asiste a investigadores y estudiantes resumiendo rápidamente artículos académicos, extrayendo hallazgos clave e identificando citas relevantes. Puede ayudar a navegar por literatura científica compleja, rastrear tendencias de investigación y construir bibliografías de manera más eficiente. Sus capacidades de procesamiento de lenguaje natural le permiten comprender el contexto de los artículos de investigación y proporcionar resúmenes concisos y precisos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'academic research papers',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'graduation cap book',
+    category: 'Information',
+    categorySlug: 'information',
+    link: '#scholarai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'paper summary interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'citation network graph'
+  },
+  {
+    id: 'designspark-ai',
+    title: LS('DesignSpark AI', 'IA ChispaDeDiseño'),
+    shortDescription: LS(
+      'AI for generating mood boards, color palettes, and design inspiration from text or images.',
+      'IA para generar mood boards, paletas de colores e inspiración de diseño a partir de texto o imágenes.'
+    ),
+    longDescription: LS(
+      'DesignSpark AI helps designers overcome creative blocks by generating mood boards, color palettes, and visual inspiration based on text prompts or uploaded images. It analyzes stylistic elements and suggests complementary design assets, helping to kickstart the creative process for branding, web design, or artistic projects. Users can refine suggestions and explore various aesthetic directions.',
+      'DesignSpark AI ayuda a los diseñadores a superar bloqueos creativos generando mood boards, paletas de colores e inspiración visual basados en prompts de texto o imágenes cargadas. Analiza elementos estilísticos y sugiere activos de diseño complementarios, ayudando a iniciar el proceso creativo para branding, diseño web o proyectos artísticos. Los usuarios pueden refinar sugerencias y explorar diversas direcciones estéticas.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'mood board color palette',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'spark palette icon',
+    category: 'Design',
+    categorySlug: 'design',
+    link: '#designspark-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'color palette generator',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'mood board creation tool'
+  },
+  {
+    id: 'codeguardian-ai',
+    title: LS('CodeGuardian AI', 'IA GuardiánDeCódigo'),
+    shortDescription: LS(
+      'AI for static code analysis, security vulnerability detection, and coding best practices.',
+      'IA para análisis estático de código, detección de vulnerabilidades de seguridad y mejores prácticas de codificación.'
+    ),
+    longDescription: LS(
+      'CodeGuardian AI integrates with development workflows to automatically scan code for potential security vulnerabilities, bugs, and deviations from coding best practices. It provides actionable feedback and suggestions for remediation, helping developers write more secure and maintainable code. It supports multiple languages and can be integrated into CI/CD pipelines.',
+      'CodeGuardian AI se integra con los flujos de trabajo de desarrollo para escanear automáticamente el código en busca de posibles vulnerabilidades de seguridad, errores y desviaciones de las mejores prácticas de codificación. Proporciona retroalimentación procesable y sugerencias para la remediación, ayudando a los desarrolladores a escribir código más seguro y mantenible. Admite múltiples lenguajes y puede integrarse en pipelines de CI/CD.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'code security shield',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'shield code brackets',
+    category: 'Programming',
+    categorySlug: 'programming',
+    link: '#codeguardian-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'vulnerability report dashboard',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'code analysis tool'
+  },
+  {
+    id: 'videotune-ai',
+    title: LS('VideoTune AI', 'IA VideoAfinador'),
+    shortDescription: LS(
+      'AI for automatic video color correction, audio enhancement, and scene stabilization.',
+      'IA para corrección automática de color en video, mejora de audio y estabilización de escenas.'
+    ),
+    longDescription: LS(
+      'VideoTune AI simplifies video post-production by automatically analyzing footage and applying color correction, enhancing audio quality (noise reduction, equalization), and stabilizing shaky scenes. It helps creators achieve a more professional look and sound for their videos with minimal manual effort, making it ideal for vlogs, social media content, and quick video projects.',
+      'VideoTune AI simplifica la postproducción de video analizando automáticamente el metraje y aplicando corrección de color, mejorando la calidad del audio (reducción de ruido, ecualización) y estabilizando escenas movidas. Ayuda a los creadores a lograr un aspecto y sonido más profesional para sus videos con un mínimo esfuerzo manual, lo que lo hace ideal para vlogs, contenido de redes sociales y proyectos de video rápidos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'video editing color grade',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'video play slider',
+    category: 'Videos',
+    categorySlug: 'videos',
+    link: '#videotune-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'color correction interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'audio enhancement waveform'
+  },
+  {
+    id: 'audiocraft-ai',
+    title: LS('AudioCraft AI', 'IA AudioCrear'),
+    shortDescription: LS(
+      'AI for generating music, sound effects, and ambient soundscapes from text prompts.',
+      'IA para generar música, efectos de sonido y paisajes sonoros ambientales a partir de prompts de texto.'
+    ),
+    longDescription: LS(
+      'AudioCraft AI allows users to create original music tracks, sound effects, and ambient soundscapes by simply describing what they want in text. It can generate audio in various genres and styles, offering parameters to control mood, tempo, and instrumentation. This tool is valuable for game developers, filmmakers, and content creators needing custom audio without extensive music production skills.',
+      'AudioCraft AI permite a los usuarios crear pistas de música originales, efectos de sonido y paisajes sonoros ambientales simplemente describiendo lo que quieren en texto. Puede generar audio en diversos géneros y estilos, ofreciendo parámetros para controlar el estado de ánimo, el tempo y la instrumentación. Esta herramienta es valiosa para desarrolladores de juegos, cineastas y creadores de contenido que necesitan audio personalizado sin amplias habilidades de producción musical.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'music composition AI',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'music note sound wave',
+    category: 'Audio',
+    categorySlug: 'audio',
+    link: '#audiocraft-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'music generation interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'sound effect library'
+  },
+  {
+    id: 'edugamemaker-ai',
+    title: LS('EduGameMaker AI', 'IA CreaJuegosEdu'),
+    shortDescription: LS(
+      'AI to assist educators in creating engaging educational games and interactive quizzes.',
+      'IA para asistir a educadores en la creación de juegos educativos atractivos y quizzes interactivos.'
+    ),
+    longDescription: LS(
+      'EduGameMaker AI empowers educators to design and develop simple educational games and interactive quizzes without needing coding skills. Users can define learning objectives, topics, and question types, and the AI helps generate game mechanics, character interactions, and quiz content. It aims to make learning more fun and effective by incorporating gamification principles into educational materials.',
+      'EduGameMaker AI empodera a los educadores para diseñar y desarrollar juegos educativos simples y quizzes interactivos sin necesidad de habilidades de codificación. Los usuarios pueden definir objetivos de aprendizaje, temas y tipos de preguntas, y la IA ayuda a generar mecánicas de juego, interacciones de personajes y contenido de quizzes. Su objetivo es hacer el aprendizaje más divertido y efectivo incorporando principios de gamificación en los materiales educativos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'educational game interface',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'graduation cap joystick',
+    category: 'Education',
+    categorySlug: 'education',
+    link: '#edugamemaker-ai',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'quiz creation tool',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'interactive game map'
   }
 ];
 
@@ -807,4 +945,5 @@ export const getCategoryByName = (nameEN: string): Category | undefined => {
     return catName === nameEN;
   });
 };
+
 

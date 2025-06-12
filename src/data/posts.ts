@@ -509,6 +509,162 @@ export const posts: Post[] = [
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'interactive learning chat interface',
     comments: []
+  },
+  {
+    id: 'scholarai-post',
+    title: LS('ScholarAI: Your Academic Research Partner', 'IA Académico: Tu Compañero de Investigación Académica'),
+    shortDescription: LS(
+      'Leverage AI for summarizing academic papers, finding citations, and accelerating research.',
+      'Aprovecha la IA para resumir artículos académicos, encontrar citas y acelerar la investigación.'
+    ),
+    longDescription: LS(
+      'ScholarAI assists researchers and students by quickly summarizing academic papers, extracting key findings, and identifying relevant citations. It can help navigate complex scientific literature, track research trends, and build bibliographies more efficiently. Its natural language processing capabilities allow it to understand the context of research papers and provide concise, accurate summaries. This post details how ScholarAI can streamline your academic workflow.',
+      'ScholarAI asiste a investigadores y estudiantes resumiendo rápidamente artículos académicos, extrayendo hallazgos clave e identificando citas relevantes. Puede ayudar a navegar por literatura científica compleja, rastrear tendencias de investigación y construir bibliografías de manera más eficiente. Sus capacidades de procesamiento de lenguaje natural le permiten comprender el contexto de los artículos de investigación y proporcionar resúmenes concisos y precisos. Este post detalla cómo ScholarAI puede optimizar tu flujo de trabajo académico.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'academic research analysis',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'scholar cap book',
+    category: 'Information',
+    categorySlug: 'information',
+    tags: ['Research', 'Academia', 'NLP', 'Citation Management'],
+    publishedDate: subHours(new Date(), 6), // New post
+    link: '#scholarai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'paper summary UI',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'research data visualization',
+    comments: []
+  },
+  {
+    id: 'designspark-ai-post',
+    title: LS('Unleash Creativity with DesignSpark AI', 'Desata la Creatividad con IA ChispaDeDiseño'),
+    shortDescription: LS(
+      'Generate mood boards, color palettes, and design inspiration effortlessly with AI.',
+      'Genera mood boards, paletas de colores e inspiración de diseño sin esfuerzo con IA.'
+    ),
+    longDescription: LS(
+      'DesignSpark AI helps designers overcome creative blocks by generating mood boards, color palettes, and visual inspiration based on text prompts or uploaded images. It analyzes stylistic elements and suggests complementary design assets, helping to kickstart the creative process for branding, web design, or artistic projects. Users can refine suggestions and explore various aesthetic directions. This post shows you how to get started.',
+      'DesignSpark AI ayuda a los diseñadores a superar bloqueos creativos generando mood boards, paletas de colores e inspiración visual basados en prompts de texto o imágenes cargadas. Analiza elementos estilísticos y sugiere activos de diseño complementarios, ayudando a iniciar el proceso creativo para branding, diseño web o proyectos artísticos. Los usuarios pueden refinar sugerencias y explorar diversas direcciones estéticas. Este post te muestra cómo empezar.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'design inspiration moodboard',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'creative spark palette',
+    category: 'Design',
+    categorySlug: 'design',
+    tags: ['Design Tools', 'Mood Boards', 'Color Palettes', 'Creative AI'],
+    publishedDate: subHours(new Date(), 5), // New post
+    link: '#designspark-ai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'AI color palette tool',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'moodboard generation example',
+    comments: []
+  },
+  {
+    id: 'codeguardian-ai-post',
+    title: LS('Secure Your Code with CodeGuardian AI', 'Asegura Tu Código con IA GuardiánDeCódigo'),
+    shortDescription: LS(
+      'Automated static code analysis for security vulnerabilities and best practice adherence.',
+      'Análisis estático de código automatizado para vulnerabilidades de seguridad y cumplimiento de mejores prácticas.'
+    ),
+    longDescription: LS(
+      'CodeGuardian AI integrates with development workflows to automatically scan code for potential security vulnerabilities, bugs, and deviations from coding best practices. It provides actionable feedback and suggestions for remediation, helping developers write more secure and maintainable code. This post explores its features and integration into CI/CD pipelines.',
+      'CodeGuardian AI se integra con los flujos de trabajo de desarrollo para escanear automáticamente el código en busca de posibles vulnerabilidades de seguridad, errores y desviaciones de las mejores prácticas de codificación. Proporciona retroalimentación procesable y sugerencias para la remediación, ayudando a los desarrolladores a escribir código más seguro y mantenible. Este post explora sus características y su integración en pipelines de CI/CD.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'code security scan',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'secure code shield',
+    category: 'Programming',
+    categorySlug: 'programming',
+    tags: ['Code Security', 'Static Analysis', 'DevSecOps', 'CI/CD'],
+    publishedDate: subHours(new Date(), 4), // New post
+    link: '#codeguardian-ai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'vulnerability report UI',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'IDE integration screenshot',
+    comments: []
+  },
+  {
+    id: 'videotune-ai-post',
+    title: LS('Professional Video Post-Production with VideoTune AI', 'Postproducción de Video Profesional con IA VideoAfinador'),
+    shortDescription: LS(
+      'Automate color correction, audio enhancement, and stabilization for your videos.',
+      'Automatiza la corrección de color, la mejora de audio y la estabilización para tus videos.'
+    ),
+    longDescription: LS(
+      'VideoTune AI simplifies video post-production by automatically analyzing footage and applying color correction, enhancing audio quality (noise reduction, equalization), and stabilizing shaky scenes. It helps creators achieve a more professional look and sound for their videos with minimal manual effort. Learn how it can elevate your vlogs, social media content, and quick video projects in this post.',
+      'VideoTune AI simplifica la postproducción de video analizando automáticamente el metraje y aplicando corrección de color, mejorando la calidad del audio (reducción de ruido, ecualización) y estabilizando escenas movidas. Ayuda a los creadores a lograr un aspecto y sonido más profesional para sus videos con un mínimo esfuerzo manual. Aprende cómo puede elevar tus vlogs, contenido de redes sociales y proyectos de video rápidos en este post.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'video editing software timeline',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'video film reel',
+    category: 'Videos',
+    categorySlug: 'videos',
+    tags: ['Video Editing', 'Post-Production', 'Color Correction', 'Audio Enhancement'],
+    publishedDate: subHours(new Date(), 3), // New post
+    link: '#videotune-ai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'before after color correction',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'audio waveform editing',
+    comments: []
+  },
+  {
+    id: 'audiocraft-ai-post',
+    title: LS('Create Custom Audio with AudioCraft AI', 'Crea Audio Personalizado con IA AudioCrear'),
+    shortDescription: LS(
+      'Generate unique music, sound effects, and ambient soundscapes using text prompts.',
+      'Genera música única, efectos de sonido y paisajes sonoros ambientales usando prompts de texto.'
+    ),
+    longDescription: LS(
+      'AudioCraft AI allows users to create original music tracks, sound effects, and ambient soundscapes by simply describing what they want in text. It can generate audio in various genres and styles, offering parameters to control mood, tempo, and instrumentation. This post explores how game developers, filmmakers, and content creators can leverage AudioCraft AI for their projects.',
+      'AudioCraft AI permite a los usuarios crear pistas de música originales, efectos de sonido y paisajes sonoros ambientales simplemente describiendo lo que quieren en texto. Puede generar audio en diversos géneros y estilos, ofreciendo parámetros para controlar el estado de ánimo, el tempo y la instrumentación. Este post explora cómo los desarrolladores de juegos, cineastas y creadores de contenido pueden aprovechar AudioCraft AI para sus proyectos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'AI music generation interface',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'music notes staff',
+    category: 'Audio',
+    categorySlug: 'audio',
+    tags: ['Music Generation', 'Sound Effects', 'AI Audio', 'Content Creation'],
+    publishedDate: subHours(new Date(), 2), // New post
+    link: '#audiocraft-ai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'text to music prompt',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'sound effect library view',
+    comments: []
+  },
+  {
+    id: 'edugamemaker-ai-post',
+    title: LS('Engaging Learning with EduGameMaker AI', 'Aprendizaje Atractivo con IA CreaJuegosEdu'),
+    shortDescription: LS(
+      'Assist educators in creating interactive educational games and quizzes effortlessly.',
+      'Asiste a educadores en la creación de juegos educativos interactivos y quizzes sin esfuerzo.'
+    ),
+    longDescription: LS(
+      'EduGameMaker AI empowers educators to design and develop simple educational games and interactive quizzes without needing coding skills. Users can define learning objectives, topics, and question types, and the AI helps generate game mechanics, character interactions, and quiz content. This post showcases how to make learning more fun and effective by incorporating gamification.',
+      'EduGameMaker AI empodera a los educadores para diseñar y desarrollar juegos educativos simples y quizzes interactivos sin necesidad de habilidades de codificación. Los usuarios pueden definir objetivos de aprendizaje, temas y tipos de preguntas, y la IA ayuda a generar mecánicas de juego, interacciones de personajes y contenido de quizzes. Este post muestra cómo hacer el aprendizaje más divertido y efectivo incorporando la gamificación.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'interactive educational game',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'game controller book',
+    category: 'Education',
+    categorySlug: 'education',
+    tags: ['Educational Games', 'Gamification', 'Interactive Learning', 'AI Education'],
+    publishedDate: subHours(new Date(), 1), // New post
+    link: '#edugamemaker-ai-post',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'game creation interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'sample educational quiz',
+    comments: []
   }
 ];
 
@@ -535,4 +691,5 @@ export const getCategoryByName = (nameEN: string): Category | undefined => {
     return catName === nameEN;
   });
 };
+
 
