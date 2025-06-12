@@ -20,16 +20,12 @@ import { addPostToFirestore, getPostFromFirestore, updatePostInFirestore, db } f
 import { doc, collection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 
-const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
-  if (!value) return '';
-  if (typeof value === 'string') return value;
-  return value[lang as keyof LocalizedString] || value.en || '';
-};
-
 // Define the return type for getUpdatedLocalizedField at the top level using an intersection
-type UpdatedLocalizedFieldReturnType = 
-  { [key in LanguageCode]?: string } & 
-  { en: string }; // Ensures 'en' is always present
+type UpdatedLocalizedFieldReturnType = {
+  [key in LanguageCode]?: string;
+} & {
+  en: string; // Ensures 'en' is always present
+}; // Semicolon to terminate the type alias statement.
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
@@ -72,6 +68,13 @@ export default function CreatePostPage() {
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
+
+  const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
+    if (!value) return '';
+    if (typeof value === 'string') return value; // Should ideally not happen with Firestore data
+    return value[lang as keyof LocalizedString] || value.en || '';
+  };
+
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -135,18 +138,18 @@ export default function CreatePostPage() {
 
           setCategory(existingPost.categorySlug);
           setTags(existingPost.tags.join(', '));
-          
+
           let pDate = existingPost.publishedDate;
           if (pDate instanceof Timestamp) {
             pDate = pDate.toDate();
           }
           setPublishedDate(pDate instanceof Date ? pDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
-          
+
           setLinkTool(existingPost.link || '');
         } else {
           toast({
             variant: "destructive",
-            title: t('adminPostError'),
+            title: t('adminPostError', "Error loading post"),
             description: `Post with ID ${id} not found in database.`,
           });
           router.push('/admin');
@@ -154,7 +157,7 @@ export default function CreatePostPage() {
         setIsLoadingData(false);
       }).catch(error => {
         console.error("Error fetching post for edit:", error);
-        toast({ variant: "destructive", title: t('adminPostError'), description: "Failed to load post data."});
+        toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: "Failed to load post data."});
         setIsLoadingData(false);
         router.push('/admin');
       });
@@ -181,7 +184,7 @@ export default function CreatePostPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setDataUriState(reader.result as string);
-        if (setPlaceholderUrlState) setPlaceholderUrlState('');
+        if (setPlaceholderUrlState) setPlaceholderUrlState(''); // Clear placeholder if image is uploaded
       };
       reader.readAsDataURL(file);
     }
@@ -207,7 +210,7 @@ export default function CreatePostPage() {
     if (!title || !shortDescription || !longDescription || !requiredImageProvided || !category || !publishedDate) {
       toast({
         variant: "destructive",
-        title: t('adminPostError'),
+        title: t('adminPostError', "Error submitting post"),
         description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or a valid non-default placeholder is used.",
       });
       return;
@@ -216,24 +219,24 @@ export default function CreatePostPage() {
     setIsSubmitting(true);
 
     const currentEditingLanguage = language as LanguageCode;
-    
+
     const getUpdatedLocalizedField = (
       existingFieldData: LocalizedString | undefined,
       newValue: string
     ): UpdatedLocalizedFieldReturnType => {
       const base = typeof existingFieldData === 'object' && existingFieldData !== null
         ? { ...existingFieldData }
-        : { en: '' }; 
-      
+        : { en: '' };
+
       const typedBase = base as UpdatedLocalizedFieldReturnType;
 
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en) { 
+      if (!typedBase.en && newValue) {
            typedBase.en = newValue;
       }
       return typedBase;
     };
-    
+
     const postDetailsToSave = {
       title: getUpdatedLocalizedField(existingPostDataForForm?.title, title),
       shortDescription: getUpdatedLocalizedField(existingPostDataForForm?.shortDescription, shortDescription),
@@ -242,10 +245,10 @@ export default function CreatePostPage() {
       imageHint: mainImageHint,
       logoUrl: logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl),
       logoHint: logoHint,
-      category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
+      category: allCategories.find(c => c.slug === category)?.name.en || 'Information', // Save English category name
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      publishedDate: new Date(publishedDate), 
+      publishedDate: new Date(publishedDate),
       link: linkTool,
       detailImageUrl1: detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl),
       detailImageHint1: detailImageHint1,
@@ -262,33 +265,34 @@ export default function CreatePostPage() {
           action: <CheckCircle className="text-green-500" />,
         });
       } else {
-        
-        const newPostData = { 
-            ...postDetailsToSave, 
-            publishedDate: postDetailsToSave.publishedDate || new Date() 
+
+        const newPostData = {
+            ...postDetailsToSave,
+            publishedDate: postDetailsToSave.publishedDate || new Date()
         };
-        const newPostId = doc(collection(db, 'posts')).id; 
-        await addPostToFirestore({ ...newPostData, id: newPostId });
+        const newPostId = doc(collection(db, 'posts')).id;
+        await addPostToFirestore({ ...newPostData, id: newPostId }); // Pass id here for consistency if needed
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
           description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
-        
+
+        // Reset form after successful creation
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl); setMainImageHint('');
         clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl); setLogoHint('');
         clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl); setDetailImageHint1('');
         clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null); 
+        setExistingPostDataForForm(null);
       }
-      router.push('/admin'); 
+      router.push('/admin');
     } catch (error) {
       console.error("Error saving post to Firestore:", error);
       toast({
         variant: "destructive",
-        title: t('adminPostError'),
+        title: t('adminPostError', "Error saving post"),
         description: `Failed to save post: ${error instanceof Error ? error.message : "Unknown error"}`,
         action: <XCircle className="text-red-500" />,
       });
@@ -317,12 +321,12 @@ export default function CreatePostPage() {
       <Label>{t(labelKey, defaultLabel)}</Label>
       <div className="flex items-center gap-4">
         <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={isSubmitting || isLoadingData}>
-          <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton')}
+          <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton', 'Upload Image')}
         </Button>
         <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData} />
         {(imageDataUri || (placeholderUrl && !placeholderUrl.startsWith("https://placehold.co"))) && (
           <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData}>
-            <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton')}
+            <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton', 'Clear')}
           </Button>
         )}
       </div>
@@ -335,7 +339,7 @@ export default function CreatePostPage() {
             height={previewSize.height}
             className="object-cover w-full h-full"
             data-ai-hint={hintValue || (imageDataUri ? "uploaded image" : "placeholder")}
-            unoptimized={!!imageDataUri} 
+            unoptimized={!!imageDataUri}
           />
         </div>
       )}
@@ -359,34 +363,34 @@ export default function CreatePostPage() {
       <Button variant="outline" asChild className="mb-6">
         <Link href="/admin" className="flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
-          {t('adminPostButtonBack')}
+          {t('adminPostButtonBack', 'Back to Admin')}
         </Link>
       </Button>
 
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-headline text-primary">
-            {isEditMode ? t('adminEditTitle') : t('adminCreateTitle')}
+            {isEditMode ? t('adminEditTitle', 'Edit Post') : t('adminCreateTitle', 'Create New Post')}
           </CardTitle>
           <CardDescription>
-            {isEditMode && existingPostDataForForm ? `${t('adminEditTitle')}: ${getLocalizedStringDefault(existingPostDataForForm.title, language)}` : t('adminPostLongDescPlaceholder', 'Fill in the details to create a new blog post.')}
+            {isEditMode && existingPostDataForForm ? `${t('adminEditTitle', 'Edit Post')}: ${getLocalizedStringDefault(existingPostDataForForm.title, language)}` : t('adminPostLongDescPlaceholder', 'Fill in the details to create a new blog post.')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="title">{t('adminPostTitleLabel')}</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder')} required disabled={isSubmitting || isLoadingData} />
+              <Label htmlFor="title">{t('adminPostTitleLabel', 'Post Title')}</Label>
+              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isSubmitting || isLoadingData} />
             </div>
 
             <div>
-              <Label htmlFor="shortDescription">{t('adminPostShortDescLabel')}</Label>
-              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder')} required disabled={isSubmitting || isLoadingData} />
+              <Label htmlFor="shortDescription">{t('adminPostShortDescLabel', 'Short Description')}</Label>
+              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isSubmitting || isLoadingData} />
             </div>
 
             <div>
-              <Label htmlFor="longDescription">{t('adminPostLongDescLabel')}</Label>
-              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder')} rows={8} required disabled={isSubmitting || isLoadingData} />
+              <Label htmlFor="longDescription">{t('adminPostLongDescLabel', 'Long Description (Content)')}</Label>
+              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isSubmitting || isLoadingData} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
@@ -417,7 +421,7 @@ export default function CreatePostPage() {
               />
             </div>
 
-            <CardDescription>{t('additionalVisualsTitle')}</CardDescription>
+            <CardDescription>{t('additionalVisualsTitle', 'Visual Insights')}</CardDescription>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
                <ImageUploadSection
                 labelKey="adminPostDetailImage1Label" defaultLabel="Visual Insight Image 1"
@@ -447,10 +451,10 @@ export default function CreatePostPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="category">{t('adminPostCategoryLabel')}</Label>
+                <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
                 <Select value={category} onValueChange={setCategory} required disabled={isSubmitting || isLoadingData}>
                   <SelectTrigger id="category">
-                    <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder')} />
+                    <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder', 'Select a category')} />
                   </SelectTrigger>
                   <SelectContent>
                     {allCategories.map(cat => (
@@ -463,26 +467,26 @@ export default function CreatePostPage() {
               </div>
 
               <div>
-                <Label htmlFor="tags">{t('adminPostTagsLabel')}</Label>
-                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder')} disabled={isSubmitting || isLoadingData} />
+                <Label htmlFor="tags">{t('adminPostTagsLabel', 'Tags (comma-separated)')}</Label>
+                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} disabled={isSubmitting || isLoadingData} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <Label htmlFor="publishedDate">{t('adminPostPublishedDateLabel')}</Label>
+                <Label htmlFor="publishedDate">{t('adminPostPublishedDateLabel', 'Published Date')}</Label>
                 <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required disabled={isSubmitting || isLoadingData} />
               </div>
               <div>
-                <Label htmlFor="linkTool">{t('adminPostLinkToolLabel')}</Label>
-                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder')} disabled={isSubmitting || isLoadingData} />
+                <Label htmlFor="linkTool">{t('adminPostLinkToolLabel', 'Link to Tool (Optional)')}</Label>
+                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} disabled={isSubmitting || isLoadingData} />
               </div>
             </div>
 
             <div className="flex justify-end pt-4">
               <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting || isLoadingData}>
                 {(isSubmitting || (isLoadingData && isEditMode)) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                {isEditMode ? t('adminPostButtonUpdate') : t('adminPostButtonCreate')}
+                {isEditMode ? t('adminPostButtonUpdate', 'Update Post') : t('adminPostButtonCreate', 'Create Post')}
               </Button>
             </div>
           </form>
@@ -491,5 +495,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-
-    
