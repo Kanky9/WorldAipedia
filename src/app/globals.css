@@ -222,4 +222,55 @@ body {
 .animate-fab-attention {
   animation: fab-attention-pulse 5.5s infinite ease-in-out;
 }
+
+/* New AIs Bubble */
+.new-ai-bubble-link {
+  /* Positioned relative to viewport, near LanguageSwitcher */
+  /* Further adjustments might be needed based on exact Header layout */
+}
+
+.new-ai-bubble {
+  background-color: hsl(var(--accent)); /* Use accent color for visibility */
+  color: hsl(var(--accent-foreground));
+  padding: 0.3rem 0.75rem; /* Tailwind: py-1 px-3 */
+  border-radius: 9999px; /* Full pill shape */
+  font-size: 0.75rem; /* Tailwind: text-xs */
+  font-weight: 600; /* Tailwind: font-semibold */
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Tailwind: shadow-md */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, background-color 0.2s;
+}
+.new-ai-bubble:hover {
+  transform: scale(1.05);
+  background-color: hsl(var(--accent) / 0.9);
+}
+
+/* Pulsating Dot for New AI in Category */
+.pulsating-dot-new-ai {
+  display: inline-block;
+  width: 10px; /* Slightly larger for visibility */
+  height: 10px;
+  background-color: hsl(var(--primary));
+  border-radius: 50%;
+  /* margin-left: 6px;  Let the component manage spacing if needed */
+  animation: pulse-dot 1.5s infinite ease-in-out;
+  /* No need for explicit box-shadow here if pulse-dot handles it */
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 6px hsl(var(--primary) / 0); /* Expand shadow */
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
+  }
+}
     

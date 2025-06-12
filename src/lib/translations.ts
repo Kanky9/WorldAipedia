@@ -22,6 +22,8 @@ export type CoreTranslationKey =
   | 'navAdmin'
   | 'navAccount'
   | 'proMemberLabel'
+  | 'newAIsAvailableShort'
+  | 'newAIsAvailableTooltip'
   // Mascot
   | 'mascotGreeting'
   | 'mascotChatGreeting1'
@@ -31,7 +33,11 @@ export type CoreTranslationKey =
   | 'blogSubtitle'
   | 'exploreCategoriesButton' 
   | 'featuredPostsTitle' 
-  | 'viewAllPostsButton'
+  | 'viewAllPostsButton' // Kept for potential other uses, but homepage uses new one
+  | 'viewAllPostsArchiveButton' // New key for homepage button linking to /blog
+  // All Posts Page (/blog)
+  | 'allPostsTitle'
+  | 'allPostsSubtitle'
   // Post Card
   | 'readMoreButton'
   // AI Chat Assistant "Lace"
@@ -49,6 +55,7 @@ export type CoreTranslationKey =
   | 'categoriesSubtitle'
   | 'viewPostsButton' 
   | 'noCategoriesAvailable'
+  | 'newPostsInCategoryTooltip'
   // Category Detail Page (Posts in Category)
   | 'noPostsInCategory' 
   | 'noPostsInCategorySuggestion' 
@@ -180,6 +187,12 @@ export type TranslationSet = {
   featuredPostsTitle: string; 
   userReviewsTitle: string;
   loginToCommentPrompt: string;
+  viewAllPostsArchiveButton: string;
+  allPostsTitle: string;
+  allPostsSubtitle: string;
+  newAIsAvailableShort: string;
+  newAIsAvailableTooltip: string;
+  newPostsInCategoryTooltip: string;
 };
 
 export type Translations = {
@@ -198,6 +211,8 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'My Account',
     proMemberLabel: 'PRO Member',
+    newAIsAvailableShort: 'New!',
+    newAIsAvailableTooltip: 'New AI posts available!',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
     mascotChatGreeting1: 'Chat with me!',
     mascotChatGreeting2: 'I can inform you about whatever you need.',
@@ -206,6 +221,9 @@ export const translations: Translations = {
     exploreCategoriesButton: 'Explore Categories',
     featuredPostsTitle: 'Featured Posts',
     viewAllPostsButton: 'View All Posts',
+    viewAllPostsArchiveButton: 'View All Posts',
+    allPostsTitle: 'All Blog Posts',
+    allPostsSubtitle: 'Browse through our complete collection of articles and insights on AI.',
     readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
     laceChatDescription: 'I\'m Lace! Ask me about World AI, AI tools, or let\'s just chat.',
@@ -220,6 +238,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Find posts tailored to your interests, organized into relevant categories for easy browsing.',
     viewPostsButton: 'View Posts',
     noCategoriesAvailable: 'No categories available at the moment.',
+    newPostsInCategoryTooltip: 'New posts in this category!',
     noPostsInCategory: 'No posts found in the "{categoryName}" category yet.',
     noPostsInCategorySuggestion: 'Check back soon, or explore other categories!',
     allCategoriesButton: 'All Categories',
@@ -344,6 +363,8 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Mi Cuenta',
     proMemberLabel: 'Miembro PRO',
+    newAIsAvailableShort: '¡Nuevo!',
+    newAIsAvailableTooltip: '¡Nuevas publicaciones de IA disponibles!',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
     mascotChatGreeting1: '¡Chatea conmigo!',
     mascotChatGreeting2: 'Puedo informarte sobre lo que necesites.',
@@ -352,6 +373,9 @@ export const translations: Translations = {
     exploreCategoriesButton: 'Explorar Categorías',
     featuredPostsTitle: 'Publicaciones Destacadas',
     viewAllPostsButton: 'Ver Todas las Publicaciones',
+    viewAllPostsArchiveButton: 'Ver Todas las Publicaciones',
+    allPostsTitle: 'Todas las Publicaciones del Blog',
+    allPostsSubtitle: 'Navega por nuestra colección completa de artículos e ideas sobre IA.',
     readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
     laceChatDescription: '¡Soy Lace! Pregúntame sobre World AI, herramientas de IA, o simplemente charlemos.',
@@ -366,6 +390,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Encuentra publicaciones adaptadas a tus intereses, organizadas en categorías relevantes para facilitar la navegación.',
     viewPostsButton: 'Ver Publicaciones',
     noCategoriesAvailable: 'No hay categorías disponibles en este momento.',
+    newPostsInCategoryTooltip: '¡Nuevas publicaciones en esta categoría!',
     noPostsInCategory: 'Aún no se han encontrado publicaciones en la categoría "{categoryName}".',
     noPostsInCategorySuggestion: '¡Vuelve pronto o explora otras categorías!',
     allCategoriesButton: 'Todas las Categorías',
@@ -485,15 +510,21 @@ export const translations: Translations = {
     navCategories: 'Categorie',
     loginButton: 'Accedi',
     registerButton: 'Registrati',
+    newAIsAvailableShort: 'Novità!',
+    newAIsAvailableTooltip: 'Nuovi post AI disponibili!',
     mascotGreeting: "Ciao, sono Lace! Pronto a esplorare l'IA?",
     mascotChatGreeting1: "Chatta con me!",
     mascotChatGreeting2: "Posso informarti su ciò di cui hai bisogno.",
     blogTitle: 'Il Blog di World AI',
     featuredPostsTitle: 'Post in Evidenza',
     viewAllPostsButton: 'Vedi Tutti i Post',
+    viewAllPostsArchiveButton: 'Vedi Tutti i Post',
+    allPostsTitle: 'Tutti i Post del Blog',
+    allPostsSubtitle: 'Sfoglia la nostra collezione completa di articoli e approfondimenti sull\'IA.',
     readMoreButton: 'Leggi di più',
     categoriesTitle: 'Esplora Post per Categoria',
     viewPostsButton: 'Vedi Post',
+    newPostsInCategoryTooltip: 'Nuovi post in questa categoria!',
     backToBlogButton: 'Torna al Blog',
     postContentTitle: 'Contenuto del Post',
     adminPanelTitle: 'Pannello Admin',
@@ -546,7 +577,6 @@ export const translations: Translations = {
     signUpLink: 'Sign up',
     loginAttemptMessage: 'Login attempt (simulated)',
     socialLoginAttemptMessage: 'Login with {provider} (simulated)',
-    registerPageTitle: 'Create your Account',
     registerPageSubtitle: 'Join World AI to discover and discuss AI tools.',
     usernameLabel: 'Username',
     usernamePlaceholder: 'Choose a username',
@@ -633,15 +663,21 @@ export const translations: Translations = {
     navCategories: '分类',
     loginButton: '登录',
     registerButton: '注册',
+    newAIsAvailableShort: '最新!',
+    newAIsAvailableTooltip: '有新的人工智能帖子!',
     mascotGreeting: "你好，我是Lace！准备好探索AI了吗？",
     mascotChatGreeting1: "和我聊天！",
     mascotChatGreeting2: "我可以告诉你任何你需要的信息。",
     blogTitle: 'World AI 博客',
     featuredPostsTitle: '精选帖子',
     viewAllPostsButton: '查看所有帖子',
+    viewAllPostsArchiveButton: '查看所有帖子',
+    allPostsTitle: '所有博客帖子',
+    allPostsSubtitle: '浏览我们所有关于AI的文章和见解。',
     readMoreButton: '阅读更多',
     categoriesTitle: '按分类浏览帖子',
     viewPostsButton: '查看帖子',
+    newPostsInCategoryTooltip: '此分类中有新帖子!',
     backToBlogButton: '返回博客',
     postContentTitle: '帖子内容',
     adminPanelTitle: '管理面板',
@@ -780,15 +816,21 @@ export const translations: Translations = {
     navCategories: 'カテゴリー',
     loginButton: 'ログイン',
     registerButton: '登録',
+    newAIsAvailableShort: '新着!',
+    newAIsAvailableTooltip: '新しいAI投稿があります！',
     mascotGreeting: "こんにちは、レースです！AIを探求する準備はできましたか？",
     mascotChatGreeting1: "私とチャットしましょう！",
     mascotChatGreeting2: "必要な情報をお知らせできます。",
     blogTitle: 'World AI ブログ',
     featuredPostsTitle: 'おすすめ記事',
     viewAllPostsButton: 'すべての記事を見る',
+    viewAllPostsArchiveButton: 'すべての記事を見る',
+    allPostsTitle: 'すべてのブログ記事',
+    allPostsSubtitle: 'AIに関する記事や洞察の完全なコレクションをご覧ください。',
     readMoreButton: '続きを読む',
     categoriesTitle: 'カテゴリーで記事を探す',
     viewPostsButton: '記事を見る',
+    newPostsInCategoryTooltip: 'このカテゴリーに新しい記事があります！',
     backToBlogButton: 'ブログに戻る',
     postContentTitle: '記事内容',
     adminPanelTitle: '管理パネル',
@@ -927,15 +969,21 @@ export const translations: Translations = {
     navCategories: 'Categorias',
     loginButton: 'Entrar',
     registerButton: 'Cadastre-se',
+    newAIsAvailableShort: 'Novo!',
+    newAIsAvailableTooltip: 'Novas postagens de IA disponíveis!',
     mascotGreeting: "Olá, sou a Lace! Pronto para explorar a IA?",
     mascotChatGreeting1: "Converse comigo!",
     mascotChatGreeting2: "Posso informar sobre o que você precisar.",
     blogTitle: 'O Blog World AI',
     featuredPostsTitle: 'Postagens em Destaque',
     viewAllPostsButton: 'Ver Todas as Postagens',
+    viewAllPostsArchiveButton: 'Ver Todas as Postagens',
+    allPostsTitle: 'Todas as Postagens do Blog',
+    allPostsSubtitle: 'Navegue por nossa coleção completa de artigos e insights sobre IA.',
     readMoreButton: 'Leia Mais',
     categoriesTitle: 'Explore Postagens por Categoria',
     viewPostsButton: 'Ver Postagens',
+    newPostsInCategoryTooltip: 'Novas postagens nesta categoria!',
     backToBlogButton: 'Voltar ao Blog',
     postContentTitle: 'Conteúdo da Postagem',
     adminPanelTitle: 'Painel Admin',
@@ -1069,5 +1117,3 @@ export const translations: Translations = {
     cancelButton: "Cancel",
   },
 };
-
-    

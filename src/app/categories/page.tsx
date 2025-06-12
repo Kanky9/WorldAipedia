@@ -2,12 +2,16 @@
 "use client"; 
 
 import Link from 'next/link';
-import { categories } from '@/data/posts'; // Changed from ai-tools
+import { categories } from '@/data/posts'; 
+import { posts as allPosts } from '@/data/posts';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
+import { isPostNew } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 export default function CategoriesPage() {
   const { t } = useLanguage();
@@ -33,6 +37,10 @@ export default function CategoriesPage() {
             const localizedCategoryDescription = t(category.description);
             const iconKeyCategoryName = typeof category.name === 'string' ? category.name : category.name.en!;
 
+            const hasNewInThisCategory = allPosts.some(
+              post => post.categorySlug === category.slug && isPostNew(post)
+            );
+
             return (
               <Link href={`/categories/${category.slug}`} key={category.slug} className="block group">
                 <Card 
@@ -40,9 +48,23 @@ export default function CategoriesPage() {
                   style={{animationDelay: `${index * 0.05}s`}}
                 >
                   <CardHeader>
-                    <div className="flex items-center gap-3 mb-2">
-                      <CategoryIcon categoryName={iconKeyCategoryName} className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                      <CardTitle className="font-headline text-xl sm:text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-3 mb-2">
+                        <CategoryIcon categoryName={iconKeyCategoryName} className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                        <CardTitle className="font-headline text-xl sm:text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
+                      </div>
+                      {hasNewInThisCategory && (
+                         <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="pulsating-dot-new-ai"></span>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>{t('newPostsInCategoryTooltip', 'New posts in this category!')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="flex-grow">
