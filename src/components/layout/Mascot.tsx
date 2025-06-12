@@ -24,7 +24,7 @@ const Mascot = () => {
   useEffect(() => {
     setInitialGreeting(t('mascotGreeting'));
     const visibilityTimer = setTimeout(() => {
-      if (!isChatOpen) { // Only make initially visible if chat is not already open
+      if (!isChatOpen) { 
         setIsMascotVisible(true);
       }
     }, 700);
@@ -38,27 +38,25 @@ const Mascot = () => {
     let bubbleTimer: NodeJS.Timeout | undefined;
 
     if (isChatOpen) {
-      setIsMascotVisible(true); // Ensure mascot is visible when chat opens
+      setIsMascotVisible(true); 
       setShowDefaultBubble(false); 
 
       if (currentChatBubbleIndex === -1) { 
-        setCurrentChatBubbleIndex(0); // Start the sequence
+        setCurrentChatBubbleIndex(0); 
       } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
         setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
         bubbleTimer = setTimeout(() => {
           setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
-        }, 3000);
+        }, 4000); // <-- Changed duration to 4000ms (4 seconds)
       } else {
-        // Sequence finished, clear text but keep mascot visible
+        
         setCurrentChatBubbleText(''); 
       }
     } else {
-      // Chat closed
-      setCurrentChatBubbleIndex(-1); // Reset sequence
+      
+      setCurrentChatBubbleIndex(-1); 
       setCurrentChatBubbleText('');
-      setShowDefaultBubble(true); // Show default greeting bubble again
-      // Optionally, start timer to hide mascot if it was only visible due to chat
-      // For now, let's keep it visible if it was made visible by initial timer or chat
+      setShowDefaultBubble(true); 
     }
 
     return () => {
@@ -73,7 +71,7 @@ const Mascot = () => {
     }
   };
 
-  // Determine if mascot should be rendered at all (initial delay for non-chat state)
+  
   if (!isMascotVisible && !isChatOpen) return null;
 
   let bubbleContent = '';
@@ -84,7 +82,7 @@ const Mascot = () => {
     shouldShowSpeechBubble = !!currentChatBubbleText; 
   } else if (!isChatOpen && showDefaultBubble) {
     bubbleContent = initialGreeting;
-    shouldShowSpeechBubble = !!bubbleContent; // Only show if greeting is not empty
+    shouldShowSpeechBubble = !!bubbleContent; 
   }
   
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
@@ -94,7 +92,6 @@ const Mascot = () => {
   let mascotPositionStyle: React.CSSProperties = {
     animation: mascotAnimation,
     opacity: mascotOpacity,
-    // Default to avoid type errors, will be overridden
     top: 'auto',
     left: 'auto',
     bottom: 'auto',
@@ -104,17 +101,17 @@ const Mascot = () => {
   if (isChatOpen) {
     mascotPositionStyle = {
       ...mascotPositionStyle,
-      top: 'calc(50vh - 30px)', // Vertically align with mid-lower part of centered dialog
-      left: 'calc(50vw + 262.5px + 15px)', // Position to the right of the 525px dialog (262.5px is half) + 15px offset
+      top: 'calc(50vh - 30px)', 
+      left: 'calc(50vw + 262.5px + 15px)', 
       bottom: 'auto',
       right: 'auto',
-      transform: 'none', // Ensure no other transforms interfere
+      transform: 'none', 
     };
   } else {
     mascotPositionStyle = {
       ...mascotPositionStyle,
-      bottom: '1.25rem', // 20px (tailwind bottom-5)
-      right: '1.25rem',  // 20px (tailwind right-5)
+      bottom: '1.25rem', 
+      right: '1.25rem',  
       top: 'auto',
       left: 'auto',
     };
@@ -126,13 +123,17 @@ const Mascot = () => {
       className={cn(mascotBaseClasses)}
       style={mascotPositionStyle}
     >
-      {/* Speech Bubble */}
+      {/* Speech Bubble - Positioned absolutely to not affect SVG position */}
       {shouldShowSpeechBubble && (
         <div 
-          className={`relative mb-2 ${shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'}`}
+          className={cn(
+            "absolute left-1/2 -translate-x-1/2 w-max max-w-[180px] z-10",
+            "bottom-[115px]", // Positions bubble above the SVG (SVG height approx 110px + 5px gap)
+            shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'
+          )}
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
         >
-          <div className="bg-card text-card-foreground p-3 rounded-lg shadow-xl text-sm max-w-[180px] text-center border border-border">
+          <div className="bg-card text-card-foreground p-3 rounded-lg shadow-xl text-sm text-center border border-border">
             {bubbleContent}
           </div>
           {/* Speech bubble tail */}
@@ -195,7 +196,7 @@ const Mascot = () => {
 
         <style jsx>{`
           @keyframes mascotAppearAnimation { 
-            from { opacity: 0; transform: translateY(15px) scale(0.95); } /* Added scale for pop */
+            from { opacity: 0; transform: translateY(15px) scale(0.95); } 
             to { opacity: 1; transform: translateY(0) scale(1); }
           }
 
@@ -211,7 +212,7 @@ const Mascot = () => {
             animation: antenna-pulse 2s infinite ease-in-out;
           }
           @keyframes antenna-pulse {
-            0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 1px hsl(var(--primary)/0.5)); } /* Using filter for shadow */
+            0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 1px hsl(var(--primary)/0.5)); } 
             50% { opacity: 1; filter: drop-shadow(0 0 3px hsl(var(--primary)/0.8)); }
           }
 
@@ -224,37 +225,37 @@ const Mascot = () => {
           }
           
           .robot-arm-left-animation {
-            transform-origin: 50% 15%; /* Adjusted origin for better swing */
+            transform-origin: 50% 15%; 
             animation: arm-wave 4s ease-in-out infinite;
           }
           .robot-arm-right-animation {
-            transform-origin: 50% 15%; /* Adjusted origin for better swing */
+            transform-origin: 50% 15%; 
             animation: arm-wave 4s ease-in-out infinite reverse; 
           }
           @keyframes arm-wave {
             0%, 100% { transform: rotate(0deg) translateY(0px); }
-            25% { transform: rotate(-10deg) translateY(-1px); } /* Increased angle */
+            25% { transform: rotate(-10deg) translateY(-1px); } 
             75% { transform: rotate(6deg) translateY(0px); }
           }
 
           .speech-bubble-enter {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0) scale(1) translateX(-50%); /* Added translateX back for centering */
             animation: speech-bubble-enter-anim 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
           }
           .speech-bubble-exit {
             opacity: 0;
-            transform: translateY(10px) scale(0.9);
+            transform: translateY(10px) scale(0.8) translateX(-50%); /* Added translateX back for centering */
             animation: speech-bubble-exit-anim 0.3s ease-in forwards;
           }
 
           @keyframes speech-bubble-enter-anim {
-            from { opacity: 0; transform: translateY(10px) scale(0.8); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateY(10px) scale(0.8) translateX(-50%); }
+            to { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); }
           }
           @keyframes speech-bubble-exit-anim {
-            from { opacity: 1; transform: translateY(0) scale(1); }
-            to { opacity: 0; transform: translateY(10px) scale(0.8); }
+            from { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); }
+            to { opacity: 0; transform: translateY(10px) scale(0.8) translateX(-50%); }
           }
         `}</style>
       </svg>
@@ -263,3 +264,4 @@ const Mascot = () => {
 };
 
 export default Mascot;
+
