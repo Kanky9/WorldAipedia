@@ -17,7 +17,7 @@ const Header = () => {
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <BrainCircuit className="h-10 w-10 text-primary transition-transform group-hover:rotate-[15deg] duration-300" />
-          <h1 className="text-3xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80">World AI</h1>
+          <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80">World AI</h1>
         </Link>
         
         <div className="flex items-center gap-2">

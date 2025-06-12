@@ -15,6 +15,7 @@ export type CoreTranslationKey =
   // Header
   | 'navHome'
   | 'navCategories'
+  | 'tooltipLanguageSwitcher' // Added new key
   // Mascot
   | 'mascotGreeting'
   // Homepage
@@ -61,6 +62,7 @@ export const translations: Translations = {
   en: {
     navHome: 'Home',
     navCategories: 'Categories',
+    tooltipLanguageSwitcher: 'Change language',
     mascotGreeting: 'Hello! Explore the world of AI with me!',
     homeTitle: 'Unlock the Power of AI',
     homeSubtitle: 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.',
@@ -90,6 +92,7 @@ export const translations: Translations = {
   es: {
     navHome: 'Inicio',
     navCategories: 'Categorías',
+    tooltipLanguageSwitcher: 'Cambiar idioma',
     mascotGreeting: '¡Hola! ¡Explora el mundo de la IA conmigo!',
     homeTitle: 'Desbloquea el Poder de la IA',
     homeSubtitle: 'Bienvenido a World AI: tu plataforma definitiva para descubrir herramientas de IA innovadoras. Sumérgete, explora y revoluciona tu mundo.',
@@ -119,6 +122,7 @@ export const translations: Translations = {
   it: {
     navHome: 'Home',
     navCategories: 'Categorie',
+    tooltipLanguageSwitcher: 'Cambia lingua',
     mascotGreeting: 'Ciao! Esplora il mondo dell\'IA con me!',
     homeTitle: 'Sblocca il Potere dell\'IA',
     homeSubtitle: 'Benvenuto in World AI – la tua piattaforma definitiva per scoprire strumenti IA rivoluzionari. Immergiti, esplora e rivoluziona il tuo mondo.',
@@ -148,6 +152,7 @@ export const translations: Translations = {
   zh: {
     navHome: '首页',
     navCategories: '类别',
+    tooltipLanguageSwitcher: '更改语言',
     mascotGreeting: '你好！和我一起探索AI的世界吧！',
     homeTitle: '解锁人工智能的力量',
     homeSubtitle: '欢迎来到 World AI – 您发现突破性人工智能工具的终极平台。潜入、探索并彻底改变您的世界。',
@@ -177,6 +182,7 @@ export const translations: Translations = {
   ja: {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
+    tooltipLanguageSwitcher: '言語を変更',
     mascotGreeting: 'こんにちは！私と一緒にAIの世界を探検しましょう！',
     homeTitle: 'AIの力を解き放つ',
     homeSubtitle: 'World AIへようこそ – 画期的なAIツールを発見するための究極のランチパッドです。飛び込み、探求し、あなたの世界を革命的に変えましょう。',
@@ -206,6 +212,7 @@ export const translations: Translations = {
   pt: {
     navHome: 'Início',
     navCategories: 'Categorias',
+    tooltipLanguageSwitcher: 'Mudar idioma',
     mascotGreeting: 'Olá! Explore o mundo da IA comigo!',
     homeTitle: 'Desbloqueie o Poder da IA',
     homeSubtitle: 'Bem-vindo à World AI – sua plataforma definitiva para descobrir ferramentas de IA inovadoras. Mergulhe, explore e revolucione seu mundo.',
