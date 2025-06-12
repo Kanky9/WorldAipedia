@@ -9,59 +9,58 @@ body {
 
 @layer base {
   :root {
-    /* Updated Light Theme based on new PRD */
-    --background: 0 0% 94%; /* #F0F0F0 Light gray, almost white */
-    --foreground: 220 10% 20%; /* Dark gray for text */
-    --card: 0 0% 100%; /* White cards */
-    --card-foreground: 220 10% 20%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 10% 20%;
-    --primary: 197 71% 53%; /* #29ABE2 Vibrant blue */
-    --primary-foreground: 0 0% 100%; /* White text on primary */
-    --secondary: 215 20% 65%; /* Kept for secondary elements if needed */
-    --secondary-foreground: 220 10% 10%;
-    --muted: 215 25% 90%; /* Lighter gray for muted elements */
-    --muted-foreground: 215 15% 45%;
-    --accent: 120 73% 75%; /* #90EE90 Bright lime green */
-    --accent-foreground: 220 10% 10%; /* Dark text on accent for readability */
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 262.1 83.3% 57.8%; /* Muted Purple */
+    --primary-foreground: 0 0% 98%; /* White text on primary */
+    --secondary: 240 4.8% 95.9%; /* Light Gray */
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%; /* Lighter gray for muted elements */
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 346.8 77.2% 49.8%; /* Muted Pink/Red */
+    --accent-foreground: 0 0% 98%; /* White text on accent */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 215 20% 85%;
-    --input: 0 0% 100%; /* White input fields */
-    --ring: 197 71% 58%; /* Vibrant blue for ring */
-    --chart-1: 197 71% 53%;
-    --chart-2: 120 73% 75%;
-    --chart-3: 25 100% 50%;  /* Orange, can be used as tertiary */
-    --chart-4: 220 10% 40%; 
-    --chart-5: 210 40% 96.1%;
-    --radius: 0.75rem; 
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%; /* Input fields */
+    --ring: 346.8 77.2% 49.8%; /* Accent color for ring */
+    --chart-1: 262.1 83.3% 57.8%;
+    --chart-2: 346.8 77.2% 49.8%;
+    --chart-3: 25 95% 53.1%;
+    --chart-4: 240 5.9% 10%;
+    --chart-5: 180 4.1% 96.1%;
+    --radius: 0.5rem;
   }
+
   .dark {
-    /* Dark Theme - Adjusted to complement new primary/accent if needed, or keep existing */
-    --background: 220 10% 8%; 
-    --foreground: 0 0% 92%; 
-    --card: 220 10% 13%; 
-    --card-foreground: 0 0% 92%;
-    --popover: 220 10% 13%;
-    --popover-foreground: 0 0% 92%;
-    --primary: 197 71% 53%; /* Vibrant blue */
+    --background: 20 14.3% 4.1%;
+    --foreground: 0 0% 95%;
+    --card: 24 9.8% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 263.4 70% 50.4%; /* Muted Purple - Dark */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 10% 25%; 
-    --secondary-foreground: 0 0% 80%; 
-    --muted: 220 10% 20%; 
-    --muted-foreground: 0 0% 65%; 
-    --accent: 120 73% 75%; /* Bright lime green */
-    --accent-foreground: 220 10% 10%;
-    --destructive: 0 70% 50%;
+    --secondary: 240 3.7% 15.9%; /* Darker Gray */
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 346.8 77.2% 49.8%; /* Muted Pink/Red */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 18%; 
-    --input: 220 10% 16%; 
-    --ring: 197 71% 58%; /* Vibrant blue for ring */
-    --chart-1: 197 71% 53%;
-    --chart-2: 120 73% 75%;
-    --chart-3: 25 100% 50%;
-    --chart-4: 220 10% 70%;
-    --chart-5: 220 20% 30%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346.8 77.2% 49.8%;
+    --chart-1: 263.4 70% 50.4%;
+    --chart-2: 346.8 77.2% 49.8%;
+    --chart-3: 25 85% 43.1%;
+    --chart-4: 0 0% 80%;
+    --chart-5: 240 3.7% 25.9%;
   }
 }
 
@@ -198,3 +197,5 @@ body {
   /* For the X centering, apply translate-x-1/2 directly in the component className */
   animation: bounce-subtle 2s infinite;
 }
+
+    
