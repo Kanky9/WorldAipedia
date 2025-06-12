@@ -6,6 +6,7 @@ import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered,
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useAuth } from '@/contexts/AuthContext'; // Import useAuth
 import { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,38 +19,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { User } from '@/lib/types'; // Import User type
+// No longer need User type from '@/lib/types' as currentUser comes from AuthContext
 
 const Header = () => {
   const { t } = useLanguage();
+  const { currentUser, logout, loading } = useAuth(); // Use AuthContext
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null); // Use User type
-
-  // Simulate login/logout
-  const handleLogin = () => {
-    setUser({ 
-      id: "simulated-user-pro", 
-      username: "UsuarioDemo", 
-      email: "demo@example.com", 
-      isSubscribed: true, 
-      profileImageUrl: "https://placehold.co/40x40.png?text=UD" 
-    });
-    // To simulate a non-PRO user:
-    // setUser({ id: "simulated-user-basic", username: "UsuarioComun", email: "comun@example.com", isSubscribed: false });
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-  };
 
   useEffect(() => {
+    if (!loading) { // Close mobile menu when auth state is resolved or user changes
+        setIsMobileMenuOpen(false);
+    }
+  }, [currentUser, loading]);
+
+  const handleLogout = async () => {
+    await logout();
     setIsMobileMenuOpen(false);
-  }, [user]);
+  };
 
   const navLinks = [
     { href: "/", labelKey: "navHome", icon: ListOrdered },
     { href: "/categories", labelKey: "navCategories", icon: Settings },
-    // { href: "/pricing", labelKey: "navPricing", icon: Star }, // Example for later
   ];
 
   return (
@@ -74,7 +64,11 @@ const Header = () => {
 
           <LanguageSwitcher />
 
-          {user ? (
+          {loading ? (
+            <div className="h-10 w-20 flex items-center justify-center"> {/* Placeholder for loading state */}
+              <Settings className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : currentUser ? (
             <DropdownMenu>
               <TooltipProvider>
                 <Tooltip>
@@ -82,11 +76,11 @@ const Header = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
                         <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-                          {user.profileImageUrl ? (
-                            <AvatarImage src={user.profileImageUrl} alt={user.username} data-ai-hint="user profile avatar"/>
-                          ) : <AvatarFallback className="bg-muted text-muted-foreground text-xs sm:text-sm">{user.username.substring(0, 2).toUpperCase()}</AvatarFallback>}
+                          {currentUser.photoURL ? (
+                            <AvatarImage src={currentUser.photoURL} alt={currentUser.displayName || currentUser.username || 'User'} data-ai-hint="user profile avatar"/>
+                          ) : <AvatarFallback className="bg-muted text-muted-foreground text-xs sm:text-sm">{(currentUser.displayName || currentUser.username || 'U').substring(0, 2).toUpperCase()}</AvatarFallback>}
                         </Avatar>
-                        {user.isSubscribed && (
+                        {currentUser.isSubscribed && (
                           <Badge variant="default" className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 leading-none border-2 border-background bg-primary text-primary-foreground shadow-md">
                             PRO
                           </Badge>
@@ -102,9 +96,9 @@ const Header = () => {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.username}</p>
+                    <p className="text-sm font-medium leading-none">{currentUser.displayName || currentUser.username}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
+                      {currentUser.email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -112,7 +106,7 @@ const Header = () => {
                 <DropdownMenuItem asChild className="cursor-pointer">
                     <Link href="/account"><UserCircle className="mr-2 h-4 w-4" />{t('navAccount', 'My Account')}</Link>
                 </DropdownMenuItem>
-                {user.isSubscribed && (
+                {currentUser.isSubscribed && (
                   <DropdownMenuItem className="cursor-default text-accent">
                     <ShieldCheck className="mr-2 h-4 w-4" />
                     <span>{t('proMemberLabel', 'PRO Member')}</span>
@@ -170,12 +164,12 @@ const Header = () => {
                 <Settings className="h-4 w-4"/>{t('navAdmin', 'Admin')}
             </Link>
             <DropdownMenuSeparator />
-            {user ? (
+            {loading ? <div className="p-2 text-center">Loading...</div> : currentUser ? (
               <>
                 <Link href="/account" className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
                   <UserCircle className="h-4 w-4"/>{t('navAccount', 'My Account')}
                 </Link>
-                <Button onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }} variant="ghost" className="w-full justify-start text-base font-medium text-destructive hover:text-destructive-foreground hover:bg-destructive py-2 px-3 flex items-center gap-2">
+                <Button onClick={handleLogout} variant="ghost" className="w-full justify-start text-base font-medium text-destructive hover:text-destructive-foreground hover:bg-destructive py-2 px-3 flex items-center gap-2">
                   <LogOut className="h-4 w-4"/>{t('logoutButton', 'Logout')}
                 </Button>
               </>

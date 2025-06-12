@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { AuthProvider } from '@/contexts/AuthContext'; // Import AuthProvider
 import Mascot from '@/components/layout/Mascot';
 import { ChatProvider } from '@/contexts/ChatContext';
 import ChatElements from '@/components/layout/ChatElements'; 
@@ -29,16 +30,18 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
-          <ChatProvider>
-            <Header />
-            <main className="flex-grow container mx-auto px-4 py-3"> {/* Reduced py-4 to py-3 */}
-              {children}
-            </main>
-            <Footer />
-            <Mascot />
-            <ChatElements />
-            <Toaster />
-          </ChatProvider>
+          <AuthProvider> {/* Wrap with AuthProvider */}
+            <ChatProvider>
+              <Header />
+              <main className="flex-grow container mx-auto px-4 py-3">
+                {children}
+              </main>
+              <Footer />
+              <Mascot />
+              <ChatElements />
+              <Toaster />
+            </ChatProvider>
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

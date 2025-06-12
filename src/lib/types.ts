@@ -1,10 +1,10 @@
 
 import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
+import type { Timestamp } from 'firebase/firestore';
 
 export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; }; // Ensure 'en' is always present as a fallback
 
-// Renamed AITool to Post, added publishedDate and tags
 export interface Post {
   id: string;
   title: LocalizedString;
@@ -12,18 +12,18 @@ export interface Post {
   longDescription: LocalizedString;
   imageUrl: string;
   imageHint?: string;
-  logoUrl?: string; // Still relevant if post is about a specific tool
-  logoHint?: string; // Still relevant
-  category: string; // Main category/tag
+  logoUrl?: string; 
+  logoHint?: string; 
+  category: string; 
   categorySlug: string; 
-  tags: string[]; // Additional tags
-  publishedDate: Date;
-  link: string; // Link to the AI tool if the post is about one
-  detailImageUrl1?: string; // Still relevant
-  detailImageHint1?: string; // Still relevant
-  detailImageUrl2?: string; // Still relevant
-  detailImageHint2?: string; // Still relevant
-  comments?: UserComment[]; // Added comments
+  tags: string[]; 
+  publishedDate: Date; // For mock data, Firestore would use Timestamp
+  link: string; 
+  detailImageUrl1?: string; 
+  detailImageHint1?: string; 
+  detailImageUrl2?: string; 
+  detailImageHint2?: string; 
+  comments?: UserComment[]; // Initially from mock, then Firestore
 }
 
 export interface Category {
@@ -33,24 +33,28 @@ export interface Category {
   description: LocalizedString;
 }
 
-// Simplified User type for UI simulation
+// User type representing data from Firebase Auth and Firestore
 export interface User {
-  id: string;
-  username: string;
-  email: string;
-  profileImageUrl?: string;
-  isSubscribed: boolean; // PRO status
+  uid: string; // Firebase Auth UID
+  email: string | null;
+  username?: string; // Custom username from Firestore
+  displayName?: string | null; // From Firebase Auth Profile (e.g., Google name)
+  photoURL?: string | null; // From Firebase Auth Profile (e.g., Google avatar)
+  isSubscribed?: boolean; // From Firestore
+  memberSince?: Timestamp | Date; // From Firestore
+  subscriptionPlan?: string; // From Firestore
 }
 
 export interface UserComment {
-  id: string;
+  id: string; // Firestore document ID
   postId: string; 
-  username: string;
+  userId: string; // UID of the commenter
+  username: string; // Denormalized for easy display
+  profileImageUrl?: string; // Denormalized
   isAnonymous: boolean;
   rating: number; 
   text: string;
-  timestamp: Date;
-  profileImageUrl?: string; 
+  timestamp: Timestamp | Date; // Firestore Timestamp or Date object
 }
 
 export interface AiToolChatContext {

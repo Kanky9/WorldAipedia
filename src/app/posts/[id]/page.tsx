@@ -2,17 +2,18 @@
 "use client"; 
 
 import Image from 'next/image';
-import { notFound, useParams, useRouter } from 'next/navigation'; // Added useRouter
-import { getPostById, getCategoryByName } from '@/data/posts'; 
+import { notFound, useParams, useRouter } from 'next/navigation';
+import { getPostById as getMockPostById, getCategoryByName } from '@/data/posts'; // getPostById is now for mock data
 import AILink from '@/components/ai/AILink'; 
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader } from '@/components/ui/card'; 
 import Link from 'next/link';
-import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle } from 'lucide-react';
+import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
-import { useEffect, useState } from 'react';
-import type { Post, UserComment, User } from '@/lib/types'; 
+import { useAuth } from '@/contexts/AuthContext'; // Import useAuth
+import { useEffect, useState, useCallback } from 'react';
+import type { Post, UserComment } from '@/lib/types'; 
 import { Skeleton } from '@/components/ui/skeleton';
 import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator'; 
 import { format } from 'date-fns';
@@ -23,71 +24,77 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import StarRatingInput from '@/components/ai/StarRatingInput';
 import CommentCard from '@/components/ai/CommentCard';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-// Mock user for simulating login state - in a real app, this would come from auth context
-const mockUser: User = { 
-  id: "simulated-user-basic", 
-  username: "DemoUser", 
-  email: "demo@example.com", 
-  isSubscribed: false, // Set to true to simulate PRO user
-  profileImageUrl: "https://placehold.co/40x40.png?text=DU"
-};
-
-// const mockUserPro: User = { 
-//   id: "simulated-user-pro", 
-//   username: "ProUser", 
-//   email: "pro@example.com", 
-//   isSubscribed: true,
-//   profileImageUrl: "https://placehold.co/40x40.png?text=PU"
-// };
+import { db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase'; // Firebase imports
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function PostPage() { 
   const params = useParams();
-  const router = useRouter(); // Added for programmatic navigation if needed
+  const router = useRouter(); 
   const id = typeof params.id === 'string' ? params.id : '';
   const { t, language } = useLanguage(); 
+  const { currentUser, loading: authLoading } = useAuth();
+  const { toast } = useToast();
 
-  const [post, setPost] = useState<Post | null | undefined>(undefined); 
+  const [post, setPost] = useState<Post | null | undefined>(undefined); // Post data (still from mock)
   const [pageAnimationClass, setPageAnimationClass] = useState('');
 
   // Comment State
   const [comments, setComments] = useState<UserComment[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(true);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentRating, setNewCommentRating] = useState(0);
   const [isAnonymousComment, setIsAnonymousComment] = useState(false);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
   const [showSubscribeAlert, setShowSubscribeAlert] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(mockUser); // Use mockUser, can be toggled
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+
+
+  const fetchComments = useCallback(async (postId: string) => {
+    if (!postId) return;
+    setCommentsLoading(true);
+    try {
+      const commentsRef = collection(db, 'posts', postId, 'comments');
+      const q = query(commentsRef, orderBy('timestamp', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const fetchedComments: UserComment[] = [];
+      querySnapshot.forEach((doc) => {
+        fetchedComments.push({ id: doc.id, ...doc.data() } as UserComment);
+      });
+      setComments(fetchedComments);
+    } catch (error) {
+      console.error("Error fetching comments: ", error);
+      toast({ variant: "destructive", title: "Error", description: "Could not load comments." });
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [toast]);
 
   useEffect(() => {
     if (id) {
       window.scrollTo(0, 0); 
-      const currentPost = getPostById(id);
+      const currentPost = getMockPostById(id); // Get main post data from mock
       setPost(currentPost);
       if (currentPost) {
-        setComments(currentPost.comments || []);
+        fetchComments(currentPost.id); // Fetch comments from Firestore
         setPageAnimationClass('animate-scale-up-fade-in');
       } else {
         setPageAnimationClass(''); 
       }
     }
-  }, [id]); 
+  }, [id, fetchComments]); 
 
   const getPostDateLocale = () => {
     switch (language) {
-      case 'es':
-        return es;
-      case 'en':
-      default:
-        return enUS;
+      case 'es': return es;
+      case 'en': default: return enUS;
     }
   };
   const postDateLocale = getPostDateLocale();
 
-  const handleCommentSubmit = (e: React.FormEvent) => {
+  const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) {
       setShowLoginAlert(true);
@@ -98,29 +105,45 @@ export default function PostPage() {
       return;
     }
     if (newCommentText.trim() === '' || newCommentRating === 0) {
-      // Basic validation, can be improved
-      alert('Please provide a rating and a comment.');
+      toast({ variant: "destructive", title: "Missing Information", description: "Please provide a rating and a comment."});
       return;
     }
+    if (!post || isSubmittingComment) return;
 
-    const newComment: UserComment = {
-      id: crypto.randomUUID(),
-      postId: post!.id,
-      username: currentUser.username,
-      profileImageUrl: currentUser.profileImageUrl,
+    setIsSubmittingComment(true);
+    const newCommentData = {
+      postId: post.id,
+      userId: currentUser.uid,
+      username: isAnonymousComment ? "Anonymous" : (currentUser.username || currentUser.displayName || "User"),
+      profileImageUrl: isAnonymousComment ? undefined : currentUser.photoURL,
       isAnonymous: isAnonymousComment,
       rating: newCommentRating,
       text: newCommentText,
-      timestamp: new Date(),
+      timestamp: serverTimestamp(), // Use serverTimestamp for Firestore
     };
-    setComments(prev => [newComment, ...prev]);
-    setNewCommentText('');
-    setNewCommentRating(0);
-    setIsAnonymousComment(false);
+
+    try {
+      const commentCollectionRef = collection(db, 'posts', post.id, 'comments');
+      await addDoc(commentCollectionRef, newCommentData);
+      
+      // Optimistically add to local state or re-fetch
+      // For simplicity, we re-fetch. Better UX might be optimistic update.
+      fetchComments(post.id); 
+
+      setNewCommentText('');
+      setNewCommentRating(0);
+      setIsAnonymousComment(false);
+      toast({ title: "Comment Submitted", description: "Your comment has been posted." });
+    } catch (error) {
+      console.error("Error submitting comment: ", error);
+      toast({ variant: "destructive", title: "Submission Error", description: "Could not post your comment."});
+    } finally {
+      setIsSubmittingComment(false);
+    }
   };
 
 
-  if (post === undefined) { 
+  if (post === undefined && !authLoading) { // Show skeleton if post data not yet loaded
     return (
       <div className="space-y-6"> 
         <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" /> 
@@ -145,10 +168,20 @@ export default function PostPage() {
     )
   }
 
-  if (!post) {
+  if (!post && !authLoading) { // If loading is done and post is still null
     notFound();
   }
   
+  // Display loader if post or auth state is still loading
+  if (authLoading || post === undefined) {
+     return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Post is loaded by this point
   const category = getCategoryByName(post.category);
   const localizedCategoryName = category ? t(category.name) : post.category;
   const localizedPostTitle = t(post.title);
@@ -259,7 +292,6 @@ export default function PostPage() {
           {t('userReviewsTitle', "User Reviews & Comments")}
         </h2>
 
-        {/* Add Comment Form */}
         <Card className="shadow-lg bg-card/80 border border-border/50">
           <CardHeader>
             <h3 className="text-lg font-semibold text-foreground">{t('addYourCommentTitle', "Add Your Comment")}</h3>
@@ -271,7 +303,7 @@ export default function PostPage() {
                 <StarRatingInput 
                   value={newCommentRating} 
                   onChange={setNewCommentRating}
-                  disabled={!currentUser || !currentUser.isSubscribed}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
                 />
               </div>
               <div>
@@ -282,7 +314,7 @@ export default function PostPage() {
                   onChange={(e) => setNewCommentText(e.target.value)}
                   placeholder={!currentUser ? t('loginToCommentPrompt') : (!currentUser.isSubscribed ? t('subscribeToCommentDescription') : "Share your thoughts...")}
                   rows={4}
-                  disabled={!currentUser || !currentUser.isSubscribed}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -290,7 +322,7 @@ export default function PostPage() {
                   id="anonymous" 
                   checked={isAnonymousComment}
                   onCheckedChange={(checked) => setIsAnonymousComment(Boolean(checked))}
-                  disabled={!currentUser || !currentUser.isSubscribed}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
                 />
                 <Label htmlFor="anonymous" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   {t('anonymousCommentLabel', "Comment Anonymously")}
@@ -299,27 +331,28 @@ export default function PostPage() {
               <Button 
                 type="submit" 
                 className="bg-primary hover:bg-primary/90"
-                disabled={!currentUser || (!currentUser.isSubscribed && newCommentText !== '')} // Enable if not PRO but only to trigger alert
+                disabled={isSubmittingComment || authLoading || (!currentUser || (!currentUser.isSubscribed && newCommentText !== ''))}
               >
+                {isSubmittingComment ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
                 {t('submitCommentButton', "Submit Comment")}
               </Button>
             </form>
           </CardContent>
         </Card>
         
-        {/* Display Comments */}
-        <div className="space-y-4">
-          {comments.length > 0 ? (
-            comments.map(comment => (
-              <CommentCard key={comment.id} comment={comment} />
-            ))
-          ) : (
-            <p className="text-muted-foreground text-center py-4">{t('noCommentsYet', "No comments yet. Be the first to share your thoughts!")}</p>
-          )}
-        </div>
+        {commentsLoading ? (
+          <div className="flex justify-center items-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : comments.length > 0 ? (
+          comments.map(comment => (
+            <CommentCard key={comment.id} comment={comment} />
+          ))
+        ) : (
+          <p className="text-muted-foreground text-center py-4">{t('noCommentsYet', "No comments yet. Be the first to share your thoughts!")}</p>
+        )}
       </section>
 
-      {/* Login Alert Dialog */}
       <AlertDialog open={showLoginAlert} onOpenChange={setShowLoginAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -331,15 +364,12 @@ export default function PostPage() {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowLoginAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link href="/login" legacyBehavior passHref>
-                <a>{t('loginButton')}</a>
-              </Link>
+              <Link href="/login">{t('loginButton')}</Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Subscribe Alert Dialog */}
       <AlertDialog open={showSubscribeAlert} onOpenChange={setShowSubscribeAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -351,9 +381,7 @@ export default function PostPage() {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowSubscribeAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link href="/account" legacyBehavior passHref>
-                <a>{t('subscribeButton')}</a>
-              </Link>
+              <Link href="/account">{t('subscribeButton')}</Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

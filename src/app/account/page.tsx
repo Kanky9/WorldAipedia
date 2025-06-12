@@ -6,54 +6,100 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
-import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
+import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-
-// Mock user data - in a real app, this would come from auth context/backend
-const mockUser = {
-  username: "DemoUserPRO",
-  email: "demo.pro@example.com",
-  profileImageUrl: "https://placehold.co/100x100.png?text=PRO",
-  isSubscribed: true,
-  subscriptionPlan: "PRO Monthly",
-  nextBillingDate: "August 15, 2024",
-  memberSince: "July 1, 2023"
-};
-
-// const mockUserBasic = {
-//   username: "DemoUserBasic",
-//   email: "basic@example.com",
-//   profileImageUrl: "",
-//   isSubscribed: false,
-// };
-
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/hooks/use-toast";
+import { format } from 'date-fns'; // For memberSince
+import { enUS, es } from 'date-fns/locale'; 
+import type { Timestamp } from 'firebase/firestore';
 
 export default function AccountPage() {
-  const { t } = useLanguage();
-  // For demo, using mockUser. Replace with actual user state.
-  const [currentUser, setCurrentUser] = useState(mockUser); 
+  const { t, language } = useLanguage();
+  const { currentUser, loading: authLoading, updateUserProfileInFirestore } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const handleUpdateProfile = (e: React.FormEvent) => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  // Password fields are for display/UX, actual change might need re-auth and Firebase methods
+  // const [currentPassword, setCurrentPassword] = useState('');
+  // const [newPassword, setNewPassword] = useState('');
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+
+
+  useEffect(() => {
+    if (!authLoading && !currentUser) {
+      router.push('/login'); // Redirect if not logged in
+    }
+    if (currentUser) {
+      setUsername(currentUser.username || currentUser.displayName || '');
+      setEmail(currentUser.email || '');
+    }
+  }, [currentUser, authLoading, router]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t('profileUpdateSimulated', "Profile update (simulated)."));
+    if (!currentUser || isUpdatingProfile) return;
+    setIsUpdatingProfile(true);
+    try {
+      // Here, we'd update Firebase Auth profile (displayName) if needed,
+      // and always update Firestore for 'username' and other custom fields.
+      // For simplicity, we're focusing on the 'username' in Firestore.
+      // If displayName in Firebase Auth should also change, add:
+      // await updateFirebaseAuthProfile(auth.currentUser, { displayName: username });
+      await updateUserProfileInFirestore(currentUser.uid, { username });
+      toast({ title: t('profileUpdateSimulated', "Profile Updated"), description: "Your profile has been successfully updated."});
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      toast({ variant: "destructive", title: "Update Failed", description: error.message || "Could not update profile."});
+    } finally {
+      setIsUpdatingProfile(false);
+    }
   };
 
   const handleCancelSubscription = () => {
-    alert(t('cancelSubscriptionSimulated', "Subscription cancellation (simulated)."));
-    // setCurrentUser(prev => ({...prev!, isSubscribed: false, subscriptionPlan: undefined, nextBillingDate: undefined}));
+    // This would involve backend logic and payment provider integration
+    // For now, it remains a simulated action.
+    // If isSubscribed flag is in Firestore, update it:
+    // if (currentUser) {
+    //   updateUserProfileInFirestore(currentUser.uid, { isSubscribed: false, subscriptionPlan: null });
+    // }
+    toast({ title: t('cancelSubscriptionSimulated', "Subscription cancellation (simulated).") });
   }
   
   const handleUpgradeToPro = () => {
-     alert(t('upgradeToProSimulated', "Upgrade to PRO (simulated payment flow)."));
-    // setCurrentUser(prev => ({
-    //   ...prev!, 
-    //   isSubscribed: true, 
-    //   subscriptionPlan: "PRO Monthly", 
-    //   nextBillingDate: "Next Month", 
-    //   profileImageUrl: prev?.profileImageUrl || "https://placehold.co/100x100.png?text=NEW"
-    // }));
+    // This would involve backend logic and payment provider integration
+    // If isSubscribed flag is in Firestore, update it:
+    // if (currentUser) {
+    //   updateUserProfileInFirestore(currentUser.uid, { isSubscribed: true, subscriptionPlan: "PRO Monthly", nextBillingDate: "..." }); // nextBillingDate would be calculated
+    // }
+    toast({ title: t('upgradeToProSimulated', "Upgrade to PRO (simulated payment flow).") });
+  }
+
+  const getLocaleForDate = () => {
+    switch (language) {
+      case 'es': return es;
+      default: return enUS;
+    }
+  };
+
+  const formatMemberSince = (memberSince: Timestamp | Date | undefined): string => {
+    if (!memberSince) return 'N/A';
+    const date = memberSince instanceof Date ? memberSince : memberSince.toDate();
+    return format(date, 'PP', { locale: getLocaleForDate() });
+  };
+
+
+  if (authLoading || !currentUser) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -68,25 +114,25 @@ export default function AccountPage() {
         <Card className="md:col-span-1 shadow-lg">
           <CardHeader className="items-center text-center">
             <Avatar className="h-24 w-24 mb-3 border-2 border-primary">
-              {currentUser.profileImageUrl ? (
-                <AvatarImage src={currentUser.profileImageUrl} alt={currentUser.username} data-ai-hint="user profile image"/>
+              {currentUser.photoURL ? (
+                <AvatarImage src={currentUser.photoURL} alt={currentUser.username || currentUser.displayName || 'User'} data-ai-hint="user profile image"/>
               ) : (
                 <AvatarFallback className="text-3xl bg-muted text-muted-foreground">
-                  {currentUser.username.substring(0, 2).toUpperCase()}
+                  {(currentUser.username || currentUser.displayName || 'U').substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               )}
             </Avatar>
-             <Button variant="outline" size="sm" className="text-xs mt-2">
+             <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: "Profile picture change via Gravatar/Google (simulated)."})}>
                 <Pencil className="mr-1.5 h-3 w-3"/> {t('changeProfilePictureButton', 'Change Picture')}
             </Button>
-            <CardTitle className="mt-2">{currentUser.username}</CardTitle>
+            <CardTitle className="mt-2">{currentUser.username || currentUser.displayName}</CardTitle>
             <CardDescription>{currentUser.email}</CardDescription>
             {currentUser.isSubscribed && (
-              <Badge className="mt-2 bg-primary text-primary-foreground"><Star className="mr-1.5 h-3.5 w-3.5"/> PRO Member</Badge>
+              <Badge className="mt-2 bg-primary text-primary-foreground"><Star className="mr-1.5 h-3.5 w-3.5"/> {t('proMemberLabel', 'PRO Member')}</Badge>
             )}
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground">
-            <p>{t('memberSinceLabel', 'Member since')}: {currentUser.memberSince || 'N/A'}</p>
+            <p>{t('memberSinceLabel', 'Member since')}: {formatMemberSince(currentUser.memberSince)}</p>
           </CardContent>
         </Card>
 
@@ -101,22 +147,26 @@ export default function AccountPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="username">{t('usernameLabel', 'Username')}</Label>
-                    <Input id="username" defaultValue={currentUser.username} />
+                    <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} disabled={isUpdatingProfile}/>
                   </div>
                   <div>
                     <Label htmlFor="email">{t('emailLabel', 'Email Address')}</Label>
-                    <Input id="email" type="email" defaultValue={currentUser.email} />
+                    <Input id="email" type="email" value={email} readOnly disabled />
                   </div>
                 </div>
-                <div>
+                {/* Password change requires re-authentication, more complex flow */}
+                {/* <div>
                     <Label htmlFor="current-password">{t('currentPasswordLabel', 'Current Password')}</Label>
                     <Input id="current-password" type="password" placeholder="********"/>
                 </div>
                  <div>
                     <Label htmlFor="new-password">{t('newPasswordLabel', 'New Password (optional)')}</Label>
                     <Input id="new-password" type="password" placeholder={t('leaveBlankNoChange', 'Leave blank to keep current')}/>
-                </div>
-                <Button type="submit" className="bg-primary hover:bg-primary/90">{t('updateProfileButton', 'Update Profile')}</Button>
+                </div> */}
+                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile}>
+                  {isUpdatingProfile ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
+                  {t('updateProfileButton', 'Update Profile')}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -128,11 +178,11 @@ export default function AccountPage() {
             <CardContent className="space-y-3">
               {currentUser.isSubscribed ? (
                 <>
-                  <p>{t('currentPlanLabel', 'Current Plan')}: <span className="font-semibold text-primary">{currentUser.subscriptionPlan}</span></p>
-                  <p>{t('nextBillingDateLabel', 'Next Billing Date')}: {currentUser.nextBillingDate}</p>
+                  <p>{t('currentPlanLabel', 'Current Plan')}: <span className="font-semibold text-primary">{currentUser.subscriptionPlan || 'PRO Plan'}</span></p>
+                  <p>{t('nextBillingDateLabel', 'Next Billing Date')}: {currentUser.nextBillingDate || "August 15, 2024 (Simulated)"}</p>
                   <p>{t('paymentMethodLabel', 'Payment Method')}: Visa **** 1234 (Simulated)</p>
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                    <Button variant="outline">{t('updatePaymentButton', 'Update Payment Method')}</Button>
+                    <Button variant="outline" onClick={() => toast({description: "Payment update (simulated)."}) }>{t('updatePaymentButton', 'Update Payment Method')}</Button>
                     <Button variant="destructive" onClick={handleCancelSubscription}>{t('cancelSubscriptionButton', 'Cancel Subscription')}</Button>
                   </div>
                 </>
