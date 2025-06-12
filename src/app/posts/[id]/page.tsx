@@ -2,7 +2,7 @@
 "use client"; 
 
 import Image from 'next/image';
-import { notFound, useParams } from 'next/navigation'; 
+import { notFound, useParams, useRouter } from 'next/navigation'; // Added useRouter
 import { getPostById, getCategoryByName } from '@/data/posts'; 
 import AILink from '@/components/ai/AILink'; 
 import CategoryIcon from '@/components/ai/CategoryIcon';
@@ -46,6 +46,7 @@ const mockUser: User = {
 
 export default function PostPage() { 
   const params = useParams();
+  const router = useRouter(); // Added for programmatic navigation if needed
   const id = typeof params.id === 'string' ? params.id : '';
   const { t, language } = useLanguage(); 
 
@@ -121,8 +122,8 @@ export default function PostPage() {
 
   if (post === undefined) { 
     return (
-      <div className="space-y-6"> {/* Reduced space-y-8 to space-y-6 */}
-        <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" /> {/* Reduced mb-6 to mb-4 */}
+      <div className="space-y-6"> 
+        <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" /> 
         <Card className="overflow-hidden shadow-lg rounded-xl bg-card">
           <CardHeader className="p-0">
             <Skeleton className="relative w-full h-60 sm:h-72 md:h-96" />
@@ -154,9 +155,9 @@ export default function PostPage() {
 
 
   return (
-    <div className={`relative space-y-8 ${pageAnimationClass}`}> {/* Reduced space-y-10 to space-y-8 */}
+    <div className={`relative space-y-8 ${pageAnimationClass}`}> 
       <ScrollDownIndicator />
-      <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md"> {/* Reduced mb-6 to mb-4 */}
+      <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md"> 
         <Link href="/" className="flex items-center gap-2">
           <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
           {t('backToBlogButton', 'Back to Blog')}
@@ -330,7 +331,9 @@ export default function PostPage() {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowLoginAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link href="/login">{t('loginButton')}</Link>
+              <Link href="/login" legacyBehavior passHref>
+                <a>{t('loginButton')}</a>
+              </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -348,7 +351,9 @@ export default function PostPage() {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowSubscribeAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction asChild>
-              <Link href="/account">{t('subscribeButton')}</Link> 
+              <Link href="/account" legacyBehavior passHref>
+                <a>{t('subscribeButton')}</a>
+              </Link>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -356,3 +361,5 @@ export default function PostPage() {
     </div>
   );
 }
+
+    
