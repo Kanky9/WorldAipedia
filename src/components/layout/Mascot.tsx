@@ -58,11 +58,11 @@ const Mascot = () => {
       // Chat closed, reset chat bubble sequence and ensure default bubble is set to show
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
-      setShowDefaultBubble(true); // <<<< MODIFICACIÓN: Forzar que el globo de saludo se muestre
+      setShowDefaultBubble(true); 
     }
 
     return () => clearTimeout(bubbleTimer);
-  }, [isChatOpen, currentChatBubbleIndex, t, language]); // chatBubbleMessagesKeys is stable
+  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]); // Added chatBubbleMessagesKeys to dependencies
 
 
   const handleMascotClick = () => {
@@ -90,7 +90,9 @@ const Mascot = () => {
 
   return (
     <div 
-      className="fixed bottom-5 right-5 z-50 flex flex-col items-center group"
+      className={`fixed bottom-5 z-50 flex flex-col items-center group transition-all duration-500 ease-in-out ${
+        isChatOpen ? 'left-5' : 'right-5'
+      }`}
       style={{ animation: isMascotVisible ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none' }}
     >
       {/* Speech Bubble */}
