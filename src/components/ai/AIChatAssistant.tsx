@@ -37,7 +37,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(false); // Managed by open and messages.length now
+  const [isInitialLoading, setIsInitialLoading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
@@ -46,12 +46,12 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
   const { language, t } = useLanguage();
 
   useEffect(() => {
-    if (open && messages.length === 0) { // Only fetch initial message if dialog is open and no messages exist
+    if (open && messages.length === 0) {
       setIsInitialLoading(true);
       if (initialContext) {
         getAiToolWelcome({
-          toolTitle: initialContext.title, // Already localized from context provider
-          toolDescription: initialContext.shortDescription, // Already localized
+          toolTitle: initialContext.title,
+          toolDescription: initialContext.shortDescription,
           toolLink: initialContext.link,
           language,
         })
@@ -79,10 +79,10 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           });
       }
     } else if (!open) {
-      setMessages([]); // Clear messages when dialog closes
-      clearSelectedImage(); // Also clear any selected image
+      setMessages([]);
+      clearSelectedImage();
     }
-  }, [open, initialContext, language, t]); // messages.length removed to allow context change to re-trigger if open
+  }, [open, initialContext, language, t]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -140,7 +140,9 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       parts: msg.parts.map(part => {
         const genkitPart: any = {};
         if (part.text) genkitPart.text = part.text;
-        if (part.media) genkitPart.media = { url: "User sent an image previously" }; 
+        // For history, Genkit expects a simplified representation or just text for images
+        // to avoid resending large data or complex structures in history.
+        if (part.media) genkitPart.media = { url: "User sent an image previously" }; // Placeholder or simple indicator
         return genkitPart;
       }),
     }));
@@ -163,7 +165,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[525px] h-[70vh] flex flex-col p-0 rounded-xl">
+      <DialogContent className="w-full sm:max-w-[525px] h-auto max-h-[calc(100dvh-4rem)] sm:max-h-[70vh] flex flex-col p-0 rounded-xl">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="flex items-center gap-2">
             <Bot className="h-6 w-6 text-primary" />
