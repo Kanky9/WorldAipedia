@@ -26,6 +26,11 @@ const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: str
   return value[lang as keyof LocalizedString] || value.en || '';
 };
 
+// Define the return type for getUpdatedLocalizedField at the top level using an intersection
+type UpdatedLocalizedFieldReturnType = 
+  { [key in LanguageCode]?: string } & 
+  { en: string }; // Ensures 'en' is always present
+
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -211,24 +216,19 @@ export default function CreatePostPage() {
     setIsSubmitting(true);
 
     const currentEditingLanguage = language as LanguageCode;
-
-    type UpdatedLocalizedFieldReturnType = {
-      [key in LanguageCode]?: string;
-      en: string; // Ensure 'en' is always present
-    };
-
+    
     const getUpdatedLocalizedField = (
       existingFieldData: LocalizedString | undefined,
       newValue: string
     ): UpdatedLocalizedFieldReturnType => {
       const base = typeof existingFieldData === 'object' && existingFieldData !== null
         ? { ...existingFieldData }
-        : { en: '' }; // Default to an object with 'en' key
+        : { en: '' }; 
       
       const typedBase = base as UpdatedLocalizedFieldReturnType;
 
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en) { // Ensure 'en' always has a value, defaulting to the current new value if 'en' wasn't set
+      if (!typedBase.en) { 
            typedBase.en = newValue;
       }
       return typedBase;
@@ -245,7 +245,7 @@ export default function CreatePostPage() {
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-      publishedDate: new Date(publishedDate), // Ensure this is a Date object for Firestore functions
+      publishedDate: new Date(publishedDate), 
       link: linkTool,
       detailImageUrl1: detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl),
       detailImageHint1: detailImageHint1,
@@ -262,26 +262,26 @@ export default function CreatePostPage() {
           action: <CheckCircle className="text-green-500" />,
         });
       } else {
-        // For new posts, ensure publishedDate is correctly passed if `addPostToFirestore` expects a non-optional Date
+        
         const newPostData = { 
             ...postDetailsToSave, 
-            publishedDate: postDetailsToSave.publishedDate || new Date() // Fallback if somehow null, though form validates
+            publishedDate: postDetailsToSave.publishedDate || new Date() 
         };
-        const newPostId = doc(collection(db, 'posts')).id; // Generate ID client-side for consistency with PostType
+        const newPostId = doc(collection(db, 'posts')).id; 
         await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
           description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
-        // Clear form only if creating a new post and successful
+        
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl); setMainImageHint('');
         clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl); setLogoHint('');
         clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl); setDetailImageHint1('');
         clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null); // Reset existing data
+        setExistingPostDataForForm(null); 
       }
       router.push('/admin'); 
     } catch (error) {
