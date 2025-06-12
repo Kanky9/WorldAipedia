@@ -405,6 +405,110 @@ export const posts: Post[] = [
     detailImageHint1: 'video generation prompt interface',
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'animated scene example'
+  },
+  {
+    id: 'taskmaster-ai-post',
+    title: LS('TaskMaster AI: Intelligent Project Planning', 'TaskMaster AI: Planificación Inteligente de Proyectos'),
+    shortDescription: LS(
+      'Manage tasks and projects efficiently with AI-driven insights and automation.',
+      'Gestiona tareas y proyectos eficientemente con información y automatización impulsadas por IA.'
+    ),
+    longDescription: LS(
+      'TaskMaster AI helps you organize your projects, prioritize tasks, and collaborate with your team efficiently. It uses AI to suggest optimal workflows, predict task durations based on historical data, and identify potential bottlenecks before they impact your deadlines. With integrations for popular calendars and communication tools, TaskMaster AI streamlines your entire project lifecycle, from initial planning to final delivery, ensuring everyone stays on track and informed. This post explores how TaskMaster AI can transform your productivity.',
+      'TaskMaster AI te ayuda a organizar tus proyectos, priorizar tareas y colaborar con tu equipo de manera eficiente. Utiliza IA para sugerir flujos de trabajo óptimos, predecir la duración de las tareas basándose en datos históricos e identificar posibles cuellos de botella antes de que afecten tus plazos. Con integraciones para calendarios y herramientas de comunicación populares, TaskMaster AI optimiza todo el ciclo de vida de tu proyecto, desde la planificación inicial hasta la entrega final, asegurando que todos se mantengan encaminados e informados. Este post explora cómo TaskMaster AI puede transformar tu productividad.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'project management dashboard tasks',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'checkmark list icon',
+    category: 'Productivity',
+    categorySlug: 'productivity',
+    tags: ['Project Management', 'Task Automation', 'Team Collaboration', 'AI Productivity'],
+    publishedDate: subDays(new Date(), 1), // Recent post
+    link: '#taskmaster-ai', // Placeholder link
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'gantt chart project planning',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'team collaboration interface kanban',
+    comments: []
+  },
+  {
+    id: 'inboxzero-ai-post',
+    title: LS('Achieve Inbox Zero with AI Assistance', 'Alcanza la Bandeja de Entrada Cero con Asistencia IA'),
+    shortDescription: LS(
+      'Discover how InboxZero AI declutters your email and boosts your focus.',
+      'Descubre cómo InboxZero AI despeja tu correo electrónico y aumenta tu concentración.'
+    ),
+    longDescription: LS(
+      'Overwhelmed by emails? InboxZero AI analyzes your incoming messages, intelligently categorizes them, drafts smart replies for common queries, and helps you achieve the elusive inbox zero. It learns your email habits and preferences to prioritize important messages, snooze less critical ones, and effectively filter out spam or promotional content. This post details its features and how it can save you significant time each week, reducing email-related stress and enhancing productivity.',
+      '¿Abrumado por los correos electrónicos? InboxZero AI analiza tus mensajes entrantes, los categoriza inteligentemente, redacta respuestas inteligentes para consultas comunes y te ayuda a alcanzar la esquiva bandeja de entrada cero. Aprende tus hábitos y preferencias de correo electrónico para priorizar mensajes importantes, posponer los menos críticos y filtrar eficazmente el spam o contenido promocional. Este post detalla sus funciones y cómo puede ahorrarte tiempo significativo cada semana, reduciendo el estrés relacionado con el correo electrónico y mejorando la productividad.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'clean organized email inbox',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'email envelope shield',
+    category: 'Productivity',
+    categorySlug: 'productivity',
+    tags: ['Email Management', 'AI Organization', 'Productivity Hacks', 'Anti-Spam'],
+    publishedDate: subHours(new Date(), 12), // Very recent post
+    link: '#inboxzero-ai', // Placeholder link
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'email categorization filters',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'AI smart reply suggestion',
+    comments: []
+  },
+  {
+    id: 'learnsphere-ai-post',
+    title: LS('LearnSphere AI: Personalized Education for All', 'LearnSphere AI: Educación Personalizada para Todos'),
+    shortDescription: LS(
+      'Explore adaptive learning paths and skill tracking with LearnSphere AI.',
+      'Explora rutas de aprendizaje adaptativas y seguimiento de habilidades con LearnSphere AI.'
+    ),
+    longDescription: LS(
+      'LearnSphere AI offers a vast library of courses across numerous disciplines that dynamically adapt to your individual learning pace and style. The AI engine identifies your existing knowledge, strengths, and areas needing improvement, then crafts a personalized learning path with interactive exercises, multimedia content, and real-time feedback. This post explores how LearnSphere AI makes learning more engaging, effective, and accessible, ensuring you master new skills efficiently.',
+      'LearnSphere AI ofrece una vasta biblioteca de cursos en numerosas disciplinas que se adaptan dinámicamente a tu ritmo y estilo de aprendizaje individual. El motor de IA identifica tus conocimientos existentes, fortalezas y áreas que necesitan mejora, luego crea una ruta de aprendizaje personalizada con ejercicios interactivos, contenido multimedia y retroalimentación en tiempo real. Este post explora cómo LearnSphere AI hace el aprendizaje más atractivo, efectivo y accesible, asegurando que domines nuevas habilidades eficientemente.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'interactive online learning platform',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'graduation cap atom',
+    category: 'Education',
+    categorySlug: 'education',
+    tags: ['E-learning', 'Adaptive Learning', 'Skill Development', 'AI Education'],
+    publishedDate: subDays(new Date(), 3),
+    link: '#learnsphere-ai', // Placeholder link
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'adaptive learning module interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'skill progress dashboard chart',
+    comments: []
+  },
+  {
+    id: 'tutorbot-ai-post',
+    title: LS('TutorBot AI: Your 24/7 Academic Assistant', 'TutorBot AI: Tu Asistente Académico 24/7'),
+    shortDescription: LS(
+      'Get instant, step-by-step help across various subjects with TutorBot AI.',
+      'Obtén ayuda instantánea y paso a paso en diversas materias con TutorBot AI.'
+    ),
+    longDescription: LS(
+      'Struggling with homework or complex concepts? TutorBot AI acts as your personal 24/7 academic assistant. You can ask questions on a wide range of subjects, from math and science to history and literature, and receive clear, step-by-step explanations. This post demonstrates how TutorBot AI can help with problem-solving, explain difficult topics through interactive dialogue, and offer practice quizzes to reinforce learning, making education more accessible and personalized for everyone.',
+      '¿Luchando con la tarea o conceptos complejos? TutorBot AI actúa como tu asistente académico personal 24/7. Puedes hacer preguntas sobre una amplia gama de materias, desde matemáticas y ciencias hasta historia y literatura, y recibir explicaciones claras y paso a paso. Este post demuestra cómo TutorBot AI puede ayudar con la resolución de problemas, explicar temas difíciles a través del diálogo interactivo y ofrecer cuestionarios de práctica para reforzar el aprendizaje, haciendo la educación más accesible y personalizada para todos.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'student AI tutor interaction chat',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'robot teacher book icon',
+    category: 'Education',
+    categorySlug: 'education',
+    tags: ['AI Tutor', 'Homework Help', 'Personalized Learning', 'Academic Support'],
+    publishedDate: subDays(new Date(), 4),
+    link: '#tutorbot-ai', // Placeholder link
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'math problem explanation steps',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'interactive learning chat interface',
+    comments: []
   }
 ];
 
@@ -431,3 +535,4 @@ export const getCategoryByName = (nameEN: string): Category | undefined => {
     return catName === nameEN;
   });
 };
+
