@@ -29,7 +29,7 @@ export type CoreTranslationKey =
   | 'blogSubtitle'
   | 'exploreCategoriesButton' 
   | 'featuredPostsTitle' 
-  | 'viewAllPostsButton'
+  | 'viewAllPostsButton' // Re-purposed from 'View All Posts & Categories'
   // Post Card
   | 'readMoreButton'
   // AI Chat Assistant "Lace"
@@ -92,6 +92,44 @@ export type CoreTranslationKey =
   | 'deleteButton'
   | 'deletePostConfirm'
   | 'adminNoPosts'
+  // Admin Create/Edit Post Page
+  | 'adminCreateTitle'
+  | 'adminEditTitle'
+  | 'adminPostTitleLabel'
+  | 'adminPostTitlePlaceholder'
+  | 'adminPostShortDescLabel'
+  | 'adminPostShortDescPlaceholder'
+  | 'adminPostLongDescLabel'
+  | 'adminPostLongDescPlaceholder'
+  | 'adminPostMainImageUrlLabel'
+  | 'adminPostMainImageUrlPlaceholder'
+  | 'adminPostMainImageHintLabel'
+  | 'adminPostMainImageHintPlaceholder'
+  | 'adminPostLogoUrlLabel'
+  | 'adminPostLogoUrlPlaceholder'
+  | 'adminPostLogoHintLabel'
+  | 'adminPostLogoHintPlaceholder'
+  | 'adminPostDetailImageUrl1Label'
+  | 'adminPostDetailImageUrl1Placeholder'
+  | 'adminPostDetailImageHint1Label'
+  | 'adminPostDetailImageHint1Placeholder'
+  | 'adminPostDetailImageUrl2Label'
+  | 'adminPostDetailImageUrl2Placeholder'
+  | 'adminPostDetailImageHint2Label'
+  | 'adminPostDetailImageHint2Placeholder'
+  | 'adminPostCategoryLabel'
+  | 'adminPostSelectCategoryPlaceholder'
+  | 'adminPostTagsLabel'
+  | 'adminPostTagsPlaceholder'
+  | 'adminPostPublishedDateLabel'
+  | 'adminPostLinkToolLabel'
+  | 'adminPostLinkToolPlaceholder'
+  | 'adminPostButtonCreate'
+  | 'adminPostButtonUpdate'
+  | 'adminPostButtonBack'
+  | 'adminPostCreatedSuccess'
+  | 'adminPostUpdatedSuccess'
+  | 'adminPostError'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -163,7 +201,7 @@ export const translations: Translations = {
     blogSubtitle: 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.',
     exploreCategoriesButton: 'Explore Categories',
     featuredPostsTitle: 'Featured Posts',
-    viewAllPostsButton: 'View All Posts & Categories',
+    viewAllPostsButton: 'View All Posts',
     readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
     laceChatDescription: 'I\'m Lace! Ask me about World AI, AI tools, or let\'s just chat.',
@@ -219,6 +257,43 @@ export const translations: Translations = {
     deleteButton: 'Delete',
     deletePostConfirm: 'Delete post {postId} (simulated)?',
     adminNoPosts: 'No posts found.',
+    adminCreateTitle: 'Create New Post',
+    adminEditTitle: 'Edit Post',
+    adminPostTitleLabel: 'Post Title',
+    adminPostTitlePlaceholder: 'Enter post title',
+    adminPostShortDescLabel: 'Short Description',
+    adminPostShortDescPlaceholder: 'Enter a brief summary',
+    adminPostLongDescLabel: 'Long Description (Content)',
+    adminPostLongDescPlaceholder: 'Write the full content of the post here...',
+    adminPostMainImageUrlLabel: 'Main Image URL',
+    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
+    adminPostMainImageHintLabel: 'Main Image AI Hint',
+    adminPostMainImageHintPlaceholder: 'e.g., abstract technology',
+    adminPostLogoUrlLabel: 'Tool Logo URL (Optional)',
+    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
+    adminPostLogoHintLabel: 'Logo AI Hint',
+    adminPostLogoHintPlaceholder: 'e.g., brand logo',
+    adminPostDetailImageUrl1Label: 'Visual Insight Image 1 URL',
+    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
+    adminPostDetailImageHint1Label: 'Visual Insight 1 AI Hint',
+    adminPostDetailImageHint1Placeholder: 'e.g., interface screenshot',
+    adminPostDetailImageUrl2Label: 'Visual Insight Image 2 URL',
+    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
+    adminPostDetailImageHint2Label: 'Visual Insight 2 AI Hint',
+    adminPostDetailImageHint2Placeholder: 'e.g., concept art',
+    adminPostCategoryLabel: 'Category',
+    adminPostSelectCategoryPlaceholder: 'Select a category',
+    adminPostTagsLabel: 'Tags (comma-separated)',
+    adminPostTagsPlaceholder: 'e.g., AI, Machine Learning, NLP',
+    adminPostPublishedDateLabel: 'Published Date',
+    adminPostLinkToolLabel: 'Link to Tool (Optional)',
+    adminPostLinkToolPlaceholder: 'https://example.com/tool',
+    adminPostButtonCreate: 'Create Post',
+    adminPostButtonUpdate: 'Update Post',
+    adminPostButtonBack: 'Back to Admin',
+    adminPostCreatedSuccess: 'Post created successfully (simulated).',
+    adminPostUpdatedSuccess: 'Post updated successfully (simulated).',
+    adminPostError: 'An error occurred (simulated).',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -239,7 +314,6 @@ export const translations: Translations = {
     noActiveSubscription: 'You do not have an active PRO subscription.',
     upgradeToProButton: 'Upgrade to PRO - $1/month',
     upgradeToProSimulated: "Upgrade to PRO (simulated payment flow).",
-    // User Reviews & Comments
     userReviewsTitle: "User Reviews & Comments",
     noCommentsYet: "No comments yet. Be the first to share your thoughts!",
     addYourCommentTitle: "Add Your Comment",
@@ -271,7 +345,7 @@ export const translations: Translations = {
     blogSubtitle: 'Mantente actualizado con las últimas noticias, ideas y herramientas en el mundo de la Inteligencia Artificial.',
     exploreCategoriesButton: 'Explorar Categorías',
     featuredPostsTitle: 'Publicaciones Destacadas',
-    viewAllPostsButton: 'Ver Todas las Publicaciones y Categorías',
+    viewAllPostsButton: 'Ver Todas las Publicaciones',
     readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
     laceChatDescription: '¡Soy Lace! Pregúntame sobre World AI, herramientas de IA, o simplemente charlemos.',
@@ -327,6 +401,43 @@ export const translations: Translations = {
     deleteButton: 'Eliminar',
     deletePostConfirm: '¿Eliminar publicación {postId} (simulado)?',
     adminNoPosts: 'No se encontraron publicaciones.',
+    adminCreateTitle: 'Crear Nueva Publicación',
+    adminEditTitle: 'Editar Publicación',
+    adminPostTitleLabel: 'Título de la Publicación',
+    adminPostTitlePlaceholder: 'Introduce el título de la publicación',
+    adminPostShortDescLabel: 'Descripción Corta',
+    adminPostShortDescPlaceholder: 'Introduce un resumen breve',
+    adminPostLongDescLabel: 'Descripción Larga (Contenido)',
+    adminPostLongDescPlaceholder: 'Escribe el contenido completo de la publicación aquí...',
+    adminPostMainImageUrlLabel: 'URL Imagen Principal',
+    adminPostMainImageUrlPlaceholder: 'https://placehold.co/600x400.png',
+    adminPostMainImageHintLabel: 'Pista IA Imagen Principal',
+    adminPostMainImageHintPlaceholder: 'ej: tecnología abstracta',
+    adminPostLogoUrlLabel: 'URL Logo Herramienta (Opcional)',
+    adminPostLogoUrlPlaceholder: 'https://placehold.co/50x50.png',
+    adminPostLogoHintLabel: 'Pista IA Logo',
+    adminPostLogoHintPlaceholder: 'ej: logo de marca',
+    adminPostDetailImageUrl1Label: 'URL Imagen Perspectiva Visual 1',
+    adminPostDetailImageUrl1Placeholder: 'https://placehold.co/400x300.png',
+    adminPostDetailImageHint1Label: 'Pista IA Perspectiva Visual 1',
+    adminPostDetailImageHint1Placeholder: 'ej: captura de interfaz',
+    adminPostDetailImageUrl2Label: 'URL Imagen Perspectiva Visual 2',
+    adminPostDetailImageUrl2Placeholder: 'https://placehold.co/400x300.png',
+    adminPostDetailImageHint2Label: 'Pista IA Perspectiva Visual 2',
+    adminPostDetailImageHint2Placeholder: 'ej: arte conceptual',
+    adminPostCategoryLabel: 'Categoría',
+    adminPostSelectCategoryPlaceholder: 'Selecciona una categoría',
+    adminPostTagsLabel: 'Etiquetas (separadas por coma)',
+    adminPostTagsPlaceholder: 'ej: IA, Machine Learning, PLN',
+    adminPostPublishedDateLabel: 'Fecha de Publicación',
+    adminPostLinkToolLabel: 'Enlace a la Herramienta (Opcional)',
+    adminPostLinkToolPlaceholder: 'https://ejemplo.com/herramienta',
+    adminPostButtonCreate: 'Crear Publicación',
+    adminPostButtonUpdate: 'Actualizar Publicación',
+    adminPostButtonBack: 'Volver a Admin',
+    adminPostCreatedSuccess: 'Publicación creada con éxito (simulado).',
+    adminPostUpdatedSuccess: 'Publicación actualizada con éxito (simulado).',
+    adminPostError: 'Ocurrió un error (simulado).',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -347,7 +458,6 @@ export const translations: Translations = {
     noActiveSubscription: 'No tienes una suscripción PRO activa.',
     upgradeToProButton: 'Actualizar a PRO - $1/mes',
     upgradeToProSimulated: "Actualización a PRO (flujo de pago simulado).",
-    // User Reviews & Comments
     userReviewsTitle: "Reseñas y Comentarios de Usuarios",
     noCommentsYet: "Aún no hay comentarios. ¡Sé el primero en compartir tu opinión!",
     addYourCommentTitle: "Añade Tu Comentario",
@@ -364,12 +474,14 @@ export const translations: Translations = {
     loginToCommentPrompt: "Por favor, inicia sesión para dejar un comentario.",
   },
   it: {
+    // ... existing translations ...
     navHome: 'Home',
     navCategories: 'Categorie',
     loginButton: 'Accedi',
     registerButton: 'Registrati',
     blogTitle: 'Il Blog di World AI',
     featuredPostsTitle: 'Post in Evidenza',
+    viewAllPostsButton: 'Vedi Tutti i Post',
     readMoreButton: 'Leggi di più',
     categoriesTitle: 'Esplora Post per Categoria',
     viewPostsButton: 'Vedi Post',
@@ -382,14 +494,21 @@ export const translations: Translations = {
     upgradeToProButton: 'Passa a PRO - $1/mese',
     userReviewsTitle: "Recensioni e Commenti",
     loginToCommentPrompt: "Accedi per lasciare un commento.",
+    adminCreateTitle: 'Crea Nuovo Post',
+    adminEditTitle: 'Modifica Post',
+    adminPostButtonCreate: 'Crea Post',
+    adminPostButtonUpdate: 'Aggiorna Post',
+    adminPostButtonBack: 'Indietro',
   },
   zh: {
+    // ... existing translations ...
     navHome: '首页',
     navCategories: '分类',
     loginButton: '登录',
     registerButton: '注册',
     blogTitle: 'World AI 博客',
     featuredPostsTitle: '精选帖子',
+    viewAllPostsButton: '查看所有帖子',
     readMoreButton: '阅读更多',
     categoriesTitle: '按分类浏览帖子',
     viewPostsButton: '查看帖子',
@@ -402,14 +521,21 @@ export const translations: Translations = {
     upgradeToProButton: '升级到PRO - $1/月',
     userReviewsTitle: "用户评论",
     loginToCommentPrompt: "请登录后发表评论。",
+    adminCreateTitle: '创建新帖子',
+    adminEditTitle: '编辑帖子',
+    adminPostButtonCreate: '创建帖子',
+    adminPostButtonUpdate: '更新帖子',
+    adminPostButtonBack: '返回',
   },
   ja: {
+    // ... existing translations ...
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
     loginButton: 'ログイン',
     registerButton: '登録',
     blogTitle: 'World AI ブログ',
     featuredPostsTitle: 'おすすめ記事',
+    viewAllPostsButton: 'すべての記事を見る',
     readMoreButton: '続きを読む',
     categoriesTitle: 'カテゴリーで記事を探す',
     viewPostsButton: '記事を見る',
@@ -422,14 +548,21 @@ export const translations: Translations = {
     upgradeToProButton: 'PROにアップグレード - $1/月',
     userReviewsTitle: "ユーザーレビュー",
     loginToCommentPrompt: "コメントするにはログインしてください。",
+    adminCreateTitle: '新しい記事を作成',
+    adminEditTitle: '記事を編集',
+    adminPostButtonCreate: '記事を作成',
+    adminPostButtonUpdate: '記事を更新',
+    adminPostButtonBack: '戻る',
   },
   pt: {
+    // ... existing translations ...
     navHome: 'Início',
     navCategories: 'Categorias',
     loginButton: 'Entrar',
     registerButton: 'Cadastre-se',
     blogTitle: 'O Blog World AI',
     featuredPostsTitle: 'Postagens em Destaque',
+    viewAllPostsButton: 'Ver Todas as Postagens',
     readMoreButton: 'Leia Mais',
     categoriesTitle: 'Explore Postagens por Categoria',
     viewPostsButton: 'Ver Postagens',
@@ -442,5 +575,10 @@ export const translations: Translations = {
     upgradeToProButton: 'Atualizar para PRO - $1/mês',
     userReviewsTitle: "Avaliações e Comentários",
     loginToCommentPrompt: "Faça login para deixar um comentário.",
+    adminCreateTitle: 'Criar Nova Postagem',
+    adminEditTitle: 'Editar Postagem',
+    adminPostButtonCreate: 'Criar Postagem',
+    adminPostButtonUpdate: 'Atualizar Postagem',
+    adminPostButtonBack: 'Voltar',
   },
 };

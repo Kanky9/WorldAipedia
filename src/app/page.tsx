@@ -90,7 +90,7 @@ export default function HomePage() {
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredPostsTitle', 'Featured Posts')}</h2>
         {displayedPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
-            {displayedPosts.map((post) => ( // Display all posts
+            {displayedPosts.map((post) => ( 
               <PostCard key={post.id} post={post} />
             ))}
           </div>
@@ -101,8 +101,8 @@ export default function HomePage() {
 
        <section className="text-center py-6 md:py-8 animate-fadeInUp" style={{animationDelay: '0.2s'}}>
          <Button asChild variant="ghost" className="text-primary hover:bg-primary/10 hover:text-primary/80 text-sm px-4 py-2 sm:text-base sm:px-6 sm:py-2.5 md:px-8 md:py-3 rounded-lg group">
-           <Link href="/categories">
-            {t('viewAllPostsButton', 'View All Posts & Categories')}
+           <Link href="/">
+            {t('viewAllPostsButton', 'View All Posts')}
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </Link>
          </Button>

@@ -6,17 +6,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useLanguage } from "@/hooks/useLanguage";
 import { PlusCircle, Edit, Trash2, ListChecks } from 'lucide-react';
 import Link from "next/link";
-
-// Mock data for posts - in a real app, this would come from a database
-const mockPosts = [
-  { id: "1", title: "Understanding Large Language Models", date: "2024-07-15", status: "Published" },
-  { id: "2", title: "The Future of AI in Art Generation", date: "2024-07-10", status: "Draft" },
-  { id: "3", title: "Getting Started with Genkit", date: "2024-07-05", status: "Published" },
-];
-
+import { posts as mockPosts } from '@/data/posts'; // Using the actual posts data
+import { format } from 'date-fns';
+import { enUS, es } from 'date-fns/locale';
 
 export default function AdminPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const getLocale = () => {
+    switch (language) {
+      case 'es':
+        return es;
+      default:
+        return enUS;
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -52,11 +56,14 @@ export default function AdminPage() {
                 <tbody className="bg-card divide-y divide-border">
                   {mockPosts.map((post) => (
                     <tr key={post.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{post.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{post.date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{t(post.title)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                        {format(new Date(post.publishedDate), 'PP', { locale: getLocale() })}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${post.status === 'Published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100'}`}>
-                          {post.status}
+                        {/* Placeholder for status - can be dynamic later */}
+                        <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'>
+                          Published
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
@@ -79,16 +86,6 @@ export default function AdminPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Placeholder for other admin sections like user management, settings etc. */}
-      {/* <Card className="mt-8 shadow-lg">
-        <CardHeader>
-          <CardTitle>{t('adminUserManagementTitle', 'User Management')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">{t('adminFeatureComingSoon', 'User management features coming soon.')}</p>
-        </CardContent>
-      </Card> */}
     </div>
   );
 }

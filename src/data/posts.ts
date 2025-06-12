@@ -6,7 +6,7 @@ import { subDays, subHours } from 'date-fns';
 const LS = (en: string, es: string, it?: string, zh?: string, ja?: string, pt?: string): LocalizedString => ({
   en,
   es,
-  it: it || en, 
+  it: it || en,
   zh: zh || en,
   ja: ja || en,
   pt: pt || en,
@@ -132,7 +132,6 @@ export const categories: Category[] = [
   },
 ];
 
-// Sample comments data to be added to posts
 const sampleComments: UserComment[] = [
   {
     id: 'comment-1',
@@ -166,10 +165,9 @@ const sampleComments: UserComment[] = [
 ];
 
 
-// Sample posts data
 export const posts: Post[] = [
   {
-    id: 'chatgpt-post', // Changed ID to reflect it's a post
+    id: 'chatgpt-post',
     title: LS('The Rise of ChatGPT: A New Era in AI Conversation', 'El Auge de ChatGPT: Una Nueva Era en la Conversación IA'),
     shortDescription: LS(
       'An in-depth look at ChatGPT, its capabilities, and its impact on various industries.',
@@ -185,7 +183,7 @@ export const posts: Post[] = [
     logoHint: 'OpenAI logo',
     category: 'Information',
     categorySlug: 'information',
-    tags: ['LLM', 'OpenAI', 'Conversational AI'],
+    tags: ['LLM', 'OpenAI', 'Conversational AI', 'NLP'],
     publishedDate: subDays(new Date(), 2),
     link: 'https://openai.com/chatgpt',
     detailImageUrl1: 'https://placehold.co/400x300.png',
@@ -211,7 +209,7 @@ export const posts: Post[] = [
     logoHint: 'Midjourney logo symbol',
     category: 'Photos',
     categorySlug: 'photos',
-    tags: ['AI Art', 'Image Generation', 'Creative Tools'],
+    tags: ['AI Art', 'Image Generation', 'Creative Tools', 'Discord Bot'],
     publishedDate: subDays(new Date(), 5),
     link: 'https://www.midjourney.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
@@ -237,7 +235,7 @@ export const posts: Post[] = [
     logoHint: 'GitHub Copilot icon',
     category: 'Programming',
     categorySlug: 'programming',
-    tags: ['Development', 'AI Coding', 'Productivity'],
+    tags: ['Development', 'AI Coding', 'Productivity', 'VS Code'],
     publishedDate: subDays(new Date(), 10),
     link: 'https://copilot.github.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
@@ -263,7 +261,7 @@ export const posts: Post[] = [
     logoHint: 'Canva logo symbol',
     category: 'Design',
     categorySlug: 'design',
-    tags: ['Graphic Design', 'AI Tools', 'Marketing'],
+    tags: ['Graphic Design', 'AI Tools', 'Marketing', 'Presentations'],
     publishedDate: subDays(new Date(), 12),
     link: 'https://www.canva.com/magic-design/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
@@ -282,6 +280,131 @@ export const posts: Post[] = [
             profileImageUrl: 'https://placehold.co/40x40.png?text=DD'
         }
     ]
+  },
+  {
+    id: 'synthesia-video-generation',
+    title: LS('Synthesia: AI Video Avatars for Business', 'Synthesia: Avatares de Video IA para Empresas'),
+    shortDescription: LS(
+      'How Synthesia enables quick creation of professional videos with AI presenters.',
+      'Cómo Synthesia permite la creación rápida de videos profesionales con presentadores IA.'
+    ),
+    longDescription: LS(
+      'Synthesia.io is revolutionizing video production by allowing users to create videos with AI-generated avatars from text. This post explores its features, including a wide selection of stock avatars, custom avatar creation, multi-language support, and various video templates. We discuss use cases such as corporate training, product explainers, and personalized marketing messages. The ease of updating video content by simply editing text is a significant advantage. Ethical considerations around AI avatars are also briefly touched upon.',
+      'Synthesia.io está revolucionando la producción de video al permitir a los usuarios crear videos con avatares generados por IA a partir de texto. Esta publicación explora sus características, incluida una amplia selección de avatares de stock, creación de avatares personalizados, soporte multilingüe y diversas plantillas de video. Discutimos casos de uso como capacitación corporativa, explicadores de productos y mensajes de marketing personalizados. La facilidad para actualizar el contenido de video simplemente editando texto es una ventaja significativa. También se mencionan brevemente las consideraciones éticas en torno a los avatares de IA.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'AI avatar speaking',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'Synthesia S icon',
+    category: 'Videos',
+    categorySlug: 'videos',
+    tags: ['Video Generation', 'AI Avatars', 'Corporate Communication'],
+    publishedDate: subDays(new Date(), 15),
+    link: 'https://www.synthesia.io/',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'video script editor',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'avatar customization options'
+  },
+  {
+    id: 'elevenlabs-voice-synthesis',
+    title: LS('ElevenLabs: The Future of AI Voice Synthesis', 'ElevenLabs: El Futuro de la Síntesis de Voz IA'),
+    shortDescription: LS(
+      'Exploring the capabilities of ElevenLabs for realistic text-to-speech and voice cloning.',
+      'Explorando las capacidades de ElevenLabs para texto a voz realista y clonación de voz.'
+    ),
+    longDescription: LS(
+      'ElevenLabs has gained significant attention for its highly realistic and expressive AI-generated voices. This post delves into its text-to-speech technology, voice cloning features, and the quality of its output across different languages and emotional tones. We look at applications in audiobooks, podcasting, gaming, and accessibility. The ethical implications of advanced voice cloning technology are also discussed, highlighting the company\'s approach to responsible AI development.',
+      'ElevenLabs ha ganado una atención significativa por sus voces generadas por IA altamente realistas y expresivas. Esta publicación profundiza en su tecnología de texto a voz, características de clonación de voz y la calidad de su salida en diferentes idiomas y tonos emocionales. Analizamos aplicaciones en audiolibros, podcasting, juegos y accesibilidad. También se discuten las implicaciones éticas de la tecnología avanzada de clonación de voz, destacando el enfoque de la compañía hacia el desarrollo responsable de la IA.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'sound wave audio',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'ElevenLabs E symbol',
+    category: 'Audio',
+    categorySlug: 'audio',
+    tags: ['Voice Synthesis', 'TTS', 'Voice Cloning', 'Audio AI'],
+    publishedDate: subDays(new Date(), 18),
+    link: 'https://elevenlabs.io/',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'voice selection panel',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'audio editing software'
+  },
+  {
+    id: 'grammarly-writing-assistant',
+    title: LS('Grammarly: More Than Just a Spell Checker', 'Grammarly: Más que un Simple Corrector Ortográfico'),
+    shortDescription: LS(
+      'A deep dive into how Grammarly\'s AI helps improve clarity, tone, and style in writing.',
+      'Una inmersión profunda en cómo la IA de Grammarly ayuda a mejorar la claridad, el tono y el estilo en la escritura.'
+    ),
+    longDescription: LS(
+      'Grammarly has become an indispensable tool for writers of all levels. This post goes beyond its well-known grammar and spell-checking features to explore its AI-powered suggestions for clarity, conciseness, engagement, and delivery. We examine its tone detector, style guide adherence, and plagiarism checker. The post also covers its various integrations (browser extensions, desktop app, mobile keyboard) and how it adapts to different writing goals (academic, business, casual).',
+      'Grammarly se ha convertido en una herramienta indispensable para escritores de todos los niveles. Esta publicación va más allá de sus conocidas funciones de corrección gramatical y ortográfica para explorar sus sugerencias impulsadas por IA para la claridad, concisión, compromiso y entrega. Examinamos su detector de tono, la adherencia a guías de estilo y el verificador de plagio. La publicación también cubre sus diversas integraciones (extensiones de navegador, aplicación de escritorio, teclado móvil) y cómo se adapta a diferentes objetivos de escritura (académico, empresarial, informal).'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'text editing software',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'Grammarly G logo',
+    category: 'Writing',
+    categorySlug: 'writing',
+    tags: ['Writing Assistant', 'Grammar', 'Style Improvement', 'AI Editing'],
+    publishedDate: subDays(new Date(), 21),
+    link: 'https://www.grammarly.com/',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'writing suggestions example',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'tone analysis report'
+  },
+  {
+    id: 'stable-diffusion-open-source',
+    title: LS('Stable Diffusion: Powering Open-Source AI Art', 'Stable Diffusion: Impulsando el Arte IA de Código Abierto'),
+    shortDescription: LS(
+      'Understanding the impact and versatility of the Stable Diffusion text-to-image model.',
+      'Comprendiendo el impacto y la versatilidad del modelo de texto a imagen Stable Diffusion.'
+    ),
+    longDescription: LS(
+      'Stable Diffusion, released by Stability AI, has significantly democratized AI image generation due to its open-source nature. This post explains its core technology (latent diffusion models) and how it differs from other models like DALL-E or Midjourney. We explore its capabilities beyond simple text-to-image, including inpainting, outpainting, and image-to-image transformations. The vibrant community around Stable Diffusion, with its custom models (checkpoints/LoRAs) and user interfaces (e.g., Automatic1111), is a key focus.',
+      'Stable Diffusion, lanzado por Stability AI, ha democratizado significativamente la generación de imágenes con IA debido a su naturaleza de código abierto. Esta publicación explica su tecnología central (modelos de difusión latente) y cómo difiere de otros modelos como DALL-E o Midjourney. Exploramos sus capacidades más allá del simple texto a imagen, incluyendo inpainting, outpainting y transformaciones de imagen a imagen. La vibrante comunidad en torno a Stable Diffusion, con sus modelos personalizados (checkpoints/LoRAs) e interfaces de usuario (p. ej., Automatic1111), es un enfoque clave.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'abstract generative art',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'StabilityAI S icon',
+    category: 'Photos',
+    categorySlug: 'photos',
+    tags: ['Open Source', 'AI Art', 'Image Generation', 'Diffusion Models'],
+    publishedDate: subDays(new Date(), 25),
+    link: 'https://stability.ai/',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'image generation parameters UI',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'community art showcase'
+  },
+  {
+    id: 'runwayml-gen2-video',
+    title: LS('Runway Gen-2: Text-to-Video and Beyond', 'Runway Gen-2: De Texto a Video y Más Allá'),
+    shortDescription: LS(
+      'A look at RunwayML\'s Gen-2 model for AI video generation from text and images.',
+      'Una mirada al modelo Gen-2 de RunwayML para la generación de video IA a partir de texto e imágenes.'
+    ),
+    longDescription: LS(
+      'RunwayML continues to push the boundaries of AI-driven creative tools, and their Gen-2 model is a prime example. This post focuses on its text-to-video and image-to-video capabilities, allowing creators to bring dynamic scenes to life from simple prompts. We explore the quality of generated videos, control parameters, and potential applications in filmmaking, advertising, and art. The post also touches on other "AI Magic Tools" offered by Runway that complement video generation.',
+      'RunwayML continúa empujando los límites de las herramientas creativas impulsadas por IA, y su modelo Gen-2 es un excelente ejemplo. Esta publicación se centra en sus capacidades de texto a video e imagen a video, permitiendo a los creadores dar vida a escenas dinámicas a partir de simples prompts. Exploramos la calidad de los videos generados, los parámetros de control y las posibles aplicaciones en cine, publicidad y arte. La publicación también menciona otras "Herramientas Mágicas de IA" ofrecidas por Runway que complementan la generación de video.'
+    ),
+    imageUrl: 'https://placehold.co/600x400.png',
+    imageHint: 'AI video sequence',
+    logoUrl: 'https://placehold.co/50x50.png',
+    logoHint: 'RunwayML R symbol',
+    category: 'Videos',
+    categorySlug: 'videos',
+    tags: ['Text-to-Video', 'AI Video', 'Creative Suite', 'RunwayML'],
+    publishedDate: subDays(new Date(), 28),
+    link: 'https://runwayml.com/',
+    detailImageUrl1: 'https://placehold.co/400x300.png',
+    detailImageHint1: 'video generation prompt interface',
+    detailImageUrl2: 'https://placehold.co/400x300.png',
+    detailImageHint2: 'animated scene example'
   }
 ];
 
@@ -292,7 +415,7 @@ export const getPostById = (id: string): Post | undefined => {
 export const getPostsByCategory = (categorySlug: string): Post[] => {
   const categoryInfo = categories.find(cat => cat.slug === categorySlug);
   if (!categoryInfo) return [];
-  return posts.filter(post => post.categorySlug === categorySlug || post.tags.includes(categoryInfo.name.en)); // Check main category or if tag matches
+  return posts.filter(post => post.categorySlug === categorySlug || post.tags.includes(categoryInfo.name.en));
 };
 
 export const getCategoryBySlug = (slug: string): Category | undefined => {
