@@ -62,6 +62,7 @@ export type CoreTranslationKey =
   | 'subscribeToCommentDescription'
   | 'subscribeButton'
   | 'cancelButton'
+  | 'loginToCommentPrompt' // New key
   // Generic
   | 'learnMoreButton'
   | 'loadingText';
@@ -121,6 +122,7 @@ export const translations: Translations = {
     subscribeToCommentDescription: 'To comment and rate AIs, you need to be a PRO member. Subscribe now for just $1/month!',
     subscribeButton: 'Subscribe ($1/month)',
     cancelButton: 'Cancel',
+    loginToCommentPrompt: 'Please log in to leave a comment and rate this AI.',
     learnMoreButton: 'Learn More',
     loadingText: 'Loading...'
   },
@@ -169,6 +171,7 @@ export const translations: Translations = {
     subscribeToCommentDescription: 'Para comentar y calificar IAs, necesitas ser miembro PRO. ¡Suscríbete ahora por solo $1/mes!',
     subscribeButton: 'Suscribirse ($1/mes)',
     cancelButton: 'Cancelar',
+    loginToCommentPrompt: 'Por favor, inicia sesión para dejar un comentario y calificar esta IA.',
     learnMoreButton: 'Saber Más',
     loadingText: 'Cargando...'
   },
@@ -217,6 +220,7 @@ export const translations: Translations = {
     subscribeToCommentDescription: 'Per commentare e valutare le IA, devi essere un membro PRO. Abbonati ora per solo $1/mese!',
     subscribeButton: 'Abbonati ($1/mese)',
     cancelButton: 'Annulla',
+    loginToCommentPrompt: 'Effettua il login per lasciare un commento e valutare questa IA.',
     learnMoreButton: 'Scopri di Più',
     loadingText: 'Caricamento...'
   },
@@ -265,6 +269,7 @@ export const translations: Translations = {
     subscribeToCommentDescription: '要评论和评价AI，您需要成为PRO会员。立即订阅，每月仅需1美元！',
     subscribeButton: '订阅 ($1/月)',
     cancelButton: '取消',
+    loginToCommentPrompt: '请登录以发表评论并评价此AI。',
     learnMoreButton: '了解更多',
     loadingText: '加载中...'
   },
@@ -313,6 +318,7 @@ export const translations: Translations = {
     subscribeToCommentDescription: 'AIにコメントして評価するには、PROメンバーである必要があります。月額わずか1ドルで今すぐ購読しましょう！',
     subscribeButton: '購読する ($1/月)',
     cancelButton: 'キャンセル',
+    loginToCommentPrompt: 'コメントを残してこのAIを評価するには、ログインしてください。',
     learnMoreButton: '詳しく見る',
     loadingText: '読み込み中...'
   },
@@ -361,7 +367,9 @@ export const translations: Translations = {
     subscribeToCommentDescription: 'Para comentar e avaliar IAs, você precisa ser um membro PRO. Assine agora por apenas $1/mês!',
     subscribeButton: 'Assinar ($1/mês)',
     cancelButton: 'Cancelar',
+    loginToCommentPrompt: 'Faça login para deixar um comentário e avaliar esta IA.',
     learnMoreButton: 'Saiba Mais',
     loadingText: 'Carregando...'
   },
 };
+

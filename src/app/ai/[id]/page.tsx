@@ -39,7 +39,7 @@ export default function AIPage() {
   // Set to a PRO user: { username: "DemoUserPRO", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }
   // Set to a non-PRO user: { username: "DemoUserBasic", isSubscribed: false }
   // Set to null for logged-out user
-  const [mockUser, setMockUser] = useState<MockUser | null>({ username: "DemoUserPRO", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }); 
+  const [mockUser, setMockUser] = useState<MockUser | null>({ username: "DemoUserBasic", isSubscribed: false }); 
 
   const [comments, setComments] = useState<UserComment[]>([]);
   const [newCommentText, setNewCommentText] = useState('');
@@ -67,16 +67,18 @@ export default function AIPage() {
   }, [id, t]);
 
   const handleCommentSubmit = () => {
-    if (!mockUser) { // Not logged in, ideally prompt to login first
-        setShowSubscriptionAlert(true); // Or a "login required" alert
+    if (!mockUser) { 
+        // This case should ideally be handled by UI (form not shown if not logged in)
+        // If somehow submitted, show login prompt or a generic error
+        alert(t('loginToCommentPrompt', "Please log in to comment.")); // Or a more sophisticated login modal
         return;
     }
-    if (!mockUser.isSubscribed) {
-      setShowSubscriptionAlert(true);
+    if (!mockUser.isSubscribed) { // User is logged in BUT not subscribed
+      setShowSubscriptionAlert(true); // This triggers the "Subscription Required" dialog
       return;
     }
     if (!newCommentText.trim() || newCommentRating === 0) {
-      // Add some validation feedback to the user here if desired
+      // Add some validation feedback to the user here if desired (e.g., toast notification)
       return;
     }
 
@@ -88,7 +90,7 @@ export default function AIPage() {
       rating: newCommentRating,
       text: newCommentText,
       timestamp: new Date(),
-      profileImageUrl: mockUser.profileImageUrl,
+      profileImageUrl: mockUser.profileImageUrl, // Will be undefined for non-PRO basic user
     };
     setComments(prevComments => [newComment, ...prevComments]);
     setNewCommentText('');
@@ -159,7 +161,7 @@ export default function AIPage() {
           <div className="flex flex-wrap items-center gap-4 mb-6">
             {category && (
               <div className="flex items-center text-muted-foreground text-xs sm:text-sm">
-                <CategoryIcon categoryName={aiTool.category} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 text-primary" />
+                <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 text-primary" />
                 <span>{localizedCategoryName}</span>
               </div>
             )}
@@ -255,8 +257,8 @@ export default function AIPage() {
         )}
          {!mockUser && ( // Show login prompt if not logged in
             <Card className="shadow-lg rounded-xl p-6 text-center">
-                <p className="text-muted-foreground">{t('noCommentsYet','Login to leave a comment and rate this AI.')}</p>
-                 <Button onClick={() => { /* Simulate opening login modal or redirecting */ alert("Redirecting to login page (simulation)..."); }} className="mt-4">
+                <p className="text-muted-foreground">{t('loginToCommentPrompt', 'Please log in to leave a comment and rate this AI.')}</p>
+                 <Button onClick={() => { /* Simulate opening login modal or redirecting */ alert(t('loginButton', "Login")); }} className="mt-4">
                     {t('loginButton')}
                 </Button>
             </Card>
@@ -295,3 +297,4 @@ export default function AIPage() {
     </div>
   );
 }
+
