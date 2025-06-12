@@ -52,7 +52,7 @@ export default function HomePage() {
   return (
     <div className="space-y-10"> {/* Adjusted spacing slightly */}
       {/* Hero Section */}
-      <section className="relative py-12 md:py-20 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Reduced padding, subtle gradient */}
+      <section className="relative py-8 md:py-12 text-center rounded-xl overflow-hidden shadow-2xl bg-gradient-to-br from-background via-background to-primary/5"> {/* Reduced padding */}
         {/* Animated Particle Background */}
         {mounted && particles.length > 0 && (
           <div className="hero-particles">
@@ -67,33 +67,33 @@ export default function HomePage() {
         )}
         
         <div className="relative z-10 p-4 container mx-auto">
-          <Sparkles className="h-12 w-12 md:h-16 md:w-16 text-primary mx-auto mb-4 md:mb-5 animate-pulse drop-shadow-lg" />
-          <h1 className="text-5xl md:text-6xl font-headline font-bold mb-6 md:mb-7 leading-tight 
+          <Sparkles className="h-10 w-10 md:h-14 md:w-14 text-primary mx-auto mb-3 md:mb-4 animate-pulse drop-shadow-lg" /> {/* Reduced icon size and margin */}
+          <h1 className="text-4xl md:text-5xl font-headline font-bold mb-4 md:mb-5 leading-tight 
                          bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
-                         bg-clip-text text-transparent animate-gradient-flow-fast">
+                         bg-clip-text text-transparent animate-gradient-flow-fast"> {/* Reduced font size and margin */}
             {t('homeTitle', 'Unlock the Power of AI')}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 md:mb-9 max-w-2xl md:max-w-3xl mx-auto leading-relaxed">
+          <p className="text-md md:text-lg text-muted-foreground mb-6 md:mb-7 max-w-xl md:max-w-2xl mx-auto leading-relaxed"> {/* Reduced font size and margin */}
             {t('homeSubtitle', 'Welcome to World AI – your ultimate launchpad for discovering groundbreaking AI tools. Dive in, explore, and revolutionize your world.')}
           </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-5">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 md:gap-4"> {/* Reduced gap */}
             <Button 
               size="lg" 
               asChild 
-              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group animate-pulse-glow"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base rounded-lg group animate-pulse-glow" /* Reduced padding and font size */
             >
               <Link href="/categories">
                 {t('homeExploreButton', 'Explore AI Categories')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" /> {/* Reduced icon size */}
               </Link>
             </Button>
             <Button 
               size="lg" 
               variant="outline" 
               onClick={() => setIsChatOpen(true)} 
-              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-8 py-3 md:px-10 md:py-4 text-base md:text-lg rounded-lg group"
+              className="border-accent text-accent hover:bg-accent/10 hover:text-primary-foreground shadow-lg transform hover:scale-105 transition-all duration-300 ease-out px-6 py-2.5 md:px-8 md:py-3 text-sm md:text-base rounded-lg group" /* Reduced padding and font size */
             >
-              <MessageCircle className="mr-2 h-5 w-5 transition-transform group-hover:rotate-[15deg]" />
+              <MessageCircle className="mr-2 h-4 w-4 transition-transform group-hover:rotate-[15deg]" /> {/* Reduced icon size */}
               {t('homeChatButton', 'Chat with AI Guide')}
             </Button>
           </div>
