@@ -113,28 +113,28 @@ export type CoreTranslationKey =
   | 'adminPostShortDescPlaceholder'
   | 'adminPostLongDescLabel'
   | 'adminPostLongDescPlaceholder'
-  | 'adminPostMainImageLabel' // New: General label for main image section
+  | 'adminPostMainImageLabel' 
   | 'adminPostMainImageUrlLabel'
   | 'adminPostMainImageUrlPlaceholder'
   | 'adminPostMainImageHintLabel'
   | 'adminPostMainImageHintPlaceholder'
-  | 'adminPostLogoLabel' // New: General label for logo section
+  | 'adminPostLogoLabel' 
   | 'adminPostLogoUrlLabel'
   | 'adminPostLogoUrlPlaceholder'
   | 'adminPostLogoHintLabel'
   | 'adminPostLogoHintPlaceholder'
-  | 'adminPostDetailImage1Label' // New: General label for detail image 1 section
+  | 'adminPostDetailImage1Label' 
   | 'adminPostDetailImageUrl1Label'
   | 'adminPostDetailImageUrl1Placeholder'
   | 'adminPostDetailImageHint1Label'
   | 'adminPostDetailImageHint1Placeholder'
-  | 'adminPostDetailImage2Label' // New: General label for detail image 2 section
+  | 'adminPostDetailImage2Label' 
   | 'adminPostDetailImageUrl2Label'
   | 'adminPostDetailImageUrl2Placeholder'
   | 'adminPostDetailImageHint2Label'
   | 'adminPostDetailImageHint2Placeholder'
-  | 'uploadImageButton' // New
-  | 'clearImageButton' // New
+  | 'uploadImageButton' 
+  | 'clearImageButton' 
   | 'adminPostCategoryLabel'
   | 'adminPostSelectCategoryPlaceholder'
   | 'adminPostTagsLabel'
@@ -148,6 +148,8 @@ export type CoreTranslationKey =
   | 'adminPostCreatedSuccess'
   | 'adminPostUpdatedSuccess'
   | 'adminPostError'
+  | 'updatedInSession'
+  | 'createdInSession'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -335,9 +337,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Create Post',
     adminPostButtonUpdate: 'Update Post',
     adminPostButtonBack: 'Back to Admin',
-    adminPostCreatedSuccess: 'Post created successfully (simulated).',
-    adminPostUpdatedSuccess: 'Post updated successfully (simulated).',
-    adminPostError: 'An error occurred (simulated).',
+    adminPostCreatedSuccess: 'Post created successfully.',
+    adminPostUpdatedSuccess: 'Post updated successfully.',
+    adminPostError: 'An error occurred.',
+    updatedInSession: 'updated in current session data.',
+    createdInSession: 'created in current session data.',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -496,9 +500,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Crear Publicación',
     adminPostButtonUpdate: 'Actualizar Publicación',
     adminPostButtonBack: 'Volver a Admin',
-    adminPostCreatedSuccess: 'Publicación creada con éxito (simulado).',
-    adminPostUpdatedSuccess: 'Publicación actualizada con éxito (simulado).',
-    adminPostError: 'Ocurrió un error (simulado).',
+    adminPostCreatedSuccess: 'Publicación creada con éxito.',
+    adminPostUpdatedSuccess: 'Publicación actualizada con éxito.',
+    adminPostError: 'Ocurrió un error.',
+    updatedInSession: 'actualizado en los datos de la sesión actual.',
+    createdInSession: 'creado en los datos de la sesión actual.',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -657,9 +663,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Crea Post',
     adminPostButtonUpdate: 'Aggiorna Post',
     adminPostButtonBack: 'Torna ad Admin',
-    adminPostCreatedSuccess: 'Post creato con successo (simulato).',
-    adminPostUpdatedSuccess: 'Post aggiornato con successo (simulato).',
-    adminPostError: 'Si è verificato un errore (simulato).',
+    adminPostCreatedSuccess: 'Post creato con successo.',
+    adminPostUpdatedSuccess: 'Post aggiornato con successo.',
+    adminPostError: 'Si è verificato un errore.',
+    updatedInSession: 'aggiornato nei dati della sessione corrente.',
+    createdInSession: 'creato nei dati della sessione corrente.',
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -818,9 +826,11 @@ export const translations: Translations = {
     adminPostButtonCreate: '创建帖子',
     adminPostButtonUpdate: '更新帖子',
     adminPostButtonBack: '返回管理后台',
-    adminPostCreatedSuccess: '帖子创建成功（模拟）。',
-    adminPostUpdatedSuccess: '帖子更新成功（模拟）。',
-    adminPostError: '发生错误（模拟）。',
+    adminPostCreatedSuccess: '帖子创建成功。',
+    adminPostUpdatedSuccess: '帖子更新成功。',
+    adminPostError: '发生错误。',
+    updatedInSession: '已在当前会话数据中更新。',
+    createdInSession: '已在当前会话数据中创建。',
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -979,9 +989,11 @@ export const translations: Translations = {
     adminPostButtonCreate: '記事を作成',
     adminPostButtonUpdate: '記事を更新',
     adminPostButtonBack: '管理に戻る',
-    adminPostCreatedSuccess: '記事が正常に作成されました（シミュレート）。',
-    adminPostUpdatedSuccess: '記事が正常に更新されました（シミュレート）。',
-    adminPostError: 'エラーが発生しました（シミュレート）。',
+    adminPostCreatedSuccess: '記事が正常に作成されました。',
+    adminPostUpdatedSuccess: '記事が正常に更新されました。',
+    adminPostError: 'エラーが発生しました。',
+    updatedInSession: '現在のセッションデータで更新されました。',
+    createdInSession: '現在のセッションデータで作成されました。',
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -1140,9 +1152,11 @@ export const translations: Translations = {
     adminPostButtonCreate: 'Criar Postagem',
     adminPostButtonUpdate: 'Atualizar Postagem',
     adminPostButtonBack: 'Voltar para Admin',
-    adminPostCreatedSuccess: 'Postagem criada com sucesso (simulado).',
-    adminPostUpdatedSuccess: 'Postagem atualizada com sucesso (simulado).',
-    adminPostError: 'Ocorreu um erro (simulado).',
+    adminPostCreatedSuccess: 'Postagem criada com sucesso.',
+    adminPostUpdatedSuccess: 'Postagem atualizada com sucesso.',
+    adminPostError: 'Ocorreu um erro.',
+    updatedInSession: 'atualizado nos dados da sessão atual.',
+    createdInSession: 'criado nos dados da sessão atual.',
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',
