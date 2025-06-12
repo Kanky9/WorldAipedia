@@ -45,6 +45,8 @@ export type CoreTranslationKey =
   | 'backToHomeButton'
   | 'aboutSectionTitle'
   | 'visitWebsiteButton'
+  | 'additionalVisualsTitle' // New key for visual insights section
+  | 'visualDetailAlt' // New key for alt text of detail images
   // Generic
   | 'learnMoreButton'
   | 'loadingText';
@@ -86,6 +88,8 @@ export const translations: Translations = {
     backToHomeButton: 'Back to Home',
     aboutSectionTitle: 'About {toolTitle}',
     visitWebsiteButton: "Visit Website",
+    additionalVisualsTitle: 'Visual Insights',
+    visualDetailAlt: 'Visual Detail {number}',
     learnMoreButton: 'Learn More',
     loadingText: 'Loading...'
   },
@@ -116,6 +120,8 @@ export const translations: Translations = {
     backToHomeButton: 'Volver al Inicio',
     aboutSectionTitle: 'Acerca de {toolTitle}',
     visitWebsiteButton: "Visitar Sitio Web",
+    additionalVisualsTitle: 'Perspectivas Visuales',
+    visualDetailAlt: 'Detalle Visual {number}',
     learnMoreButton: 'Saber Más',
     loadingText: 'Cargando...'
   },
@@ -146,6 +152,8 @@ export const translations: Translations = {
     backToHomeButton: 'Torna alla Home',
     aboutSectionTitle: 'Informazioni su {toolTitle}',
     visitWebsiteButton: "Visita il Sito",
+    additionalVisualsTitle: 'Approfondimenti Visivi',
+    visualDetailAlt: 'Dettaglio Visivo {number}',
     learnMoreButton: 'Scopri di Più',
     loadingText: 'Caricamento...'
   },
@@ -176,6 +184,8 @@ export const translations: Translations = {
     backToHomeButton: '返回首页',
     aboutSectionTitle: '关于 {toolTitle}',
     visitWebsiteButton: "访问网站",
+    additionalVisualsTitle: '视觉洞察',
+    visualDetailAlt: '视觉细节 {number}',
     learnMoreButton: '了解更多',
     loadingText: '加载中...'
   },
@@ -206,6 +216,8 @@ export const translations: Translations = {
     backToHomeButton: 'ホームに戻る',
     aboutSectionTitle: '{toolTitle}について',
     visitWebsiteButton: "ウェブサイトへ",
+    additionalVisualsTitle: 'ビジュアルインサイト',
+    visualDetailAlt: 'ビジュアル詳細 {number}',
     learnMoreButton: '詳しく見る',
     loadingText: '読み込み中...'
   },
@@ -236,6 +248,8 @@ export const translations: Translations = {
     backToHomeButton: 'Voltar para Início',
     aboutSectionTitle: 'Sobre {toolTitle}',
     visitWebsiteButton: "Visitar Site",
+    additionalVisualsTitle: 'Insights Visuais',
+    visualDetailAlt: 'Detalhe Visual {number}',
     learnMoreButton: 'Saiba Mais',
     loadingText: 'Carregando...'
   },

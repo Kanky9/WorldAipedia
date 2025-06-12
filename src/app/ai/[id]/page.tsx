@@ -114,6 +114,40 @@ export default function AIPage() {
           <p className="text-base sm:text-lg text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {t(aiTool.longDescription)}
           </p>
+
+          {(aiTool.detailImageUrl1 || aiTool.detailImageUrl2) && (
+            <div className="mt-10">
+              <h3 className="text-lg sm:text-xl font-headline font-semibold mb-4 text-primary/90">{t('additionalVisualsTitle', 'Visual Insights')}</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                {aiTool.detailImageUrl1 && (
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <Image
+                      src={aiTool.detailImageUrl1}
+                      alt={localizedToolTitle + " - " + t('visualDetailAlt', 'Visual Detail 1')}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      data-ai-hint={aiTool.detailImageHint1 || "AI concept"}
+                      className="transform transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                  </div>
+                )}
+                {aiTool.detailImageUrl2 && (
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+                    <Image
+                      src={aiTool.detailImageUrl2}
+                      alt={localizedToolTitle + " - " + t('visualDetailAlt', 'Visual Detail 2')}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      data-ai-hint={aiTool.detailImageHint2 || "AI technology"}
+                      className="transform transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 50vw"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

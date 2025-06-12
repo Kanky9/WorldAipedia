@@ -16,6 +16,10 @@ export interface AITool {
   category: string; // This refers to the category *name* (which itself can be localized in Category type)
   categorySlug: string; // Keep slug non-localized for routing
   link: string;
+  detailImageUrl1?: string;
+  detailImageHint1?: string;
+  detailImageUrl2?: string;
+  detailImageHint2?: string;
 }
 
 export interface Category {
