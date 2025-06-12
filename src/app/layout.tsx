@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -5,11 +6,20 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import Mascot from '@/components/layout/Mascot';
+import { ChatProvider } from '@/contexts/ChatContext';
+// Remove AIChatAssistant and FloatingChatButton direct imports
+// import AIChatAssistant from '@/components/ai/AIChatAssistant';
+// import FloatingChatButton from '@/components/layout/FloatingChatButton';
+// Remove useChat import here if it was present for the old ChatElements
+// import { useChat } from '@/contexts/ChatContext'; 
+import ChatElements from '@/components/layout/ChatElements'; // Import the new component
 
 export const metadata: Metadata = {
   title: 'World AI - Your Guide to Artificial Intelligence',
   description: 'Discover news and information about existing and emerging AI tools, categorized for easy exploration.',
 };
+
+// Old ChatElements component is now in its own file.
 
 export default function RootLayout({
   children,
@@ -26,13 +36,16 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
-          <Header />
-          <main className="flex-grow container mx-auto px-4 py-4"> {/* Reduced py-8 to py-4 */}
-            {children}
-          </main>
-          <Footer />
-          <Mascot />
-          <Toaster />
+          <ChatProvider>
+            <Header />
+            <main className="flex-grow container mx-auto px-4 py-4">
+              {children}
+            </main>
+            <Footer />
+            <Mascot />
+            <ChatElements /> {/* Use the imported component */}
+            <Toaster />
+          </ChatProvider>
         </LanguageProvider>
       </body>
     </html>

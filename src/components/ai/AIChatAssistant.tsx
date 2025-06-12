@@ -2,7 +2,7 @@
 "use client";
 
 import type { FC } from 'react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -11,31 +11,34 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, User, Bot, Paperclip, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { explainPage } from '@/ai/flows/pageExplainerFlow';
-import { chatWithLace } from '@/ai/flows/chatFlow'; // Updated import
+import { chatWithLace } from '@/ai/flows/chatFlow';
+import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow'; // New import
 import { useLanguage } from '@/hooks/useLanguage';
+import type { AiToolChatContext } from '@/lib/types'; // Import the context type
 
 interface AIChatAssistantProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialContext: AiToolChatContext | null; // New prop for AI tool context
 }
 
 interface MessagePart {
   text?: string;
-  media?: { url: string; type: 'image' }; // Future: could support other media types
+  media?: { url: string; type: 'image' };
 }
 interface Message {
   id: string;
   role: 'user' | 'model';
-  parts: MessagePart[]; // An array to support multi-modal messages
+  parts: MessagePart[];
   timestamp: Date;
 }
 
-const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
+const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initialContext }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null); // Stores as Data URI
+  const [isInitialLoading, setIsInitialLoading] = useState(false); // Managed by open and messages.length now
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -43,21 +46,43 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
   const { language, t } = useLanguage();
 
   useEffect(() => {
-    if (open && messages.length === 0) {
+    if (open && messages.length === 0) { // Only fetch initial message if dialog is open and no messages exist
       setIsInitialLoading(true);
-      explainPage({ language })
+      if (initialContext) {
+        getAiToolWelcome({
+          toolTitle: initialContext.title, // Already localized from context provider
+          toolDescription: initialContext.shortDescription, // Already localized
+          toolLink: initialContext.link,
+          language,
+        })
         .then(response => {
-          setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: response.explanation }], timestamp: new Date() }]);
+          setMessages([{ id: crypto.randomUUID(), role: 'model', parts: [{ text: response.welcomeMessage }], timestamp: new Date() }]);
         })
         .catch(error => {
-          console.error("Error fetching initial explanation:", error);
+          console.error("Error fetching AI tool welcome:", error);
           setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatError') }], timestamp: new Date() }]);
         })
         .finally(() => {
           setIsInitialLoading(false);
         });
+      } else {
+        explainPage({ language })
+          .then(response => {
+            setMessages([{ id: crypto.randomUUID(), role: 'model', parts: [{ text: response.explanation }], timestamp: new Date() }]);
+          })
+          .catch(error => {
+            console.error("Error fetching initial explanation:", error);
+            setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatError') }], timestamp: new Date() }]);
+          })
+          .finally(() => {
+            setIsInitialLoading(false);
+          });
+      }
+    } else if (!open) {
+      setMessages([]); // Clear messages when dialog closes
+      clearSelectedImage(); // Also clear any selected image
     }
-  }, [open, language, t, messages.length]);
+  }, [open, initialContext, language, t]); // messages.length removed to allow context change to re-trigger if open
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -84,7 +109,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
     setSelectedImage(null);
     setSelectedImageFile(null);
     if(fileInputRef.current) {
-        fileInputRef.current.value = ""; // Reset file input
+        fileInputRef.current.value = "";
     }
   };
 
@@ -103,10 +128,10 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
     const currentMessages = [...messages, newUserMessage];
     setMessages(currentMessages);
     
-    const textInputForFlow = userInput; // Keep original userInput for the flow
+    const textInputForFlow = userInput;
     setUserInput('');
-    const imageForFlow = selectedImage; // Keep original selectedImage for the flow
-    clearSelectedImage(); // Clear after capturing for the flow
+    const imageForFlow = selectedImage;
+    clearSelectedImage();
 
     setIsLoading(true);
 
@@ -115,7 +140,6 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
       parts: msg.parts.map(part => {
         const genkitPart: any = {};
         if (part.text) genkitPart.text = part.text;
-        // For history, we only need to signal an image was there, not resend data URI
         if (part.media) genkitPart.media = { url: "User sent an image previously" }; 
         return genkitPart;
       }),
@@ -126,7 +150,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
         userInput: textInputForFlow, 
         language,
         history: historyForAI,
-        imageDataUri: imageForFlow || undefined, // Pass the current image data URI
+        imageDataUri: imageForFlow || undefined,
       });
       setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: response.aiResponse }], timestamp: new Date() }]);
     } catch (error) {
@@ -137,16 +161,8 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
     }
   };
   
-  const handleDialogClose = (isOpen: boolean) => {
-    if (!isOpen) {
-        clearSelectedImage(); // Clear image if dialog is closed
-    }
-    onOpenChange(isOpen);
-  };
-
-
   return (
-    <Dialog open={open} onOpenChange={handleDialogClose}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[525px] h-[70vh] flex flex-col p-0 rounded-xl">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="flex items-center gap-2">
@@ -271,5 +287,3 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange }) => {
 };
 
 export default AIChatAssistant;
-
-    

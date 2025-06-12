@@ -24,7 +24,7 @@ export type CoreTranslationKey =
   | 'homeTitle'
   | 'homeSubtitle'
   | 'homeExploreButton'
-  | 'homeChatButton'
+  | 'homeChatButton' // Used for FAB tooltip now
   | 'featuredAITools'
   | 'viewAllButton'
   // AI Chat Assistant "Lace"
@@ -62,7 +62,8 @@ export type CoreTranslationKey =
   | 'subscribeToCommentDescription'
   | 'subscribeButton'
   | 'cancelButton'
-  | 'loginToCommentPrompt' // New key
+  | 'loginToCommentPrompt'
+  | 'chatAboutAiButton' // New key
   // Generic
   | 'learnMoreButton'
   | 'loadingText';
@@ -123,6 +124,7 @@ export const translations: Translations = {
     subscribeButton: 'Subscribe ($1/month)',
     cancelButton: 'Cancel',
     loginToCommentPrompt: 'Please log in to leave a comment and rate this AI.',
+    chatAboutAiButton: 'Chat with Lace about {toolName}',
     learnMoreButton: 'Learn More',
     loadingText: 'Loading...'
   },
@@ -172,6 +174,7 @@ export const translations: Translations = {
     subscribeButton: 'Suscribirse ($1/mes)',
     cancelButton: 'Cancelar',
     loginToCommentPrompt: 'Por favor, inicia sesión para dejar un comentario y calificar esta IA.',
+    chatAboutAiButton: 'Chatear con Lace sobre {toolName}',
     learnMoreButton: 'Saber Más',
     loadingText: 'Cargando...'
   },
@@ -221,6 +224,7 @@ export const translations: Translations = {
     subscribeButton: 'Abbonati ($1/mese)',
     cancelButton: 'Annulla',
     loginToCommentPrompt: 'Effettua il login per lasciare un commento e valutare questa IA.',
+    chatAboutAiButton: 'Chatta con Lace su {toolName}',
     learnMoreButton: 'Scopri di Più',
     loadingText: 'Caricamento...'
   },
@@ -270,6 +274,7 @@ export const translations: Translations = {
     subscribeButton: '订阅 ($1/月)',
     cancelButton: '取消',
     loginToCommentPrompt: '请登录以发表评论并评价此AI。',
+    chatAboutAiButton: '与Lace聊聊 {toolName}',
     learnMoreButton: '了解更多',
     loadingText: '加载中...'
   },
@@ -319,6 +324,7 @@ export const translations: Translations = {
     subscribeButton: '購読する ($1/月)',
     cancelButton: 'キャンセル',
     loginToCommentPrompt: 'コメントを残してこのAIを評価するには、ログインしてください。',
+    chatAboutAiButton: '{toolName}についてLaceとチャットする',
     learnMoreButton: '詳しく見る',
     loadingText: '読み込み中...'
   },
@@ -368,8 +374,8 @@ export const translations: Translations = {
     subscribeButton: 'Assinar ($1/mês)',
     cancelButton: 'Cancelar',
     loginToCommentPrompt: 'Faça login para deixar um comentário e avaliar esta IA.',
+    chatAboutAiButton: 'Conversar com Lace sobre {toolName}',
     learnMoreButton: 'Saiba Mais',
     loadingText: 'Carregando...'
   },
 };
-

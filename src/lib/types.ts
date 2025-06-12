@@ -2,7 +2,7 @@
 import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
 
-export type LocalizedString = string | { [key in LanguageCode]?: string };
+export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; }; // Ensure 'en' is always present as a fallback
 
 export interface AITool {
   id: string;
@@ -13,8 +13,8 @@ export interface AITool {
   imageHint?: string;
   logoUrl?: string;
   logoHint?: string;
-  category: string; // This refers to the category *name* (which itself can be localized in Category type)
-  categorySlug: string; // Keep slug non-localized for routing
+  category: string; 
+  categorySlug: string; 
   link: string;
   detailImageUrl1?: string;
   detailImageHint1?: string;
@@ -24,7 +24,7 @@ export interface AITool {
 
 export interface Category {
   name: LocalizedString;
-  slug: string; // Slugs should remain consistent and typically non-localized
+  slug: string; 
   iconName: keyof typeof import('lucide-react');
   description: LocalizedString;
 }
@@ -34,8 +34,15 @@ export interface UserComment {
   aiToolId: string;
   username: string;
   isAnonymous: boolean;
-  rating: number; // 1-5 stars
+  rating: number; 
   text: string;
   timestamp: Date;
-  profileImageUrl?: string; // Optional: for users with custom profile pics
+  profileImageUrl?: string; 
+}
+
+// Context for opening chat with specific AI tool information
+export interface AiToolChatContext {
+  title: string; // Resolved, localized title
+  shortDescription: string; // Resolved, localized description
+  link: string;
 }

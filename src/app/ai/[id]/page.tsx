@@ -20,8 +20,9 @@ import { Label } from '@/components/ui/label';
 import StarRatingInput from '@/components/ai/StarRatingInput';
 import CommentCard from '@/components/ai/CommentCard';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { useChat } from '@/contexts/ChatContext'; // For opening chat with context
+import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator'; // For scroll arrow
 
-// Mock user state - in a real app, this would come from an auth context/provider
 interface MockUser {
   username: string;
   isSubscribed: boolean;
@@ -31,30 +32,25 @@ interface MockUser {
 export default function AIPage() {
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
-  const { t } = useLanguage();
+  const { t, language } = useLanguage(); // Get language for resolving localized strings
+  const { openChat } = useChat(); // Hook to open global chat
+
   const [aiTool, setAiTool] = useState<AITool | null | undefined>(undefined); 
   const [pageAnimationClass, setPageAnimationClass] = useState('');
-
-  // Mock user for comment simulation
-  // Set to a PRO user: { username: "DemoUserPRO", isSubscribed: true, profileImageUrl: "https://placehold.co/40x40.png" }
-  // Set to a non-PRO user: { username: "DemoUserBasic", isSubscribed: false }
-  // Set to null for logged-out user
   const [mockUser, setMockUser] = useState<MockUser | null>({ username: "DemoUserBasic", isSubscribed: false }); 
-
   const [comments, setComments] = useState<UserComment[]>([]);
   const [newCommentText, setNewCommentText] = useState('');
   const [newCommentRating, setNewCommentRating] = useState(0);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [showSubscriptionAlert, setShowSubscriptionAlert] = useState(false);
 
-
   useEffect(() => {
     if (id) {
+      window.scrollTo(0, 0); // Scroll to top when AI tool data/ID changes
       const tool = getAiToolById(id);
       setAiTool(tool);
       if (tool) {
         setPageAnimationClass('animate-scale-up-fade-in');
-        // Mock loading some comments for this tool
         setComments([
           { id: '1', aiToolId: id, username: 'AliceWonder', rating: 5, text: t('noCommentsYet', 'Great tool, very intuitive!'), timestamp: new Date(Date.now() - 86400000), isAnonymous: false, profileImageUrl: "https://placehold.co/40x40.png?text=AW"},
           { id: '2', aiToolId: id, username: 'BobTheBuilder', rating: 4, text: t('noCommentsYet','Good, but could use more features.'), timestamp: new Date(Date.now() - 172800000), isAnonymous: false, profileImageUrl: "https://placehold.co/40x40.png?text=BB"},
@@ -64,21 +60,18 @@ export default function AIPage() {
         setPageAnimationClass(''); 
       }
     }
-  }, [id, t]);
+  }, [id, t]); // t is included if it's used in comment loading logic
 
   const handleCommentSubmit = () => {
     if (!mockUser) { 
-        // This case should ideally be handled by UI (form not shown if not logged in)
-        // If somehow submitted, show login prompt or a generic error
-        alert(t('loginToCommentPrompt', "Please log in to comment.")); // Or a more sophisticated login modal
+        alert(t('loginToCommentPrompt', "Please log in to comment."));
         return;
     }
-    if (!mockUser.isSubscribed) { // User is logged in BUT not subscribed
-      setShowSubscriptionAlert(true); // This triggers the "Subscription Required" dialog
+    if (!mockUser.isSubscribed) {
+      setShowSubscriptionAlert(true);
       return;
     }
     if (!newCommentText.trim() || newCommentRating === 0) {
-      // Add some validation feedback to the user here if desired (e.g., toast notification)
       return;
     }
 
@@ -90,14 +83,13 @@ export default function AIPage() {
       rating: newCommentRating,
       text: newCommentText,
       timestamp: new Date(),
-      profileImageUrl: mockUser.profileImageUrl, // Will be undefined for non-PRO basic user
+      profileImageUrl: mockUser.profileImageUrl,
     };
     setComments(prevComments => [newComment, ...prevComments]);
     setNewCommentText('');
     setNewCommentRating(0);
     setIsAnonymous(false);
   };
-
 
   if (aiTool === undefined) { 
     return (
@@ -130,9 +122,12 @@ export default function AIPage() {
   const category = getCategoryByName(aiTool.category);
   const localizedCategoryName = category ? t(category.name) : aiTool.category;
   const localizedToolTitle = t(aiTool.title);
+  const localizedShortDescription = t(aiTool.shortDescription);
+
 
   return (
-    <div className={`space-y-10 ${pageAnimationClass}`}> {/* Increased space-y */}
+    <div className={`relative space-y-10 ${pageAnimationClass}`}> {/* Added relative for ScrollDownIndicator positioning */}
+      <ScrollDownIndicator />
       <Button variant="outline" asChild className="mb-6 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">
           <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
@@ -158,7 +153,7 @@ export default function AIPage() {
         <CardContent className="p-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{localizedToolTitle}</h1>
           
-          <div className="flex flex-wrap items-center gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6"> {/* Adjusted gap */}
             {category && (
               <div className="flex items-center text-muted-foreground text-xs sm:text-sm">
                 <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 text-primary" />
@@ -171,6 +166,20 @@ export default function AIPage() {
               logoHint={aiTool.logoHint}
               text={t('visitWebsiteButton', 'Visit Website')}
             />
+             <Button
+              variant="outline"
+              onClick={() => {
+                openChat({
+                  title: localizedToolTitle,
+                  shortDescription: localizedShortDescription,
+                  link: aiTool.link,
+                });
+              }}
+              className="border-accent text-accent hover:bg-accent/10 hover:text-accent-foreground shadow-sm transform hover:scale-105 transition-all duration-300 ease-out text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md group"
+            >
+              <MessageSquare className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:rotate-[10deg]" />
+              {t('chatAboutAiButton', 'Chat about {toolName}', { toolName: localizedToolTitle })}
+            </Button>
           </div>
           
           <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('aboutSectionTitle', 'About {toolTitle}', {toolTitle: localizedToolTitle})}</h2>
@@ -214,14 +223,12 @@ export default function AIPage() {
         </CardContent>
       </Card>
 
-      {/* Comments Section */}
       <section className="space-y-6 py-8">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-headline font-semibold text-primary flex items-center gap-2">
           <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
           {t('userReviewsTitle')}
         </h2>
 
-        {/* Comment Form */}
         {mockUser && (
             <Card className="shadow-lg rounded-xl">
             <CardHeader>
@@ -255,17 +262,15 @@ export default function AIPage() {
             </CardContent>
             </Card>
         )}
-         {!mockUser && ( // Show login prompt if not logged in
+         {!mockUser && (
             <Card className="shadow-lg rounded-xl p-6 text-center">
                 <p className="text-muted-foreground">{t('loginToCommentPrompt', 'Please log in to leave a comment and rate this AI.')}</p>
-                 <Button onClick={() => { /* Simulate opening login modal or redirecting */ alert(t('loginButton', "Login")); }} className="mt-4">
+                 <Button onClick={() => { alert(t('loginButton', "Login")); }} className="mt-4">
                     {t('loginButton')}
                 </Button>
             </Card>
         )}
 
-
-        {/* Comments List */}
         <div className="space-y-4">
           {comments.length > 0 ? (
             comments.map(comment => <CommentCard key={comment.id} comment={comment} />)
@@ -286,15 +291,12 @@ export default function AIPage() {
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowSubscriptionAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction onClick={() => {
-              // Simulate redirect to subscription page
               alert("Redirecting to subscription page (simulation)...");
               setShowSubscriptionAlert(false);
             }}>{t('subscribeButton')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
     </div>
   );
 }
-
