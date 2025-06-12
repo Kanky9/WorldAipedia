@@ -67,8 +67,8 @@ Available AI Tools on World AI (summary):
 {{#if history}}
 Conversation History (respect this context and language):
 {{#each history}}
-  {{#if (eq role "user")}}User: {{#if parts.[0].text}}{{parts.[0].text}}{{/if}}{{#if parts.[0].media}} [User sent an image]{{/if}}{{/if}}
-  {{#if (eq role "model")}}Lace: {{parts.[0].text}}{{/if}}
+  {{#eq role "user"}}User: {{#if parts.[0].text}}{{parts.[0].text}}{{/if}}{{#if parts.[0].media}} [User sent an image]{{/if}}{{/eq}}
+  {{#eq role "model"}}Lace: {{#if parts.[0].text}}{{parts.[0].text}}{{/if}}{{/eq}}
 {{/each}}
 {{/if}}
 
