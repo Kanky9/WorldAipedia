@@ -6,7 +6,7 @@ import { notFound, useParams } from 'next/navigation';
 import { getPostById, getCategoryByName } from '@/data/posts'; // Changed from ai-tools
 import AILink from '@/components/ai/AILink'; // This component can be reused if a post links to a tool
 import CategoryIcon from '@/components/ai/CategoryIcon';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card'; // CardTitle, CardDescription removed as not directly used here
 import Link from 'next/link';
 import { ArrowLeft, CalendarDays, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 // import { useChat } from '@/contexts/ChatContext'; 
 import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator'; 
 import { format } from 'date-fns';
+import { enUS, es } from 'date-fns/locale'; // Import locales directly
 import { Badge } from '@/components/ui/badge';
 
 export default function PostPage() { // Renamed from AIPage
@@ -45,9 +46,20 @@ export default function PostPage() { // Renamed from AIPage
         setPageAnimationClass(''); 
       }
     }
-  }, [id, t]);
+  }, [id, t]); // t was re-added as a dependency for localized strings in effect, can be removed if not strictly needed for post fetching logic
 
-  const postDateLocale = language === 'es' ? require('date-fns/locale/es') : require('date-fns/locale/en-US');
+  // Helper to get the correct locale object for date-fns
+  const getPostDateLocale = () => {
+    switch (language) {
+      case 'es':
+        return es;
+      // Add other language cases if needed
+      case 'en':
+      default:
+        return enUS;
+    }
+  };
+  const postDateLocale = getPostDateLocale();
 
 
   if (post === undefined) { 
@@ -116,7 +128,8 @@ export default function PostPage() { // Renamed from AIPage
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4" />
-              <span>{format(new Date(post.publishedDate), 'PPP', { locale: postDateLocale })}</span>
+              {/* Use post.publishedDate directly and ensure postDateLocale is valid */}
+              <span>{post.publishedDate && postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
             </div>
             {category && (
               <div className="flex items-center gap-1.5">
