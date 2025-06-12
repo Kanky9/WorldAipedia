@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,28 +13,53 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, XCircle } from 'lucide-react';
-import { categories as allCategories, posts as allPosts, getPostById } from '@/data/posts'; // Import posts and categories
+import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2 } from 'lucide-react';
+import { categories as allCategories, posts as allPosts, getPostById } from '@/data/posts'; 
 import type { Post, LocalizedString } from '@/lib/types';
 
-// Helper to handle LocalizedString for defaultValues
 const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
   if (!value) return '';
   if (typeof value === 'string') return value;
   return value[lang as keyof LocalizedString] || value.en || '';
 };
 
-
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { toast } = useToast();
 
-  // Check for edit mode (e.g., /admin/create-post?id=some-id)
-  // This is a client-side way to get query params.
-  // For a more robust solution with SSR, you'd use `useSearchParams` from `next/navigation`
   const [postId, setPostId] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Form state
+  const [title, setTitle] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
+  const [longDescription, setLongDescription] = useState('');
+  
+  const [mainImageDataUri, setMainImageDataUri] = useState<string | null>(null);
+  const [mainImagePlaceholderUrl, setMainImagePlaceholderUrl] = useState('https://placehold.co/600x400.png');
+  const [mainImageHint, setMainImageHint] = useState('');
+  const mainImageFileRef = useRef<HTMLInputElement>(null);
+
+  const [logoDataUri, setLogoDataUri] = useState<string | null>(null);
+  const [logoPlaceholderUrl, setLogoPlaceholderUrl] = useState('https://placehold.co/50x50.png');
+  const [logoHint, setLogoHint] = useState('');
+  const logoFileRef = useRef<HTMLInputElement>(null);
+
+  const [detailImage1DataUri, setDetailImage1DataUri] = useState<string | null>(null);
+  const [detailImage1PlaceholderUrl, setDetailImage1PlaceholderUrl] = useState('https://placehold.co/400x300.png');
+  const [detailImageHint1, setDetailImageHint1] = useState('');
+  const detailImage1FileRef = useRef<HTMLInputElement>(null);
+
+  const [detailImage2DataUri, setDetailImage2DataUri] = useState<string | null>(null);
+  const [detailImage2PlaceholderUrl, setDetailImage2PlaceholderUrl] = useState('https://placehold.co/400x300.png');
+  const [detailImageHint2, setDetailImageHint2] = useState('');
+  const detailImage2FileRef = useRef<HTMLInputElement>(null);
+
+  const [category, setCategory] = useState('');
+  const [tags, setTags] = useState('');
+  const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [linkTool, setLinkTool] = useState('');
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -43,21 +69,42 @@ export default function CreatePostPage() {
       setIsEditMode(true);
       const existingPost = getPostById(id);
       if (existingPost) {
-        // Pre-fill form for edit mode
         setTitle(getLocalizedStringDefault(existingPost.title, language));
         setShortDescription(getLocalizedStringDefault(existingPost.shortDescription, language));
         setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
-        setMainImageUrl(existingPost.imageUrl);
+        
+        // If imageUrl is a data URI, it means it was an uploaded image
+        if (existingPost.imageUrl.startsWith('data:image')) {
+            setMainImageDataUri(existingPost.imageUrl);
+        } else {
+            setMainImagePlaceholderUrl(existingPost.imageUrl); // Keep as placeholder if it's a URL
+        }
         setMainImageHint(existingPost.imageHint || '');
-        setLogoUrl(existingPost.logoUrl || '');
+
+        if (existingPost.logoUrl?.startsWith('data:image')) {
+            setLogoDataUri(existingPost.logoUrl);
+        } else if (existingPost.logoUrl) {
+            setLogoPlaceholderUrl(existingPost.logoUrl);
+        }
         setLogoHint(existingPost.logoHint || '');
-        setDetailImageUrl1(existingPost.detailImageUrl1 || '');
+        
+        if (existingPost.detailImageUrl1?.startsWith('data:image')) {
+            setDetailImage1DataUri(existingPost.detailImageUrl1);
+        } else if (existingPost.detailImageUrl1) {
+            setDetailImage1PlaceholderUrl(existingPost.detailImageUrl1);
+        }
         setDetailImageHint1(existingPost.detailImageHint1 || '');
-        setDetailImageUrl2(existingPost.detailImageUrl2 || '');
+
+        if (existingPost.detailImageUrl2?.startsWith('data:image')) {
+            setDetailImage2DataUri(existingPost.detailImageUrl2);
+        } else if (existingPost.detailImageUrl2) {
+            setDetailImage2PlaceholderUrl(existingPost.detailImageUrl2);
+        }
         setDetailImageHint2(existingPost.detailImageHint2 || '');
-        setCategory(existingPost.categorySlug); // Use categorySlug for Select value
+
+        setCategory(existingPost.categorySlug);
         setTags(existingPost.tags.join(', '));
-        setPublishedDate(existingPost.publishedDate.toISOString().split('T')[0]); // Format for date input
+        setPublishedDate(existingPost.publishedDate.toISOString().split('T')[0]);
         setLinkTool(existingPost.link || '');
       } else {
         toast({
@@ -70,56 +117,63 @@ export default function CreatePostPage() {
     }
   }, [language, router, t, toast]);
 
+  const handleImageFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    setDataUriState: React.Dispatch<React.SetStateAction<string | null>>,
+    setPlaceholderUrlState?: React.Dispatch<React.SetStateAction<string>> // Optional for general images
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setDataUriState(reader.result as string);
+        if (setPlaceholderUrlState) setPlaceholderUrlState(''); // Clear placeholder URL if file is uploaded
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-  // Form state
-  const [title, setTitle] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [longDescription, setLongDescription] = useState('');
-  const [mainImageUrl, setMainImageUrl] = useState('');
-  const [mainImageHint, setMainImageHint] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
-  const [logoHint, setLogoHint] = useState('');
-  const [detailImageUrl1, setDetailImageUrl1] = useState('');
-  const [detailImageHint1, setDetailImageHint1] = useState('');
-  const [detailImageUrl2, setDetailImageUrl2] = useState('');
-  const [detailImageHint2, setDetailImageHint2] = useState('');
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
-  const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [linkTool, setLinkTool] = useState('');
+  const clearImage = (
+    setDataUriState: React.Dispatch<React.SetStateAction<string | null>>,
+    fileRef: React.RefObject<HTMLInputElement>,
+    defaultPlaceholderUrl: string,
+    setPlaceholderUrlState?: React.Dispatch<React.SetStateAction<string>>
+  ) => {
+    setDataUriState(null);
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+    if (setPlaceholderUrlState) setPlaceholderUrlState(defaultPlaceholderUrl);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend (e.g., Firebase Firestore)
-    // For this prototype, we'll just show a toast message.
-
-    // Basic validation
-    if (!title || !shortDescription || !longDescription || !mainImageUrl || !category || !publishedDate) {
+    if (!title || !shortDescription || !longDescription || (!mainImageDataUri && !mainImagePlaceholderUrl.startsWith('https://placehold.co')) || !category || !publishedDate) {
       toast({
         variant: "destructive",
         title: t('adminPostError', "Error"),
-        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date).",
+        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or a valid placeholder is used if not uploaded.",
       });
       return;
     }
     
     const postData = {
-      id: isEditMode && postId ? postId : `new-post-${Date.now()}`, // Generate new ID or use existing
-      title: { en: title, es: title }, // Simplification: using same for both langs
+      id: isEditMode && postId ? postId : `new-post-${Date.now()}`,
+      title: { en: title, es: title },
       shortDescription: { en: shortDescription, es: shortDescription },
       longDescription: { en: longDescription, es: longDescription },
-      imageUrl: mainImageUrl,
+      imageUrl: mainImageDataUri || mainImagePlaceholderUrl,
       imageHint: mainImageHint,
-      logoUrl: logoUrl,
+      logoUrl: logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') ? '' : logoPlaceholderUrl),
       logoHint: logoHint,
-      category: allCategories.find(c => c.slug === category)?.name.en || 'Information', // Get category name from slug
+      category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
       link: linkTool,
-      detailImageUrl1: detailImageUrl1,
+      detailImageUrl1: detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') ? '' : detailImage1PlaceholderUrl),
       detailImageHint1: detailImageHint1,
-      detailImageUrl2: detailImageUrl2,
+      detailImageUrl2: detailImage2DataUri || (detailImage2PlaceholderUrl.startsWith('https://placehold.co') ? '' : detailImage2PlaceholderUrl),
       detailImageHint2: detailImageHint2,
       comments: isEditMode && postId ? getPostById(postId)?.comments || [] : [],
     };
@@ -132,27 +186,67 @@ export default function CreatePostPage() {
       action: <CheckCircle className="text-green-500" />,
     });
     
-    // Potentially clear form or redirect
     if (!isEditMode) {
-        // Clear form for new post
-        setTitle('');
-        setShortDescription('');
-        setLongDescription('');
-        setMainImageUrl('');
+        setTitle(''); setShortDescription(''); setLongDescription('');
+        clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl);
         setMainImageHint('');
-        setLogoUrl('');
+        clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl);
         setLogoHint('');
-        setDetailImageUrl1('');
+        clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl);
         setDetailImageHint1('');
-        setDetailImageUrl2('');
+        clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl);
         setDetailImageHint2('');
-        setCategory('');
-        setTags('');
-        setPublishedDate(new Date().toISOString().split('T')[0]);
-        setLinkTool('');
+        setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
     }
-    // router.push('/admin'); // Optionally redirect after submit
   };
+
+  const ImageUploadSection: React.FC<{
+    labelKey: string; defaultLabel: string;
+    imageDataUri: string | null; 
+    onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onClearImage: () => void;
+    fileRef: React.RefObject<HTMLInputElement>;
+    hintValue: string; onHintChange: (value: string) => void;
+    hintLabelKey: string; hintDefaultLabel: string; hintPlaceholderKey: string; hintDefaultPlaceholder: string;
+    aspectRatio?: string; // e.g., 'aspect-video' or 'aspect-square'
+    previewSize?: {width: number, height: number};
+    placeholderUrl: string;
+  }> = ({
+    labelKey, defaultLabel, imageDataUri, onFileChange, onClearImage, fileRef,
+    hintValue, onHintChange, hintLabelKey, hintDefaultLabel, hintPlaceholderKey, hintDefaultPlaceholder,
+    aspectRatio = "aspect-video", previewSize = {width:200, height:112}, placeholderUrl
+  }) => (
+    <div className="space-y-2">
+      <Label>{t(labelKey, defaultLabel)}</Label>
+      <div className="flex items-center gap-4">
+        <Button type="button" variant="outline" onClick={() => fileRef.current?.click()}>
+          <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton', 'Upload Image')}
+        </Button>
+        <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" />
+        {imageDataUri && (
+          <Button type="button" variant="ghost" size="sm" onClick={onClearImage}>
+            <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton', 'Clear')}
+          </Button>
+        )}
+      </div>
+      {(imageDataUri || placeholderUrl) && (
+        <div className={`mt-2 rounded border overflow-hidden ${aspectRatio}`} style={{maxWidth: `${previewSize.width}px`}}>
+          <Image
+            src={imageDataUri || placeholderUrl}
+            alt={t(labelKey, defaultLabel) + " preview"}
+            width={previewSize.width}
+            height={previewSize.height}
+            className="object-cover w-full h-full"
+            data-ai-hint={hintValue || "uploaded image"}
+          />
+        </div>
+      )}
+      <div className="mt-2">
+        <Label htmlFor={`${labelKey}-hint`}>{t(hintLabelKey, hintDefaultLabel)}</Label>
+        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} />
+      </div>
+    </div>
+  );
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -174,79 +268,78 @@ export default function CreatePostPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title */}
             <div>
               <Label htmlFor="title">{t('adminPostTitleLabel', 'Post Title')}</Label>
               <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required />
             </div>
 
-            {/* Short Description */}
             <div>
               <Label htmlFor="shortDescription">{t('adminPostShortDescLabel', 'Short Description')}</Label>
               <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required />
             </div>
 
-            {/* Long Description */}
             <div>
               <Label htmlFor="longDescription">{t('adminPostLongDescLabel', 'Long Description (Content)')}</Label>
               <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Main Image URL */}
-              <div>
-                <Label htmlFor="mainImageUrl">{t('adminPostMainImageUrlLabel', 'Main Image URL')}</Label>
-                <Input id="mainImageUrl" value={mainImageUrl} onChange={(e) => setMainImageUrl(e.target.value)} placeholder={t('adminPostMainImageUrlPlaceholder', 'https://placehold.co/600x400.png')} required />
-              </div>
-              {/* Main Image Hint */}
-              <div>
-                <Label htmlFor="mainImageHint">{t('adminPostMainImageHintLabel', 'Main Image AI Hint')}</Label>
-                <Input id="mainImageHint" value={mainImageHint} onChange={(e) => setMainImageHint(e.target.value)} placeholder={t('adminPostMainImageHintPlaceholder', 'e.g., abstract technology')} />
-              </div>
-            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Logo URL */}
-              <div>
-                <Label htmlFor="logoUrl">{t('adminPostLogoUrlLabel', 'Tool Logo URL (Optional)')}</Label>
-                <Input id="logoUrl" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder={t('adminPostLogoUrlPlaceholder', 'https://placehold.co/50x50.png')} />
-              </div>
-              {/* Logo Hint */}
-              <div>
-                <Label htmlFor="logoHint">{t('adminPostLogoHintLabel', 'Logo AI Hint')}</Label>
-                <Input id="logoHint" value={logoHint} onChange={(e) => setLogoHint(e.target.value)} placeholder={t('adminPostLogoHintPlaceholder', 'e.g., brand logo')} />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
+              <ImageUploadSection
+                labelKey="adminPostMainImageLabel" defaultLabel="Main Image"
+                imageDataUri={mainImageDataUri}
+                onFileChange={(e) => handleImageFileChange(e, setMainImageDataUri, setMainImagePlaceholderUrl)}
+                onClearImage={() => clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl)}
+                fileRef={mainImageFileRef}
+                hintValue={mainImageHint} onHintChange={setMainImageHint}
+                hintLabelKey="adminPostMainImageHintLabel" hintDefaultLabel="Main Image AI Hint"
+                hintPlaceholderKey="adminPostMainImageHintPlaceholder" hintDefaultPlaceholder="e.g., abstract technology"
+                previewSize={{width: 300, height: 200}}
+                placeholderUrl={mainImagePlaceholderUrl}
+              />
+              <ImageUploadSection
+                labelKey="adminPostLogoLabel" defaultLabel="Tool Logo (Optional)"
+                imageDataUri={logoDataUri}
+                onFileChange={(e) => handleImageFileChange(e, setLogoDataUri, setLogoPlaceholderUrl)}
+                onClearImage={() => clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl)}
+                fileRef={logoFileRef}
+                hintValue={logoHint} onHintChange={setLogoHint}
+                hintLabelKey="adminPostLogoHintLabel" hintDefaultLabel="Logo AI Hint"
+                hintPlaceholderKey="adminPostLogoHintPlaceholder" hintDefaultPlaceholder="e.g., brand logo"
+                aspectRatio="aspect-square"
+                previewSize={{width:100, height:100}}
+                placeholderUrl={logoPlaceholderUrl}
+              />
             </div>
 
             <CardDescription>{t('additionalVisualsTitle')}</CardDescription>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Detail Image 1 URL */}
-                <div>
-                    <Label htmlFor="detailImageUrl1">{t('adminPostDetailImageUrl1Label', 'Visual Insight Image 1 URL')}</Label>
-                    <Input id="detailImageUrl1" value={detailImageUrl1} onChange={(e) => setDetailImageUrl1(e.target.value)} placeholder={t('adminPostDetailImageUrl1Placeholder', 'https://placehold.co/400x300.png')} />
-                </div>
-                {/* Detail Image 1 Hint */}
-                <div>
-                    <Label htmlFor="detailImageHint1">{t('adminPostDetailImageHint1Label', 'Visual Insight 1 AI Hint')}</Label>
-                    <Input id="detailImageHint1" value={detailImageHint1} onChange={(e) => setDetailImageHint1(e.target.value)} placeholder={t('adminPostDetailImageHint1Placeholder', 'e.g., interface screenshot')} />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
+               <ImageUploadSection
+                labelKey="adminPostDetailImage1Label" defaultLabel="Visual Insight Image 1"
+                imageDataUri={detailImage1DataUri}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage1DataUri, setDetailImage1PlaceholderUrl)}
+                onClearImage={() => clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl)}
+                fileRef={detailImage1FileRef}
+                hintValue={detailImageHint1} onHintChange={setDetailImageHint1}
+                hintLabelKey="adminPostDetailImageHint1Label" hintDefaultLabel="Visual Insight 1 AI Hint"
+                hintPlaceholderKey="adminPostDetailImageHint1Placeholder" hintDefaultPlaceholder="e.g., interface screenshot"
+                previewSize={{width:250, height:187}}
+                placeholderUrl={detailImage1PlaceholderUrl}
+              />
+              <ImageUploadSection
+                labelKey="adminPostDetailImage2Label" defaultLabel="Visual Insight Image 2"
+                imageDataUri={detailImage2DataUri}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage2DataUri, setDetailImage2PlaceholderUrl)}
+                onClearImage={() => clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl)}
+                fileRef={detailImage2FileRef}
+                hintValue={detailImageHint2} onHintChange={setDetailImageHint2}
+                hintLabelKey="adminPostDetailImageHint2Label" hintDefaultLabel="Visual Insight 2 AI Hint"
+                hintPlaceholderKey="adminPostDetailImageHint2Placeholder" hintDefaultPlaceholder="e.g., concept art"
+                previewSize={{width:250, height:187}}
+                placeholderUrl={detailImage2PlaceholderUrl}
+              />
             </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Detail Image 2 URL */}
-                <div>
-                    <Label htmlFor="detailImageUrl2">{t('adminPostDetailImageUrl2Label', 'Visual Insight Image 2 URL')}</Label>
-                    <Input id="detailImageUrl2" value={detailImageUrl2} onChange={(e) => setDetailImageUrl2(e.target.value)} placeholder={t('adminPostDetailImageUrl2Placeholder', 'https://placehold.co/400x300.png')} />
-                </div>
-                {/* Detail Image 2 Hint */}
-                <div>
-                    <Label htmlFor="detailImageHint2">{t('adminPostDetailImageHint2Label', 'Visual Insight 2 AI Hint')}</Label>
-                    <Input id="detailImageHint2" value={detailImageHint2} onChange={(e) => setDetailImageHint2(e.target.value)} placeholder={t('adminPostDetailImageHint2Placeholder', 'e.g., concept art')} />
-                </div>
-            </div>
-
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Category */}
               <div>
                 <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
                 <Select value={category} onValueChange={setCategory} required>
@@ -263,7 +356,6 @@ export default function CreatePostPage() {
                 </Select>
               </div>
 
-              {/* Tags */}
               <div>
                 <Label htmlFor="tags">{t('adminPostTagsLabel', 'Tags (comma-separated)')}</Label>
                 <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} />
@@ -271,12 +363,10 @@ export default function CreatePostPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Published Date */}
               <div>
                 <Label htmlFor="publishedDate">{t('adminPostPublishedDateLabel', 'Published Date')}</Label>
                 <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required />
               </div>
-              {/* Link to Tool */}
               <div>
                 <Label htmlFor="linkTool">{t('adminPostLinkToolLabel', 'Link to Tool (Optional)')}</Label>
                 <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} />
@@ -294,3 +384,5 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+    
