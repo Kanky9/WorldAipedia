@@ -1,6 +1,6 @@
 
-import type { Post, Category, LocalizedString } from '@/lib/types';
-import { subDays } from 'date-fns';
+import type { Post, Category, LocalizedString, UserComment } from '@/lib/types';
+import { subDays, subHours } from 'date-fns';
 
 // Helper function to create LocalizedString for titles, descriptions, etc.
 const LS = (en: string, es: string, it?: string, zh?: string, ja?: string, pt?: string): LocalizedString => ({
@@ -132,6 +132,40 @@ export const categories: Category[] = [
   },
 ];
 
+// Sample comments data to be added to posts
+const sampleComments: UserComment[] = [
+  {
+    id: 'comment-1',
+    postId: 'chatgpt-post',
+    username: 'AI Enthusiast',
+    isAnonymous: false,
+    rating: 5,
+    text: 'This is a great overview of ChatGPT. Really helped me understand its potential!',
+    timestamp: subHours(new Date(), 2),
+    profileImageUrl: 'https://placehold.co/40x40.png?text=AE'
+  },
+  {
+    id: 'comment-2',
+    postId: 'chatgpt-post',
+    username: 'TechGeek',
+    isAnonymous: false,
+    rating: 4,
+    text: 'Good points, but I wish it delved deeper into the ethical implications.',
+    timestamp: subHours(new Date(), 5),
+    profileImageUrl: 'https://placehold.co/40x40.png?text=TG'
+  },
+  {
+    id: 'comment-3',
+    postId: 'midjourney-art-post',
+    username: 'ArtLover',
+    isAnonymous: true,
+    rating: 5,
+    text: 'Midjourney is amazing for artists! The possibilities are endless.',
+    timestamp: subHours(new Date(), 1),
+  }
+];
+
+
 // Sample posts data
 export const posts: Post[] = [
   {
@@ -157,7 +191,8 @@ export const posts: Post[] = [
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'chatbot interface concept',
     detailImageUrl2: 'https://placehold.co/400x300.png',
-    detailImageHint2: 'abstract neural network'
+    detailImageHint2: 'abstract neural network',
+    comments: sampleComments.filter(c => c.postId === 'chatgpt-post')
   },
   {
     id: 'midjourney-art-post',
@@ -182,9 +217,9 @@ export const posts: Post[] = [
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'surreal AI artwork',
     detailImageUrl2: 'https://placehold.co/400x300.png',
-    detailImageHint2: 'digital art creation process'
+    detailImageHint2: 'digital art creation process',
+    comments: sampleComments.filter(c => c.postId === 'midjourney-art-post')
   },
-  // Add more adapted posts here, ensure they have publishedDate and tags
   {
     id: 'github-copilot-review',
     title: LS('GitHub Copilot: Your AI Pair Programmer In-Depth', 'GitHub Copilot: Tu Programador IA a Fondo'),
@@ -208,7 +243,8 @@ export const posts: Post[] = [
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'code suggestion example',
     detailImageUrl2: 'https://placehold.co/400x300.png',
-    detailImageHint2: 'developer workflow diagram'
+    detailImageHint2: 'developer workflow diagram',
+    comments: []
   },
   {
     id: 'canva-magic-design-features',
@@ -233,7 +269,19 @@ export const posts: Post[] = [
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'AI generated presentation slide',
     detailImageUrl2: 'https://placehold.co/400x300.png',
-    detailImageHint2: 'social media graphic design'
+    detailImageHint2: 'social media graphic design',
+    comments: [
+        {
+            id: 'comment-4',
+            postId: 'canva-magic-design-features',
+            username: 'DesignerDan',
+            isAnonymous: false,
+            rating: 4,
+            text: 'Magic Edit is a game changer for quick touch-ups!',
+            timestamp: subHours(new Date(), 3),
+            profileImageUrl: 'https://placehold.co/40x40.png?text=DD'
+        }
+    ]
   }
 ];
 

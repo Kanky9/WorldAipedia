@@ -3,31 +3,48 @@
 
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation'; 
-import { getPostById, getCategoryByName } from '@/data/posts'; // Changed from ai-tools
-import AILink from '@/components/ai/AILink'; // This component can be reused if a post links to a tool
+import { getPostById, getCategoryByName } from '@/data/posts'; 
+import AILink from '@/components/ai/AILink'; 
 import CategoryIcon from '@/components/ai/CategoryIcon';
-import { Card, CardContent, CardHeader } from '@/components/ui/card'; // CardTitle, CardDescription removed as not directly used here
+import { Card, CardContent, CardHeader } from '@/components/ui/card'; 
 import Link from 'next/link';
-import { ArrowLeft, CalendarDays, Tag } from 'lucide-react';
+import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useEffect, useState } from 'react';
-import type { Post } from '@/lib/types'; // Changed from AITool
+import type { Post, UserComment, User } from '@/lib/types'; 
 import { Skeleton } from '@/components/ui/skeleton';
-// Comment-related imports might be re-added later based on new requirements
-// import { Textarea } from '@/components/ui/textarea';
-// import { Checkbox } from '@/components/ui/checkbox';
-// import { Label } from '@/components/ui/label';
-// import StarRatingInput from '@/components/ai/StarRatingInput';
-// import CommentCard from '@/components/ai/CommentCard';
-// import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-// import { useChat } from '@/contexts/ChatContext'; 
 import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator'; 
 import { format } from 'date-fns';
-import { enUS, es } from 'date-fns/locale'; // Import locales directly
+import { enUS, es } from 'date-fns/locale'; 
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import StarRatingInput from '@/components/ai/StarRatingInput';
+import CommentCard from '@/components/ai/CommentCard';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function PostPage() { // Renamed from AIPage
+// Mock user for simulating login state - in a real app, this would come from auth context
+const mockUser: User = { 
+  id: "simulated-user-basic", 
+  username: "DemoUser", 
+  email: "demo@example.com", 
+  isSubscribed: false, // Set to true to simulate PRO user
+  profileImageUrl: "https://placehold.co/40x40.png?text=DU"
+};
+
+// const mockUserPro: User = { 
+//   id: "simulated-user-pro", 
+//   username: "ProUser", 
+//   email: "pro@example.com", 
+//   isSubscribed: true,
+//   profileImageUrl: "https://placehold.co/40x40.png?text=PU"
+// };
+
+
+export default function PostPage() { 
   const params = useParams();
   const id = typeof params.id === 'string' ? params.id : '';
   const { t, language } = useLanguage(); 
@@ -35,31 +52,71 @@ export default function PostPage() { // Renamed from AIPage
   const [post, setPost] = useState<Post | null | undefined>(undefined); 
   const [pageAnimationClass, setPageAnimationClass] = useState('');
 
+  // Comment State
+  const [comments, setComments] = useState<UserComment[]>([]);
+  const [newCommentText, setNewCommentText] = useState('');
+  const [newCommentRating, setNewCommentRating] = useState(0);
+  const [isAnonymousComment, setIsAnonymousComment] = useState(false);
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [showSubscribeAlert, setShowSubscribeAlert] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(mockUser); // Use mockUser, can be toggled
+
   useEffect(() => {
     if (id) {
       window.scrollTo(0, 0); 
       const currentPost = getPostById(id);
       setPost(currentPost);
       if (currentPost) {
+        setComments(currentPost.comments || []);
         setPageAnimationClass('animate-scale-up-fade-in');
       } else {
         setPageAnimationClass(''); 
       }
     }
-  }, [id, t]); // t was re-added as a dependency for localized strings in effect, can be removed if not strictly needed for post fetching logic
+  }, [id]); 
 
-  // Helper to get the correct locale object for date-fns
   const getPostDateLocale = () => {
     switch (language) {
       case 'es':
         return es;
-      // Add other language cases if needed
       case 'en':
       default:
         return enUS;
     }
   };
   const postDateLocale = getPostDateLocale();
+
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) {
+      setShowLoginAlert(true);
+      return;
+    }
+    if (!currentUser.isSubscribed) {
+      setShowSubscribeAlert(true);
+      return;
+    }
+    if (newCommentText.trim() === '' || newCommentRating === 0) {
+      // Basic validation, can be improved
+      alert('Please provide a rating and a comment.');
+      return;
+    }
+
+    const newComment: UserComment = {
+      id: crypto.randomUUID(),
+      postId: post!.id,
+      username: currentUser.username,
+      profileImageUrl: currentUser.profileImageUrl,
+      isAnonymous: isAnonymousComment,
+      rating: newCommentRating,
+      text: newCommentText,
+      timestamp: new Date(),
+    };
+    setComments(prev => [newComment, ...prev]);
+    setNewCommentText('');
+    setNewCommentRating(0);
+    setIsAnonymousComment(false);
+  };
 
 
   if (post === undefined) { 
@@ -76,7 +133,7 @@ export default function PostPage() { // Renamed from AIPage
               <Skeleton className="h-8 w-20 sm:h-10 sm:w-24" /> 
               <Skeleton className="h-8 w-28 sm:h-10 sm:w-32" />
             </div>
-            <Skeleton className="h-5 w-1/4 mb-2" /> {/* For date */}
+            <Skeleton className="h-5 w-1/4 mb-2" /> 
             <Skeleton className="h-7 w-1/3 sm:h-8 sm:w-1/4 mt-8 mb-3" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
             <Skeleton className="h-5 w-full sm:h-6 mb-2" />
@@ -94,7 +151,6 @@ export default function PostPage() { // Renamed from AIPage
   const category = getCategoryByName(post.category);
   const localizedCategoryName = category ? t(category.name) : post.category;
   const localizedPostTitle = t(post.title);
-  // const localizedShortDescription = t(post.shortDescription); // Potentially used by chat
 
 
   return (
@@ -128,7 +184,6 @@ export default function PostPage() { // Renamed from AIPage
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4" />
-              {/* Use post.publishedDate directly and ensure postDateLocale is valid */}
               <span>{post.publishedDate && postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
             </div>
             {category && (
@@ -151,25 +206,9 @@ export default function PostPage() { // Renamed from AIPage
               href={post.link} 
               logoUrl={post.logoUrl} 
               logoHint={post.logoHint}
-              text={t('visitAiToolWebsiteButton', 'Visit Tool Website')} // Specific text if post is about a tool
+              text={t('visitAiToolWebsiteButton', 'Visit Tool Website')} 
             />
           )}
-          {/* Chat about AI button removed for now, to be reconsidered with new subscription model
-             <Button
-              variant="outline"
-              onClick={() => {
-                openChat({
-                  title: localizedPostTitle,
-                  shortDescription: localizedShortDescription,
-                  link: post.link,
-                });
-              }}
-              className="border-accent text-accent hover:bg-accent/10 hover:text-accent-foreground shadow-sm transform hover:scale-105 transition-all duration-300 ease-out text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md group"
-            >
-              <MessageSquare className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:rotate-[10deg]" />
-              {t('chatAboutPostButton', 'Chat about this Post')}
-            </Button>
-          */}
           
           <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('postContentTitle', 'Post Content')}</h2>
           <article className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none text-foreground/80 leading-relaxed whitespace-pre-wrap">
@@ -212,16 +251,108 @@ export default function PostPage() { // Renamed from AIPage
         </CardContent>
       </Card>
 
-      {/* Existing comments section is removed for now. Will be rebuilt with new auth/subscription logic. */}
-      {/* 
+      {/* Comments Section */}
       <section className="space-y-6 py-8">
         <h2 className="text-xl sm:text-2xl md:text-3xl font-headline font-semibold text-primary flex items-center gap-2">
           <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7" />
-          {t('userReviewsTitle')}
+          {t('userReviewsTitle', "User Reviews & Comments")}
         </h2>
-        ...
+
+        {/* Add Comment Form */}
+        <Card className="shadow-lg bg-card/80 border border-border/50">
+          <CardHeader>
+            <h3 className="text-lg font-semibold text-foreground">{t('addYourCommentTitle', "Add Your Comment")}</h3>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleCommentSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="rating" className="mb-1 block">{t('ratingLabel', "Your Rating")}</Label>
+                <StarRatingInput 
+                  value={newCommentRating} 
+                  onChange={setNewCommentRating}
+                  disabled={!currentUser || !currentUser.isSubscribed}
+                />
+              </div>
+              <div>
+                <Label htmlFor="comment" className="mb-1 block">{t('commentLabel', "Your Comment")}</Label>
+                <Textarea
+                  id="comment"
+                  value={newCommentText}
+                  onChange={(e) => setNewCommentText(e.target.value)}
+                  placeholder={!currentUser ? t('loginToCommentPrompt') : (!currentUser.isSubscribed ? t('subscribeToCommentDescription') : "Share your thoughts...")}
+                  rows={4}
+                  disabled={!currentUser || !currentUser.isSubscribed}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="anonymous" 
+                  checked={isAnonymousComment}
+                  onCheckedChange={(checked) => setIsAnonymousComment(Boolean(checked))}
+                  disabled={!currentUser || !currentUser.isSubscribed}
+                />
+                <Label htmlFor="anonymous" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  {t('anonymousCommentLabel', "Comment Anonymously")}
+                </Label>
+              </div>
+              <Button 
+                type="submit" 
+                className="bg-primary hover:bg-primary/90"
+                disabled={!currentUser || (!currentUser.isSubscribed && newCommentText !== '')} // Enable if not PRO but only to trigger alert
+              >
+                {t('submitCommentButton', "Submit Comment")}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+        
+        {/* Display Comments */}
+        <div className="space-y-4">
+          {comments.length > 0 ? (
+            comments.map(comment => (
+              <CommentCard key={comment.id} comment={comment} />
+            ))
+          ) : (
+            <p className="text-muted-foreground text-center py-4">{t('noCommentsYet', "No comments yet. Be the first to share your thoughts!")}</p>
+          )}
+        </div>
       </section>
-      */}
+
+      {/* Login Alert Dialog */}
+      <AlertDialog open={showLoginAlert} onOpenChange={setShowLoginAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('loginToCommentTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('loginToCommentDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowLoginAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link href="/login">{t('loginButton')}</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Subscribe Alert Dialog */}
+      <AlertDialog open={showSubscribeAlert} onOpenChange={setShowSubscribeAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('subscribeToCommentTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('subscribeToCommentDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowSubscribeAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link href="/account">{t('subscribeButton')}</Link> 
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

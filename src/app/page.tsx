@@ -90,7 +90,7 @@ export default function HomePage() {
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredPostsTitle', 'Featured Posts')}</h2>
         {displayedPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8">
-            {displayedPosts.slice(0, 6).map((post) => ( // Display up to 6 posts
+            {displayedPosts.map((post) => ( // Display all posts
               <PostCard key={post.id} post={post} />
             ))}
           </div>

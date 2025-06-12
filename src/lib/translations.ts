@@ -13,7 +13,7 @@ export type LanguageCode = keyof typeof languages;
 export type CoreTranslationKey = 
   // Header
   | 'navHome'
-  | 'navCategories' // Now means "Post Categories"
+  | 'navCategories' 
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
   | 'logoutButton'
@@ -27,8 +27,8 @@ export type CoreTranslationKey =
   // Homepage (Blog Listing)
   | 'blogTitle'
   | 'blogSubtitle'
-  | 'exploreCategoriesButton' //Explore Post Categories
-  | 'featuredPostsTitle' // Changed from latestPosts
+  | 'exploreCategoriesButton' 
+  | 'featuredPostsTitle' 
   | 'viewAllPostsButton'
   // Post Card
   | 'readMoreButton'
@@ -45,16 +45,16 @@ export type CoreTranslationKey =
   // Categories Page (Post Categories)
   | 'categoriesTitle'
   | 'categoriesSubtitle'
-  | 'viewPostsButton' // Changed from viewToolsButton
+  | 'viewPostsButton' 
   | 'noCategoriesAvailable'
   // Category Detail Page (Posts in Category)
-  | 'noPostsInCategory' // Changed from noToolsInCategory
-  | 'noPostsInCategorySuggestion' // Changed
+  | 'noPostsInCategory' 
+  | 'noPostsInCategorySuggestion' 
   | 'allCategoriesButton'
   // Post Detail Page
-  | 'backToBlogButton' // Changed from backToHomeButton
-  | 'postContentTitle' // Changed from aboutSectionTitle
-  | 'visitAiToolWebsiteButton' // If post links to a tool
+  | 'backToBlogButton' 
+  | 'postContentTitle' 
+  | 'visitAiToolWebsiteButton' 
   | 'additionalVisualsTitle'
   | 'visualDetailAlt'
   // Login Page
@@ -113,31 +113,33 @@ export type CoreTranslationKey =
   | 'noActiveSubscription'
   | 'upgradeToProButton'
   | 'upgradeToProSimulated'
-  // User Reviews & Comments (will be added later with full feature)
-  // | 'userReviewsTitle'
-  // | 'noCommentsYet'
-  // | 'addYourCommentTitle'
-  // | 'ratingLabel'
-  // | 'commentLabel'
-  // | 'anonymousCommentLabel'
-  // | 'submitCommentButton'
-  // | 'subscribeToCommentTitle'
-  // | 'subscribeToCommentDescription'
-  // | 'subscribeButton'
-  // | 'cancelButton'
-  // | 'loginToCommentPrompt'
-  // | 'chatAboutPostButton'
+  // User Reviews & Comments
+  | 'userReviewsTitle'
+  | 'noCommentsYet'
+  | 'addYourCommentTitle'
+  | 'ratingLabel'
+  | 'commentLabel'
+  | 'anonymousCommentLabel'
+  | 'submitCommentButton'
+  | 'loginToCommentTitle'
+  | 'loginToCommentDescription'
+  | 'subscribeToCommentTitle'
+  | 'subscribeToCommentDescription'
+  | 'subscribeButton'
+  | 'cancelButton'
+  | 'loginToCommentPrompt'
   // Generic
   | 'loadingText';
 
 
 export type TranslationSet = {
-  [key in CoreTranslationKey]?: string; // Make keys optional initially
-} & { // Ensure essential keys are present
+  [key in CoreTranslationKey]?: string; 
+} & { 
   navHome: string;
   navCategories: string;
   featuredPostsTitle: string; 
-  // ... add other truly essential keys if any
+  userReviewsTitle: string;
+  loginToCommentPrompt: string;
 };
 
 export type Translations = {
@@ -185,7 +187,6 @@ export const translations: Translations = {
     additionalVisualsTitle: 'Visual Insights',
     visualDetailAlt: 'Visual Detail {number}',
     loadingText: 'Loading...',
-    // Login Page
     loginPageTitle: 'Welcome Back!',
     loginPageSubtitle: 'Log in to access your account and PRO features.',
     emailLabel: 'Email Address',
@@ -197,7 +198,6 @@ export const translations: Translations = {
     signUpLink: 'Sign up',
     loginAttemptMessage: 'Login attempt (simulated)',
     socialLoginAttemptMessage: 'Login with {provider} (simulated)',
-    // Register Page
     registerPageTitle: 'Create your Account',
     registerPageSubtitle: 'Join World AI to discover and discuss AI tools.',
     usernameLabel: 'Username',
@@ -207,7 +207,6 @@ export const translations: Translations = {
     alreadyHaveAccountPrompt: 'Already have an account?',
     loginLink: 'Log in',
     registrationAttemptMessage: 'Registration attempt (simulated)',
-    // Admin Page
     adminPanelTitle: 'Admin Panel',
     adminCreatePostButton: 'Create New Post',
     adminManagePostsTitle: 'Manage Posts',
@@ -220,7 +219,6 @@ export const translations: Translations = {
     deleteButton: 'Delete',
     deletePostConfirm: 'Delete post {postId} (simulated)?',
     adminNoPosts: 'No posts found.',
-    // Account Page
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -240,7 +238,22 @@ export const translations: Translations = {
     cancelSubscriptionSimulated: "Subscription cancellation (simulated).",
     noActiveSubscription: 'You do not have an active PRO subscription.',
     upgradeToProButton: 'Upgrade to PRO - $1/month',
-    upgradeToProSimulated: "Upgrade to PRO (simulated payment flow)."
+    upgradeToProSimulated: "Upgrade to PRO (simulated payment flow).",
+    // User Reviews & Comments
+    userReviewsTitle: "User Reviews & Comments",
+    noCommentsYet: "No comments yet. Be the first to share your thoughts!",
+    addYourCommentTitle: "Add Your Comment",
+    ratingLabel: "Your Rating",
+    commentLabel: "Your Comment",
+    anonymousCommentLabel: "Comment Anonymously",
+    submitCommentButton: "Submit Comment",
+    loginToCommentTitle: "Login Required",
+    loginToCommentDescription: "Please log in to post comments and ratings.",
+    subscribeToCommentTitle: "PRO Feature",
+    subscribeToCommentDescription: "Commenting and rating is a PRO feature. Please upgrade your account to participate.",
+    subscribeButton: "Upgrade to PRO",
+    cancelButton: "Cancel",
+    loginToCommentPrompt: "Please log in to leave a comment.",
   },
   es: {
     navHome: 'Inicio',
@@ -282,7 +295,6 @@ export const translations: Translations = {
     additionalVisualsTitle: 'Perspectivas Visuales',
     visualDetailAlt: 'Detalle Visual {number}',
     loadingText: 'Cargando...',
-    // Login Page
     loginPageTitle: '¡Bienvenido de Nuevo!',
     loginPageSubtitle: 'Inicia sesión para acceder a tu cuenta y funciones PRO.',
     emailLabel: 'Correo Electrónico',
@@ -294,7 +306,6 @@ export const translations: Translations = {
     signUpLink: 'Regístrate',
     loginAttemptMessage: 'Intento de inicio de sesión (simulado)',
     socialLoginAttemptMessage: 'Iniciar sesión con {provider} (simulado)',
-    // Register Page
     registerPageTitle: 'Crea tu Cuenta',
     registerPageSubtitle: 'Únete a World AI para descubrir y discutir herramientas de IA.',
     usernameLabel: 'Nombre de Usuario',
@@ -304,7 +315,6 @@ export const translations: Translations = {
     alreadyHaveAccountPrompt: '¿Ya tienes una cuenta?',
     loginLink: 'Iniciar sesión',
     registrationAttemptMessage: 'Intento de registro (simulado)',
-    // Admin Page
     adminPanelTitle: 'Panel de Administración',
     adminCreatePostButton: 'Crear Nueva Publicación',
     adminManagePostsTitle: 'Gestionar Publicaciones',
@@ -317,7 +327,6 @@ export const translations: Translations = {
     deleteButton: 'Eliminar',
     deletePostConfirm: '¿Eliminar publicación {postId} (simulado)?',
     adminNoPosts: 'No se encontraron publicaciones.',
-    // Account Page
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -337,9 +346,23 @@ export const translations: Translations = {
     cancelSubscriptionSimulated: "Cancelación de suscripción (simulada).",
     noActiveSubscription: 'No tienes una suscripción PRO activa.',
     upgradeToProButton: 'Actualizar a PRO - $1/mes',
-    upgradeToProSimulated: "Actualización a PRO (flujo de pago simulado)."
+    upgradeToProSimulated: "Actualización a PRO (flujo de pago simulado).",
+    // User Reviews & Comments
+    userReviewsTitle: "Reseñas y Comentarios de Usuarios",
+    noCommentsYet: "Aún no hay comentarios. ¡Sé el primero en compartir tu opinión!",
+    addYourCommentTitle: "Añade Tu Comentario",
+    ratingLabel: "Tu Calificación",
+    commentLabel: "Tu Comentario",
+    anonymousCommentLabel: "Comentar Anónimamente",
+    submitCommentButton: "Enviar Comentario",
+    loginToCommentTitle: "Inicio de Sesión Requerido",
+    loginToCommentDescription: "Por favor, inicia sesión para publicar comentarios y calificaciones.",
+    subscribeToCommentTitle: "Función PRO",
+    subscribeToCommentDescription: "Comentar y calificar es una función PRO. Por favor, actualiza tu cuenta para participar.",
+    subscribeButton: "Actualizar a PRO",
+    cancelButton: "Cancelar",
+    loginToCommentPrompt: "Por favor, inicia sesión para dejar un comentario.",
   },
-  // italian, chinese, japanese, portuguese translations (similar to spanish but adapted for brevity)
   it: {
     navHome: 'Home',
     navCategories: 'Categorie',
@@ -357,7 +380,8 @@ export const translations: Translations = {
     accountPageTitle: 'Il Mio Account',
     updateProfileButton: 'Aggiorna Profilo',
     upgradeToProButton: 'Passa a PRO - $1/mese',
-    // ... other essential translations
+    userReviewsTitle: "Recensioni e Commenti",
+    loginToCommentPrompt: "Accedi per lasciare un commento.",
   },
   zh: {
     navHome: '首页',
@@ -376,7 +400,8 @@ export const translations: Translations = {
     accountPageTitle: '我的账户',
     updateProfileButton: '更新个人资料',
     upgradeToProButton: '升级到PRO - $1/月',
-    // ... other essential translations
+    userReviewsTitle: "用户评论",
+    loginToCommentPrompt: "请登录后发表评论。",
   },
   ja: {
     navHome: 'ホーム',
@@ -395,7 +420,8 @@ export const translations: Translations = {
     accountPageTitle: 'マイアカウント',
     updateProfileButton: 'プロフィール更新',
     upgradeToProButton: 'PROにアップグレード - $1/月',
-    // ... other essential translations
+    userReviewsTitle: "ユーザーレビュー",
+    loginToCommentPrompt: "コメントするにはログインしてください。",
   },
   pt: {
     navHome: 'Início',
@@ -414,6 +440,7 @@ export const translations: Translations = {
     accountPageTitle: 'Minha Conta',
     updateProfileButton: 'Atualizar Perfil',
     upgradeToProButton: 'Atualizar para PRO - $1/mês',
-    // ... other essential translations
+    userReviewsTitle: "Avaliações e Comentários",
+    loginToCommentPrompt: "Faça login para deixar um comentário.",
   },
 };

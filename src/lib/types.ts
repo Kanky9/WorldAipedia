@@ -23,6 +23,7 @@ export interface Post {
   detailImageHint1?: string; // Still relevant
   detailImageUrl2?: string; // Still relevant
   detailImageHint2?: string; // Still relevant
+  comments?: UserComment[]; // Added comments
 }
 
 export interface Category {
@@ -43,7 +44,7 @@ export interface User {
 
 export interface UserComment {
   id: string;
-  postId: string; // Changed from aiToolId
+  postId: string; 
   username: string;
   isAnonymous: boolean;
   rating: number; 
