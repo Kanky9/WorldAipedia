@@ -31,8 +31,8 @@ body {
     --chart-1: 25 90% 50%;
     --chart-2: 35 80% 58%;
     --chart-3: 45 75% 62%; /* Another orange/yellow tone */
-    --chart-4: 240 5.9% 10%; /* Dark text for charts */
-    --chart-5: 180 4.1% 96.1%; /* Very light gray for chart backgrounds */
+    --chart-4: 20 14.3% 4.1%; /* Dark text for charts */
+    --chart-5: 0 0% 96.1%; /* Very light gray for chart backgrounds */
     --radius: 0.5rem;
   }
 

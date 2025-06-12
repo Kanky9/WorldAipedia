@@ -185,7 +185,7 @@ export default function PostPage() {
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <CalendarDays className="h-4 w-4" />
-              <span>{post.publishedDate && postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
+              <span>{postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
             </div>
             {category && (
               <div className="flex items-center gap-1.5">
@@ -361,5 +361,3 @@ export default function PostPage() {
     </div>
   );
 }
-
-    
