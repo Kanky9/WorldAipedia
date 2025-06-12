@@ -30,6 +30,12 @@ export default function RegisterPage() {
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
     if (isSubmitting || authLoading) return;
+
+    if (password.length < 6) {
+      toast({ variant: "destructive", title: "Registration Failed", description: "Password should be at least 6 characters."});
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast({ variant: "destructive", title: "Registration Failed", description: "Passwords do not match."});
       return;
