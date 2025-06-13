@@ -175,7 +175,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow min-h-0 px-6" ref={scrollAreaRef}>
+        <ScrollArea type="always" className="flex-grow min-h-0 px-6" ref={scrollAreaRef}>
           <div className="space-y-4 py-4">
             {isInitialLoading && messages.length === 0 && (
               <div className="flex items-center justify-center p-4">
@@ -288,5 +288,3 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
 };
 
 export default AIChatAssistant;
-
-    
