@@ -65,9 +65,11 @@ const Header = () => {
                 <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
               </Button>
             ))}
-             <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
-                <Link href="/admin">{t('navAdmin', 'Admin')}</Link>
+            {currentUser?.isAdmin && (
+              <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
+                  <Link href="/admin">{t('navAdmin', 'Admin')}</Link>
               </Button>
+            )}
           </nav>
 
           <LanguageSwitcher />
@@ -188,13 +190,15 @@ const Header = () => {
                 <link.icon className="h-4 w-4"/>{t(link.labelKey as any, link.labelKey)}
               </Link>
             ))}
-            <Link 
-                href="/admin" 
-                className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" 
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Settings className="h-4 w-4"/>{t('navAdmin', 'Admin')}
-            </Link>
+            {currentUser?.isAdmin && (
+              <Link 
+                  href="/admin" 
+                  className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Settings className="h-4 w-4"/>{t('navAdmin', 'Admin')}
+              </Link>
+            )}
             <DropdownMenuSeparator />
             {loading ? <div className="p-2 text-center">Loading...</div> : currentUser ? (
               <>

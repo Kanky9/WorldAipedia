@@ -43,6 +43,7 @@ export interface User {
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
   subscriptionPlan?: string; // From Firestore
+  isAdmin?: boolean; // Added for admin role
 }
 
 export interface UserComment {
@@ -62,3 +63,4 @@ export interface AiToolChatContext {
   shortDescription: string;
   link: string;
 }
+

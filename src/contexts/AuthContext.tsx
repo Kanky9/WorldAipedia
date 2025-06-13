@@ -52,23 +52,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: firebaseUser.email,
         displayName: firebaseUser.displayName,
         photoURL: firebaseUser.photoURL,
+        isAdmin: false, // Default isAdmin to false
       };
 
       if (userSnap.exists()) {
         const firestoreData = userSnap.data() as Partial<User>;
-        userData = { ...userData, ...firestoreData };
+        userData = { ...userData, ...firestoreData }; // Spread Firestore data, potentially overriding isAdmin if it exists
       } else {
-        const newFirestoreUser: Partial<User> = {
+        // New user, create Firestore document
+        const newFirestoreUser: User = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
           username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
           photoURL: firebaseUser.photoURL,
           isSubscribed: false,
+          isAdmin: false, // Explicitly set isAdmin to false for new users
           memberSince: Timestamp.now(),
         };
         await setDoc(userRef, newFirestoreUser, { merge: true });
-        userData = { ...userData, ...newFirestoreUser } as User;
+        userData = newFirestoreUser; // Assign the complete new user data
       }
       setCurrentUser(userData);
       return userData;
@@ -76,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCurrentUser(null);
       return null;
     }
-  }, []); // Empty dependency array means this is stable and won't change
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -84,32 +87,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const checkAuthFlow = async () => {
       try {
-        // Check for redirect result first. This is important for a smooth redirect sign-in flow.
         const result = await getRedirectResult(auth);
         if (result && result.user) {
-          // If a user is found via redirect, handleUser will process them.
-          // onAuthStateChanged will also fire, typically confirming this user.
-          // We let onAuthStateChanged be the one to set loading to false.
           await handleUser(result.user);
         }
       } catch (error) {
-        // 'auth/no-auth-event' is normal if no redirect operation was in progress.
         if ((error as any).code !== 'auth/no-auth-event') {
           console.error("Error processing redirect result in AuthContext:", error);
         }
       } finally {
-        // onAuthStateChanged is the definitive listener for auth state.
-        // It will fire once the auth state is determined (e.g., after redirect or from session).
         unsubscribeFromAuth = onAuthStateChanged(auth, async (firebaseUser) => {
           if (firebaseUser) {
-            // It's possible handleUser was already called by getRedirectResult.
-            // handleUser should be idempotent or check if already processed if necessary.
-            // For simplicity, we call it again; setCurrentUser will handle no-op if data is same.
             await handleUser(firebaseUser);
           } else {
             setCurrentUser(null);
           }
-          setLoading(false); // This is the single point where loading becomes false.
+          setLoading(false);
         });
       }
     };
@@ -121,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         unsubscribeFromAuth();
       }
     };
-  }, [handleUser]); // Only `handleUser` as dependency, which is stable.
+  }, [handleUser]);
 
   const signUpWithEmailAndPassword = async (email: string, pass: string, username: string): Promise<User | null> => {
     setLoading(true);
@@ -139,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: username,
         photoURL: firebaseUser.photoURL,
         isSubscribed: false,
+        isAdmin: false, // Set isAdmin to false on new sign-up
         memberSince: Timestamp.now(),
       };
       await setDoc(userRef, newUser);
@@ -169,14 +163,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInWithGoogle = async (): Promise<void> => {
-    setLoading(true); // Set loading true before redirect
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
       await signInWithRedirect(auth, provider);
-      // Result will be handled by getRedirectResult and onAuthStateChanged in the useEffect
     } catch (error) {
       console.error("Error initiating Google sign-in with redirect:", error);
-      // If redirect itself fails, ensure loading is reset
       setCurrentUser(null);
       setLoading(false); 
       throw error;
@@ -216,10 +208,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   if (loading) {
-    // Consider returning a full-page loader or null to prevent rendering children prematurely
-    // For a less jarring experience, especially if loading is quick,
-    // you might allow children to render but be aware they might see a brief "no user" state.
-    // However, for robust auth state, waiting for loading to be false is safer.
     return null; 
   }
 

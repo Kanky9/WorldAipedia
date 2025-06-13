@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/useLanguage";
-import { PlusCircle, Edit, Trash2, ListChecks, Loader2, AlertTriangle } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, ListChecks, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
 import Link from "next/link";
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
@@ -12,6 +12,8 @@ import { useEffect, useState, useCallback } from "react";
 import type { Post as PostType } from "@/lib/types";
 import { getAllPostsFromFirestore, deletePostFromFirestore } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,14 +28,34 @@ import {
 export default function AdminPage() {
   const { t, language } = useLanguage();
   const { toast } = useToast();
+  const { currentUser, loading: authLoading } = useAuth();
+  const router = useRouter();
+
   const [posts, setPosts] = useState<PostType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [postToDelete, setPostToDelete] = useState<PostType | null>(null);
 
+  useEffect(() => {
+    if (!authLoading) {
+      if (!currentUser || !currentUser.isAdmin) {
+        toast({
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You do not have permission to view this page.",
+        });
+        router.replace('/');
+      }
+    }
+  }, [currentUser, authLoading, router, toast]);
+
   const fetchPosts = useCallback(async () => {
-    setIsLoading(true);
+    if (!currentUser?.isAdmin) {
+      setIsLoadingPosts(false);
+      return;
+    }
+    setIsLoadingPosts(true);
     setError(null);
     try {
       const fetchedPosts = await getAllPostsFromFirestore();
@@ -43,13 +65,15 @@ export default function AdminPage() {
       setError(err instanceof Error ? err.message : "Failed to load posts.");
       toast({ variant: "destructive", title: "Error", description: "Could not fetch posts from database." });
     } finally {
-      setIsLoading(false);
+      setIsLoadingPosts(false);
     }
-  }, [toast]);
+  }, [toast, currentUser?.isAdmin]);
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    if (currentUser?.isAdmin) {
+      fetchPosts();
+    }
+  }, [fetchPosts, currentUser?.isAdmin]);
 
   const getLocale = () => {
     switch (language) {
@@ -70,7 +94,7 @@ export default function AdminPage() {
     try {
       await deletePostFromFirestore(postToDelete.id);
       toast({ title: "Post Deleted", description: `"${t(postToDelete.title)}" has been deleted.` });
-      setPosts(prevPosts => prevPosts.filter(p => p.id !== postToDelete.id)); // Optimistic update
+      setPosts(prevPosts => prevPosts.filter(p => p.id !== postToDelete.id)); 
     } catch (deleteError) {
       console.error("Error deleting post:", deleteError);
       toast({ variant: "destructive", title: "Delete Failed", description: "Could not delete the post." });
@@ -80,7 +104,29 @@ export default function AdminPage() {
     }
   };
 
-  if (isLoading) {
+  if (authLoading || (!currentUser && !authLoading) ) { // Show loader while auth is resolving, or if no user and not yet redirected
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+  
+  // If, after loading, user is still not an admin (e.g., redirected but component hasn't unmounted yet)
+  // or if there was an error specifically fetching posts (and user is admin)
+  if (!currentUser?.isAdmin && !authLoading) {
+     return (
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-10rem)] text-center">
+        <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
+        <h2 className="text-2xl font-semibold text-destructive mb-2">Access Denied</h2>
+        <p className="text-muted-foreground">You do not have permission to view this page.</p>
+        <Button onClick={() => router.push('/')} className="mt-4">Go to Homepage</Button>
+      </div>
+    );
+  }
+
+
+  if (isLoadingPosts && currentUser?.isAdmin) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -88,7 +134,7 @@ export default function AdminPage() {
     );
   }
 
-  if (error) {
+  if (error && currentUser?.isAdmin) {
     return (
       <div className="container mx-auto py-8 px-4 text-center">
         <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
@@ -98,6 +144,7 @@ export default function AdminPage() {
       </div>
     );
   }
+  
 
   return (
     <div className="container mx-auto py-8 px-4">

@@ -13,12 +13,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert } from 'lucide-react';
 import { categories as allCategories } from '@/data/posts';
 import type { Post as PostType, LocalizedString } from '@/lib/types';
 import { addPostToFirestore, getPostFromFirestore, updatePostInFirestore, db } from '@/lib/firebase';
 import { doc, collection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Define the return type for getUpdatedLocalizedField at the top level using an intersection
 type UpdatedLocalizedFieldReturnType = {
@@ -31,6 +32,7 @@ export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
   const { toast } = useToast();
+  const { currentUser, loading: authLoading } = useAuth();
 
   const [postIdFromQuery, setPostIdFromQuery] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -69,14 +71,29 @@ export default function CreatePostPage() {
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
 
+  useEffect(() => {
+    if (!authLoading) {
+      if (!currentUser || !currentUser.isAdmin) {
+        toast({
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You do not have permission to view this page.",
+        });
+        router.replace('/');
+      }
+    }
+  }, [currentUser, authLoading, router, toast]);
+
   const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
     if (!value) return '';
-    if (typeof value === 'string') return value; // Should ideally not happen with Firestore data
+    if (typeof value === 'string') return value; 
     return value[lang as keyof LocalizedString] || value.en || '';
   };
 
 
   useEffect(() => {
+    if (authLoading || !currentUser?.isAdmin) return; // Wait for auth and admin check
+
     const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
     if (id) {
@@ -172,7 +189,7 @@ export default function CreatePostPage() {
       clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl); setDetailImageHint2('');
       setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
     }
-  }, [postIdFromQuery, language, router, t, toast]);
+  }, [postIdFromQuery, language, router, t, toast, authLoading, currentUser]);
 
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -184,7 +201,7 @@ export default function CreatePostPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setDataUriState(reader.result as string);
-        if (setPlaceholderUrlState) setPlaceholderUrlState(''); // Clear placeholder if image is uploaded
+        if (setPlaceholderUrlState) setPlaceholderUrlState(''); 
       };
       reader.readAsDataURL(file);
     }
@@ -205,6 +222,11 @@ export default function CreatePostPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser?.isAdmin) {
+      toast({ variant: "destructive", title: "Access Denied", description: "You do not have permission to perform this action." });
+      return;
+    }
+
     const requiredImageProvided = mainImageDataUri || (mainImagePlaceholderUrl && !mainImagePlaceholderUrl.startsWith('https://placehold.co'));
 
     if (!title || !shortDescription || !longDescription || !requiredImageProvided || !category || !publishedDate) {
@@ -245,7 +267,7 @@ export default function CreatePostPage() {
       imageHint: mainImageHint,
       logoUrl: logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl),
       logoHint: logoHint,
-      category: allCategories.find(c => c.slug === category)?.name.en || 'Information', // Save English category name
+      category: allCategories.find(c => c.slug === category)?.name.en || 'Information', 
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
@@ -271,14 +293,13 @@ export default function CreatePostPage() {
             publishedDate: postDetailsToSave.publishedDate || new Date()
         };
         const newPostId = doc(collection(db, 'posts')).id;
-        await addPostToFirestore({ ...newPostData, id: newPostId }); // Pass id here for consistency if needed
+        await addPostToFirestore({ ...newPostData, id: newPostId }); 
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
           description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
 
-        // Reset form after successful creation
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl); setMainImageHint('');
         clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl); setLogoHint('');
@@ -349,6 +370,25 @@ export default function CreatePostPage() {
       </div>
     </div>
   );
+
+  if (authLoading || (!currentUser && !authLoading)) {
+    return (
+      <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!currentUser?.isAdmin && !authLoading) {
+     return (
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-10rem)] text-center">
+        <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
+        <h2 className="text-2xl font-semibold text-destructive mb-2">Access Denied</h2>
+        <p className="text-muted-foreground">You do not have permission to view this page.</p>
+        <Button onClick={() => router.push('/')} className="mt-4">Go to Homepage</Button>
+      </div>
+    );
+  }
 
   if (isLoadingData && isEditMode) {
     return (
