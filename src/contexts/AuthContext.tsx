@@ -7,7 +7,9 @@ import {
   auth,
   db,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithPopup, // Keep for potential future use or reference, but won't be default
+  signInWithRedirect, // Added
+  getRedirectResult,  // Added
   createUserWithEmailAndPassword as firebaseCreateUser,
   signInWithEmailAndPassword as firebaseSignInEmail,
   signOut as firebaseSignOut,
@@ -16,7 +18,7 @@ import {
   doc,
   setDoc,
   getDoc,
-  updateDoc, // Added updateDoc to imports
+  updateDoc,
   Timestamp,
   type FirebaseUser as AuthFirebaseUser,
 } from '@/lib/firebase';
@@ -28,7 +30,7 @@ interface AuthContextType {
   loading: boolean;
   signUpWithEmailAndPassword: (email: string, pass: string, username: string) => Promise<User | null>;
   signInWithEmail: (email: string, pass: string) => Promise<User | null>;
-  signInWithGoogle: () => Promise<User | null>;
+  signInWithGoogle: () => Promise<void>; // signInWithRedirect doesn't return a User directly
   logout: () => Promise<void>;
   updateUserProfileInFirestore: (uid: string, data: Partial<User>) => Promise<void>;
 }
@@ -79,11 +81,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      await handleUser(firebaseUser);
+      if (firebaseUser) {
+        await handleUser(firebaseUser);
+      } else {
+        // No user from onAuthStateChanged, check for redirect result
+        try {
+          const result = await getRedirectResult(auth);
+          if (result && result.user) {
+            await handleUser(result.user);
+          } else {
+            setCurrentUser(null); // Explicitly set to null if no user and no redirect result
+          }
+        } catch (error) {
+          console.error("Error getting redirect result:", error);
+          setCurrentUser(null);
+        }
+      }
       setLoading(false);
     });
     return () => unsubscribe();
   }, [handleUser]);
+
 
   const signUpWithEmailAndPassword = async (email: string, pass: string, username: string): Promise<User | null> => {
     setLoading(true);
@@ -91,10 +109,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await firebaseCreateUser(auth, email, pass);
       const firebaseUser = userCredential.user;
       
-      // Update Firebase Auth profile
       await updateFirebaseAuthProfile(firebaseUser, { displayName: username });
 
-      // Create Firestore document
       const userRef = doc(db, 'users', firebaseUser.uid);
       const newUser: User = {
         uid: firebaseUser.uid,
@@ -111,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return newUser;
     } catch (error) {
       console.error("Error signing up:", error);
-      setCurrentUser(null); // Ensure user is null on error
+      setCurrentUser(null);
       setLoading(false);
       throw error;
     }
@@ -132,18 +148,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signInWithGoogle = async (): Promise<User | null> => {
+  const signInWithGoogle = async (): Promise<void> => { // signInWithRedirect doesn't return a User directly
     setLoading(true);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      const user = await handleUser(result.user); // handleUser will create Firestore doc if needed
-      setLoading(false);
-      return user;
+      await signInWithRedirect(auth, provider);
+      // The user will be redirected. The result is handled in the useEffect by getRedirectResult.
+      // setLoading(false) will be handled by the onAuthStateChanged/getRedirectResult flow.
     } catch (error) {
-      console.error("Error signing in with Google:", error);
-      setCurrentUser(null);
-      setLoading(false);
+      console.error("Error initiating Google sign-in with redirect:", error);
+      setCurrentUser(null); // Ensure user is null on error
+      setLoading(false); // Set loading to false if redirect itself fails immediately
       throw error;
     }
   };
@@ -153,7 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await firebaseSignOut(auth);
       setCurrentUser(null);
-      router.push('/'); // Redirect to home after logout
+      router.push('/');
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {
@@ -164,7 +179,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUserProfileInFirestore = async (uid: string, data: Partial<User>) => {
     const userRef = doc(db, 'users', uid);
     await updateDoc(userRef, data);
-    // Optimistically update local state or re-fetch
     if (currentUser && currentUser.uid === uid) {
       const updatedUser = { ...currentUser, ...data };
       setCurrentUser(updatedUser);
@@ -181,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateUserProfileInFirestore,
   };
 
-  return <AuthContext.Provider value={value}>{!loading && children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

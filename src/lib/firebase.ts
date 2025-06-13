@@ -9,6 +9,8 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile as updateFirebaseAuthProfile,
+  getRedirectResult,
+  signInWithRedirect, // Added import here
   type User as FirebaseUser
 } from 'firebase/auth';
 import {
@@ -167,6 +169,8 @@ export {
   signOut,
   onAuthStateChanged,
   updateFirebaseAuthProfile,
+  getRedirectResult,
+  signInWithRedirect, // Added export here
   doc, // Re-exporting for use elsewhere if needed
   setDoc, // Re-exporting
   getDoc, // Re-exporting
