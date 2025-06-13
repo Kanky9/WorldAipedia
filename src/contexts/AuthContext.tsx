@@ -8,8 +8,8 @@ import {
   db,
   GoogleAuthProvider,
   signInWithPopup, // Keep for potential future use or reference, but won't be default
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithRedirect, // Added
+  getRedirectResult,  // Added
   createUserWithEmailAndPassword as firebaseCreateUser,
   signInWithEmailAndPassword as firebaseSignInEmail,
   signOut as firebaseSignOut,
@@ -44,37 +44,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleUser = useCallback(async (firebaseUser: AuthFirebaseUser | null): Promise<User | null> => {
     if (firebaseUser) {
-      const userRef = doc(db, 'users', firebaseUser.uid);
-      const userSnap = await getDoc(userRef);
+      try {
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        const userSnap = await getDoc(userRef);
 
-      let userData: User = {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        displayName: firebaseUser.displayName,
-        photoURL: firebaseUser.photoURL,
-        isAdmin: false, // Default isAdmin to false
-      };
-
-      if (userSnap.exists()) {
-        const firestoreData = userSnap.data() as Partial<User>;
-        userData = { ...userData, ...firestoreData }; // Spread Firestore data, potentially overriding isAdmin if it exists
-      } else {
-        // New user, create Firestore document
-        const newFirestoreUser: User = {
+        let userData: User = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
-          displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+          displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
-          isSubscribed: false,
-          isAdmin: false, // Explicitly set isAdmin to false for new users
-          memberSince: Timestamp.now(),
+          isAdmin: false, 
         };
-        await setDoc(userRef, newFirestoreUser, { merge: true });
-        userData = newFirestoreUser; // Assign the complete new user data
+
+        if (userSnap.exists()) {
+          const firestoreData = userSnap.data() as Partial<User>;
+          userData = { ...userData, ...firestoreData, isAdmin: firestoreData.isAdmin || false };
+        } else {
+          // New user, create Firestore document
+          const newFirestoreUser: User = {
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+            photoURL: firebaseUser.photoURL,
+            isSubscribed: false,
+            isAdmin: false, // Explicitly set isAdmin to false for new users
+            memberSince: Timestamp.now(),
+          };
+          await setDoc(userRef, newFirestoreUser, { merge: true });
+          userData = newFirestoreUser;
+        }
+        setCurrentUser(userData);
+        return userData;
+      } catch (error) {
+        console.error("Error in handleUser (Firestore interaction):", error);
+        // Fallback to minimal user data if Firestore interaction fails
+        const minimalUserData: User = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          isAdmin: false, // Default to false
+        };
+        setCurrentUser(minimalUserData);
+        return minimalUserData; // Return minimal data instead of throwing
       }
-      setCurrentUser(userData);
-      return userData;
     } else {
       setCurrentUser(null);
       return null;
@@ -92,17 +106,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await handleUser(result.user);
         }
       } catch (error) {
-        if ((error as any).code !== 'auth/no-auth-event') {
+        if ((error as any).code !== 'auth/no-auth-event') { // auth/no-auth-event is expected if no redirect occurred
           console.error("Error processing redirect result in AuthContext:", error);
         }
+        // Do not setLoading(false) here yet, let onAuthStateChanged handle it
       } finally {
+        // This will run regardless of getRedirectResult outcome or errors (unless checkAuthFlow itself crashes before finally)
         unsubscribeFromAuth = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
-            await handleUser(firebaseUser);
-          } else {
-            setCurrentUser(null);
+          try {
+            if (firebaseUser) {
+              await handleUser(firebaseUser);
+            } else {
+              setCurrentUser(null);
+            }
+          } catch (error) {
+            console.error("Error in onAuthStateChanged handler (likely within handleUser):", error);
+            setCurrentUser(null); // Fallback if handleUser fails catastrophically
+          } finally {
+            setLoading(false); // CRITICAL: Ensure loading is set to false here
           }
-          setLoading(false);
         });
       }
     };
@@ -151,26 +173,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       const userCredential = await firebaseSignInEmail(auth, email, pass);
+      // onAuthStateChanged will handle setting user and loading state
       const user = await handleUser(userCredential.user); 
-      setLoading(false);
+      // setLoading(false) will be handled by onAuthStateChanged
       return user;
     } catch (error) {
       console.error("Error signing in with email:", error);
       setCurrentUser(null);
-      setLoading(false);
+      setLoading(false); // Ensure loading is false in direct error case
       throw error;
     }
   };
 
   const signInWithGoogle = async (): Promise<void> => {
-    setLoading(true);
+    setLoading(true); // Set loading true before redirect
     const provider = new GoogleAuthProvider();
     try {
       await signInWithRedirect(auth, provider);
+      // After redirect, the useEffect and onAuthStateChanged will handle the user and setLoading(false)
     } catch (error) {
       console.error("Error initiating Google sign-in with redirect:", error);
       setCurrentUser(null);
-      setLoading(false); 
+      setLoading(false); // Ensure loading is false if redirect initiation fails
       throw error;
     }
   };
@@ -184,7 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Error signing out:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Ensure loading is false after logout attempt
     }
   };
 
