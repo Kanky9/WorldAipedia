@@ -19,9 +19,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // The 'experimental' block containing 'allowedDevOrigins' has been removed
-  // as 'allowedDevOrigins' was reported as an unrecognized key within 'experimental'
-  // for this Next.js version/setup.
+  allowedDevOrigins: [
+    // Add the origin from the warning message
+    "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
+    // It's good practice to also allow the standard localhost for local development outside of Studio
+    "http://localhost:9002",
+  ],
 };
 
 export default nextConfig;
