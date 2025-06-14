@@ -28,6 +28,8 @@ type UpdatedLocalizedFieldReturnType = {
   en: string; // Ensures 'en' is always present
 }; // Semicolon to terminate the type alias statement.
 
+const MAX_DATA_URI_LENGTH = 1000000; // Approx 1MB, Firestore limit is 1,048,487 bytes. Keep a small buffer.
+
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
@@ -200,7 +202,16 @@ export default function CreatePostPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setDataUriState(reader.result as string);
+        const result = reader.result as string;
+        if (result.length > MAX_DATA_URI_LENGTH * 1.1) { // Check raw data URI length, give some leeway for UI updates vs save check
+            toast({
+                variant: "destructive",
+                title: "Image File Too Large",
+                description: `The selected image is likely too large (>${MAX_DATA_URI_LENGTH/1000}KB after encoding) and may not save. Please choose a smaller file.`,
+                duration: 7000,
+            });
+        }
+        setDataUriState(result);
         if (setPlaceholderUrlState) setPlaceholderUrlState(''); 
       };
       reader.readAsDataURL(file);
@@ -227,9 +238,9 @@ export default function CreatePostPage() {
       return;
     }
 
-    const requiredImageProvided = mainImageDataUri || (mainImagePlaceholderUrl && !mainImagePlaceholderUrl.startsWith('https://placehold.co'));
+    const requiredImageProvidedOrPlaceholder = mainImageDataUri || (mainImagePlaceholderUrl && !mainImagePlaceholderUrl.startsWith('https://placehold.co'));
 
-    if (!title || !shortDescription || !longDescription || !requiredImageProvided || !category || !publishedDate) {
+    if (!title || !shortDescription || !longDescription || !requiredImageProvidedOrPlaceholder || !category || !publishedDate) {
       toast({
         variant: "destructive",
         title: t('adminPostError', "Error submitting post"),
@@ -239,6 +250,51 @@ export default function CreatePostPage() {
     }
 
     setIsSubmitting(true);
+
+    // Prepare image URLs, checking for size limits
+    let finalMainImageUrl = mainImageDataUri || mainImagePlaceholderUrl;
+    if (mainImageDataUri && mainImageDataUri.length > MAX_DATA_URI_LENGTH) {
+      toast({
+        variant: "destructive",
+        title: "Main Image Too Large",
+        description: `The main image file is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
+        duration: 7000,
+      });
+      finalMainImageUrl = mainImagePlaceholderUrl; 
+    }
+
+    let finalLogoUrl = logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl);
+    if (logoDataUri && logoDataUri.length > MAX_DATA_URI_LENGTH) {
+      toast({
+        variant: "destructive",
+        title: "Logo Image Too Large",
+        description: `The logo image file is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). It will not be saved. Please upload a smaller file.`,
+        duration: 7000,
+      });
+      finalLogoUrl = logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl;
+    }
+    
+    let finalDetailImageUrl1 = detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl);
+    if (detailImage1DataUri && detailImage1DataUri.length > MAX_DATA_URI_LENGTH) {
+        toast({
+            variant: "destructive",
+            title: "Detail Image 1 Too Large",
+            description: `Detail Image 1 is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
+            duration: 7000,
+        });
+        finalDetailImageUrl1 = detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl;
+    }
+
+    let finalDetailImageUrl2 = detailImage2DataUri || (detailImage2PlaceholderUrl.startsWith('https://placehold.co') || !detailImage2PlaceholderUrl ? undefined : detailImage2PlaceholderUrl);
+    if (detailImage2DataUri && detailImage2DataUri.length > MAX_DATA_URI_LENGTH) {
+        toast({
+            variant: "destructive",
+            title: "Detail Image 2 Too Large",
+            description: `Detail Image 2 is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
+            duration: 7000,
+        });
+        finalDetailImageUrl2 = detailImage2PlaceholderUrl.startsWith('https://placehold.co') || !detailImage2PlaceholderUrl ? undefined : detailImage2PlaceholderUrl;
+    }
 
     const currentEditingLanguage = language as LanguageCode;
 
@@ -263,18 +319,18 @@ export default function CreatePostPage() {
       title: getUpdatedLocalizedField(existingPostDataForForm?.title, title),
       shortDescription: getUpdatedLocalizedField(existingPostDataForForm?.shortDescription, shortDescription),
       longDescription: getUpdatedLocalizedField(existingPostDataForForm?.longDescription, longDescription),
-      imageUrl: mainImageDataUri || mainImagePlaceholderUrl,
+      imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
-      logoUrl: logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl),
+      logoUrl: finalLogoUrl,
       logoHint: logoHint,
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information', 
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
       link: linkTool,
-      detailImageUrl1: detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl),
+      detailImageUrl1: finalDetailImageUrl1,
       detailImageHint1: detailImageHint1,
-      detailImageUrl2: detailImage2DataUri || (detailImage2PlaceholderUrl.startsWith('https://placehold.co') || !detailImage2PlaceholderUrl ? undefined : detailImage2PlaceholderUrl),
+      detailImageUrl2: finalDetailImageUrl2,
       detailImageHint2: detailImageHint2,
     };
 
@@ -535,3 +591,4 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
