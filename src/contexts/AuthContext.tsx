@@ -7,9 +7,8 @@ import {
   auth,
   db,
   GoogleAuthProvider,
-  signInWithPopup, // Keep for potential future use or reference, but won't be default
-  signInWithRedirect, // Added
-  getRedirectResult,  // Added
+  signInWithPopup, // Changed from signInWithRedirect
+  getRedirectResult,
   createUserWithEmailAndPassword as firebaseCreateUser,
   signInWithEmailAndPassword as firebaseSignInEmail,
   signOut as firebaseSignOut,
@@ -39,7 +38,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // Initial state is true
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const handleUser = useCallback(async (firebaseUser: AuthFirebaseUser | null): Promise<User | null> => {
@@ -53,14 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
-          isAdmin: false, 
+          isAdmin: false,
         };
 
         if (userSnap.exists()) {
           const firestoreData = userSnap.data() as Partial<User>;
           userData = { ...userData, ...firestoreData, isAdmin: firestoreData.isAdmin || false };
         } else {
-          // New user, create Firestore document
           const newFirestoreUser: User = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -68,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
             photoURL: firebaseUser.photoURL,
             isSubscribed: false,
-            isAdmin: false, // Explicitly set isAdmin to false for new users
+            isAdmin: false,
             memberSince: Timestamp.now(),
           };
           await setDoc(userRef, newFirestoreUser, { merge: true });
@@ -78,16 +76,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userData;
       } catch (error) {
         console.error("Error in handleUser (Firestore interaction):", error);
-        // Fallback to minimal user data if Firestore interaction fails
         const minimalUserData: User = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
           photoURL: firebaseUser.photoURL,
-          isAdmin: false, // Default to false
+          isAdmin: false,
         };
         setCurrentUser(minimalUserData);
-        return minimalUserData; // Return minimal data instead of throwing
+        return minimalUserData;
       }
     } else {
       setCurrentUser(null);
@@ -106,12 +103,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await handleUser(result.user);
         }
       } catch (error) {
-        if ((error as any).code !== 'auth/no-auth-event') { // auth/no-auth-event is expected if no redirect occurred
+        if ((error as any).code !== 'auth/no-auth-event') {
           console.error("Error processing redirect result in AuthContext:", error);
         }
-        // Do not setLoading(false) here yet, let onAuthStateChanged handle it
       } finally {
-        // This will run regardless of getRedirectResult outcome or errors (unless checkAuthFlow itself crashes before finally)
         unsubscribeFromAuth = onAuthStateChanged(auth, async (firebaseUser) => {
           try {
             if (firebaseUser) {
@@ -120,10 +115,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               setCurrentUser(null);
             }
           } catch (error) {
-            console.error("Error in onAuthStateChanged handler (likely within handleUser):", error);
-            setCurrentUser(null); // Fallback if handleUser fails catastrophically
+            console.error("Error in onAuthStateChanged handler (within handleUser):", error);
+            setCurrentUser(null); 
           } finally {
-            setLoading(false); // CRITICAL: Ensure loading is set to false here
+            setLoading(false); 
           }
         });
       }
@@ -154,17 +149,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: username,
         photoURL: firebaseUser.photoURL,
         isSubscribed: false,
-        isAdmin: false, // Set isAdmin to false on new sign-up
+        isAdmin: false,
         memberSince: Timestamp.now(),
       };
       await setDoc(userRef, newUser);
-      setCurrentUser(newUser);
-      setLoading(false);
+      setCurrentUser(newUser); // Optimistically set, but onAuthStateChanged confirms
+      // setLoading(false) will be handled by onAuthStateChanged
       return newUser;
     } catch (error) {
       console.error("Error signing up:", error);
       setCurrentUser(null);
-      setLoading(false);
+      setLoading(false); // Ensure loading is false on direct error
       throw error;
     }
   };
@@ -173,43 +168,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       const userCredential = await firebaseSignInEmail(auth, email, pass);
-      // onAuthStateChanged will handle setting user and loading state
       const user = await handleUser(userCredential.user); 
       // setLoading(false) will be handled by onAuthStateChanged
       return user;
     } catch (error) {
       console.error("Error signing in with email:", error);
       setCurrentUser(null);
-      setLoading(false); // Ensure loading is false in direct error case
+      setLoading(false); 
       throw error;
     }
   };
 
   const signInWithGoogle = async (): Promise<void> => {
-    setLoading(true); // Set loading true before redirect
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithRedirect(auth, provider);
-      // After redirect, the useEffect and onAuthStateChanged will handle the user and setLoading(false)
-    } catch (error) {
-      console.error("Error initiating Google sign-in with redirect:", error);
-      setCurrentUser(null);
-      setLoading(false); // Ensure loading is false if redirect initiation fails
+      // Using signInWithPopup instead of signInWithRedirect
+      await signInWithPopup(auth, provider);
+      // After a successful sign-in via popup, the onAuthStateChanged listener
+      // (configured in the useEffect hook) will automatically detect the new auth state.
+      // It will then call handleUser, which updates currentUser.
+      // The global loading state (AuthContext's loading) is managed by the useEffect.
+    } catch (error: any) {
+      console.error("Error during Google signInWithPopup:", error);
+      // Re-throw the error so the calling component can handle it (e.g., show a toast).
+      // No need to set loading or currentUser here as the existing auth state should persist
+      // or be updated by onAuthStateChanged if the auth state genuinely changes.
       throw error;
     }
   };
 
   const logout = async () => {
-    setLoading(true);
+    // setLoading(true); // Not strictly necessary here as UI should react quickly
     try {
       await firebaseSignOut(auth);
-      setCurrentUser(null);
+      // onAuthStateChanged will set currentUser to null and setLoading(false)
       router.push('/'); 
     } catch (error) {
       console.error("Error signing out:", error);
-    } finally {
-      setLoading(false); // Ensure loading is false after logout attempt
+      // setLoading(false); // Ensure loading is false if signout fails
     }
+    // setLoading(false) will be handled by onAuthStateChanged's finally block
   };
 
   const updateUserProfileInFirestore = async (uid: string, data: Partial<User>) => {
@@ -231,6 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     updateUserProfileInFirestore,
   };
 
+  // Do not render children until authentication status is resolved
   if (loading) {
     return null; 
   }
