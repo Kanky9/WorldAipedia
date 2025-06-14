@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
   updateProfile as updateFirebaseAuthProfile,
   getRedirectResult,
-  signInWithRedirect, // Added import here
+  signInWithRedirect,
   type User as FirebaseUser
 } from 'firebase/auth';
 import {
@@ -29,7 +29,14 @@ import {
   orderBy,
   serverTimestamp
 } from 'firebase/firestore';
-// import { getStorage } from 'firebase/storage';
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject as deleteFirebaseStorageObject, // Renamed to avoid conflict
+  type StorageReference
+} from 'firebase/storage';
 
 import type { Post as PostType } from './types';
 import type { LanguageCode } from './translations';
@@ -39,7 +46,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyDpPy6-b9DhCjZizVDZXP4vE3EfG4AcNPk",
   authDomain: "worldaipedia.firebaseapp.com",
   projectId: "worldaipedia",
-  storageBucket: "worldaipedia.appspot.com", // Corrected format
+  storageBucket: "worldaipedia.appspot.com",
   messagingSenderId: "124464012147",
   appId: "1:124464012147:web:9380bde3f055bd4d784306"
 };
@@ -55,16 +62,15 @@ if (getApps().length === 0) {
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-// const storage = getStorage(app);
+const storage = getStorage(app); // Initialize Firebase Storage
 
 // Helper to prepare Post data for Firestore
 const preparePostForFirestore = (postData: Partial<Omit<PostType, 'id' | 'publishedDate'> & { publishedDate?: Date | Timestamp }>): any => {
-  const dataToSave = { ...postData } as any; // Clone to avoid mutating the original object
+  const dataToSave = { ...postData } as any;
 
   const localizedFields: (keyof Pick<PostType, 'title' | 'shortDescription' | 'longDescription'>)[] = ['title', 'shortDescription', 'longDescription'];
   localizedFields.forEach(field => {
     if (dataToSave[field] && typeof dataToSave[field] === 'string') {
-      console.warn(`Warning: Localized field '${field}' was a string. Converting to { en: "value" }. Ensure form submits structured localized data.`);
       dataToSave[field] = { en: dataToSave[field] as string };
     }
   });
@@ -73,12 +79,6 @@ const preparePostForFirestore = (postData: Partial<Omit<PostType, 'id' | 'publis
     if (dataToSave.publishedDate instanceof Date) {
       dataToSave.publishedDate = Timestamp.fromDate(dataToSave.publishedDate);
     }
-    // If it's already a Timestamp, it's fine.
-  } else if (!postData.id) { // Only set serverTimestamp for brand new posts if date isn't provided
-    // This check '(!postData.id)' is a bit indirect for "is new post".
-    // It's better if the calling function decides if serverTimestamp is needed.
-    // For now, assuming if id is not part of initial data, it could be new.
-    // This specific part will be handled more explicitly in addPostToFirestore.
   }
   
   return dataToSave;
@@ -89,15 +89,14 @@ export const addPostToFirestore = async (postData: Omit<PostType, 'id' | 'publis
   const postId = postData.id || doc(collection(db, 'posts')).id;
   const postRef = doc(db, 'posts', postId);
   
-  // Explicitly prepare the data, ensuring publishedDate is a Timestamp for new posts or converted if Date
   const dataToSave = { ...postData };
   if (dataToSave.publishedDate instanceof Date) {
     dataToSave.publishedDate = Timestamp.fromDate(dataToSave.publishedDate);
-  } else if (!dataToSave.publishedDate) { // Should not happen if type is `publishedDate: Date`
-     (dataToSave as any).publishedDate = serverTimestamp(); // Fallback, though type implies Date
+  } else if (!dataToSave.publishedDate) {
+     (dataToSave as any).publishedDate = serverTimestamp();
   }
 
-  const { id, ...firestoreData } = dataToSave; // Remove client-side ID before saving
+  const { id, ...firestoreData } = dataToSave;
   await setDoc(postRef, firestoreData);
   return postId;
 };
@@ -150,10 +149,38 @@ export const getPostsByCategorySlugFromFirestore = async (categorySlug: string):
 };
 
 export const deletePostFromFirestore = async (postId: string): Promise<void> => {
-  // Note: This doesn't delete subcollections like comments. For a full delete,
-  // you'd need a Firebase Function or more complex client-side logic.
   const postRef = doc(db, 'posts', postId);
   await deleteDoc(postRef);
+  // Note: This does not delete associated images from Firebase Storage.
+  // That would require additional logic here or a Firebase Function.
+};
+
+// Firebase Storage helper function
+export const uploadImageAndGetURL = async (file: File, path: string): Promise<string> => {
+  const storageRef = ref(storage, path);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+
+  return new Promise((resolve, reject) => {
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        // Optional: Observe state change events such as progress, pause, and resume
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // console.log('Upload is ' + progress + '% done');
+      },
+      (error) => {
+        // Handle unsuccessful uploads
+        console.error("Upload failed:", error);
+        reject(error);
+      },
+      () => {
+        // Handle successful uploads on complete
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          resolve(downloadURL);
+        }).catch(reject);
+      }
+    );
+  });
 };
 
 
@@ -161,7 +188,7 @@ export {
   app,
   auth,
   db,
-  // storage,
+  storage, // Export storage
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -170,19 +197,24 @@ export {
   onAuthStateChanged,
   updateFirebaseAuthProfile,
   getRedirectResult,
-  signInWithRedirect, // Added export here
-  doc, // Re-exporting for use elsewhere if needed
-  setDoc, // Re-exporting
-  getDoc, // Re-exporting
-  collection, // Re-exporting
-  addDoc, // Re-exporting
-  query, // Re-exporting
-  where, // Re-exporting
-  getDocs, // Re-exporting
-  updateDoc, // Re-exporting
-  deleteDoc, // Re-exporting
-  Timestamp, // Re-exporting
-  orderBy, // Re-exporting
-  serverTimestamp, // Re-exporting
-  type FirebaseUser
+  signInWithRedirect,
+  doc,
+  setDoc,
+  getDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  Timestamp,
+  orderBy,
+  serverTimestamp,
+  type FirebaseUser,
+  // Storage specific exports
+  ref as storageRef, // alias to avoid conflict with React.ref
+  uploadBytesResumable,
+  getDownloadURL as getStorageDownloadURL, // alias
+  deleteFirebaseStorageObject
 };

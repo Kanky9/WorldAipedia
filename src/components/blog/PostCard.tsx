@@ -22,7 +22,6 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
   const category = getCategoryByName(post.category);
   const localizedCategoryName = category ? t(category.name) : post.category;
 
-  // Robust locale selection
   const getPostDateLocale = () => {
     switch (language) {
       case 'es':
@@ -30,7 +29,6 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
       case 'en':
       default:
         return enUS;
-      // Add other cases if more languages are supported with date-fns locales
     }
   };
   const postDateLocale = getPostDateLocale();
@@ -47,6 +45,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
             className="rounded-t-xl group-hover:scale-105 transition-transform duration-300"
             data-ai-hint={post.imageHint || "technology concept"}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            // unoptimized prop removed as images are now primarily Storage URLs
           />
         </div>
       </Link>
@@ -56,7 +55,6 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
         </Link>
         <div className="flex items-center text-xs text-muted-foreground mt-1 gap-2">
           <CalendarDays className="h-3.5 w-3.5" />
-          {/* Ensure postDateLocale is valid before calling format */}
           <span>{postDateLocale ? format(new Date(post.publishedDate), 'MMM d, yyyy', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
         </div>
         {category && (

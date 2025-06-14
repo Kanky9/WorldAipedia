@@ -16,19 +16,28 @@ import Link from 'next/link';
 import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert } from 'lucide-react';
 import { categories as allCategories } from '@/data/posts';
 import type { Post as PostType, LocalizedString } from '@/lib/types';
-import { addPostToFirestore, getPostFromFirestore, updatePostInFirestore, db } from '@/lib/firebase';
-import { doc, collection, Timestamp } from 'firebase/firestore';
+import {
+  addPostToFirestore,
+  getPostFromFirestore,
+  updatePostInFirestore,
+  db,
+  uploadImageAndGetURL, // Import the new upload function
+  storageRef, // Import storageRef
+  deleteFirebaseStorageObject // Optional: for deleting old images
+} from '@/lib/firebase';
+import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore'; // aliased to avoid conflict with local collection
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
 
-// Define the return type for getUpdatedLocalizedField at the top level using an intersection
 type UpdatedLocalizedFieldReturnType = {
   [key in LanguageCode]?: string;
 } & {
-  en: string; // Ensures 'en' is always present
-}; // Semicolon to terminate the type alias statement.
+  en: string;
+};
 
-const MAX_DATA_URI_LENGTH = 1000000; // Approx 1MB, Firestore limit is 1,048,487 bytes. Keep a small buffer.
+const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
+const DEFAULT_LOGO_PLACEHOLDER = 'https://placehold.co/50x50.png';
+const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
@@ -42,36 +51,40 @@ export default function CreatePostPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingPostDataForForm, setExistingPostDataForForm] = useState<PostType | null>(null);
 
-
-  // Form state
+  // Form state for text fields
   const [title, setTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [longDescription, setLongDescription] = useState('');
-
-  const [mainImageDataUri, setMainImageDataUri] = useState<string | null>(null);
-  const [mainImagePlaceholderUrl, setMainImagePlaceholderUrl] = useState('https://placehold.co/600x400.png');
-  const [mainImageHint, setMainImageHint] = useState('');
-  const mainImageFileRef = useRef<HTMLInputElement>(null);
-
-  const [logoDataUri, setLogoDataUri] = useState<string | null>(null);
-  const [logoPlaceholderUrl, setLogoPlaceholderUrl] = useState('https://placehold.co/50x50.png');
-  const [logoHint, setLogoHint] = useState('');
-  const logoFileRef = useRef<HTMLInputElement>(null);
-
-  const [detailImage1DataUri, setDetailImage1DataUri] = useState<string | null>(null);
-  const [detailImage1PlaceholderUrl, setDetailImage1PlaceholderUrl] = useState('https://placehold.co/400x300.png');
-  const [detailImageHint1, setDetailImageHint1] = useState('');
-  const detailImage1FileRef = useRef<HTMLInputElement>(null);
-
-  const [detailImage2DataUri, setDetailImage2DataUri] = useState<string | null>(null);
-  const [detailImage2PlaceholderUrl, setDetailImage2PlaceholderUrl] = useState('https://placehold.co/400x300.png');
-  const [detailImageHint2, setDetailImageHint2] = useState('');
-  const detailImage2FileRef = useRef<HTMLInputElement>(null);
-
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
+
+  // Image states: file object, preview URL, hint, and original storage path (for edit mode deletion)
+  const [mainImageFile, setMainImageFile] = useState<File | null>(null);
+  const [mainImageUrlForPreview, setMainImageUrlForPreview] = useState<string>(DEFAULT_MAIN_PLACEHOLDER);
+  const [mainImageHint, setMainImageHint] = useState('');
+  const [originalMainImageStoragePath, setOriginalMainImageStoragePath] = useState<string | null>(null);
+  const mainImageFileRef = useRef<HTMLInputElement>(null);
+
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrlForPreview, setLogoUrlForPreview] = useState<string>(DEFAULT_LOGO_PLACEHOLDER);
+  const [logoHint, setLogoHint] = useState('');
+  const [originalLogoStoragePath, setOriginalLogoStoragePath] = useState<string | null>(null);
+  const logoFileRef = useRef<HTMLInputElement>(null);
+
+  const [detailImage1File, setDetailImage1File] = useState<File | null>(null);
+  const [detailImage1UrlForPreview, setDetailImage1UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
+  const [detailImageHint1, setDetailImageHint1] = useState('');
+  const [originalDetailImage1StoragePath, setOriginalDetailImage1StoragePath] = useState<string | null>(null);
+  const detailImage1FileRef = useRef<HTMLInputElement>(null);
+
+  const [detailImage2File, setDetailImage2File] = useState<File | null>(null);
+  const [detailImage2UrlForPreview, setDetailImage2UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
+  const [detailImageHint2, setDetailImageHint2] = useState('');
+  const [originalDetailImage2StoragePath, setOriginalDetailImage2StoragePath] = useState<string | null>(null);
+  const detailImage2FileRef = useRef<HTMLInputElement>(null);
+
 
   useEffect(() => {
     if (!authLoading) {
@@ -88,13 +101,29 @@ export default function CreatePostPage() {
 
   const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
     if (!value) return '';
-    if (typeof value === 'string') return value; 
+    if (typeof value === 'string') return value;
     return value[lang as keyof LocalizedString] || value.en || '';
   };
 
+  const getStoragePathFromUrl = (url: string): string | null => {
+    try {
+      if (!url || !url.startsWith('https://firebasestorage.googleapis.com')) return null;
+      const parsedUrl = new URL(url);
+      // Path is like /v0/b/worldaipedia.appspot.com/o/posts%2F...
+      // We need to decode and extract from "posts%2F..."
+      const pathName = parsedUrl.pathname;
+      const parts = pathName.split('/o/');
+      if (parts.length > 1) {
+        return decodeURIComponent(parts[1].split('?')[0]); // Remove query params like alt=media&token=...
+      }
+    } catch (e) {
+      console.warn("Could not parse storage path from URL:", url, e);
+    }
+    return null;
+  };
 
   useEffect(() => {
-    if (authLoading || !currentUser?.isAdmin) return; // Wait for auth and admin check
+    if (authLoading || !currentUser?.isAdmin) return;
 
     const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
@@ -109,74 +138,36 @@ export default function CreatePostPage() {
           setShortDescription(getLocalizedStringDefault(existingPost.shortDescription, language));
           setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
 
-          if (existingPost.imageUrl.startsWith('data:image')) {
-            setMainImageDataUri(existingPost.imageUrl);
-            setMainImagePlaceholderUrl('');
-          } else {
-            setMainImagePlaceholderUrl(existingPost.imageUrl || 'https://placehold.co/600x400.png');
-            setMainImageDataUri(null);
-          }
+          setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
           setMainImageHint(existingPost.imageHint || '');
+          setOriginalMainImageStoragePath(getStoragePathFromUrl(existingPost.imageUrl));
 
-          if (existingPost.logoUrl?.startsWith('data:image')) {
-            setLogoDataUri(existingPost.logoUrl);
-            setLogoPlaceholderUrl('');
-          } else if (existingPost.logoUrl) {
-            setLogoPlaceholderUrl(existingPost.logoUrl);
-            setLogoDataUri(null);
-          } else {
-            setLogoPlaceholderUrl('https://placehold.co/50x50.png');
-            setLogoDataUri(null);
-          }
+          setLogoUrlForPreview(existingPost.logoUrl || DEFAULT_LOGO_PLACEHOLDER);
           setLogoHint(existingPost.logoHint || '');
-
-          if (existingPost.detailImageUrl1?.startsWith('data:image')) {
-            setDetailImage1DataUri(existingPost.detailImageUrl1);
-            setDetailImage1PlaceholderUrl('');
-          } else if (existingPost.detailImageUrl1) {
-            setDetailImage1PlaceholderUrl(existingPost.detailImageUrl1);
-            setDetailImage1DataUri(null);
-          } else {
-            setDetailImage1PlaceholderUrl('https://placehold.co/400x300.png');
-            setDetailImage1DataUri(null);
-          }
+          setOriginalLogoStoragePath(getStoragePathFromUrl(existingPost.logoUrl || ''));
+          
+          setDetailImage1UrlForPreview(existingPost.detailImageUrl1 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImageHint1(existingPost.detailImageHint1 || '');
+          setOriginalDetailImage1StoragePath(getStoragePathFromUrl(existingPost.detailImageUrl1 || ''));
 
-           if (existingPost.detailImageUrl2?.startsWith('data:image')) {
-            setDetailImage2DataUri(existingPost.detailImageUrl2);
-            setDetailImage2PlaceholderUrl('');
-          } else if (existingPost.detailImageUrl2) {
-            setDetailImage2PlaceholderUrl(existingPost.detailImageUrl2);
-            setDetailImage2DataUri(null);
-          } else {
-            setDetailImage2PlaceholderUrl('https://placehold.co/400x300.png');
-            setDetailImage2DataUri(null);
-          }
+          setDetailImage2UrlForPreview(existingPost.detailImageUrl2 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImageHint2(existingPost.detailImageHint2 || '');
-
+          setOriginalDetailImage2StoragePath(getStoragePathFromUrl(existingPost.detailImageUrl2 || ''));
 
           setCategory(existingPost.categorySlug);
           setTags(existingPost.tags.join(', '));
-
           let pDate = existingPost.publishedDate;
-          if (pDate instanceof Timestamp) {
-            pDate = pDate.toDate();
-          }
+          if (pDate instanceof Timestamp) pDate = pDate.toDate();
           setPublishedDate(pDate instanceof Date ? pDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
-
           setLinkTool(existingPost.link || '');
         } else {
-          toast({
-            variant: "destructive",
-            title: t('adminPostError', "Error loading post"),
-            description: `Post with ID ${id} not found in database.`,
-          });
+          toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: `Post with ID ${id} not found.` });
           router.push('/admin');
         }
         setIsLoadingData(false);
       }).catch(error => {
         console.error("Error fetching post for edit:", error);
-        toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: "Failed to load post data."});
+        toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: "Failed to load post data." });
         setIsLoadingData(false);
         router.push('/admin');
       });
@@ -185,50 +176,50 @@ export default function CreatePostPage() {
       setIsEditMode(false);
       setExistingPostDataForForm(null);
       setTitle(''); setShortDescription(''); setLongDescription('');
-      clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl); setMainImageHint('');
-      clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl); setLogoHint('');
-      clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl); setDetailImageHint1('');
-      clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl); setDetailImageHint2('');
+      clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath); setMainImageHint('');
+      clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath); setLogoHint('');
+      clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath); setDetailImageHint1('');
+      clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath); setDetailImageHint2('');
       setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
     }
   }, [postIdFromQuery, language, router, t, toast, authLoading, currentUser]);
 
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setDataUriState: React.Dispatch<React.SetStateAction<string | null>>,
-    setPlaceholderUrlState?: React.Dispatch<React.SetStateAction<string>>
+    setFileState: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
+    setOriginalStoragePath: React.Dispatch<React.SetStateAction<string | null>>
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        if (result.length > MAX_DATA_URI_LENGTH * 1.1) { // Check raw data URI length, give some leeway for UI updates vs save check
-            toast({
-                variant: "destructive",
-                title: "Image File Too Large",
-                description: `The selected image is likely too large (>${MAX_DATA_URI_LENGTH/1000}KB after encoding) and may not save. Please choose a smaller file.`,
-                duration: 7000,
-            });
-        }
-        setDataUriState(result);
-        if (setPlaceholderUrlState) setPlaceholderUrlState(''); 
-      };
-      reader.readAsDataURL(file);
+      // Basic file size check (e.g., 5MB) - adjust as needed for Storage
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+            variant: "destructive",
+            title: "Image File Too Large",
+            description: `Please select an image file smaller than 5MB.`,
+            duration: 7000,
+        });
+        if (event.target) event.target.value = ""; // Clear the input
+        return;
+      }
+      setFileState(file);
+      setPreviewUrlState(URL.createObjectURL(file));
+      setOriginalStoragePath(null); // New file selected, so old path is irrelevant for this slot
     }
   };
-
-  const clearImage = (
-    setDataUriState: React.Dispatch<React.SetStateAction<string | null>>,
+  
+  const clearImageHelper = (
+    setFileState: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
     fileRef: React.RefObject<HTMLInputElement>,
     defaultPlaceholderUrl: string,
-    setPlaceholderUrlState?: React.Dispatch<React.SetStateAction<string>>
+    setOriginalStoragePath: React.Dispatch<React.SetStateAction<string | null>>
   ) => {
-    setDataUriState(null);
-    if (fileRef.current) {
-      fileRef.current.value = "";
-    }
-    if (setPlaceholderUrlState) setPlaceholderUrlState(defaultPlaceholderUrl);
+    setFileState(null);
+    setPreviewUrlState(defaultPlaceholderUrl);
+    if (fileRef.current) fileRef.current.value = "";
+    setOriginalStoragePath(null); // Clearing image means no original path to worry about for this slot
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -238,66 +229,18 @@ export default function CreatePostPage() {
       return;
     }
 
-    const requiredImageProvidedOrPlaceholder = mainImageDataUri || (mainImagePlaceholderUrl && !mainImagePlaceholderUrl.startsWith('https://placehold.co'));
-
-    if (!title || !shortDescription || !longDescription || !requiredImageProvidedOrPlaceholder || !category || !publishedDate) {
+    if (!title || !shortDescription || !longDescription || (!mainImageFile && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
       toast({
         variant: "destructive",
         title: t('adminPostError', "Error submitting post"),
-        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or a valid non-default placeholder is used.",
+        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded.",
       });
       return;
     }
 
     setIsSubmitting(true);
 
-    // Prepare image URLs, checking for size limits
-    let finalMainImageUrl = mainImageDataUri || mainImagePlaceholderUrl;
-    if (mainImageDataUri && mainImageDataUri.length > MAX_DATA_URI_LENGTH) {
-      toast({
-        variant: "destructive",
-        title: "Main Image Too Large",
-        description: `The main image file is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
-        duration: 7000,
-      });
-      finalMainImageUrl = mainImagePlaceholderUrl; 
-    }
-
-    let finalLogoUrl = logoDataUri || (logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl);
-    if (logoDataUri && logoDataUri.length > MAX_DATA_URI_LENGTH) {
-      toast({
-        variant: "destructive",
-        title: "Logo Image Too Large",
-        description: `The logo image file is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). It will not be saved. Please upload a smaller file.`,
-        duration: 7000,
-      });
-      finalLogoUrl = logoPlaceholderUrl.startsWith('https://placehold.co') || !logoPlaceholderUrl ? undefined : logoPlaceholderUrl;
-    }
-    
-    let finalDetailImageUrl1 = detailImage1DataUri || (detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl);
-    if (detailImage1DataUri && detailImage1DataUri.length > MAX_DATA_URI_LENGTH) {
-        toast({
-            variant: "destructive",
-            title: "Detail Image 1 Too Large",
-            description: `Detail Image 1 is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
-            duration: 7000,
-        });
-        finalDetailImageUrl1 = detailImage1PlaceholderUrl.startsWith('https://placehold.co') || !detailImage1PlaceholderUrl ? undefined : detailImage1PlaceholderUrl;
-    }
-
-    let finalDetailImageUrl2 = detailImage2DataUri || (detailImage2PlaceholderUrl.startsWith('https://placehold.co') || !detailImage2PlaceholderUrl ? undefined : detailImage2PlaceholderUrl);
-    if (detailImage2DataUri && detailImage2DataUri.length > MAX_DATA_URI_LENGTH) {
-        toast({
-            variant: "destructive",
-            title: "Detail Image 2 Too Large",
-            description: `Detail Image 2 is too large (>${MAX_DATA_URI_LENGTH / 1000}KB after encoding). A placeholder will be used. Please upload a smaller file.`,
-            duration: 7000,
-        });
-        finalDetailImageUrl2 = detailImage2PlaceholderUrl.startsWith('https://placehold.co') || !detailImage2PlaceholderUrl ? undefined : detailImage2PlaceholderUrl;
-    }
-
     const currentEditingLanguage = language as LanguageCode;
-
     const getUpdatedLocalizedField = (
       existingFieldData: LocalizedString | undefined,
       newValue: string
@@ -305,15 +248,68 @@ export default function CreatePostPage() {
       const base = typeof existingFieldData === 'object' && existingFieldData !== null
         ? { ...existingFieldData }
         : { en: '' };
-
       const typedBase = base as UpdatedLocalizedFieldReturnType;
-
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) {
-           typedBase.en = newValue;
-      }
+      if (!typedBase.en && newValue) typedBase.en = newValue;
       return typedBase;
     };
+    
+    const tempPostId = postIdFromQuery || doc(firestoreCollection(db, 'temp')).id; // Temporary ID for storage path if new post
+
+    let finalMainImageUrl = mainImageUrlForPreview;
+    if (mainImageFile) {
+      try {
+        const path = `posts/${tempPostId}/main_${Date.now()}_${mainImageFile.name}`;
+        finalMainImageUrl = await uploadImageAndGetURL(mainImageFile, path);
+        // Optional: Delete old image if originalMainImageStoragePath exists and is different
+      } catch (error) {
+        toast({ variant: "destructive", title: "Main Image Upload Failed", description: (error as Error).message });
+        setIsSubmitting(false); return;
+      }
+    } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER) { // If placeholder is still there and no new file
+        finalMainImageUrl = ''; // Or handle as error if main image is mandatory without placeholder
+    }
+
+
+    let finalLogoUrl = logoUrlForPreview;
+    if (logoFile) {
+      try {
+        const path = `posts/${tempPostId}/logo_${Date.now()}_${logoFile.name}`;
+        finalLogoUrl = await uploadImageAndGetURL(logoFile, path);
+      } catch (error) {
+        toast({ variant: "destructive", title: "Logo Upload Failed", description: (error as Error).message });
+        setIsSubmitting(false); return;
+      }
+    } else if (finalLogoUrl === DEFAULT_LOGO_PLACEHOLDER) {
+        finalLogoUrl = '';
+    }
+
+    let finalDetailImageUrl1 = detailImage1UrlForPreview;
+    if (detailImage1File) {
+      try {
+        const path = `posts/${tempPostId}/detail1_${Date.now()}_${detailImage1File.name}`;
+        finalDetailImageUrl1 = await uploadImageAndGetURL(detailImage1File, path);
+      } catch (error) {
+        toast({ variant: "destructive", title: "Detail Image 1 Upload Failed", description: (error as Error).message });
+        setIsSubmitting(false); return;
+      }
+    } else if (finalDetailImageUrl1 === DEFAULT_DETAIL_PLACEHOLDER) {
+        finalDetailImageUrl1 = '';
+    }
+
+    let finalDetailImageUrl2 = detailImage2UrlForPreview;
+    if (detailImage2File) {
+      try {
+        const path = `posts/${tempPostId}/detail2_${Date.now()}_${detailImage2File.name}`;
+        finalDetailImageUrl2 = await uploadImageAndGetURL(detailImage2File, path);
+      } catch (error) {
+        toast({ variant: "destructive", title: "Detail Image 2 Upload Failed", description: (error as Error).message });
+        setIsSubmitting(false); return;
+      }
+    } else if (finalDetailImageUrl2 === DEFAULT_DETAIL_PLACEHOLDER) {
+        finalDetailImageUrl2 = '';
+    }
+
 
     const postDetailsToSave = {
       title: getUpdatedLocalizedField(existingPostDataForForm?.title, title),
@@ -321,16 +317,16 @@ export default function CreatePostPage() {
       longDescription: getUpdatedLocalizedField(existingPostDataForForm?.longDescription, longDescription),
       imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
-      logoUrl: finalLogoUrl,
+      logoUrl: finalLogoUrl || undefined, // Ensure undefined if empty string
       logoHint: logoHint,
-      category: allCategories.find(c => c.slug === category)?.name.en || 'Information', 
+      category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
       link: linkTool,
-      detailImageUrl1: finalDetailImageUrl1,
+      detailImageUrl1: finalDetailImageUrl1 || undefined,
       detailImageHint1: detailImageHint1,
-      detailImageUrl2: finalDetailImageUrl2,
+      detailImageUrl2: finalDetailImageUrl2 || undefined,
       detailImageHint2: detailImageHint2,
     };
 
@@ -339,28 +335,24 @@ export default function CreatePostPage() {
         await updatePostInFirestore(postIdFromQuery, postDetailsToSave);
         toast({
           title: t('adminPostUpdatedSuccess', "Post Updated"),
-          description: `${getLocalizedStringDefault(postDetailsToSave.title, language)} ${t('updatedInSession', "has been updated in the database.")}`,
+          description: `${getLocalizedStringDefault(postDetailsToSave.title, language)} ${t('updatedInSession', "has been updated.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
       } else {
-
-        const newPostData = {
-            ...postDetailsToSave,
-            publishedDate: postDetailsToSave.publishedDate || new Date()
-        };
-        const newPostId = doc(collection(db, 'posts')).id;
-        await addPostToFirestore({ ...newPostData, id: newPostId }); 
+        const newPostData = { ...postDetailsToSave, publishedDate: postDetailsToSave.publishedDate || new Date() };
+        const newPostId = doc(firestoreCollection(db, 'posts')).id; // Generate ID client-side for Storage path consistency if needed
+        await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
-          description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved to the database.")}`,
+          description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
-
+        // Reset form after successful creation
         setTitle(''); setShortDescription(''); setLongDescription('');
-        clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl); setMainImageHint('');
-        clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl); setLogoHint('');
-        clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl); setDetailImageHint1('');
-        clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl); setDetailImageHint2('');
+        clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath); setMainImageHint('');
+        clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath); setLogoHint('');
+        clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath); setDetailImageHint1('');
+        clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
         setExistingPostDataForForm(null);
       }
@@ -378,9 +370,9 @@ export default function CreatePostPage() {
     }
   };
 
-  const ImageUploadSection: React.FC<{
+  interface ImageUploadSectionProps {
     labelKey: string; defaultLabel: string;
-    imageDataUri: string | null;
+    imageUrlForPreview: string;
     onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClearImage: () => void;
     fileRef: React.RefObject<HTMLInputElement>;
@@ -388,44 +380,55 @@ export default function CreatePostPage() {
     hintLabelKey: string; hintDefaultLabel: string; hintPlaceholderKey: string; hintDefaultPlaceholder: string;
     aspectRatio?: string;
     previewSize?: {width: number, height: number};
-    placeholderUrl: string;
-  }> = ({
-    labelKey, defaultLabel, imageDataUri, onFileChange, onClearImage, fileRef,
+    isUploading?: boolean; // Add this prop if you implement individual progress
+    uploadProgress?: number; // Add this prop
+  }
+  
+  const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
+    labelKey, defaultLabel, imageUrlForPreview, onFileChange, onClearImage, fileRef,
     hintValue, onHintChange, hintLabelKey, hintDefaultLabel, hintPlaceholderKey, hintDefaultPlaceholder,
-    aspectRatio = "aspect-video", previewSize = {width:200, height:112}, placeholderUrl
+    aspectRatio = "aspect-video", previewSize = {width:200, height:112}, 
+    isUploading, uploadProgress
   }) => (
     <div className="space-y-2">
       <Label>{t(labelKey, defaultLabel)}</Label>
       <div className="flex items-center gap-4">
-        <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={isSubmitting || isLoadingData}>
+        <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={isSubmitting || isLoadingData || isUploading}>
           <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton', 'Upload Image')}
         </Button>
-        <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData} />
-        {(imageDataUri || (placeholderUrl && !placeholderUrl.startsWith("https://placehold.co"))) && (
-          <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData}>
+        <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData || isUploading} />
+        {(imageUrlForPreview && imageUrlForPreview !== DEFAULT_MAIN_PLACEHOLDER && imageUrlForPreview !== DEFAULT_LOGO_PLACEHOLDER && imageUrlForPreview !== DEFAULT_DETAIL_PLACEHOLDER) && (
+          <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData || isUploading}>
             <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton', 'Clear')}
           </Button>
         )}
       </div>
-      {(imageDataUri || placeholderUrl) && (
+      {imageUrlForPreview && (
         <div className={`mt-2 rounded border overflow-hidden ${aspectRatio}`} style={{maxWidth: `${previewSize.width}px`}}>
           <Image
-            src={imageDataUri || placeholderUrl}
+            src={imageUrlForPreview} // Use the preview URL (blob or existing Storage URL)
             alt={t(labelKey, defaultLabel) + " preview"}
             width={previewSize.width}
             height={previewSize.height}
             className="object-cover w-full h-full"
-            data-ai-hint={hintValue || (imageDataUri ? "uploaded image" : "placeholder")}
-            unoptimized={!!imageDataUri}
+            data-ai-hint={hintValue || (imageUrlForPreview.startsWith('blob:') ? "uploaded image" : "image")}
+            unoptimized={imageUrlForPreview.startsWith('blob:')} // Unoptimize for local blob URLs
           />
+        </div>
+      )}
+       {isUploading && (
+        <div className="mt-2">
+          <progress value={uploadProgress || 0} max="100" className="w-full h-2 rounded [&::-webkit-progress-bar]:rounded [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary"></progress>
+          <p className="text-xs text-muted-foreground text-center">{uploadProgress?.toFixed(0)}%</p>
         </div>
       )}
       <div className="mt-2">
         <Label htmlFor={`${labelKey}-hint`}>{t(hintLabelKey, hintDefaultLabel)}</Label>
-        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} disabled={isSubmitting || isLoadingData} />
+        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} disabled={isSubmitting || isLoadingData || isUploading} />
       </div>
     </div>
   );
+  
 
   if (authLoading || (!currentUser && !authLoading)) {
     return (
@@ -492,28 +495,26 @@ export default function CreatePostPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
               <ImageUploadSection
                 labelKey="adminPostMainImageLabel" defaultLabel="Main Image"
-                imageDataUri={mainImageDataUri}
-                onFileChange={(e) => handleImageFileChange(e, setMainImageDataUri, setMainImagePlaceholderUrl)}
-                onClearImage={() => clearImage(setMainImageDataUri, mainImageFileRef, 'https://placehold.co/600x400.png', setMainImagePlaceholderUrl)}
+                imageUrlForPreview={mainImageUrlForPreview}
+                onFileChange={(e) => handleImageFileChange(e, setMainImageFile, setMainImageUrlForPreview, setOriginalMainImageStoragePath)}
+                onClearImage={() => clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath)}
                 fileRef={mainImageFileRef}
                 hintValue={mainImageHint} onHintChange={setMainImageHint}
                 hintLabelKey="adminPostMainImageHintLabel" hintDefaultLabel="Main Image AI Hint"
                 hintPlaceholderKey="adminPostMainImageHintPlaceholder" hintDefaultPlaceholder="e.g., abstract technology"
                 previewSize={{width: 300, height: 200}}
-                placeholderUrl={mainImagePlaceholderUrl}
               />
               <ImageUploadSection
                 labelKey="adminPostLogoLabel" defaultLabel="Tool Logo (Optional)"
-                imageDataUri={logoDataUri}
-                onFileChange={(e) => handleImageFileChange(e, setLogoDataUri, setLogoPlaceholderUrl)}
-                onClearImage={() => clearImage(setLogoDataUri, logoFileRef, 'https://placehold.co/50x50.png', setLogoPlaceholderUrl)}
+                imageUrlForPreview={logoUrlForPreview}
+                onFileChange={(e) => handleImageFileChange(e, setLogoFile, setLogoUrlForPreview, setOriginalLogoStoragePath)}
+                onClearImage={() => clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath)}
                 fileRef={logoFileRef}
                 hintValue={logoHint} onHintChange={setLogoHint}
                 hintLabelKey="adminPostLogoHintLabel" hintDefaultLabel="Logo AI Hint"
                 hintPlaceholderKey="adminPostLogoHintPlaceholder" hintDefaultPlaceholder="e.g., brand logo"
                 aspectRatio="aspect-square"
                 previewSize={{width:100, height:100}}
-                placeholderUrl={logoPlaceholderUrl}
               />
             </div>
 
@@ -521,27 +522,25 @@ export default function CreatePostPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
                <ImageUploadSection
                 labelKey="adminPostDetailImage1Label" defaultLabel="Visual Insight Image 1"
-                imageDataUri={detailImage1DataUri}
-                onFileChange={(e) => handleImageFileChange(e, setDetailImage1DataUri, setDetailImage1PlaceholderUrl)}
-                onClearImage={() => clearImage(setDetailImage1DataUri, detailImage1FileRef, 'https://placehold.co/400x300.png', setDetailImage1PlaceholderUrl)}
+                imageUrlForPreview={detailImage1UrlForPreview}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage1File, setDetailImage1UrlForPreview, setOriginalDetailImage1StoragePath)}
+                onClearImage={() => clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath)}
                 fileRef={detailImage1FileRef}
                 hintValue={detailImageHint1} onHintChange={setDetailImageHint1}
                 hintLabelKey="adminPostDetailImageHint1Label" hintDefaultLabel="Visual Insight 1 AI Hint"
                 hintPlaceholderKey="adminPostDetailImageHint1Placeholder" hintDefaultPlaceholder="e.g., interface screenshot"
                 previewSize={{width:250, height:187}}
-                placeholderUrl={detailImage1PlaceholderUrl}
               />
               <ImageUploadSection
                 labelKey="adminPostDetailImage2Label" defaultLabel="Visual Insight Image 2"
-                imageDataUri={detailImage2DataUri}
-                onFileChange={(e) => handleImageFileChange(e, setDetailImage2DataUri, setDetailImage2PlaceholderUrl)}
-                onClearImage={() => clearImage(setDetailImage2DataUri, detailImage2FileRef, 'https://placehold.co/400x300.png', setDetailImage2PlaceholderUrl)}
+                imageUrlForPreview={detailImage2UrlForPreview}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage2File, setDetailImage2UrlForPreview, setOriginalDetailImage2StoragePath)}
+                onClearImage={() => clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath)}
                 fileRef={detailImage2FileRef}
                 hintValue={detailImageHint2} onHintChange={setDetailImageHint2}
                 hintLabelKey="adminPostDetailImageHint2Label" hintDefaultLabel="Visual Insight 2 AI Hint"
                 hintPlaceholderKey="adminPostDetailImageHint2Placeholder" hintDefaultPlaceholder="e.g., concept art"
                 previewSize={{width:250, height:187}}
-                placeholderUrl={detailImage2PlaceholderUrl}
               />
             </div>
 
@@ -591,4 +590,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-

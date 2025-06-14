@@ -83,8 +83,8 @@ export default function PostPage() {
   useEffect(() => {
     if (id) {
       window.scrollTo(0, 0);
-      setPost(undefined); // Reset post state while loading
-      setCommentsLoading(true); // Ensure comments loading state is also reset
+      setPost(undefined); 
+      setCommentsLoading(true); 
 
       getPostFromFirestore(id).then(currentPost => {
         if (currentPost) {
@@ -92,8 +92,8 @@ export default function PostPage() {
           fetchComments(currentPost.id);
           setPageAnimationClass('animate-scale-up-fade-in');
         } else {
-          setPost(null); // Explicitly set to null if not found
-          setCommentsLoading(false); // Stop comments loading if no post
+          setPost(null); 
+          setCommentsLoading(false); 
           setPageAnimationClass('');
         }
       }).catch(err => {
@@ -189,7 +189,7 @@ export default function PostPage() {
     )
   }
 
-  if (!post && !authLoading) { // If loading is done and post is still null (not found)
+  if (!post && !authLoading) { 
     notFound();
   }
 
@@ -228,7 +228,7 @@ export default function PostPage() {
               data-ai-hint={post.imageHint || "technology banner"}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
               className="rounded-t-xl"
-              unoptimized={post.imageUrl.startsWith('data:image')} // Add unoptimized for Data URIs
+              // unoptimized removed as images should now be Storage URLs mostly
             />
           </div>
         </CardHeader>
@@ -283,7 +283,6 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint1 || "AI concept"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
-                      unoptimized={post.detailImageUrl1.startsWith('data:image')}
                     />
                   </div>
                 )}
@@ -297,7 +296,6 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint2 || "AI technology"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
-                      unoptimized={post.detailImageUrl2.startsWith('data:image')}
                     />
                   </div>
                 )}
