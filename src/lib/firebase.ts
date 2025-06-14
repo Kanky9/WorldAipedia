@@ -34,7 +34,7 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  deleteObject as deleteFirebaseStorageObject, // Renamed to avoid conflict
+  deleteObject as deleteFirebaseStorageObject,
   type StorageReference
 } from 'firebase/storage';
 
@@ -151,44 +151,13 @@ export const getPostsByCategorySlugFromFirestore = async (categorySlug: string):
 export const deletePostFromFirestore = async (postId: string): Promise<void> => {
   const postRef = doc(db, 'posts', postId);
   await deleteDoc(postRef);
-  // Note: This does not delete associated images from Firebase Storage.
-  // That would require additional logic here or a Firebase Function.
 };
-
-// Firebase Storage helper function
-export const uploadImageAndGetURL = async (file: File, path: string): Promise<string> => {
-  const storageRef = ref(storage, path);
-  const uploadTask = uploadBytesResumable(storageRef, file);
-
-  return new Promise((resolve, reject) => {
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Optional: Observe state change events such as progress, pause, and resume
-        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-        // const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log('Upload is ' + progress + '% done');
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-        console.error("Upload failed:", error);
-        reject(error);
-      },
-      () => {
-        // Handle successful uploads on complete
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          resolve(downloadURL);
-        }).catch(reject);
-      }
-    );
-  });
-};
-
 
 export {
   app,
   auth,
   db,
-  storage, // Export storage
+  storage, 
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
@@ -212,9 +181,8 @@ export {
   orderBy,
   serverTimestamp,
   type FirebaseUser,
-  // Storage specific exports
-  ref as storageRef, // alias to avoid conflict with React.ref
+  ref as storageRef, 
   uploadBytesResumable,
-  getDownloadURL as getStorageDownloadURL, // alias
+  getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };

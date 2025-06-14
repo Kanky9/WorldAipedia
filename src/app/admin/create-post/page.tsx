@@ -21,23 +21,15 @@ import {
   getPostFromFirestore,
   updatePostInFirestore,
   db,
-  uploadImageAndGetURL, // Import the new upload function
-  storageRef, // Import storageRef
-  deleteFirebaseStorageObject // Optional: for deleting old images
 } from '@/lib/firebase';
-import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore'; // aliased to avoid conflict with local collection
+import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
-
-type UpdatedLocalizedFieldReturnType = {
-  [key in LanguageCode]?: string;
-} & {
-  en: string;
-};
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
 const DEFAULT_LOGO_PLACEHOLDER = 'https://placehold.co/50x50.png';
 const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
+const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
@@ -51,7 +43,6 @@ export default function CreatePostPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [existingPostDataForForm, setExistingPostDataForForm] = useState<PostType | null>(null);
 
-  // Form state for text fields
   const [title, setTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [longDescription, setLongDescription] = useState('');
@@ -60,31 +51,26 @@ export default function CreatePostPage() {
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
 
-  // Image states: file object, preview URL, hint, and original storage path (for edit mode deletion)
-  const [mainImageFile, setMainImageFile] = useState<File | null>(null);
+  // State for Data URIs and Preview URLs
+  const [mainImageDataUri, setMainImageDataUri] = useState<string>('');
   const [mainImageUrlForPreview, setMainImageUrlForPreview] = useState<string>(DEFAULT_MAIN_PLACEHOLDER);
   const [mainImageHint, setMainImageHint] = useState('');
-  const [originalMainImageStoragePath, setOriginalMainImageStoragePath] = useState<string | null>(null);
   const mainImageFileRef = useRef<HTMLInputElement>(null);
 
-  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoDataUri, setLogoDataUri] = useState<string>('');
   const [logoUrlForPreview, setLogoUrlForPreview] = useState<string>(DEFAULT_LOGO_PLACEHOLDER);
   const [logoHint, setLogoHint] = useState('');
-  const [originalLogoStoragePath, setOriginalLogoStoragePath] = useState<string | null>(null);
   const logoFileRef = useRef<HTMLInputElement>(null);
 
-  const [detailImage1File, setDetailImage1File] = useState<File | null>(null);
+  const [detailImage1DataUri, setDetailImage1DataUri] = useState<string>('');
   const [detailImage1UrlForPreview, setDetailImage1UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
   const [detailImageHint1, setDetailImageHint1] = useState('');
-  const [originalDetailImage1StoragePath, setOriginalDetailImage1StoragePath] = useState<string | null>(null);
   const detailImage1FileRef = useRef<HTMLInputElement>(null);
 
-  const [detailImage2File, setDetailImage2File] = useState<File | null>(null);
+  const [detailImage2DataUri, setDetailImage2DataUri] = useState<string>('');
   const [detailImage2UrlForPreview, setDetailImage2UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
   const [detailImageHint2, setDetailImageHint2] = useState('');
-  const [originalDetailImage2StoragePath, setOriginalDetailImage2StoragePath] = useState<string | null>(null);
   const detailImage2FileRef = useRef<HTMLInputElement>(null);
-
 
   useEffect(() => {
     if (!authLoading) {
@@ -105,23 +91,6 @@ export default function CreatePostPage() {
     return value[lang as keyof LocalizedString] || value.en || '';
   };
 
-  const getStoragePathFromUrl = (url: string): string | null => {
-    try {
-      if (!url || !url.startsWith('https://firebasestorage.googleapis.com')) return null;
-      const parsedUrl = new URL(url);
-      // Path is like /v0/b/worldaipedia.appspot.com/o/posts%2F...
-      // We need to decode and extract from "posts%2F..."
-      const pathName = parsedUrl.pathname;
-      const parts = pathName.split('/o/');
-      if (parts.length > 1) {
-        return decodeURIComponent(parts[1].split('?')[0]); // Remove query params like alt=media&token=...
-      }
-    } catch (e) {
-      console.warn("Could not parse storage path from URL:", url, e);
-    }
-    return null;
-  };
-
   useEffect(() => {
     if (authLoading || !currentUser?.isAdmin) return;
 
@@ -139,20 +108,20 @@ export default function CreatePostPage() {
           setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
 
           setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
+          setMainImageDataUri(existingPost.imageUrl || '');
           setMainImageHint(existingPost.imageHint || '');
-          setOriginalMainImageStoragePath(getStoragePathFromUrl(existingPost.imageUrl));
 
           setLogoUrlForPreview(existingPost.logoUrl || DEFAULT_LOGO_PLACEHOLDER);
+          setLogoDataUri(existingPost.logoUrl || '');
           setLogoHint(existingPost.logoHint || '');
-          setOriginalLogoStoragePath(getStoragePathFromUrl(existingPost.logoUrl || ''));
           
           setDetailImage1UrlForPreview(existingPost.detailImageUrl1 || DEFAULT_DETAIL_PLACEHOLDER);
+          setDetailImage1DataUri(existingPost.detailImageUrl1 || '');
           setDetailImageHint1(existingPost.detailImageHint1 || '');
-          setOriginalDetailImage1StoragePath(getStoragePathFromUrl(existingPost.detailImageUrl1 || ''));
 
           setDetailImage2UrlForPreview(existingPost.detailImageUrl2 || DEFAULT_DETAIL_PLACEHOLDER);
+          setDetailImage2DataUri(existingPost.detailImageUrl2 || '');
           setDetailImageHint2(existingPost.detailImageHint2 || '');
-          setOriginalDetailImage2StoragePath(getStoragePathFromUrl(existingPost.detailImageUrl2 || ''));
 
           setCategory(existingPost.categorySlug);
           setTags(existingPost.tags.join(', '));
@@ -172,54 +141,53 @@ export default function CreatePostPage() {
         router.push('/admin');
       });
     } else {
-      // Reset form for new post
       setIsEditMode(false);
       setExistingPostDataForForm(null);
       setTitle(''); setShortDescription(''); setLongDescription('');
-      clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath); setMainImageHint('');
-      clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath); setLogoHint('');
-      clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath); setDetailImageHint1('');
-      clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath); setDetailImageHint2('');
+      clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
+      clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
+      clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
+      clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
       setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
     }
   }, [postIdFromQuery, language, router, t, toast, authLoading, currentUser]);
 
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFileState: React.Dispatch<React.SetStateAction<File | null>>,
-    setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
-    setOriginalStoragePath: React.Dispatch<React.SetStateAction<string | null>>
+    setDataUriState: React.Dispatch<React.SetStateAction<string>>,
+    setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Basic file size check (e.g., 5MB) - adjust as needed for Storage
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) { // Basic 5MB check for UX
         toast({
             variant: "destructive",
             title: "Image File Too Large",
-            description: `Please select an image file smaller than 5MB.`,
+            description: `Please select an image file smaller than 5MB. Larger images may not save correctly.`,
             duration: 7000,
         });
-        if (event.target) event.target.value = ""; // Clear the input
+        if (event.target) event.target.value = "";
         return;
       }
-      setFileState(file);
-      setPreviewUrlState(URL.createObjectURL(file));
-      setOriginalStoragePath(null); // New file selected, so old path is irrelevant for this slot
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setDataUriState(result);
+        setPreviewUrlState(result); // For preview, use the data URI itself
+      };
+      reader.readAsDataURL(file);
     }
   };
   
   const clearImageHelper = (
-    setFileState: React.Dispatch<React.SetStateAction<File | null>>,
+    setDataUriState: React.Dispatch<React.SetStateAction<string>>,
     setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
     fileRef: React.RefObject<HTMLInputElement>,
-    defaultPlaceholderUrl: string,
-    setOriginalStoragePath: React.Dispatch<React.SetStateAction<string | null>>
+    defaultPlaceholderUrl: string
   ) => {
-    setFileState(null);
+    setDataUriState('');
     setPreviewUrlState(defaultPlaceholderUrl);
     if (fileRef.current) fileRef.current.value = "";
-    setOriginalStoragePath(null); // Clearing image means no original path to worry about for this slot
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -229,18 +197,18 @@ export default function CreatePostPage() {
       return;
     }
 
-    if (!title || !shortDescription || !longDescription || (!mainImageFile && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
+    if (!title || !shortDescription || !longDescription || (!mainImageDataUri && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
       toast({
         variant: "destructive",
         title: t('adminPostError', "Error submitting post"),
-        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded.",
+        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or set.",
       });
       return;
     }
-
     setIsSubmitting(true);
 
     const currentEditingLanguage = language as LanguageCode;
+    type UpdatedLocalizedFieldReturnType = { [key in LanguageCode]?: string; } & { en: string; };
     const getUpdatedLocalizedField = (
       existingFieldData: LocalizedString | undefined,
       newValue: string
@@ -250,66 +218,41 @@ export default function CreatePostPage() {
         : { en: '' };
       const typedBase = base as UpdatedLocalizedFieldReturnType;
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) typedBase.en = newValue;
+      if (!typedBase.en && newValue) typedBase.en = newValue; // Ensure 'en' has a value if possible
       return typedBase;
     };
     
-    const tempPostId = postIdFromQuery || doc(firestoreCollection(db, 'temp')).id; // Temporary ID for storage path if new post
-
-    let finalMainImageUrl = mainImageUrlForPreview;
-    if (mainImageFile) {
-      try {
-        const path = `posts/${tempPostId}/main_${Date.now()}_${mainImageFile.name}`;
-        finalMainImageUrl = await uploadImageAndGetURL(mainImageFile, path);
-        // Optional: Delete old image if originalMainImageStoragePath exists and is different
-      } catch (error) {
-        toast({ variant: "destructive", title: "Main Image Upload Failed", description: (error as Error).message });
-        setIsSubmitting(false); return;
-      }
-    } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER) { // If placeholder is still there and no new file
-        finalMainImageUrl = ''; // Or handle as error if main image is mandatory without placeholder
+    let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
+    if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
+        toast({ variant: "destructive", title: "Main Image Too Large", description: `Main image is too large (${(finalMainImageUrl.length / (1024*1024)).toFixed(1)}MB). Using placeholder. Max ~1MB for direct save.` });
+        finalMainImageUrl = DEFAULT_MAIN_PLACEHOLDER;
+    } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER && !mainImageDataUri) {
+        finalMainImageUrl = ''; // If it's still the default placeholder and no new data URI was set.
     }
 
-
-    let finalLogoUrl = logoUrlForPreview;
-    if (logoFile) {
-      try {
-        const path = `posts/${tempPostId}/logo_${Date.now()}_${logoFile.name}`;
-        finalLogoUrl = await uploadImageAndGetURL(logoFile, path);
-      } catch (error) {
-        toast({ variant: "destructive", title: "Logo Upload Failed", description: (error as Error).message });
-        setIsSubmitting(false); return;
-      }
-    } else if (finalLogoUrl === DEFAULT_LOGO_PLACEHOLDER) {
+    let finalLogoUrl = logoDataUri || logoUrlForPreview;
+    if (finalLogoUrl && finalLogoUrl.startsWith('data:image') && finalLogoUrl.length > MAX_DATA_URI_LENGTH) {
+        toast({ variant: "destructive", title: "Logo Image Too Large", description: `Logo image is too large. Using placeholder. Max ~1MB.` });
+        finalLogoUrl = DEFAULT_LOGO_PLACEHOLDER;
+    } else if (finalLogoUrl === DEFAULT_LOGO_PLACEHOLDER && !logoDataUri) {
         finalLogoUrl = '';
     }
 
-    let finalDetailImageUrl1 = detailImage1UrlForPreview;
-    if (detailImage1File) {
-      try {
-        const path = `posts/${tempPostId}/detail1_${Date.now()}_${detailImage1File.name}`;
-        finalDetailImageUrl1 = await uploadImageAndGetURL(detailImage1File, path);
-      } catch (error) {
-        toast({ variant: "destructive", title: "Detail Image 1 Upload Failed", description: (error as Error).message });
-        setIsSubmitting(false); return;
-      }
-    } else if (finalDetailImageUrl1 === DEFAULT_DETAIL_PLACEHOLDER) {
+    let finalDetailImageUrl1 = detailImage1DataUri || detailImage1UrlForPreview;
+    if (finalDetailImageUrl1 && finalDetailImageUrl1.startsWith('data:image') && finalDetailImageUrl1.length > MAX_DATA_URI_LENGTH) {
+        toast({ variant: "destructive", title: "Detail Image 1 Too Large", description: `Detail Image 1 is too large. Using placeholder. Max ~1MB.` });
+        finalDetailImageUrl1 = DEFAULT_DETAIL_PLACEHOLDER;
+    } else if (finalDetailImageUrl1 === DEFAULT_DETAIL_PLACEHOLDER && !detailImage1DataUri) {
         finalDetailImageUrl1 = '';
     }
 
-    let finalDetailImageUrl2 = detailImage2UrlForPreview;
-    if (detailImage2File) {
-      try {
-        const path = `posts/${tempPostId}/detail2_${Date.now()}_${detailImage2File.name}`;
-        finalDetailImageUrl2 = await uploadImageAndGetURL(detailImage2File, path);
-      } catch (error) {
-        toast({ variant: "destructive", title: "Detail Image 2 Upload Failed", description: (error as Error).message });
-        setIsSubmitting(false); return;
-      }
-    } else if (finalDetailImageUrl2 === DEFAULT_DETAIL_PLACEHOLDER) {
+    let finalDetailImageUrl2 = detailImage2DataUri || detailImage2UrlForPreview;
+    if (finalDetailImageUrl2 && finalDetailImageUrl2.startsWith('data:image') && finalDetailImageUrl2.length > MAX_DATA_URI_LENGTH) {
+        toast({ variant: "destructive", title: "Detail Image 2 Too Large", description: `Detail Image 2 is too large. Using placeholder. Max ~1MB.` });
+        finalDetailImageUrl2 = DEFAULT_DETAIL_PLACEHOLDER;
+    } else if (finalDetailImageUrl2 === DEFAULT_DETAIL_PLACEHOLDER && !detailImage2DataUri) {
         finalDetailImageUrl2 = '';
     }
-
 
     const postDetailsToSave = {
       title: getUpdatedLocalizedField(existingPostDataForForm?.title, title),
@@ -317,7 +260,7 @@ export default function CreatePostPage() {
       longDescription: getUpdatedLocalizedField(existingPostDataForForm?.longDescription, longDescription),
       imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
-      logoUrl: finalLogoUrl || undefined, // Ensure undefined if empty string
+      logoUrl: finalLogoUrl || undefined,
       logoHint: logoHint,
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
@@ -340,19 +283,18 @@ export default function CreatePostPage() {
         });
       } else {
         const newPostData = { ...postDetailsToSave, publishedDate: postDetailsToSave.publishedDate || new Date() };
-        const newPostId = doc(firestoreCollection(db, 'posts')).id; // Generate ID client-side for Storage path consistency if needed
+        const newPostId = doc(firestoreCollection(db, 'posts')).id; 
         await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
           description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved.")}`,
           action: <CheckCircle className="text-green-500" />,
         });
-        // Reset form after successful creation
         setTitle(''); setShortDescription(''); setLongDescription('');
-        clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath); setMainImageHint('');
-        clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath); setLogoHint('');
-        clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath); setDetailImageHint1('');
-        clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath); setDetailImageHint2('');
+        clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
+        clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
+        clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
+        clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
         setExistingPostDataForForm(null);
       }
@@ -380,25 +322,22 @@ export default function CreatePostPage() {
     hintLabelKey: string; hintDefaultLabel: string; hintPlaceholderKey: string; hintDefaultPlaceholder: string;
     aspectRatio?: string;
     previewSize?: {width: number, height: number};
-    isUploading?: boolean; // Add this prop if you implement individual progress
-    uploadProgress?: number; // Add this prop
   }
   
   const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     labelKey, defaultLabel, imageUrlForPreview, onFileChange, onClearImage, fileRef,
     hintValue, onHintChange, hintLabelKey, hintDefaultLabel, hintPlaceholderKey, hintDefaultPlaceholder,
-    aspectRatio = "aspect-video", previewSize = {width:200, height:112}, 
-    isUploading, uploadProgress
+    aspectRatio = "aspect-video", previewSize = {width:200, height:112}
   }) => (
     <div className="space-y-2">
       <Label>{t(labelKey, defaultLabel)}</Label>
       <div className="flex items-center gap-4">
-        <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={isSubmitting || isLoadingData || isUploading}>
+        <Button type="button" variant="outline" onClick={() => fileRef.current?.click()} disabled={isSubmitting || isLoadingData}>
           <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton', 'Upload Image')}
         </Button>
-        <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData || isUploading} />
+        <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData} />
         {(imageUrlForPreview && imageUrlForPreview !== DEFAULT_MAIN_PLACEHOLDER && imageUrlForPreview !== DEFAULT_LOGO_PLACEHOLDER && imageUrlForPreview !== DEFAULT_DETAIL_PLACEHOLDER) && (
-          <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData || isUploading}>
+          <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData}>
             <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton', 'Clear')}
           </Button>
         )}
@@ -406,29 +345,22 @@ export default function CreatePostPage() {
       {imageUrlForPreview && (
         <div className={`mt-2 rounded border overflow-hidden ${aspectRatio}`} style={{maxWidth: `${previewSize.width}px`}}>
           <Image
-            src={imageUrlForPreview} // Use the preview URL (blob or existing Storage URL)
+            src={imageUrlForPreview}
             alt={t(labelKey, defaultLabel) + " preview"}
             width={previewSize.width}
             height={previewSize.height}
             className="object-cover w-full h-full"
-            data-ai-hint={hintValue || (imageUrlForPreview.startsWith('blob:') ? "uploaded image" : "image")}
-            unoptimized={imageUrlForPreview.startsWith('blob:')} // Unoptimize for local blob URLs
+            data-ai-hint={hintValue || (imageUrlForPreview.startsWith('blob:') || imageUrlForPreview.startsWith('data:') ? "uploaded image" : "image")}
+            unoptimized={imageUrlForPreview.startsWith('blob:') || imageUrlForPreview.startsWith('data:')}
           />
-        </div>
-      )}
-       {isUploading && (
-        <div className="mt-2">
-          <progress value={uploadProgress || 0} max="100" className="w-full h-2 rounded [&::-webkit-progress-bar]:rounded [&::-webkit-progress-value]:rounded [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary"></progress>
-          <p className="text-xs text-muted-foreground text-center">{uploadProgress?.toFixed(0)}%</p>
         </div>
       )}
       <div className="mt-2">
         <Label htmlFor={`${labelKey}-hint`}>{t(hintLabelKey, hintDefaultLabel)}</Label>
-        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} disabled={isSubmitting || isLoadingData || isUploading} />
+        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} disabled={isSubmitting || isLoadingData} />
       </div>
     </div>
   );
-  
 
   if (authLoading || (!currentUser && !authLoading)) {
     return (
@@ -496,8 +428,8 @@ export default function CreatePostPage() {
               <ImageUploadSection
                 labelKey="adminPostMainImageLabel" defaultLabel="Main Image"
                 imageUrlForPreview={mainImageUrlForPreview}
-                onFileChange={(e) => handleImageFileChange(e, setMainImageFile, setMainImageUrlForPreview, setOriginalMainImageStoragePath)}
-                onClearImage={() => clearImageHelper(setMainImageFile, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER, setOriginalMainImageStoragePath)}
+                onFileChange={(e) => handleImageFileChange(e, setMainImageDataUri, setMainImageUrlForPreview)}
+                onClearImage={() => clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER)}
                 fileRef={mainImageFileRef}
                 hintValue={mainImageHint} onHintChange={setMainImageHint}
                 hintLabelKey="adminPostMainImageHintLabel" hintDefaultLabel="Main Image AI Hint"
@@ -507,8 +439,8 @@ export default function CreatePostPage() {
               <ImageUploadSection
                 labelKey="adminPostLogoLabel" defaultLabel="Tool Logo (Optional)"
                 imageUrlForPreview={logoUrlForPreview}
-                onFileChange={(e) => handleImageFileChange(e, setLogoFile, setLogoUrlForPreview, setOriginalLogoStoragePath)}
-                onClearImage={() => clearImageHelper(setLogoFile, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER, setOriginalLogoStoragePath)}
+                onFileChange={(e) => handleImageFileChange(e, setLogoDataUri, setLogoUrlForPreview)}
+                onClearImage={() => clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER)}
                 fileRef={logoFileRef}
                 hintValue={logoHint} onHintChange={setLogoHint}
                 hintLabelKey="adminPostLogoHintLabel" hintDefaultLabel="Logo AI Hint"
@@ -523,8 +455,8 @@ export default function CreatePostPage() {
                <ImageUploadSection
                 labelKey="adminPostDetailImage1Label" defaultLabel="Visual Insight Image 1"
                 imageUrlForPreview={detailImage1UrlForPreview}
-                onFileChange={(e) => handleImageFileChange(e, setDetailImage1File, setDetailImage1UrlForPreview, setOriginalDetailImage1StoragePath)}
-                onClearImage={() => clearImageHelper(setDetailImage1File, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage1StoragePath)}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage1DataUri, setDetailImage1UrlForPreview)}
+                onClearImage={() => clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER)}
                 fileRef={detailImage1FileRef}
                 hintValue={detailImageHint1} onHintChange={setDetailImageHint1}
                 hintLabelKey="adminPostDetailImageHint1Label" hintDefaultLabel="Visual Insight 1 AI Hint"
@@ -534,8 +466,8 @@ export default function CreatePostPage() {
               <ImageUploadSection
                 labelKey="adminPostDetailImage2Label" defaultLabel="Visual Insight Image 2"
                 imageUrlForPreview={detailImage2UrlForPreview}
-                onFileChange={(e) => handleImageFileChange(e, setDetailImage2File, setDetailImage2UrlForPreview, setOriginalDetailImage2StoragePath)}
-                onClearImage={() => clearImageHelper(setDetailImage2File, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER, setOriginalDetailImage2StoragePath)}
+                onFileChange={(e) => handleImageFileChange(e, setDetailImage2DataUri, setDetailImage2UrlForPreview)}
+                onClearImage={() => clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER)}
                 fileRef={detailImage2FileRef}
                 hintValue={detailImageHint2} onHintChange={setDetailImageHint2}
                 hintLabelKey="adminPostDetailImageHint2Label" hintDefaultLabel="Visual Insight 2 AI Hint"

@@ -228,7 +228,7 @@ export default function PostPage() {
               data-ai-hint={post.imageHint || "technology banner"}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
               className="rounded-t-xl"
-              // unoptimized removed as images should now be Storage URLs mostly
+              unoptimized={post.imageUrl.startsWith('data:')}
             />
           </div>
         </CardHeader>
@@ -283,6 +283,7 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint1 || "AI concept"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
+                      unoptimized={post.detailImageUrl1.startsWith('data:')}
                     />
                   </div>
                 )}
@@ -296,6 +297,7 @@ export default function PostPage() {
                       data-ai-hint={post.detailImageHint2 || "AI technology"}
                       className="transform transition-transform duration-300 group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, 50vw"
+                      unoptimized={post.detailImageUrl2.startsWith('data:')}
                     />
                   </div>
                 )}

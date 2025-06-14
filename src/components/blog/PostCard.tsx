@@ -45,7 +45,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
             className="rounded-t-xl group-hover:scale-105 transition-transform duration-300"
             data-ai-hint={post.imageHint || "technology concept"}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            // unoptimized prop removed as images are now primarily Storage URLs
+            unoptimized={post.imageUrl.startsWith('data:')}
           />
         </div>
       </Link>
