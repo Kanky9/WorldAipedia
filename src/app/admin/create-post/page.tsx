@@ -174,6 +174,7 @@ export default function CreatePostPage() {
       setLongDescription(getLocalizedStringDefault(existingPostDataForForm.longDescription, language));
       // Category SelectItems will update their display automatically based on language prop used in their rendering.
       // The `category` state (slug) doesn't change with language.
+      // The `tags` state (string) also doesn't change with language as it's not localized.
     }
     // No action needed for create mode, user input should be preserved.
   }, [language, isEditMode, existingPostDataForForm]);
@@ -254,17 +255,15 @@ export default function CreatePostPage() {
     ): UpdatedLocalizedFieldReturnType => {
       const base = typeof existingFieldData === 'object' && existingFieldData !== null
         ? { ...existingFieldData }
-        : { en: '' }; // Default to { en: '' } if no existing data or it's a string
+        : { en: '' }; 
       
-      // Ensure base is an object that can be spread and assigned to
       const typedBase: Partial<Record<LanguageCode, string>> & { en?: string } = 
         typeof base === 'string' ? { en: base } : { ...base };
 
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) { // If 'en' is missing or empty, and we have a new value, populate 'en'
+      if (!typedBase.en && newValue) { 
         typedBase.en = newValue;
       }
-      // Ensure 'en' always exists, even if it's an empty string from initialization
       if (typeof typedBase.en === 'undefined') {
           typedBase.en = '';
       }
@@ -276,7 +275,7 @@ export default function CreatePostPage() {
         toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Main Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
         finalMainImageUrl = DEFAULT_MAIN_PLACEHOLDER;
     } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER && !mainImageDataUri) {
-        finalMainImageUrl = ''; // Allow saving with no image if it was never set beyond default
+        finalMainImageUrl = ''; 
     }
 
     let finalLogoUrl = logoDataUri || logoUrlForPreview;
@@ -432,7 +431,7 @@ export default function CreatePostPage() {
     );
   }
 
-  if (isLoadingData && isEditMode) { // Only show full page loader in edit mode while fetching initial data
+  if (isLoadingData && isEditMode) { 
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -574,4 +573,4 @@ export default function CreatePostPage() {
   );
 }
 
-
+    
