@@ -3,18 +3,18 @@
 
 import Image from 'next/image';
 import { notFound, useParams, useRouter } from 'next/navigation';
-import { getCategoryByName } from '@/data/posts'; // getCategoryByName is still useful for display
-import { getPostFromFirestore } from '@/lib/firebase'; // Use Firestore version
+import { getCategoryByName } from '@/data/posts';
+import { getPostFromFirestore, deleteCommentFromFirestore, db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
-import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState, useCallback } from 'react';
-import type { Post as PostType, UserComment } from '@/lib/types'; // Renamed Post to PostType to avoid conflict
+import type { Post as PostType, UserComment } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import ScrollDownIndicator from '@/components/ui/ScrollDownIndicator';
 import { format } from 'date-fns';
@@ -27,7 +27,6 @@ import StarRatingInput from '@/components/ai/StarRatingInput';
 import CommentCard from '@/components/ai/CommentCard';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -51,6 +50,9 @@ export default function PostPage() {
   const [showSubscribeAlert, setShowSubscribeAlert] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
+  const [showDeleteCommentConfirm, setShowDeleteCommentConfirm] = useState(false);
+  const [commentToDeleteId, setCommentToDeleteId] = useState<string | null>(null);
+
 
   const fetchComments = useCallback(async (postId: string) => {
     if (!postId) {
@@ -70,15 +72,15 @@ export default function PostPage() {
     } catch (error: any) {
       console.error("Error fetching comments: ", error);
       if (error.code === 'permission-denied' || error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
-        toast({ variant: "destructive", title: "Comments Disabled", description: "Could not load comments due to permissions. Please check Firestore rules." });
+        toast({ variant: "destructive", title: t('errorDefaultTitle', "Error"), description: t('permissionDeniedErrorToastDesc', "You do not have permission to post comments. Please check Firestore rules.") });
       } else {
-        toast({ variant: "destructive", title: "Error Loading Comments", description: "Could not load comments at this time." });
+        toast({ variant: "destructive", title: t('errorDefaultTitle', "Error"), description: t('commentSubmitErrorDesc', "Could not post your comment.") });
       }
       setComments([]);
     } finally {
       setCommentsLoading(false);
     }
-  }, [toast]);
+  }, [toast, t]);
 
   useEffect(() => {
     if (id) {
@@ -100,12 +102,12 @@ export default function PostPage() {
         console.error("Error fetching post from Firestore:", err);
         setPost(null);
         setCommentsLoading(false);
-        toast({variant: "destructive", title: "Error", description: "Failed to load post."})
+        toast({variant: "destructive", title: t('errorDefaultTitle', "Error"), description: t('errorLoadingPost', "Failed to load post.")})
       });
     } else {
       setCommentsLoading(false);
     }
-  }, [id, fetchComments, toast]);
+  }, [id, fetchComments, toast, t]);
 
   const getPostDateLocale = () => {
     switch (language) {
@@ -126,7 +128,7 @@ export default function PostPage() {
       return;
     }
     if (newCommentText.trim() === '' || newCommentRating === 0) {
-      toast({ variant: "destructive", title: "Missing Information", description: "Please provide a rating and a comment."});
+      toast({ variant: "destructive", title: t('commentMissingInfoTitle', "Missing Information"), description: t('commentMissingInfoDesc', "Please provide a rating and a comment.")});
       return;
     }
     if (!post || isSubmittingComment) return;
@@ -135,7 +137,7 @@ export default function PostPage() {
     const newCommentData = {
       postId: post.id,
       userId: currentUser.uid,
-      username: isAnonymousComment ? "Anonymous" : (currentUser.username || currentUser.displayName || "User"),
+      username: isAnonymousComment ? t('anonymousCommentLabel', "Anonymous") : (currentUser.username || currentUser.displayName || "User"),
       profileImageUrl: isAnonymousComment ? undefined : currentUser.photoURL,
       isAnonymous: isAnonymousComment,
       rating: newCommentRating,
@@ -150,21 +152,41 @@ export default function PostPage() {
       setNewCommentText('');
       setNewCommentRating(0);
       setIsAnonymousComment(false);
-      toast({ title: "Comment Submitted", description: "Your comment has been posted." });
+      toast({ title: t('commentSubmittedSuccessTitle', "Comment Submitted"), description: t('commentSubmittedSuccessDesc', "Your comment has been posted.") });
     } catch (error: any) {
       console.error("Error submitting comment: ", error);
       if (error.code === 'permission-denied' || error.message?.includes('permission-denied') || error.message?.includes('Missing or insufficient permissions')) {
-         toast({ variant: "destructive", title: "Submission Failed", description: "You do not have permission to post comments. Please check Firestore rules."});
+         toast({ variant: "destructive", title: t('commentSubmitErrorTitle', "Submission Error"), description: t('permissionDeniedErrorToastDesc', "You do not have permission to post comments. Please check Firestore rules.")});
       } else {
-         toast({ variant: "destructive", title: "Submission Error", description: "Could not post your comment."});
+         toast({ variant: "destructive", title: t('commentSubmitErrorTitle', "Submission Error"), description: t('commentSubmitErrorDesc', "Could not post your comment.")});
       }
     } finally {
       setIsSubmittingComment(false);
     }
   };
 
+  const handleDeleteCommentClicked = (commentId: string) => {
+    setCommentToDeleteId(commentId);
+    setShowDeleteCommentConfirm(true);
+  };
 
-  if (post === undefined && !authLoading) {
+  const confirmDeleteComment = async () => {
+    if (!commentToDeleteId || !post) return;
+    try {
+      await deleteCommentFromFirestore(post.id, commentToDeleteId);
+      toast({ title: t('commentDeletedSuccess', "Comment deleted successfully.") });
+      setComments(prevComments => prevComments.filter(c => c.id !== commentToDeleteId));
+    } catch (deleteError) {
+      console.error("Error deleting comment:", deleteError);
+      toast({ variant: "destructive", title: t('commentDeleteError', "Failed to delete comment.") });
+    } finally {
+      setShowDeleteCommentConfirm(false);
+      setCommentToDeleteId(null);
+    }
+  };
+
+
+  if (post === undefined && !authLoading) { // Still loading post data
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" />
@@ -189,11 +211,12 @@ export default function PostPage() {
     )
   }
 
-  if (!post && !authLoading) { 
+  if (!post && !authLoading) { // Post not found after attempting to load
     notFound();
   }
 
-  if (authLoading || post === undefined || (post === undefined && commentsLoading) ) {
+  // Covers auth loading OR post still undefined (initial state or after failed fetch) OR comments still loading
+  if (authLoading || post === undefined || (post && commentsLoading && !comments.length) ) {
      return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -277,7 +300,7 @@ export default function PostPage() {
                   <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <Image
                       src={post.detailImageUrl1}
-                      alt={localizedPostTitle + " - " + t('visualDetailAlt', 'Visual Detail 1')}
+                      alt={localizedPostTitle + " - " + t('visualDetailAlt', 'Visual Detail 1', {number: '1'})}
                       fill
                       style={{ objectFit: 'cover' }}
                       data-ai-hint={post.detailImageHint1 || "AI concept"}
@@ -291,7 +314,7 @@ export default function PostPage() {
                   <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg group transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <Image
                       src={post.detailImageUrl2}
-                      alt={localizedPostTitle + " - " + t('visualDetailAlt', 'Visual Detail 2')}
+                      alt={localizedPostTitle + " - " + t('visualDetailAlt', 'Visual Detail 2', {number: '2'})}
                       fill
                       style={{ objectFit: 'cover' }}
                       data-ai-hint={post.detailImageHint2 || "AI technology"}
@@ -324,7 +347,7 @@ export default function PostPage() {
                 <StarRatingInput
                   value={newCommentRating}
                   onChange={setNewCommentRating}
-                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment || authLoading}
                 />
               </div>
               <div>
@@ -333,9 +356,9 @@ export default function PostPage() {
                   id="comment"
                   value={newCommentText}
                   onChange={(e) => setNewCommentText(e.target.value)}
-                  placeholder={!currentUser ? t('loginToCommentPrompt') : (!currentUser.isSubscribed ? t('subscribeToCommentDescription') : "Share your thoughts...")}
+                  placeholder={!currentUser ? t('loginToCommentPrompt') : (!currentUser.isSubscribed ? t('subscribeToCommentDescription') : t('commentLabel', "Your Comment"))}
                   rows={4}
-                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment || authLoading}
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -343,7 +366,7 @@ export default function PostPage() {
                   id="anonymous"
                   checked={isAnonymousComment}
                   onCheckedChange={(checked) => setIsAnonymousComment(Boolean(checked))}
-                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment}
+                  disabled={!currentUser || !currentUser.isSubscribed || isSubmittingComment || authLoading}
                 />
                 <Label htmlFor="anonymous" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   {t('anonymousCommentLabel', "Comment Anonymously")}
@@ -361,13 +384,18 @@ export default function PostPage() {
           </CardContent>
         </Card>
 
-        {commentsLoading ? (
+        {commentsLoading && comments.length === 0 ? (
           <div className="flex justify-center items-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : comments.length > 0 ? (
           comments.map(comment => (
-            <CommentCard key={comment.id} comment={comment} />
+            <CommentCard
+              key={comment.id}
+              comment={comment}
+              isAdmin={currentUser?.isAdmin}
+              onDelete={handleDeleteCommentClicked}
+            />
           ))
         ) : (
           <p className="text-muted-foreground text-center py-4">{t('noCommentsYet', "No comments yet. Be the first to share your thoughts!")}</p>
@@ -403,6 +431,23 @@ export default function PostPage() {
             <AlertDialogCancel onClick={() => setShowSubscribeAlert(false)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction asChild>
               <Link href="/account">{t('subscribeButton')}</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showDeleteCommentConfirm} onOpenChange={setShowDeleteCommentConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('deleteCommentConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('deleteCommentConfirmDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowDeleteCommentConfirm(false)}>{t('cancelButton')}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteComment} className="bg-destructive hover:bg-destructive/90">
+              {t('deleteButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -49,14 +49,12 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     }
 
     setIsProcessing(true);
-    // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
       await updateUserProfileInFirestore(currentUser.uid, {
         isSubscribed: true,
         subscriptionPlan: "PRO Monthly",
-        // nextBillingDate could be set here too e.g., one month from now
       });
       toast({
         title: t('upgradeSuccessTitle', 'Upgrade Successful!'),
@@ -108,7 +106,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
           <div className="text-center my-6">
             <p className="text-3xl font-bold text-primary">{t('upgradeToProPrice', "Just $1/month!")}</p>
-            <p className="text-xs text-muted-foreground">(Billed monthly, cancel anytime)</p>
+            <p className="text-xs text-muted-foreground">({t('cancelButton', "Billed monthly, cancel anytime")})</p>
           </div>
           
           <div>
@@ -131,7 +129,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 {t('googlePayLabel', "Google Pay")}
               </Button>
             </div>
-             <p className="text-xs text-muted-foreground mt-2 text-center"> (Payment simulation only) </p>
+             <p className="text-xs text-muted-foreground mt-2 text-center"> ({t('upgradeToProSimulated', "Payment simulation only")}) </p>
           </div>
         </div>
 
@@ -152,4 +150,3 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 };
 
 export default UpgradeProDialog;
-

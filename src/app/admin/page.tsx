@@ -42,13 +42,13 @@ export default function AdminPage() {
       if (!currentUser || !currentUser.isAdmin) {
         toast({
           variant: "destructive",
-          title: "Access Denied",
-          description: "You do not have permission to view this page.",
+          title: t('adminPostAccessDeniedTitle', "Access Denied"),
+          description: t('adminPostAccessDeniedDesc', "You do not have permission to view this page."),
         });
         router.replace('/');
       }
     }
-  }, [currentUser, authLoading, router, toast]);
+  }, [currentUser, authLoading, router, toast, t]);
 
   const fetchPosts = useCallback(async () => {
     if (!currentUser?.isAdmin) {
@@ -62,12 +62,13 @@ export default function AdminPage() {
       setPosts(fetchedPosts);
     } catch (err) {
       console.error("Error fetching posts:", err);
-      setError(err instanceof Error ? err.message : "Failed to load posts.");
-      toast({ variant: "destructive", title: "Error", description: "Could not fetch posts from database." });
+      const errorMessage = err instanceof Error ? err.message : t('adminErrorLoadingPostsDesc', "Failed to load posts.");
+      setError(errorMessage);
+      toast({ variant: "destructive", title: t('adminErrorLoadingPostsTitle', "Error Loading Posts"), description: errorMessage });
     } finally {
       setIsLoadingPosts(false);
     }
-  }, [toast, currentUser?.isAdmin]);
+  }, [toast, currentUser?.isAdmin, t]);
 
   useEffect(() => {
     if (currentUser?.isAdmin) {
@@ -93,18 +94,18 @@ export default function AdminPage() {
     if (!postToDelete) return;
     try {
       await deletePostFromFirestore(postToDelete.id);
-      toast({ title: "Post Deleted", description: `"${t(postToDelete.title)}" has been deleted.` });
+      toast({ title: t('adminDeletePostSuccessTitle', "Post Deleted"), description: t('adminDeletePostSuccessDesc', 'Post "{title}" has been deleted.', { title: t(postToDelete.title) })});
       setPosts(prevPosts => prevPosts.filter(p => p.id !== postToDelete.id)); 
     } catch (deleteError) {
       console.error("Error deleting post:", deleteError);
-      toast({ variant: "destructive", title: "Delete Failed", description: "Could not delete the post." });
+      toast({ variant: "destructive", title: t('adminDeletePostErrorTitle', "Delete Failed"), description: t('adminPostErrorDesc', "Could not delete the post.") });
     } finally {
       setShowDeleteConfirm(false);
       setPostToDelete(null);
     }
   };
 
-  if (authLoading || (!currentUser && !authLoading) ) { // Show loader while auth is resolving, or if no user and not yet redirected
+  if (authLoading || (!currentUser && !authLoading) ) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -112,15 +113,13 @@ export default function AdminPage() {
     );
   }
   
-  // If, after loading, user is still not an admin (e.g., redirected but component hasn't unmounted yet)
-  // or if there was an error specifically fetching posts (and user is admin)
   if (!currentUser?.isAdmin && !authLoading) {
      return (
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-10rem)] text-center">
         <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-semibold text-destructive mb-2">Access Denied</h2>
-        <p className="text-muted-foreground">You do not have permission to view this page.</p>
-        <Button onClick={() => router.push('/')} className="mt-4">Go to Homepage</Button>
+        <h2 className="text-2xl font-semibold text-destructive mb-2">{t('adminPostAccessDeniedTitle', "Access Denied")}</h2>
+        <p className="text-muted-foreground">{t('adminPostAccessDeniedDesc', "You do not have permission to view this page.")}</p>
+        <Button onClick={() => router.push('/')} className="mt-4">{t('goToHomepageButton', "Go to Homepage")}</Button>
       </div>
     );
   }
@@ -138,9 +137,9 @@ export default function AdminPage() {
     return (
       <div className="container mx-auto py-8 px-4 text-center">
         <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-destructive mb-2">Error Loading Posts</h2>
+        <h2 className="text-xl font-semibold text-destructive mb-2">{t('adminErrorLoadingPostsTitle', "Error Loading Posts")}</h2>
         <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={fetchPosts}>Try Again</Button>
+        <Button onClick={fetchPosts}>{t('tryAgainButton', "Try Again")}</Button>
       </div>
     );
   }
@@ -186,12 +185,12 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className='px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'>
-                          Published
+                          {t('adminPostPublishedStatus', 'Published')}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={`/admin/create-post?id=${post.id}`}> {/* Changed to use create-post with ID */}
+                          <Link href={`/admin/create-post?id=${post.id}`}>
                             <Edit className="mr-1 h-4 w-4" /> {t('editButton', 'Edit')}
                           </Link>
                         </Button>
@@ -212,15 +211,15 @@ export default function AdminPage() {
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+            <AlertDialogTitle>{t('deletePostConfirm', "Confirm Deletion")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('deletePostConfirm', `Are you sure you want to delete the post "${postToDelete ? t(postToDelete.title) : ''}"? This action cannot be undone.` , {postId: postToDelete ? t(postToDelete.title) : ''})}
+              {t('deletePostConfirm', `Are you sure you want to delete the post "{postId}"? This action cannot be undone.` , {postId: postToDelete ? t(postToDelete.title) : ''})}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setShowDeleteConfirm(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setShowDeleteConfirm(false)}>{t('cancelButton', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
-              Delete
+              {t('deleteButton', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

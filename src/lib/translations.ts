@@ -34,7 +34,7 @@ export type CoreTranslationKey =
   | 'blogSubtitle'
   | 'exploreCategoriesButton'
   | 'featuredPostsTitle'
-  | 'viewAllPostsButton' // Kept for potential other uses, but homepage button changed
+  | 'viewAllPostsButton'
   | 'viewAllPostsArchiveButton'
   // All Posts Page (/blog)
   | 'allPostsTitle'
@@ -104,6 +104,7 @@ export type CoreTranslationKey =
   | 'deleteButton'
   | 'deletePostConfirm'
   | 'adminNoPosts'
+  | 'adminPostPublishedStatus'
   // Admin Create/Edit Post Page
   | 'adminCreateTitle'
   | 'adminEditTitle'
@@ -114,23 +115,15 @@ export type CoreTranslationKey =
   | 'adminPostLongDescLabel'
   | 'adminPostLongDescPlaceholder'
   | 'adminPostMainImageLabel'
-  | 'adminPostMainImageUrlLabel' // Deprecated by file upload
-  | 'adminPostMainImageUrlPlaceholder' // Deprecated
   | 'adminPostMainImageHintLabel'
   | 'adminPostMainImageHintPlaceholder'
   | 'adminPostLogoLabel'
-  | 'adminPostLogoUrlLabel' // Deprecated
-  | 'adminPostLogoUrlPlaceholder' // Deprecated
   | 'adminPostLogoHintLabel'
   | 'adminPostLogoHintPlaceholder'
   | 'adminPostDetailImage1Label'
-  | 'adminPostDetailImageUrl1Label' // Deprecated
-  | 'adminPostDetailImageUrl1Placeholder' // Deprecated
   | 'adminPostDetailImageHint1Label'
   | 'adminPostDetailImageHint1Placeholder'
   | 'adminPostDetailImage2Label'
-  | 'adminPostDetailImageUrl2Label' // Deprecated
-  | 'adminPostDetailImageUrl2Placeholder' // Deprecated
   | 'adminPostDetailImageHint2Label'
   | 'adminPostDetailImageHint2Placeholder'
   | 'uploadImageButton'
@@ -148,8 +141,24 @@ export type CoreTranslationKey =
   | 'adminPostCreatedSuccess'
   | 'adminPostUpdatedSuccess'
   | 'adminPostError'
-  | 'updatedInSession' // Now reflects DB
-  | 'createdInSession' // Now reflects DB
+  | 'updatedInSession'
+  | 'createdInSession'
+  | 'errorLoadingPost'
+  | 'adminPostErrorTitle'
+  | 'adminPostErrorDesc'
+  | 'adminPostNotFound'
+  | 'adminPostImageTooLarge'
+  | 'adminPostImageSizeHint'
+  | 'adminPostRequiredFields'
+  | 'adminPostAccessDeniedTitle'
+  | 'adminPostAccessDeniedDesc'
+  | 'goToHomepageButton'
+  | 'adminErrorLoadingPostsTitle'
+  | 'adminErrorLoadingPostsDesc'
+  | 'tryAgainButton'
+  | 'adminDeletePostSuccessTitle'
+  | 'adminDeletePostSuccessDesc'
+  | 'adminDeletePostErrorTitle'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -171,6 +180,10 @@ export type CoreTranslationKey =
   | 'noActiveSubscription'
   | 'upgradeToProButton'
   | 'upgradeToProSimulated'
+  | 'profileUpdatedSuccessTitle'
+  | 'profileUpdatedSuccessDesc'
+  | 'profileUpdateErrorTitle'
+  | 'profileUpdateErrorDesc'
   // User Reviews & Comments
   | 'userReviewsTitle'
   | 'noCommentsYet'
@@ -186,6 +199,17 @@ export type CoreTranslationKey =
   | 'subscribeButton'
   | 'cancelButton'
   | 'loginToCommentPrompt'
+  | 'commentSubmittedSuccessTitle'
+  | 'commentSubmittedSuccessDesc'
+  | 'commentSubmitErrorTitle'
+  | 'commentSubmitErrorDesc'
+  | 'commentMissingInfoTitle'
+  | 'commentMissingInfoDesc'
+  | 'deleteCommentButton'
+  | 'deleteCommentConfirmTitle'
+  | 'deleteCommentConfirmDescription'
+  | 'commentDeletedSuccess'
+  | 'commentDeleteError'
   // PRO Upgrade Button & Dialog
   | 'proButtonLabel'
   | 'proButtonTooltip'
@@ -209,7 +233,15 @@ export type CoreTranslationKey =
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
   // Generic
-  | 'loadingText';
+  | 'loadingText'
+  | 'errorText'
+  | 'errorDefaultTitle'
+  | 'errorDefaultDesc'
+  | 'imageFileTooLargeTitle'
+  | 'imageFileTooLargeDesc'
+  | 'accessDeniedTitle'
+  | 'accessDeniedDescription'
+  | 'permissionDeniedErrorToastDesc';
 
 
 export type TranslationSet = {
@@ -296,8 +328,8 @@ export const translations: Translations = {
     orContinueWith: 'Or continue with',
     noAccountPrompt: "Don't have an account?",
     signUpLink: 'Sign up',
-    loginAttemptMessage: 'Login attempt (simulated)',
-    socialLoginAttemptMessage: 'Login with {provider} (simulated)',
+    loginAttemptMessage: 'Successfully logged in!',
+    socialLoginAttemptMessage: 'Successfully logged in with {provider}!',
     registerPageTitle: 'Create your Account',
     registerPageSubtitle: 'Join World AI to discover and discuss AI tools.',
     usernameLabel: 'Username',
@@ -306,7 +338,7 @@ export const translations: Translations = {
     orSignUpWith: 'Or sign up with',
     alreadyHaveAccountPrompt: 'Already have an account?',
     loginLink: 'Log in',
-    registrationAttemptMessage: 'Registration attempt (simulated)',
+    registrationAttemptMessage: 'Registration successful! Welcome!',
     adminPanelTitle: 'Admin Panel',
     adminCreatePostButton: 'Create New Post',
     adminManagePostsTitle: 'Manage Posts',
@@ -314,6 +346,7 @@ export const translations: Translations = {
     adminTableTitle: 'Title',
     adminTableDate: 'Date',
     adminTableStatus: 'Status',
+    adminPostPublishedStatus: 'Published',
     adminTableActions: 'Actions',
     editButton: 'Edit',
     deleteButton: 'Delete',
@@ -353,9 +386,27 @@ export const translations: Translations = {
     adminPostButtonBack: 'Back to Admin',
     adminPostCreatedSuccess: 'Post Created',
     adminPostUpdatedSuccess: 'Post Updated',
-    adminPostError: 'Error Saving Post',
-    updatedInSession: "has been updated in the database.",
-    createdInSession: "has been saved to the database.",
+    adminPostError: 'Error saving post',
+    updatedInSession: 'Post "{title}" has been updated.',
+    createdInSession: 'Post "{title}" has been saved.',
+    errorLoadingPost: 'Error loading post',
+    adminPostErrorTitle: 'Error Loading Post',
+    adminPostErrorDesc: 'Failed to load post data.',
+    adminPostNotFound: 'Post with ID {id} not found.',
+    adminPostImageTooLarge: 'Image is too large. Using placeholder. Max ~1MB for direct save.',
+    imageFileTooLargeTitle: 'Image File Too Large',
+    imageFileTooLargeDesc: 'Please select an image file smaller than 5MB. Larger images may not save correctly.',
+    adminPostImageSizeHint: 'Using placeholder. Max ~1MB for direct save.',
+    adminPostRequiredFields: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or set.",
+    adminPostAccessDeniedTitle: 'Access Denied',
+    adminPostAccessDeniedDesc: 'You do not have permission to view this page.',
+    goToHomepageButton: 'Go to Homepage',
+    adminErrorLoadingPostsTitle: 'Error Loading Posts',
+    adminErrorLoadingPostsDesc: 'Failed to load posts. Please try again later.',
+    tryAgainButton: 'Try Again',
+    adminDeletePostSuccessTitle: 'Post Deleted',
+    adminDeletePostSuccessDesc: 'Post "{title}" has been deleted.',
+    adminDeletePostErrorTitle: 'Delete Failed',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -365,7 +416,7 @@ export const translations: Translations = {
     newPasswordLabel: 'New Password (optional)',
     leaveBlankNoChange: 'Leave blank to keep current',
     updateProfileButton: 'Update Profile',
-    profileUpdateSimulated: "Profile update (simulated).",
+    profileUpdateSimulated: "Profile picture change via Gravatar/Google (simulated).",
     subscriptionDetailsTitle: 'Subscription Details',
     currentPlanLabel: 'Current Plan',
     nextBillingDateLabel: 'Next Billing Date',
@@ -376,6 +427,10 @@ export const translations: Translations = {
     noActiveSubscription: 'You do not have an active PRO subscription.',
     upgradeToProButton: 'Upgrade to PRO - $1/month',
     upgradeToProSimulated: "Upgrade to PRO (simulated payment flow).",
+    profileUpdatedSuccessTitle: 'Profile Updated',
+    profileUpdatedSuccessDesc: 'Your profile has been successfully updated.',
+    profileUpdateErrorTitle: 'Update Failed',
+    profileUpdateErrorDesc: 'Could not update profile.',
     userReviewsTitle: "User Reviews & Comments",
     noCommentsYet: "No comments yet. Be the first to share your thoughts!",
     addYourCommentTitle: "Add Your Comment",
@@ -390,6 +445,18 @@ export const translations: Translations = {
     subscribeButton: "Upgrade to PRO",
     cancelButton: "Cancel",
     loginToCommentPrompt: "Please log in to leave a comment.",
+    commentSubmittedSuccessTitle: "Comment Submitted",
+    commentSubmittedSuccessDesc: "Your comment has been posted.",
+    commentSubmitErrorTitle: "Submission Error",
+    commentSubmitErrorDesc: "Could not post your comment.",
+    permissionDeniedErrorToastDesc: "You do not have permission to post comments. Please check Firestore rules.",
+    commentMissingInfoTitle: "Missing Information",
+    commentMissingInfoDesc: "Please provide a rating and a comment.",
+    deleteCommentButton: 'Delete Comment',
+    deleteCommentConfirmTitle: 'Confirm Comment Deletion',
+    deleteCommentConfirmDescription: 'Are you sure you want to delete this comment? This action cannot be undone.',
+    commentDeletedSuccess: 'Comment deleted successfully.',
+    commentDeleteError: 'Failed to delete comment.',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "Go PRO",
     proButtonTooltip: "Upgrade to PRO",
@@ -412,6 +479,12 @@ export const translations: Translations = {
     upgradeFailedDescription: "Could not process your upgrade. Please try again or contact support.",
     loginRequiredForProTitle: "Login Required",
     loginRequiredForProDescription: "Please log in or create an account to upgrade to PRO.",
+    // Generic
+    errorText: 'Error',
+    errorDefaultTitle: 'Error',
+    errorDefaultDesc: 'An unexpected error occurred.',
+    accessDeniedTitle: 'Access Denied',
+    accessDeniedDescription: 'You do not have permission to perform this action.',
   },
   es: {
     navHome: 'Inicio',
@@ -473,8 +546,8 @@ export const translations: Translations = {
     orContinueWith: 'O continuar con',
     noAccountPrompt: '¿No tienes una cuenta?',
     signUpLink: 'Regístrate',
-    loginAttemptMessage: 'Intento de inicio de sesión (simulado)',
-    socialLoginAttemptMessage: 'Iniciar sesión con {provider} (simulado)',
+    loginAttemptMessage: '¡Inicio de sesión exitoso!',
+    socialLoginAttemptMessage: '¡Inicio de sesión exitoso con {provider}!',
     registerPageTitle: 'Crea tu Cuenta',
     registerPageSubtitle: 'Únete a World AI para descubrir y discutir herramientas de IA.',
     usernameLabel: 'Nombre de Usuario',
@@ -483,7 +556,7 @@ export const translations: Translations = {
     orSignUpWith: 'O regístrate con',
     alreadyHaveAccountPrompt: '¿Ya tienes una cuenta?',
     loginLink: 'Iniciar sesión',
-    registrationAttemptMessage: 'Intento de registro (simulado)',
+    registrationAttemptMessage: '¡Registro exitoso! ¡Bienvenido!',
     adminPanelTitle: 'Panel de Administración',
     adminCreatePostButton: 'Crear Nueva Publicación',
     adminManagePostsTitle: 'Gestionar Publicaciones',
@@ -491,6 +564,7 @@ export const translations: Translations = {
     adminTableTitle: 'Título',
     adminTableDate: 'Fecha',
     adminTableStatus: 'Estado',
+    adminPostPublishedStatus: 'Publicado',
     adminTableActions: 'Acciones',
     editButton: 'Editar',
     deleteButton: 'Eliminar',
@@ -530,9 +604,27 @@ export const translations: Translations = {
     adminPostButtonBack: 'Volver a Admin',
     adminPostCreatedSuccess: 'Publicación Creada',
     adminPostUpdatedSuccess: 'Publicación Actualizada',
-    adminPostError: 'Error al Guardar Publicación',
-    updatedInSession: "ha sido actualizado en la base de datos.",
-    createdInSession: "ha sido guardado en la base de datos.",
+    adminPostError: 'Error al guardar la publicación',
+    updatedInSession: 'La publicación "{title}" ha sido actualizada.',
+    createdInSession: 'La publicación "{title}" ha sido guardada.',
+    errorLoadingPost: 'Error al cargar la publicación',
+    adminPostErrorTitle: 'Error al Cargar Publicación',
+    adminPostErrorDesc: 'No se pudieron cargar los datos de la publicación.',
+    adminPostNotFound: 'No se encontró la publicación con ID {id}.',
+    adminPostImageTooLarge: 'La imagen es demasiado grande. Usando marcador de posición. Máx ~1MB para guardado directo.',
+    imageFileTooLargeTitle: 'Archivo de Imagen Demasiado Grande',
+    imageFileTooLargeDesc: 'Por favor, seleccione un archivo de imagen más pequeño de 5MB. Imágenes más grandes pueden no guardarse correctamente.',
+    adminPostImageSizeHint: 'Usando marcador de posición. Máx ~1MB para guardado directo.',
+    adminPostRequiredFields: "Por favor, complete todos los campos obligatorios (Título, Descripciones, Imagen Principal, Categoría, Fecha de Publicación). Asegúrese de que la imagen principal esté cargada o configurada.",
+    adminPostAccessDeniedTitle: 'Acceso Denegado',
+    adminPostAccessDeniedDesc: 'No tiene permiso para ver esta página.',
+    goToHomepageButton: 'Ir a la Página Principal',
+    adminErrorLoadingPostsTitle: 'Error al Cargar Publicaciones',
+    adminErrorLoadingPostsDesc: 'No se pudieron cargar las publicaciones. Por favor, inténtelo de nuevo más tarde.',
+    tryAgainButton: 'Intentar de Nuevo',
+    adminDeletePostSuccessTitle: 'Publicación Eliminada',
+    adminDeletePostSuccessDesc: 'La publicación "{title}" ha sido eliminada.',
+    adminDeletePostErrorTitle: 'Error al Eliminar',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -542,7 +634,7 @@ export const translations: Translations = {
     newPasswordLabel: 'Nueva Contraseña (opcional)',
     leaveBlankNoChange: 'Dejar en blanco para mantener actual',
     updateProfileButton: 'Actualizar Perfil',
-    profileUpdateSimulated: "Actualización de perfil (simulada).",
+    profileUpdateSimulated: "Cambio de foto de perfil vía Gravatar/Google (simulado).",
     subscriptionDetailsTitle: 'Detalles de Suscripción',
     currentPlanLabel: 'Plan Actual',
     nextBillingDateLabel: 'Próxima Fecha de Facturación',
@@ -553,6 +645,10 @@ export const translations: Translations = {
     noActiveSubscription: 'No tienes una suscripción PRO activa.',
     upgradeToProButton: 'Actualizar a PRO - $1/mes',
     upgradeToProSimulated: "Actualización a PRO (flujo de pago simulado).",
+    profileUpdatedSuccessTitle: 'Perfil Actualizado',
+    profileUpdatedSuccessDesc: 'Tu perfil ha sido actualizado exitosamente.',
+    profileUpdateErrorTitle: 'Error al Actualizar',
+    profileUpdateErrorDesc: 'No se pudo actualizar el perfil.',
     userReviewsTitle: "Reseñas y Comentarios de Usuarios",
     noCommentsYet: "Aún no hay comentarios. ¡Sé el primero en compartir tu opinión!",
     addYourCommentTitle: "Añade Tu Comentario",
@@ -567,6 +663,18 @@ export const translations: Translations = {
     subscribeButton: "Actualizar a PRO",
     cancelButton: "Cancelar",
     loginToCommentPrompt: "Por favor, inicia sesión para dejar un comentario.",
+    commentSubmittedSuccessTitle: "Comentario Enviado",
+    commentSubmittedSuccessDesc: "Tu comentario ha sido publicado.",
+    commentSubmitErrorTitle: "Error al Enviar",
+    commentSubmitErrorDesc: "No se pudo publicar tu comentario.",
+    permissionDeniedErrorToastDesc: "No tienes permiso para publicar comentarios. Por favor, revisa las reglas de Firestore.",
+    commentMissingInfoTitle: "Información Faltante",
+    commentMissingInfoDesc: "Por favor, proporciona una calificación y un comentario.",
+    deleteCommentButton: 'Eliminar Comentario',
+    deleteCommentConfirmTitle: 'Confirmar Eliminación de Comentario',
+    deleteCommentConfirmDescription: '¿Estás seguro de que quieres eliminar este comentario? Esta acción no se puede deshacer.',
+    commentDeletedSuccess: 'Comentario eliminado exitosamente.',
+    commentDeleteError: 'Error al eliminar el comentario.',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "Hazte PRO",
     proButtonTooltip: "Actualizar a PRO",
@@ -589,6 +697,12 @@ export const translations: Translations = {
     upgradeFailedDescription: "No se pudo procesar tu actualización. Por favor, inténtalo de nuevo o contacta con soporte.",
     loginRequiredForProTitle: "Inicio de Sesión Requerido",
     loginRequiredForProDescription: "Por favor, inicia sesión o crea una cuenta para actualizar a PRO.",
+    // Generic
+    errorText: 'Error',
+    errorDefaultTitle: 'Error',
+    errorDefaultDesc: 'Ocurrió un error inesperado.',
+    accessDeniedTitle: 'Acceso Denegado',
+    accessDeniedDescription: 'No tienes permiso para realizar esta acción.',
   },
   it: {
     navHome: 'Home',
@@ -650,8 +764,8 @@ export const translations: Translations = {
     orContinueWith: 'Oppure continua con',
     noAccountPrompt: "Non hai un account?",
     signUpLink: 'Registrati',
-    loginAttemptMessage: 'Tentativo di accesso (simulato)',
-    socialLoginAttemptMessage: 'Accesso con {provider} (simulato)',
+    loginAttemptMessage: 'Accesso effettuato con successo!',
+    socialLoginAttemptMessage: 'Accesso effettuato con successo con {provider}!',
     registerPageTitle: 'Crea il tuo Account',
     registerPageSubtitle: 'Unisciti a World AI per scoprire e discutere di strumenti IA.',
     usernameLabel: 'Nome Utente',
@@ -660,7 +774,7 @@ export const translations: Translations = {
     orSignUpWith: 'Oppure registrati con',
     alreadyHaveAccountPrompt: 'Hai già un account?',
     loginLink: 'Accedi',
-    registrationAttemptMessage: 'Tentativo di registrazione (simulato)',
+    registrationAttemptMessage: 'Registrazione riuscita! Benvenuto!',
     adminPanelTitle: 'Pannello Admin',
     adminCreatePostButton: 'Crea Nuovo Post',
     adminManagePostsTitle: 'Gestisci Post',
@@ -668,6 +782,7 @@ export const translations: Translations = {
     adminTableTitle: 'Titolo',
     adminTableDate: 'Data',
     adminTableStatus: 'Stato',
+    adminPostPublishedStatus: 'Pubblicato',
     adminTableActions: 'Azioni',
     editButton: 'Modifica',
     deleteButton: 'Elimina',
@@ -707,9 +822,27 @@ export const translations: Translations = {
     adminPostButtonBack: 'Torna ad Admin',
     adminPostCreatedSuccess: 'Post Creato',
     adminPostUpdatedSuccess: 'Post Aggiornato',
-    adminPostError: 'Errore nel Salvataggio del Post',
-    updatedInSession: "è stato aggiornato nel database.",
-    createdInSession: "è stato salvato nel database.",
+    adminPostError: 'Errore nel salvataggio del post',
+    updatedInSession: 'Il post "{title}" è stato aggiornato.',
+    createdInSession: 'Il post "{title}" è stato salvato.',
+    errorLoadingPost: 'Errore nel caricamento del post',
+    adminPostErrorTitle: 'Errore Caricamento Post',
+    adminPostErrorDesc: 'Impossibile caricare i dati del post.',
+    adminPostNotFound: 'Post con ID {id} non trovato.',
+    adminPostImageTooLarge: 'L\'immagine è troppo grande. Uso del placeholder. Max ~1MB per salvataggio diretto.',
+    imageFileTooLargeTitle: 'File Immagine Troppo Grande',
+    imageFileTooLargeDesc: 'Seleziona un file immagine più piccolo di 5MB. Immagini più grandi potrebbero non salvarsi correttamente.',
+    adminPostImageSizeHint: 'Uso del placeholder. Max ~1MB per salvataggio diretto.',
+    adminPostRequiredFields: "Compila tutti i campi obbligatori (Titolo, Descrizioni, Immagine Principale, Categoria, Data di Pubblicazione). Assicurati che l'immagine principale sia caricata o impostata.",
+    adminPostAccessDeniedTitle: 'Accesso Negato',
+    adminPostAccessDeniedDesc: 'Non hai il permesso di visualizzare questa pagina.',
+    goToHomepageButton: 'Vai alla Homepage',
+    adminErrorLoadingPostsTitle: 'Errore Caricamento Post',
+    adminErrorLoadingPostsDesc: 'Impossibile caricare i post. Riprova più tardi.',
+    tryAgainButton: 'Riprova',
+    adminDeletePostSuccessTitle: 'Post Eliminato',
+    adminDeletePostSuccessDesc: 'Il post "{title}" è stato eliminato.',
+    adminDeletePostErrorTitle: 'Eliminazione Fallita',
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -719,7 +852,7 @@ export const translations: Translations = {
     newPasswordLabel: 'Nuova Password (opzionale)',
     leaveBlankNoChange: 'Lascia vuoto per mantenere attuale',
     updateProfileButton: 'Aggiorna Profilo',
-    profileUpdateSimulated: "Aggiornamento profilo (simulato).",
+    profileUpdateSimulated: "Cambio immagine profilo via Gravatar/Google (simulato).",
     subscriptionDetailsTitle: 'Dettagli Abbonamento',
     currentPlanLabel: 'Piano Attuale',
     nextBillingDateLabel: 'Prossima Data Fatturazione',
@@ -730,6 +863,10 @@ export const translations: Translations = {
     noActiveSubscription: 'Non hai un abbonamento PRO attivo.',
     upgradeToProButton: 'Passa a PRO - $1/mese',
     upgradeToProSimulated: "Passaggio a PRO (flusso di pagamento simulato).",
+    profileUpdatedSuccessTitle: 'Profilo Aggiornato',
+    profileUpdatedSuccessDesc: 'Il tuo profilo è stato aggiornato con successo.',
+    profileUpdateErrorTitle: 'Aggiornamento Fallito',
+    profileUpdateErrorDesc: 'Impossibile aggiornare il profilo.',
     userReviewsTitle: "Recensioni e Commenti Utenti",
     noCommentsYet: "Nessun commento ancora. Sii il primo a condividere la tua opinione!",
     addYourCommentTitle: "Aggiungi il Tuo Commento",
@@ -744,6 +881,18 @@ export const translations: Translations = {
     subscribeButton: "Passa a PRO",
     cancelButton: "Annulla",
     loginToCommentPrompt: "Effettua l'accesso per lasciare un commento.",
+    commentSubmittedSuccessTitle: "Commento Inviato",
+    commentSubmittedSuccessDesc: "Il tuo commento è stato pubblicato.",
+    commentSubmitErrorTitle: "Errore Invio",
+    commentSubmitErrorDesc: "Impossibile pubblicare il tuo commento.",
+    permissionDeniedErrorToastDesc: "Non hai il permesso di pubblicare commenti. Verifica le regole di Firestore.",
+    commentMissingInfoTitle: "Informazioni Mancanti",
+    commentMissingInfoDesc: "Fornisci una valutazione e un commento.",
+    deleteCommentButton: 'Elimina Commento',
+    deleteCommentConfirmTitle: 'Conferma Eliminazione Commento',
+    deleteCommentConfirmDescription: 'Sei sicuro di voler eliminare questo commento? Questa azione non può essere annullata.',
+    commentDeletedSuccess: 'Commento eliminato con successo.',
+    commentDeleteError: 'Errore nell\'eliminazione del commento.',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "Diventa PRO",
     proButtonTooltip: "Passa a PRO",
@@ -766,6 +915,12 @@ export const translations: Translations = {
     upgradeFailedDescription: "Impossibile elaborare il tuo aggiornamento. Riprova o contatta l'assistenza.",
     loginRequiredForProTitle: "Accesso Richiesto",
     loginRequiredForProDescription: "Effettua l'accesso o crea un account per passare a PRO.",
+    // Generic
+    errorText: 'Errore',
+    errorDefaultTitle: 'Errore',
+    errorDefaultDesc: 'Si è verificato un errore imprevisto.',
+    accessDeniedTitle: 'Accesso Negato',
+    accessDeniedDescription: 'Non hai il permesso di eseguire questa azione.',
   },
   zh: {
     navHome: '首页',
@@ -827,8 +982,8 @@ export const translations: Translations = {
     orContinueWith: '或使用其他方式继续',
     noAccountPrompt: '还没有帐户？',
     signUpLink: '注册',
-    loginAttemptMessage: '尝试登录（模拟）',
-    socialLoginAttemptMessage: '使用{provider}登录（模拟）',
+    loginAttemptMessage: '登录成功！',
+    socialLoginAttemptMessage: '使用{provider}登录成功！',
     registerPageTitle: '创建您的帐户',
     registerPageSubtitle: '加入World AI，发现和讨论AI工具。',
     usernameLabel: '用户名',
@@ -837,7 +992,7 @@ export const translations: Translations = {
     orSignUpWith: '或使用其他方式注册',
     alreadyHaveAccountPrompt: '已经有帐户了？',
     loginLink: '登录',
-    registrationAttemptMessage: '尝试注册（模拟）',
+    registrationAttemptMessage: '注册成功！欢迎！',
     adminPanelTitle: '管理面板',
     adminCreatePostButton: '创建新帖子',
     adminManagePostsTitle: '管理帖子',
@@ -845,6 +1000,7 @@ export const translations: Translations = {
     adminTableTitle: '标题',
     adminTableDate: '日期',
     adminTableStatus: '状态',
+    adminPostPublishedStatus: '已发布',
     adminTableActions: '操作',
     editButton: '编辑',
     deleteButton: '删除',
@@ -885,8 +1041,26 @@ export const translations: Translations = {
     adminPostCreatedSuccess: '帖子已创建',
     adminPostUpdatedSuccess: '帖子已更新',
     adminPostError: '保存帖子时出错',
-    updatedInSession: "已在数据库中更新。",
-    createdInSession: "已保存到数据库。",
+    updatedInSession: '帖子 "{title}" 已更新。',
+    createdInSession: '帖子 "{title}" 已保存。',
+    errorLoadingPost: '加载帖子时出错',
+    adminPostErrorTitle: '加载帖子错误',
+    adminPostErrorDesc: '无法加载帖子数据。',
+    adminPostNotFound: '未找到ID为 {id} 的帖子。',
+    adminPostImageTooLarge: '图片太大。使用占位符。直接保存最大约1MB。',
+    imageFileTooLargeTitle: '图片文件太大',
+    imageFileTooLargeDesc: '请选择小于5MB的图片文件。较大的图片可能无法正确保存。',
+    adminPostImageSizeHint: '使用占位符。直接保存最大约1MB。',
+    adminPostRequiredFields: "请填写所有必填字段（标题、描述、主图片、分类、发布日期）。确保主图片已上传或设置。",
+    adminPostAccessDeniedTitle: '访问被拒绝',
+    adminPostAccessDeniedDesc: '您无权查看此页面。',
+    goToHomepageButton: '转到主页',
+    adminErrorLoadingPostsTitle: '加载帖子错误',
+    adminErrorLoadingPostsDesc: '无法加载帖子。请稍后再试。',
+    tryAgainButton: '再试一次',
+    adminDeletePostSuccessTitle: '帖子已删除',
+    adminDeletePostSuccessDesc: '帖子 "{title}" 已删除。',
+    adminDeletePostErrorTitle: '删除失败',
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -896,7 +1070,7 @@ export const translations: Translations = {
     newPasswordLabel: '新密码（可选）',
     leaveBlankNoChange: '留空以保持当前密码',
     updateProfileButton: '更新个人资料',
-    profileUpdateSimulated: "个人资料更新（模拟）。",
+    profileUpdateSimulated: "通过Gravatar/Google更改头像（模拟）。",
     subscriptionDetailsTitle: '订阅详情',
     currentPlanLabel: '当前计划',
     nextBillingDateLabel: '下一个账单日期',
@@ -907,6 +1081,10 @@ export const translations: Translations = {
     noActiveSubscription: '您没有有效的PRO订阅。',
     upgradeToProButton: '升级到PRO - $1/月',
     upgradeToProSimulated: "升级到PRO（模拟支付流程）。",
+    profileUpdatedSuccessTitle: '个人资料已更新',
+    profileUpdatedSuccessDesc: '您的个人资料已成功更新。',
+    profileUpdateErrorTitle: '更新失败',
+    profileUpdateErrorDesc: '无法更新个人资料。',
     userReviewsTitle: "用户评论",
     noCommentsYet: "暂无评论。成为第一个分享您想法的人！",
     addYourCommentTitle: "添加您的评论",
@@ -921,6 +1099,18 @@ export const translations: Translations = {
     subscribeButton: "升级到PRO",
     cancelButton: "取消",
     loginToCommentPrompt: "请登录后发表评论。",
+    commentSubmittedSuccessTitle: "评论已提交",
+    commentSubmittedSuccessDesc: "您的评论已发布。",
+    commentSubmitErrorTitle: "提交错误",
+    commentSubmitErrorDesc: "无法发布您的评论。",
+    permissionDeniedErrorToastDesc: "您无权发表评论。请检查Firestore规则。",
+    commentMissingInfoTitle: "信息缺失",
+    commentMissingInfoDesc: "请提供评分和评论。",
+    deleteCommentButton: '删除评论',
+    deleteCommentConfirmTitle: '确认删除评论',
+    deleteCommentConfirmDescription: '您确定要删除此评论吗？此操作无法撤销。',
+    commentDeletedSuccess: '评论已成功删除。',
+    commentDeleteError: '删除评论失败。',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "升级PRO",
     proButtonTooltip: "升级到PRO",
@@ -943,6 +1133,12 @@ export const translations: Translations = {
     upgradeFailedDescription: "无法处理您的升级。请重试或联系支持。",
     loginRequiredForProTitle: "需要登录",
     loginRequiredForProDescription: "请登录或创建账户以升级到PRO。",
+    // Generic
+    errorText: '错误',
+    errorDefaultTitle: '错误',
+    errorDefaultDesc: '发生意外错误。',
+    accessDeniedTitle: '访问被拒绝',
+    accessDeniedDescription: '您无权执行此操作。',
   },
   ja: {
     navHome: 'ホーム',
@@ -1004,8 +1200,8 @@ export const translations: Translations = {
     orContinueWith: 'または続ける',
     noAccountPrompt: 'アカウントをお持ちではありませんか？',
     signUpLink: '登録する',
-    loginAttemptMessage: 'ログイン試行（シミュレート）',
-    socialLoginAttemptMessage: '{provider}でログイン（シミュレート）',
+    loginAttemptMessage: 'ログインに成功しました！',
+    socialLoginAttemptMessage: '{provider}でのログインに成功しました！',
     registerPageTitle: 'アカウントを作成',
     registerPageSubtitle: 'World AIに参加してAIツールを発見し、議論しましょう。',
     usernameLabel: 'ユーザー名',
@@ -1014,7 +1210,7 @@ export const translations: Translations = {
     orSignUpWith: 'または登録する',
     alreadyHaveAccountPrompt: 'すでにアカウントをお持ちですか？',
     loginLink: 'ログイン',
-    registrationAttemptMessage: '登録試行（シミュレート）',
+    registrationAttemptMessage: '登録に成功しました！ようこそ！',
     adminPanelTitle: '管理パネル',
     adminCreatePostButton: '新しい記事を作成',
     adminManagePostsTitle: '記事を管理',
@@ -1022,6 +1218,7 @@ export const translations: Translations = {
     adminTableTitle: 'タイトル',
     adminTableDate: '日付',
     adminTableStatus: 'ステータス',
+    adminPostPublishedStatus: '公開済み',
     adminTableActions: 'アクション',
     editButton: '編集',
     deleteButton: '削除',
@@ -1062,8 +1259,26 @@ export const translations: Translations = {
     adminPostCreatedSuccess: '記事が作成されました',
     adminPostUpdatedSuccess: '記事が更新されました',
     adminPostError: '記事の保存中にエラーが発生しました',
-    updatedInSession: "データベースで更新されました。",
-    createdInSession: "データベースに保存されました。",
+    updatedInSession: '記事 "{title}" が更新されました。',
+    createdInSession: '記事 "{title}" が保存されました。',
+    errorLoadingPost: '記事の読み込み中にエラーが発生しました',
+    adminPostErrorTitle: '記事読み込みエラー',
+    adminPostErrorDesc: '記事データの読み込みに失敗しました。',
+    adminPostNotFound: 'ID {id} の記事が見つかりません。',
+    adminPostImageTooLarge: '画像が大きすぎます。プレースホルダーを使用しています。直接保存の最大サイズは約1MBです。',
+    imageFileTooLargeTitle: '画像ファイルが大きすぎます',
+    imageFileTooLargeDesc: '5MB未満の画像ファイルを選択してください。大きな画像は正しく保存されない場合があります。',
+    adminPostImageSizeHint: 'プレースホルダーを使用しています。直接保存の最大サイズは約1MBです。',
+    adminPostRequiredFields: "必須項目（タイトル、説明、メイン画像、カテゴリー、公開日）をすべて入力してください。メイン画像がアップロードまたは設定されていることを確認してください。",
+    adminPostAccessDeniedTitle: 'アクセス拒否',
+    adminPostAccessDeniedDesc: 'このページを表示する権限がありません。',
+    goToHomepageButton: 'ホームページに移動',
+    adminErrorLoadingPostsTitle: '記事読み込みエラー',
+    adminErrorLoadingPostsDesc: '記事の読み込みに失敗しました。後でもう一度お試しください。',
+    tryAgainButton: '再試行',
+    adminDeletePostSuccessTitle: '記事が削除されました',
+    adminDeletePostSuccessDesc: '記事 "{title}" が削除されました。',
+    adminDeletePostErrorTitle: '削除に失敗しました',
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -1073,7 +1288,7 @@ export const translations: Translations = {
     newPasswordLabel: '新しいパスワード（オプション）',
     leaveBlankNoChange: '現在のパスワードを維持する場合は空白のままにしてください',
     updateProfileButton: 'プロフィール更新',
-    profileUpdateSimulated: "プロフィール更新（シミュレート）。",
+    profileUpdateSimulated: "Gravatar/Google経由でのプロフィール写真変更（シミュレート）。",
     subscriptionDetailsTitle: 'サブスクリプションの詳細',
     currentPlanLabel: '現在のプラン',
     nextBillingDateLabel: '次回の請求日',
@@ -1084,6 +1299,10 @@ export const translations: Translations = {
     noActiveSubscription: '有効なPROサブスクリプションがありません。',
     upgradeToProButton: 'PROにアップグレード - $1/月',
     upgradeToProSimulated: "PROへのアップグレード（シミュレートされた支払いフロー）。",
+    profileUpdatedSuccessTitle: 'プロフィールが更新されました',
+    profileUpdatedSuccessDesc: 'プロフィールが正常に更新されました。',
+    profileUpdateErrorTitle: '更新に失敗しました',
+    profileUpdateErrorDesc: 'プロフィールを更新できませんでした。',
     userReviewsTitle: "ユーザーレビューとコメント",
     noCommentsYet: "まだコメントはありません。最初にあなたの考えを共有してください！",
     addYourCommentTitle: "あなたのコメントを追加",
@@ -1098,6 +1317,18 @@ export const translations: Translations = {
     subscribeButton: "PROにアップグレード",
     cancelButton: "キャンセル",
     loginToCommentPrompt: "コメントするにはログインしてください。",
+    commentSubmittedSuccessTitle: "コメントが送信されました",
+    commentSubmittedSuccessDesc: "コメントが投稿されました。",
+    commentSubmitErrorTitle: "送信エラー",
+    commentSubmitErrorDesc: "コメントを投稿できませんでした。",
+    permissionDeniedErrorToastDesc: "コメントを投稿する権限がありません。Firestoreのルールを確認してください。",
+    commentMissingInfoTitle: "情報が不足しています",
+    commentMissingInfoDesc: "評価とコメントを入力してください。",
+    deleteCommentButton: 'コメントを削除',
+    deleteCommentConfirmTitle: 'コメント削除の確認',
+    deleteCommentConfirmDescription: 'このコメントを削除してもよろしいですか？この操作は元に戻せません。',
+    commentDeletedSuccess: 'コメントが正常に削除されました。',
+    commentDeleteError: 'コメントの削除に失敗しました。',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "PROにアップグレード",
     proButtonTooltip: "PROにアップグレード",
@@ -1120,6 +1351,12 @@ export const translations: Translations = {
     upgradeFailedDescription: "アップグレードを処理できませんでした。もう一度試すか、サポートにお問い合わせください。",
     loginRequiredForProTitle: "ログインが必要です",
     loginRequiredForProDescription: "PROにアップグレードするには、ログインまたはアカウントを作成してください。",
+    // Generic
+    errorText: 'エラー',
+    errorDefaultTitle: 'エラー',
+    errorDefaultDesc: '予期しないエラーが発生しました。',
+    accessDeniedTitle: 'アクセス拒否',
+    accessDeniedDescription: 'この操作を実行する権限がありません。',
   },
   pt: {
     navHome: 'Início',
@@ -1181,8 +1418,8 @@ export const translations: Translations = {
     orContinueWith: 'Ou continue com',
     noAccountPrompt: 'Não tem uma conta?',
     signUpLink: 'Cadastre-se',
-    loginAttemptMessage: 'Tentativa de login (simulada)',
-    socialLoginAttemptMessage: 'Login com {provider} (simulado)',
+    loginAttemptMessage: 'Login realizado com sucesso!',
+    socialLoginAttemptMessage: 'Login realizado com sucesso com {provider}!',
     registerPageTitle: 'Crie sua Conta',
     registerPageSubtitle: 'Junte-se ao World AI para descobrir e discutir ferramentas de IA.',
     usernameLabel: 'Nome de Usuário',
@@ -1191,7 +1428,7 @@ export const translations: Translations = {
     orSignUpWith: 'Ou cadastre-se com',
     alreadyHaveAccountPrompt: 'Já tem uma conta?',
     loginLink: 'Entrar',
-    registrationAttemptMessage: 'Tentativa de registro (simulada)',
+    registrationAttemptMessage: 'Cadastro realizado com sucesso! Bem-vindo!',
     adminPanelTitle: 'Painel Admin',
     adminCreatePostButton: 'Criar Nova Postagem',
     adminManagePostsTitle: 'Gerenciar Postagens',
@@ -1199,6 +1436,7 @@ export const translations: Translations = {
     adminTableTitle: 'Título',
     adminTableDate: 'Data',
     adminTableStatus: 'Status',
+    adminPostPublishedStatus: 'Publicado',
     adminTableActions: 'Ações',
     editButton: 'Editar',
     deleteButton: 'Excluir',
@@ -1238,9 +1476,27 @@ export const translations: Translations = {
     adminPostButtonBack: 'Voltar para Admin',
     adminPostCreatedSuccess: 'Postagem Criada',
     adminPostUpdatedSuccess: 'Postagem Atualizada',
-    adminPostError: 'Erro ao Salvar Postagem',
-    updatedInSession: "foi atualizado no banco de dados.",
-    createdInSession: "foi salvo no banco de dados.",
+    adminPostError: 'Erro ao salvar a postagem',
+    updatedInSession: 'A postagem "{title}" foi atualizada.',
+    createdInSession: 'A postagem "{title}" foi salva.',
+    errorLoadingPost: 'Erro ao carregar a postagem',
+    adminPostErrorTitle: 'Erro ao Carregar Postagem',
+    adminPostErrorDesc: 'Falha ao carregar dados da postagem.',
+    adminPostNotFound: 'Postagem com ID {id} não encontrada.',
+    adminPostImageTooLarge: 'A imagem é muito grande. Usando placeholder. Máx ~1MB para salvamento direto.',
+    imageFileTooLargeTitle: 'Arquivo de Imagem Muito Grande',
+    imageFileTooLargeDesc: 'Por favor, selecione um arquivo de imagem menor que 5MB. Imagens maiores podem não ser salvas corretamente.',
+    adminPostImageSizeHint: 'Usando placeholder. Máx ~1MB para salvamento direto.',
+    adminPostRequiredFields: "Preencha todos os campos obrigatórios (Título, Descrições, Imagem Principal, Categoria, Data de Publicação). Certifique-se de que a imagem principal foi carregada ou definida.",
+    adminPostAccessDeniedTitle: 'Acesso Negado',
+    adminPostAccessDeniedDesc: 'Você não tem permissão para visualizar esta página.',
+    goToHomepageButton: 'Ir para a Página Inicial',
+    adminErrorLoadingPostsTitle: 'Erro ao Carregar Postagens',
+    adminErrorLoadingPostsDesc: 'Falha ao carregar postagens. Tente novamente mais tarde.',
+    tryAgainButton: 'Tentar Novamente',
+    adminDeletePostSuccessTitle: 'Postagem Excluída',
+    adminDeletePostSuccessDesc: 'A postagem "{title}" foi excluída.',
+    adminDeletePostErrorTitle: 'Falha ao Excluir',
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',
@@ -1250,7 +1506,7 @@ export const translations: Translations = {
     newPasswordLabel: 'Nova Senha (opcional)',
     leaveBlankNoChange: 'Deixe em branco para manter a atual',
     updateProfileButton: 'Atualizar Perfil',
-    profileUpdateSimulated: "Atualização de perfil (simulada).",
+    profileUpdateSimulated: "Alteração de foto de perfil via Gravatar/Google (simulada).",
     subscriptionDetailsTitle: 'Detalhes da Assinatura',
     currentPlanLabel: 'Plano Atual',
     nextBillingDateLabel: 'Próxima Data de Cobrança',
@@ -1261,6 +1517,10 @@ export const translations: Translations = {
     noActiveSubscription: 'Você não possui uma assinatura PRO ativa.',
     upgradeToProButton: 'Atualizar para PRO - $1/mês',
     upgradeToProSimulated: "Atualização para PRO (fluxo de pagamento simulado).",
+    profileUpdatedSuccessTitle: 'Perfil Atualizado',
+    profileUpdatedSuccessDesc: 'Seu perfil foi atualizado com sucesso.',
+    profileUpdateErrorTitle: 'Falha na Atualização',
+    profileUpdateErrorDesc: 'Não foi possível atualizar o perfil.',
     userReviewsTitle: "Avaliações e Comentários de Usuários",
     noCommentsYet: "Nenhum comentário ainda. Seja o primeiro a compartilhar sua opinião!",
     addYourCommentTitle: "Adicione Seu Comentário",
@@ -1275,6 +1535,18 @@ export const translations: Translations = {
     subscribeButton: "Atualizar para PRO",
     cancelButton: "Cancelar",
     loginToCommentPrompt: "Faça login para deixar um comentário.",
+    commentSubmittedSuccessTitle: "Comentário Enviado",
+    commentSubmittedSuccessDesc: "Seu comentário foi postado.",
+    commentSubmitErrorTitle: "Erro ao Enviar",
+    commentSubmitErrorDesc: "Não foi possível postar seu comentário.",
+    permissionDeniedErrorToastDesc: "Você não tem permissão para postar comentários. Verifique as regras do Firestore.",
+    commentMissingInfoTitle: "Informações Faltando",
+    commentMissingInfoDesc: "Forneça uma avaliação e um comentário.",
+    deleteCommentButton: 'Excluir Comentário',
+    deleteCommentConfirmTitle: 'Confirmar Exclusão de Comentário',
+    deleteCommentConfirmDescription: 'Tem certeza de que deseja excluir este comentário? Esta ação não pode ser desfeita.',
+    commentDeletedSuccess: 'Comentário excluído com sucesso.',
+    commentDeleteError: 'Falha ao excluir o comentário.',
     // PRO Upgrade Button & Dialog
     proButtonLabel: "Seja PRO",
     proButtonTooltip: "Atualizar para PRO",
@@ -1297,6 +1569,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "Não foi possível processar sua atualização. Tente novamente ou entre em contato com o suporte.",
     loginRequiredForProTitle: "Login Necessário",
     loginRequiredForProDescription: "Faça login ou crie uma conta para atualizar para PRO.",
+    // Generic
+    errorText: 'Erro',
+    errorDefaultTitle: 'Erro',
+    errorDefaultDesc: 'Ocorreu um erro inesperado.',
+    accessDeniedTitle: 'Acesso Negado',
+    accessDeniedDescription: 'Você não tem permissão para realizar esta ação.',
   },
 };
-

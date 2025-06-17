@@ -6,14 +6,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useAuth } from "@/contexts/AuthContext"; // Import useAuth
+import { useAuth } from "@/contexts/AuthContext";
 import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/hooks/use-toast";
-import { format } from 'date-fns'; // For memberSince
+import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; 
 import type { Timestamp } from 'firebase/firestore';
 
@@ -25,15 +25,12 @@ export default function AccountPage() {
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  // Password fields are for display/UX, actual change might need re-auth and Firebase methods
-  // const [currentPassword, setCurrentPassword] = useState('');
-  // const [newPassword, setNewPassword] = useState('');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
 
 
   useEffect(() => {
     if (!authLoading && !currentUser) {
-      router.push('/login'); // Redirect if not logged in
+      router.push('/login');
     }
     if (currentUser) {
       setUsername(currentUser.username || currentUser.displayName || '');
@@ -46,37 +43,21 @@ export default function AccountPage() {
     if (!currentUser || isUpdatingProfile) return;
     setIsUpdatingProfile(true);
     try {
-      // Here, we'd update Firebase Auth profile (displayName) if needed,
-      // and always update Firestore for 'username' and other custom fields.
-      // For simplicity, we're focusing on the 'username' in Firestore.
-      // If displayName in Firebase Auth should also change, add:
-      // await updateFirebaseAuthProfile(auth.currentUser, { displayName: username });
       await updateUserProfileInFirestore(currentUser.uid, { username });
-      toast({ title: t('profileUpdateSimulated', "Profile Updated"), description: "Your profile has been successfully updated."});
+      toast({ title: t('profileUpdatedSuccessTitle', "Profile Updated"), description: t('profileUpdatedSuccessDesc', "Your profile has been successfully updated.")});
     } catch (error: any) {
       console.error("Profile update error:", error);
-      toast({ variant: "destructive", title: "Update Failed", description: error.message || "Could not update profile."});
+      toast({ variant: "destructive", title: t('profileUpdateErrorTitle', "Update Failed"), description: error.message || t('profileUpdateErrorDesc', "Could not update profile.")});
     } finally {
       setIsUpdatingProfile(false);
     }
   };
 
   const handleCancelSubscription = () => {
-    // This would involve backend logic and payment provider integration
-    // For now, it remains a simulated action.
-    // If isSubscribed flag is in Firestore, update it:
-    // if (currentUser) {
-    //   updateUserProfileInFirestore(currentUser.uid, { isSubscribed: false, subscriptionPlan: null });
-    // }
     toast({ title: t('cancelSubscriptionSimulated', "Subscription cancellation (simulated).") });
   }
   
   const handleUpgradeToPro = () => {
-    // This would involve backend logic and payment provider integration
-    // If isSubscribed flag is in Firestore, update it:
-    // if (currentUser) {
-    //   updateUserProfileInFirestore(currentUser.uid, { isSubscribed: true, subscriptionPlan: "PRO Monthly", nextBillingDate: "..." }); // nextBillingDate would be calculated
-    // }
     toast({ title: t('upgradeToProSimulated', "Upgrade to PRO (simulated payment flow).") });
   }
 
@@ -110,7 +91,6 @@ export default function AccountPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Profile Section */}
         <Card className="md:col-span-1 shadow-lg">
           <CardHeader className="items-center text-center">
             <Avatar className="h-24 w-24 mb-3 border-2 border-primary">
@@ -122,7 +102,7 @@ export default function AccountPage() {
                 </AvatarFallback>
               )}
             </Avatar>
-             <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: "Profile picture change via Gravatar/Google (simulated)."})}>
+             <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: t('profileUpdateSimulated', "Profile picture change via Gravatar/Google (simulated).")})}>
                 <Pencil className="mr-1.5 h-3 w-3"/> {t('changeProfilePictureButton', 'Change Picture')}
             </Button>
             <CardTitle className="mt-2">{currentUser.username || currentUser.displayName}</CardTitle>
@@ -136,7 +116,6 @@ export default function AccountPage() {
           </CardContent>
         </Card>
 
-        {/* Account Details & Subscription Section */}
         <div className="md:col-span-2 space-y-8">
           <Card className="shadow-lg">
             <CardHeader>
@@ -154,15 +133,6 @@ export default function AccountPage() {
                     <Input id="email" type="email" value={email} readOnly disabled />
                   </div>
                 </div>
-                {/* Password change requires re-authentication, more complex flow */}
-                {/* <div>
-                    <Label htmlFor="current-password">{t('currentPasswordLabel', 'Current Password')}</Label>
-                    <Input id="current-password" type="password" placeholder="********"/>
-                </div>
-                 <div>
-                    <Label htmlFor="new-password">{t('newPasswordLabel', 'New Password (optional)')}</Label>
-                    <Input id="new-password" type="password" placeholder={t('leaveBlankNoChange', 'Leave blank to keep current')}/>
-                </div> */}
                 <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile}>
                   {isUpdatingProfile ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
                   {t('updateProfileButton', 'Update Profile')}
@@ -182,7 +152,7 @@ export default function AccountPage() {
                   <p>{t('nextBillingDateLabel', 'Next Billing Date')}: {currentUser.nextBillingDate || "August 15, 2024 (Simulated)"}</p>
                   <p>{t('paymentMethodLabel', 'Payment Method')}: Visa **** 1234 (Simulated)</p>
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                    <Button variant="outline" onClick={() => toast({description: "Payment update (simulated)."}) }>{t('updatePaymentButton', 'Update Payment Method')}</Button>
+                    <Button variant="outline" onClick={() => toast({description: t('paymentMethodLabel', "Payment method update (simulated).") }) }>{t('updatePaymentButton', 'Update Payment Method')}</Button>
                     <Button variant="destructive" onClick={handleCancelSubscription}>{t('cancelSubscriptionButton', 'Cancel Subscription')}</Button>
                   </div>
                 </>

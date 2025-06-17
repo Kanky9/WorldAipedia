@@ -32,22 +32,22 @@ export default function RegisterPage() {
     if (isSubmitting || authLoading) return;
 
     if (password.length < 6) {
-      toast({ variant: "destructive", title: "Registration Failed", description: "Password should be at least 6 characters."});
+      toast({ variant: "destructive", title: t('errorDefaultTitle', "Registration Failed"), description: t('errorDefaultDesc', "Password should be at least 6 characters.")});
       return;
     }
 
     if (password !== confirmPassword) {
-      toast({ variant: "destructive", title: "Registration Failed", description: "Passwords do not match."});
+      toast({ variant: "destructive", title: t('errorDefaultTitle', "Registration Failed"), description: t('errorDefaultDesc', "Passwords do not match.")});
       return;
     }
     setIsSubmitting(true);
     try {
       await signUpWithEmailAndPassword(email, password, username);
-      toast({ title: "Registration Successful", description: "Welcome! Your account has been created."});
+      toast({ title: t('registerPageTitle', "Registration Successful"), description: t('registrationAttemptMessage', "Welcome! Your account has been created.")});
       router.push('/account');
     } catch (error: any) {
       console.error("Registration failed:", error);
-      toast({ variant: "destructive", title: "Registration Failed", description: error.message || "An unknown error occurred." });
+      toast({ variant: "destructive", title: t('errorDefaultTitle', "Registration Failed"), description: error.message || t('errorDefaultDesc', "An unknown error occurred.") });
     } finally {
       setIsSubmitting(false);
     }
@@ -58,11 +58,11 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       await signInWithGoogle();
-      toast({ title: t('loginPageTitle'), description: "Successfully logged in with Google!"});
+      toast({ title: t('loginPageTitle', 'Welcome Back!'), description: t('socialLoginAttemptMessage', "Successfully logged in with Google!", {provider: "Google"})});
       router.push('/account');
     } catch (error: any) {
       console.error("Google login failed:", error);
-      toast({ variant: "destructive", title: "Google Login Failed", description: error.message || "An unknown error occurred." });
+      toast({ variant: "destructive", title: t('errorDefaultTitle', "Google Login Failed"), description: error.message || t('errorDefaultDesc', "An unknown error occurred.") });
     } finally {
       setIsSubmitting(false);
     }
@@ -121,7 +121,7 @@ export default function RegisterPage() {
                 <span className="px-2 bg-card text-muted-foreground">{t('orSignUpWith', 'Or sign up with')}</span>
               </div>
             </div>
-            <div className="mt-6 grid grid-cols-1 gap-3"> {/* Changed to 1 col for simplicity */}
+            <div className="mt-6 grid grid-cols-1 gap-3">
                <Button variant="outline" onClick={handleGoogleLogin} disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon />} 
                  <span className="ml-2">Google</span>

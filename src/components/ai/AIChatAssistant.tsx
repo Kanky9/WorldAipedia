@@ -72,7 +72,6 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           })
           .catch(error => {
             console.error("Error fetching initial explanation:", error);
-            // Fallback message if the initial explanation fails
             setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatErrorWelcomeGeneral', "Hi there! I'm Lace, your AI assistant. How can I help you today?") }], timestamp: new Date() }]);
           })
           .finally(() => {
@@ -83,7 +82,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       setMessages([]);
       clearSelectedImage();
     }
-  }, [open, initialContext, language, t, messages.length]); // Added messages.length to dependencies to re-trigger if chat is closed and reopened.
+  }, [open, initialContext, language, t, messages.length]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -141,7 +140,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       parts: msg.parts.map(part => {
         const genkitPart: any = {};
         if (part.text) genkitPart.text = part.text;
-        if (part.media) genkitPart.media = { url: "User sent an image previously" }; 
+        if (part.media) genkitPart.media = { url: t('laceChatImagePreviewAlt', "User sent an image previously") }; 
         return genkitPart;
       }),
     }));
@@ -156,7 +155,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'model', parts: [{ text: response.aiResponse }], timestamp: new Date() }]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
-      setMessages(prev => [...prev, {id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatErrorResponse') }], timestamp: new Date() }]);
+      setMessages(prev => [...prev, {id: crypto.randomUUID(), role: 'model', parts: [{ text: t('laceChatErrorResponse', "Lace is having trouble responding. Please try again.") }], timestamp: new Date() }]);
     } finally {
       setIsLoading(false);
     }
@@ -168,10 +167,10 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="flex items-center gap-2">
             <Bot className="h-6 w-6 text-primary" />
-            {t('laceChatTitle')}
+            {t('laceChatTitle', 'Chat with Lace')}
           </DialogTitle>
           <DialogDescription>
-            {t('laceChatDescription')}
+            {t('laceChatDescription', "I'm Lace! Ask me about World AI, AI tools, or let's just chat.")}
           </DialogDescription>
         </DialogHeader>
         
@@ -180,7 +179,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
             {isInitialLoading && messages.length === 0 && (
               <div className="flex items-center justify-center p-4">
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <p className="ml-2">{t('laceChatConnecting')}</p>
+                <p className="ml-2">{t('laceChatConnecting', 'Lace is connecting...')}</p>
               </div>
             )}
             {messages.map((msg) => (
@@ -204,7 +203,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
                       {part.media && part.media.type === 'image' && (
                         <Image 
                           src={part.media.url} 
-                          alt={t('laceChatImagePreviewAlt')}
+                          alt={t('laceChatImagePreviewAlt', 'Selected image preview')}
                           width={200} 
                           height={150} 
                           className="rounded-md mt-2 max-w-full h-auto" 
@@ -233,7 +232,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
         <DialogFooter className="p-6 pt-2 border-t flex-col space-y-2">
           {selectedImage && (
             <div className="relative group w-32 h-24">
-              <Image src={selectedImage} alt={t('laceChatImagePreviewAlt')} layout="fill" objectFit="cover" className="rounded-md border" />
+              <Image src={selectedImage} alt={t('laceChatImagePreviewAlt', 'Selected image preview')} layout="fill" objectFit="cover" className="rounded-md border" />
               <Button
                 variant="ghost"
                 size="icon"
@@ -252,13 +251,13 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
                             <Paperclip className="h-5 w-5" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent><p>{t('laceChatImageUploadTooltip')}</p></TooltipContent>
+                    <TooltipContent><p>{t('laceChatImageUploadTooltip', 'Upload Image')}</p></TooltipContent>
                 </Tooltip>
             </TooltipProvider>
             <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageSelect} className="hidden" />
 
             <Textarea
-              placeholder={t('laceChatPlaceholder')}
+              placeholder={t('laceChatPlaceholder', 'Type your message or upload an image...')}
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               onKeyPress={(e) => {
@@ -278,7 +277,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
               className="bg-primary hover:bg-primary/90 rounded-lg"
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              <span className="sr-only">{t('laceChatSend')}</span>
+              <span className="sr-only">{t('laceChatSend', 'Send')}</span>
             </Button>
           </div>
         </DialogFooter>

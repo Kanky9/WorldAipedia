@@ -4,20 +4,23 @@
 import type { FC } from 'react';
 import type { UserComment } from '@/lib/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star } from 'lucide-react';
+import { Star, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { es, enUS } from 'date-fns/locale'; // Import locales directly
+import { es, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { Timestamp } from 'firebase/firestore';
 
 interface CommentCardProps {
   comment: UserComment;
+  isAdmin?: boolean;
+  onDelete?: (commentId: string) => void;
 }
 
-const CommentCard: FC<CommentCardProps> = ({ comment }) => {
-  const { language } = useLanguage();
-  const displayName = comment.isAnonymous ? "Anonymous" : comment.username;
-  const displayInitials = comment.isAnonymous ? "AN" : comment.username.substring(0, 2).toUpperCase();
+const CommentCard: FC<CommentCardProps> = ({ comment, isAdmin, onDelete }) => {
+  const { language, t } = useLanguage();
+  const displayName = comment.isAnonymous ? t('anonymousCommentLabel', "Anonymous") : comment.username;
+  const displayInitials = comment.isAnonymous ? t('anonymousCommentLabel', "Anonymous").substring(0,2).toUpperCase() : comment.username.substring(0, 2).toUpperCase();
   
   const profileImage = comment.isAnonymous ? undefined : comment.profileImageUrl;
 
@@ -30,7 +33,6 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
     }
   };
 
-  // Ensure timestamp is a Date object for formatting
   let commentDate: Date | null = null;
   if (comment.timestamp) {
     if (comment.timestamp instanceof Date) {
@@ -39,6 +41,12 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
       commentDate = (comment.timestamp as Timestamp).toDate();
     }
   }
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(comment.id);
+    }
+  };
 
   return (
     <div className="flex space-x-3 p-4 border-b border-border/50">
@@ -53,11 +61,24 @@ const CommentCard: FC<CommentCardProps> = ({ comment }) => {
           <h4 className="text-sm font-semibold text-foreground">
             {displayName}
           </h4>
-          {commentDate && (
-            <time dateTime={commentDate.toISOString()} className="text-xs text-muted-foreground">
-              {format(commentDate, 'PPp', { locale: getLocale() })}
-            </time>
-          )}
+          <div className="flex items-center gap-2">
+            {commentDate && (
+              <time dateTime={commentDate.toISOString()} className="text-xs text-muted-foreground">
+                {format(commentDate, 'PPp', { locale: getLocale() })}
+              </time>
+            )}
+            {isAdmin && onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                onClick={handleDelete}
+                aria-label={t('deleteCommentButton', "Delete Comment")}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <div className="flex items-center">
           {Array.from({ length: 5 }, (_, i) => (

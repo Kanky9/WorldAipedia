@@ -62,7 +62,7 @@ if (getApps().length === 0) {
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app); // Initialize Firebase Storage
+const storage = getStorage(app);
 
 // Helper to prepare Post data for Firestore
 const preparePostForFirestore = (postData: Partial<Omit<PostType, 'id' | 'publishedDate'> & { publishedDate?: Date | Timestamp }>): any => {
@@ -151,6 +151,11 @@ export const getPostsByCategorySlugFromFirestore = async (categorySlug: string):
 export const deletePostFromFirestore = async (postId: string): Promise<void> => {
   const postRef = doc(db, 'posts', postId);
   await deleteDoc(postRef);
+};
+
+export const deleteCommentFromFirestore = async (postId: string, commentId: string): Promise<void> => {
+  const commentRef = doc(db, 'posts', postId, 'comments', commentId);
+  await deleteDoc(commentRef);
 };
 
 export {

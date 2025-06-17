@@ -51,7 +51,6 @@ export default function CreatePostPage() {
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
 
-  // State for Data URIs and Preview URLs
   const [mainImageDataUri, setMainImageDataUri] = useState<string>('');
   const [mainImageUrlForPreview, setMainImageUrlForPreview] = useState<string>(DEFAULT_MAIN_PLACEHOLDER);
   const [mainImageHint, setMainImageHint] = useState('');
@@ -77,13 +76,13 @@ export default function CreatePostPage() {
       if (!currentUser || !currentUser.isAdmin) {
         toast({
           variant: "destructive",
-          title: "Access Denied",
-          description: "You do not have permission to view this page.",
+          title: t('adminPostAccessDeniedTitle', "Access Denied"),
+          description: t('adminPostAccessDeniedDesc', "You do not have permission to view this page."),
         });
         router.replace('/');
       }
     }
-  }, [currentUser, authLoading, router, toast]);
+  }, [currentUser, authLoading, router, toast, t]);
 
   const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
     if (!value) return '';
@@ -130,13 +129,13 @@ export default function CreatePostPage() {
           setPublishedDate(pDate instanceof Date ? pDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
           setLinkTool(existingPost.link || '');
         } else {
-          toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: `Post with ID ${id} not found.` });
+          toast({ variant: "destructive", title: t('adminPostErrorTitle', "Error loading post"), description: t('adminPostNotFound', "Post with ID {id} not found.", {id}) });
           router.push('/admin');
         }
         setIsLoadingData(false);
       }).catch(error => {
         console.error("Error fetching post for edit:", error);
-        toast({ variant: "destructive", title: t('adminPostError', "Error loading post"), description: "Failed to load post data." });
+        toast({ variant: "destructive", title: t('adminPostErrorTitle', "Error loading post"), description: t('adminPostErrorDesc', "Failed to load post data.") });
         setIsLoadingData(false);
         router.push('/admin');
       });
@@ -159,11 +158,11 @@ export default function CreatePostPage() {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // Basic 5MB check for UX
+      if (file.size > 5 * 1024 * 1024) { 
         toast({
             variant: "destructive",
-            title: "Image File Too Large",
-            description: `Please select an image file smaller than 5MB. Larger images may not save correctly.`,
+            title: t('imageFileTooLargeTitle', "Image File Too Large"),
+            description: t('imageFileTooLargeDesc', "Please select an image file smaller than 5MB. Larger images may not save correctly."),
             duration: 7000,
         });
         if (event.target) event.target.value = "";
@@ -173,7 +172,7 @@ export default function CreatePostPage() {
       reader.onloadend = () => {
         const result = reader.result as string;
         setDataUriState(result);
-        setPreviewUrlState(result); // For preview, use the data URI itself
+        setPreviewUrlState(result);
       };
       reader.readAsDataURL(file);
     }
@@ -193,15 +192,15 @@ export default function CreatePostPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser?.isAdmin) {
-      toast({ variant: "destructive", title: "Access Denied", description: "You do not have permission to perform this action." });
+      toast({ variant: "destructive", title: t('adminPostAccessDeniedTitle', "Access Denied"), description: t('adminPostAccessDeniedDesc', "You do not have permission to perform this action.") });
       return;
     }
 
     if (!title || !shortDescription || !longDescription || (!mainImageDataUri && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
       toast({
         variant: "destructive",
-        title: t('adminPostError', "Error submitting post"),
-        description: "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or set.",
+        title: t('adminPostErrorTitle', "Error submitting post"),
+        description: t('adminPostRequiredFields', "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or set."),
       });
       return;
     }
@@ -218,21 +217,21 @@ export default function CreatePostPage() {
         : { en: '' };
       const typedBase = base as UpdatedLocalizedFieldReturnType;
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) typedBase.en = newValue; // Ensure 'en' has a value if possible
+      if (!typedBase.en && newValue) typedBase.en = newValue;
       return typedBase;
     };
     
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
-        toast({ variant: "destructive", title: "Main Image Too Large", description: `Main image is too large (${(finalMainImageUrl.length / (1024*1024)).toFixed(1)}MB). Using placeholder. Max ~1MB for direct save.` });
+        toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Main Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
         finalMainImageUrl = DEFAULT_MAIN_PLACEHOLDER;
     } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER && !mainImageDataUri) {
-        finalMainImageUrl = ''; // If it's still the default placeholder and no new data URI was set.
+        finalMainImageUrl = '';
     }
 
     let finalLogoUrl = logoDataUri || logoUrlForPreview;
     if (finalLogoUrl && finalLogoUrl.startsWith('data:image') && finalLogoUrl.length > MAX_DATA_URI_LENGTH) {
-        toast({ variant: "destructive", title: "Logo Image Too Large", description: `Logo image is too large. Using placeholder. Max ~1MB.` });
+        toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Logo Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB.`) });
         finalLogoUrl = DEFAULT_LOGO_PLACEHOLDER;
     } else if (finalLogoUrl === DEFAULT_LOGO_PLACEHOLDER && !logoDataUri) {
         finalLogoUrl = '';
@@ -240,7 +239,7 @@ export default function CreatePostPage() {
 
     let finalDetailImageUrl1 = detailImage1DataUri || detailImage1UrlForPreview;
     if (finalDetailImageUrl1 && finalDetailImageUrl1.startsWith('data:image') && finalDetailImageUrl1.length > MAX_DATA_URI_LENGTH) {
-        toast({ variant: "destructive", title: "Detail Image 1 Too Large", description: `Detail Image 1 is too large. Using placeholder. Max ~1MB.` });
+        toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Detail Image 1 Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB.`) });
         finalDetailImageUrl1 = DEFAULT_DETAIL_PLACEHOLDER;
     } else if (finalDetailImageUrl1 === DEFAULT_DETAIL_PLACEHOLDER && !detailImage1DataUri) {
         finalDetailImageUrl1 = '';
@@ -248,7 +247,7 @@ export default function CreatePostPage() {
 
     let finalDetailImageUrl2 = detailImage2DataUri || detailImage2UrlForPreview;
     if (finalDetailImageUrl2 && finalDetailImageUrl2.startsWith('data:image') && finalDetailImageUrl2.length > MAX_DATA_URI_LENGTH) {
-        toast({ variant: "destructive", title: "Detail Image 2 Too Large", description: `Detail Image 2 is too large. Using placeholder. Max ~1MB.` });
+        toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Detail Image 2 Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB.`) });
         finalDetailImageUrl2 = DEFAULT_DETAIL_PLACEHOLDER;
     } else if (finalDetailImageUrl2 === DEFAULT_DETAIL_PLACEHOLDER && !detailImage2DataUri) {
         finalDetailImageUrl2 = '';
@@ -274,11 +273,12 @@ export default function CreatePostPage() {
     };
 
     try {
+      const postTitleForToast = getLocalizedStringDefault(postDetailsToSave.title, language);
       if (isEditMode && postIdFromQuery) {
         await updatePostInFirestore(postIdFromQuery, postDetailsToSave);
         toast({
           title: t('adminPostUpdatedSuccess', "Post Updated"),
-          description: `${getLocalizedStringDefault(postDetailsToSave.title, language)} ${t('updatedInSession', "has been updated.")}`,
+          description: t('updatedInSession', 'Post "{title}" has been updated.', { title: postTitleForToast }),
           action: <CheckCircle className="text-green-500" />,
         });
       } else {
@@ -287,7 +287,7 @@ export default function CreatePostPage() {
         await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
-          description: `${getLocalizedStringDefault(newPostData.title, language)} ${t('createdInSession', "has been saved.")}`,
+          description: t('createdInSession', 'Post "{title}" has been saved.', { title: postTitleForToast }),
           action: <CheckCircle className="text-green-500" />,
         });
         setTitle(''); setShortDescription(''); setLongDescription('');
@@ -304,7 +304,7 @@ export default function CreatePostPage() {
       toast({
         variant: "destructive",
         title: t('adminPostError', "Error saving post"),
-        description: `Failed to save post: ${error instanceof Error ? error.message : "Unknown error"}`,
+        description: `${t('adminPostErrorDesc', 'Failed to save post')}: ${error instanceof Error ? error.message : "Unknown error"}`,
         action: <XCircle className="text-red-500" />,
       });
     } finally {
@@ -374,9 +374,9 @@ export default function CreatePostPage() {
      return (
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-10rem)] text-center">
         <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-semibold text-destructive mb-2">Access Denied</h2>
-        <p className="text-muted-foreground">You do not have permission to view this page.</p>
-        <Button onClick={() => router.push('/')} className="mt-4">Go to Homepage</Button>
+        <h2 className="text-2xl font-semibold text-destructive mb-2">{t('adminPostAccessDeniedTitle', "Access Denied")}</h2>
+        <p className="text-muted-foreground">{t('adminPostAccessDeniedDesc', "You do not have permission to view this page.")}</p>
+        <Button onClick={() => router.push('/')} className="mt-4">{t('goToHomepageButton', "Go to Homepage")}</Button>
       </div>
     );
   }
