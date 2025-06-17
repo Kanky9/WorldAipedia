@@ -95,7 +95,7 @@ const Mascot = () => {
     }
   };
 
-  if (pathname.startsWith('/admin')) {
+  if (pathname && pathname.startsWith('/admin')) {
     return null;
   }
 
@@ -120,12 +120,13 @@ const Mascot = () => {
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
   const mascotOpacity = (isMascotVisible || isChatOpen) ? 1 : 0;
 
-  // Refactored style logic
+  // Base style properties
   const baseStyle: React.CSSProperties = {
     animation: mascotAnimation,
     opacity: mascotOpacity,
   };
 
+  // Determine position-specific style properties
   let positionSpecificStyle: React.CSSProperties = {};
   if (isChatOpen) {
     if (isSmallScreen) {
@@ -137,6 +138,7 @@ const Mascot = () => {
         bottom: 'auto',
       };
     } else {
+      // Style for larger screens when chat is open
       positionSpecificStyle = {
         top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`,
         left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`,
@@ -146,6 +148,7 @@ const Mascot = () => {
       };
     }
   } else {
+    // Style when chat is closed
     const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1;
     positionSpecificStyle = {
       bottom: '1.25rem',
@@ -155,6 +158,8 @@ const Mascot = () => {
       transform: 'none',
     };
   }
+
+  // Combine base and position-specific styles
   const mascotPositionStyle: React.CSSProperties = { ...baseStyle, ...positionSpecificStyle };
 
   return (
@@ -279,4 +284,6 @@ const Mascot = () => {
 
 export default Mascot;
     
+    
+
     
