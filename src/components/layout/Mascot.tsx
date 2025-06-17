@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useChat } from '@/contexts/ChatContext';
 import type { CoreTranslationKey } from '@/lib/translations';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 const DIALOG_MAX_WIDTH_PX = 525; // Max width of the chat dialog
 const MASCOT_SVG_HEIGHT_PX = 110;
@@ -17,6 +18,7 @@ const Mascot = () => {
   const { t, language } = useLanguage();
   const { isChatOpen } = useChat();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   const [initialGreeting, setInitialGreeting] = useState('');
   const [isMascotVisible, setIsMascotVisible] = useState(false);
@@ -40,7 +42,6 @@ const Mascot = () => {
     }
     if (typeof window !== 'undefined') {
         window.addEventListener('resize', handleResize);
-        // Initial size set directly in useState, no need for handleResize() here if default is fine
         return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
@@ -63,21 +64,20 @@ const Mascot = () => {
     let bubbleTimer: NodeJS.Timeout | undefined;
 
     if (isChatOpen) {
-      setIsMascotVisible(true); // Ensure mascot is visible when chat opens
-      setShowDefaultBubble(false); // Hide default greeting bubble
+      setIsMascotVisible(true); 
+      setShowDefaultBubble(false); 
 
-      if (currentChatBubbleIndex === -1) { // Start sequence if not started
+      if (currentChatBubbleIndex === -1) { 
         setCurrentChatBubbleIndex(0);
       } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
         setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
         bubbleTimer = setTimeout(() => {
           setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
-        }, 4000); // 4 seconds per bubble
+        }, 4000); 
       } else {
-        setCurrentChatBubbleText(''); // Clear bubble after sequence
+        setCurrentChatBubbleText(''); 
       }
     } else {
-      // When chat closes, reset for next opening, and show default greeting bubble
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
       setShowDefaultBubble(true); 
@@ -90,12 +90,15 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen) { // Only toggle default bubble if chat is closed
+    if (!isChatOpen) { 
       setShowDefaultBubble(prev => !prev);
     }
   };
 
-  // Only render after client-side mount to ensure windowSize is accurate
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   if (!mounted) {
     return null;
   }
@@ -123,33 +126,31 @@ const Mascot = () => {
   };
 
   if (isChatOpen) {
-    if (isSmallScreen) { // Screens less than 640px wide
+    if (isSmallScreen) { 
       mascotPositionStyle = {
         ...mascotPositionStyle,
-        top: '3vh', // Position it near the top, above the dialog
+        top: '3vh', 
         left: '50%',
         transform: 'translateX(-50%)',
         right: 'auto',
         bottom: 'auto',
       };
-    } else { // Screens 640px wide and larger
+    } else { 
       mascotPositionStyle = {
         ...mascotPositionStyle,
-        top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`, // Vertically center mascot with dialog center
-        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`, // To the right of the dialog (525px/2 + 20px)
+        top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`, 
+        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`, 
         right: 'auto',
         bottom: 'auto',
-        transform: 'none', // Clear transform if set by small screen logic
+        transform: 'none', 
       };
     }
-  } else { // Chat closed
-    // Position to the left of the chat button (right-6 / 1.5rem) + button width (w-12 / 3rem) + gap (1rem)
-    // So, right edge of mascot is at 1.5rem + 3rem + 1rem = 5.5rem from right of screen
-    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1; // 1.5 + 3 + 1 = 5.5rem
+  } else { 
+    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1; 
     mascotPositionStyle = {
       ...mascotPositionStyle,
-      bottom: '1.25rem', // Tailwind's bottom-5 (20px)
-      right: `${mascotRightOffsetRem}rem`, // approx 88px or right-22
+      bottom: '1.25rem', 
+      right: `${mascotRightOffsetRem}rem`, 
       top: 'auto',
       left: 'auto',
       transform: 'none',
@@ -165,7 +166,7 @@ const Mascot = () => {
         <div
           className={cn(
             "absolute left-1/2 -translate-x-1/2 w-max max-w-[180px] z-10",
-            "bottom-[115px]", // Position bubble above mascot's head
+            "bottom-[115px]", 
             shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'
           )}
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
@@ -213,7 +214,7 @@ const Mascot = () => {
         <rect x="10" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-left-animation" />
         <rect x="72" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-right-animation" />
         <rect x="30" y="88" width="30" height="12" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5"/>
-        <style jsx>{`
+        <style jsx>{\`
           @keyframes mascotAppearAnimation {
             from { opacity: 0; transform: translateY(15px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -270,10 +271,11 @@ const Mascot = () => {
             from { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); }
             to { opacity: 0; transform: translateY(10px) scale(0.8) translateX(-50%); }
           }
-        `}</style>
+        \`}</style>
       </svg>
     </div>
   );
 };
 
 export default Mascot;
+    
