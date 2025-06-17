@@ -3,6 +3,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'export', // Add this line
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,10 +20,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Add allowedDevOrigins at the root level for 'next dev'
   allowedDevOrigins: [
-    // Add the origin from the warning message
     "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
-    // It's good practice to also allow the standard localhost for local development outside of Studio
     "http://localhost:9002",
   ],
 };
