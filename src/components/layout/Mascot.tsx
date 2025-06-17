@@ -64,23 +64,23 @@ const Mascot = () => {
     let bubbleTimer: NodeJS.Timeout | undefined;
 
     if (isChatOpen) {
-      setIsMascotVisible(true); 
-      setShowDefaultBubble(false); 
+      setIsMascotVisible(true);
+      setShowDefaultBubble(false);
 
-      if (currentChatBubbleIndex === -1) { 
+      if (currentChatBubbleIndex === -1) {
         setCurrentChatBubbleIndex(0);
       } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
         setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
         bubbleTimer = setTimeout(() => {
           setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
-        }, 4000); 
+        }, 4000);
       } else {
-        setCurrentChatBubbleText(''); 
+        setCurrentChatBubbleText('');
       }
     } else {
       setCurrentChatBubbleIndex(-1);
       setCurrentChatBubbleText('');
-      setShowDefaultBubble(true); 
+      setShowDefaultBubble(true);
     }
 
     return () => {
@@ -90,7 +90,7 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen) { 
+    if (!isChatOpen) {
       setShowDefaultBubble(prev => !prev);
     }
   };
@@ -120,42 +120,42 @@ const Mascot = () => {
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
   const mascotOpacity = (isMascotVisible || isChatOpen) ? 1 : 0;
 
-  let mascotPositionStyle: React.CSSProperties = {
+  // Refactored style logic
+  const baseStyle: React.CSSProperties = {
     animation: mascotAnimation,
     opacity: mascotOpacity,
   };
 
+  let positionSpecificStyle: React.CSSProperties = {};
   if (isChatOpen) {
-    if (isSmallScreen) { 
-      mascotPositionStyle = {
-        ...mascotPositionStyle,
-        top: '3vh', 
+    if (isSmallScreen) {
+      positionSpecificStyle = {
+        top: '3vh',
         left: '50%',
         transform: 'translateX(-50%)',
         right: 'auto',
         bottom: 'auto',
       };
-    } else { 
-      mascotPositionStyle = {
-        ...mascotPositionStyle,
-        top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`, 
-        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`, 
+    } else {
+      positionSpecificStyle = {
+        top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`,
+        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`,
         right: 'auto',
         bottom: 'auto',
-        transform: 'none', 
+        transform: 'none',
       };
     }
-  } else { 
-    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1; 
-    mascotPositionStyle = {
-      ...mascotPositionStyle,
-      bottom: '1.25rem', 
-      right: `${mascotRightOffsetRem}rem`, 
+  } else {
+    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1;
+    positionSpecificStyle = {
+      bottom: '1.25rem',
+      right: `${mascotRightOffsetRem}rem`,
       top: 'auto',
       left: 'auto',
       transform: 'none',
     };
   }
+  const mascotPositionStyle: React.CSSProperties = { ...baseStyle, ...positionSpecificStyle };
 
   return (
     <div
@@ -166,7 +166,7 @@ const Mascot = () => {
         <div
           className={cn(
             "absolute left-1/2 -translate-x-1/2 w-max max-w-[180px] z-10",
-            "bottom-[115px]", 
+            "bottom-[115px]",
             shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'
           )}
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
@@ -214,7 +214,7 @@ const Mascot = () => {
         <rect x="10" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-left-animation" />
         <rect x="72" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-right-animation" />
         <rect x="30" y="88" width="30" height="12" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5"/>
-        <style jsx>{\`
+        <style jsx>{`
           @keyframes mascotAppearAnimation {
             from { opacity: 0; transform: translateY(15px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -271,11 +271,12 @@ const Mascot = () => {
             from { opacity: 1; transform: translateY(0) scale(1) translateX(-50%); }
             to { opacity: 0; transform: translateY(10px) scale(0.8) translateX(-50%); }
           }
-        \`}</style>
+        `}</style>
       </svg>
     </div>
   );
 };
 
 export default Mascot;
+    
     
