@@ -9,6 +9,8 @@ import { AuthProvider } from '@/contexts/AuthContext'; // Import AuthProvider
 import Mascot from '@/components/layout/Mascot';
 import { ChatProvider } from '@/contexts/ChatContext';
 import ChatElements from '@/components/layout/ChatElements'; 
+import UpgradeProButton from '@/components/layout/UpgradeProButton';
+
 
 export const metadata: Metadata = {
   title: 'World AI - Your Guide to Artificial Intelligence',
@@ -39,6 +41,7 @@ export default function RootLayout({
               <Footer />
               <Mascot />
               <ChatElements />
+              <UpgradeProButton /> {/* Add PRO button here */}
               <Toaster />
             </ChatProvider>
           </AuthProvider>

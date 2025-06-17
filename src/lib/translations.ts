@@ -186,6 +186,28 @@ export type CoreTranslationKey =
   | 'subscribeButton'
   | 'cancelButton'
   | 'loginToCommentPrompt'
+  // PRO Upgrade Button & Dialog
+  | 'proButtonLabel'
+  | 'proButtonTooltip'
+  | 'upgradeToProTitleDialog'
+  | 'upgradeToProDescriptionDialog'
+  | 'upgradeToProBenefits'
+  | 'proBenefit1'
+  | 'proBenefit2'
+  | 'proBenefit3'
+  | 'upgradeToProPrice'
+  | 'paymentMethodsTitle'
+  | 'creditCardLabel'
+  | 'paypalLabel'
+  | 'applePayLabel'
+  | 'googlePayLabel'
+  | 'upgradeNowButton'
+  | 'upgradeSuccessTitle'
+  | 'upgradeSuccessDescription'
+  | 'upgradeFailedTitle'
+  | 'upgradeFailedDescription'
+  | 'loginRequiredForProTitle'
+  | 'loginRequiredForProDescription'
   // Generic
   | 'loadingText';
 
@@ -368,6 +390,28 @@ export const translations: Translations = {
     subscribeButton: "Upgrade to PRO",
     cancelButton: "Cancel",
     loginToCommentPrompt: "Please log in to leave a comment.",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "Go PRO",
+    proButtonTooltip: "Upgrade to PRO",
+    upgradeToProTitleDialog: "Upgrade to World AI PRO",
+    upgradeToProDescriptionDialog: "Unlock exclusive features, enhanced support, and an ad-free experience.",
+    upgradeToProBenefits: "PRO Benefits:",
+    proBenefit1: "Full access to all AI tools & posts",
+    proBenefit2: "Comment and rate AI tools",
+    proBenefit3: "Priority support",
+    upgradeToProPrice: "Just $1/month!",
+    paymentMethodsTitle: "Select Payment Method",
+    creditCardLabel: "Credit/Debit Card",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "Upgrade Now",
+    upgradeSuccessTitle: "Upgrade Successful!",
+    upgradeSuccessDescription: "Welcome to World AI PRO! Your new features are now active.",
+    upgradeFailedTitle: "Upgrade Failed",
+    upgradeFailedDescription: "Could not process your upgrade. Please try again or contact support.",
+    loginRequiredForProTitle: "Login Required",
+    loginRequiredForProDescription: "Please log in or create an account to upgrade to PRO.",
   },
   es: {
     navHome: 'Inicio',
@@ -523,6 +567,28 @@ export const translations: Translations = {
     subscribeButton: "Actualizar a PRO",
     cancelButton: "Cancelar",
     loginToCommentPrompt: "Por favor, inicia sesión para dejar un comentario.",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "Hazte PRO",
+    proButtonTooltip: "Actualizar a PRO",
+    upgradeToProTitleDialog: "Actualiza a World AI PRO",
+    upgradeToProDescriptionDialog: "Desbloquea funciones exclusivas, soporte mejorado y una experiencia sin anuncios.",
+    upgradeToProBenefits: "Beneficios PRO:",
+    proBenefit1: "Acceso completo a todas las herramientas y publicaciones de IA",
+    proBenefit2: "Comenta y califica herramientas de IA",
+    proBenefit3: "Soporte prioritario",
+    upgradeToProPrice: "¡Solo $1/mes!",
+    paymentMethodsTitle: "Seleccionar Método de Pago",
+    creditCardLabel: "Tarjeta de Crédito/Débito",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "Actualizar Ahora",
+    upgradeSuccessTitle: "¡Actualización Exitosa!",
+    upgradeSuccessDescription: "¡Bienvenido a World AI PRO! Tus nuevas funciones ya están activas.",
+    upgradeFailedTitle: "Actualización Fallida",
+    upgradeFailedDescription: "No se pudo procesar tu actualización. Por favor, inténtalo de nuevo o contacta con soporte.",
+    loginRequiredForProTitle: "Inicio de Sesión Requerido",
+    loginRequiredForProDescription: "Por favor, inicia sesión o crea una cuenta para actualizar a PRO.",
   },
   it: {
     navHome: 'Home',
@@ -678,6 +744,28 @@ export const translations: Translations = {
     subscribeButton: "Passa a PRO",
     cancelButton: "Annulla",
     loginToCommentPrompt: "Effettua l'accesso per lasciare un commento.",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "Diventa PRO",
+    proButtonTooltip: "Passa a PRO",
+    upgradeToProTitleDialog: "Passa a World AI PRO",
+    upgradeToProDescriptionDialog: "Sblocca funzionalità esclusive, supporto avanzato e un'esperienza senza pubblicità.",
+    upgradeToProBenefits: "Benefici PRO:",
+    proBenefit1: "Accesso completo a tutti gli strumenti e post AI",
+    proBenefit2: "Commenta e valuta gli strumenti AI",
+    proBenefit3: "Supporto prioritario",
+    upgradeToProPrice: "Solo $1/mese!",
+    paymentMethodsTitle: "Seleziona Metodo di Pagamento",
+    creditCardLabel: "Carta di Credito/Debito",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "Aggiorna Ora",
+    upgradeSuccessTitle: "Aggiornamento Riuscito!",
+    upgradeSuccessDescription: "Benvenuto in World AI PRO! Le tue nuove funzionalità sono ora attive.",
+    upgradeFailedTitle: "Aggiornamento Fallito",
+    upgradeFailedDescription: "Impossibile elaborare il tuo aggiornamento. Riprova o contatta l'assistenza.",
+    loginRequiredForProTitle: "Accesso Richiesto",
+    loginRequiredForProDescription: "Effettua l'accesso o crea un account per passare a PRO.",
   },
   zh: {
     navHome: '首页',
@@ -833,6 +921,28 @@ export const translations: Translations = {
     subscribeButton: "升级到PRO",
     cancelButton: "取消",
     loginToCommentPrompt: "请登录后发表评论。",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "升级PRO",
+    proButtonTooltip: "升级到PRO",
+    upgradeToProTitleDialog: "升级到 World AI PRO",
+    upgradeToProDescriptionDialog: "解锁独家功能、增强支持和无广告体验。",
+    upgradeToProBenefits: "PRO权益：",
+    proBenefit1: "完全访问所有AI工具和帖子",
+    proBenefit2: "评论和评价AI工具",
+    proBenefit3: "优先支持",
+    upgradeToProPrice: "仅需 $1/月！",
+    paymentMethodsTitle: "选择付款方式",
+    creditCardLabel: "信用卡/借记卡",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "立即升级",
+    upgradeSuccessTitle: "升级成功！",
+    upgradeSuccessDescription: "欢迎加入 World AI PRO！您的新功能现已激活。",
+    upgradeFailedTitle: "升级失败",
+    upgradeFailedDescription: "无法处理您的升级。请重试或联系支持。",
+    loginRequiredForProTitle: "需要登录",
+    loginRequiredForProDescription: "请登录或创建账户以升级到PRO。",
   },
   ja: {
     navHome: 'ホーム',
@@ -988,6 +1098,28 @@ export const translations: Translations = {
     subscribeButton: "PROにアップグレード",
     cancelButton: "キャンセル",
     loginToCommentPrompt: "コメントするにはログインしてください。",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "PROにアップグレード",
+    proButtonTooltip: "PROにアップグレード",
+    upgradeToProTitleDialog: "World AI PROにアップグレード",
+    upgradeToProDescriptionDialog: "限定機能、強化されたサポート、広告なしの体験をアンロック。",
+    upgradeToProBenefits: "PROの特典：",
+    proBenefit1: "すべてのAIツールと投稿へのフルアクセス",
+    proBenefit2: "AIツールのコメントと評価",
+    proBenefit3: "優先サポート",
+    upgradeToProPrice: "月額わずか$1！",
+    paymentMethodsTitle: "支払い方法を選択",
+    creditCardLabel: "クレジットカード/デビットカード",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "今すぐアップグレード",
+    upgradeSuccessTitle: "アップグレード成功！",
+    upgradeSuccessDescription: "World AI PROへようこそ！新しい機能が有効になりました。",
+    upgradeFailedTitle: "アップグレード失敗",
+    upgradeFailedDescription: "アップグレードを処理できませんでした。もう一度試すか、サポートにお問い合わせください。",
+    loginRequiredForProTitle: "ログインが必要です",
+    loginRequiredForProDescription: "PROにアップグレードするには、ログインまたはアカウントを作成してください。",
   },
   pt: {
     navHome: 'Início',
@@ -1143,5 +1275,28 @@ export const translations: Translations = {
     subscribeButton: "Atualizar para PRO",
     cancelButton: "Cancelar",
     loginToCommentPrompt: "Faça login para deixar um comentário.",
+    // PRO Upgrade Button & Dialog
+    proButtonLabel: "Seja PRO",
+    proButtonTooltip: "Atualizar para PRO",
+    upgradeToProTitleDialog: "Atualize para World AI PRO",
+    upgradeToProDescriptionDialog: "Desbloqueie recursos exclusivos, suporte aprimorado e uma experiência sem anúncios.",
+    upgradeToProBenefits: "Benefícios PRO:",
+    proBenefit1: "Acesso total a todas as ferramentas e postagens de IA",
+    proBenefit2: "Comente e avalie ferramentas de IA",
+    proBenefit3: "Suporte prioritário",
+    upgradeToProPrice: "Apenas $1/mês!",
+    paymentMethodsTitle: "Selecionar Método de Pagamento",
+    creditCardLabel: "Cartão de Crédito/Débito",
+    paypalLabel: "PayPal",
+    applePayLabel: "Apple Pay",
+    googlePayLabel: "Google Pay",
+    upgradeNowButton: "Atualizar Agora",
+    upgradeSuccessTitle: "Atualização Bem-sucedida!",
+    upgradeSuccessDescription: "Bem-vindo ao World AI PRO! Seus novos recursos estão ativos.",
+    upgradeFailedTitle: "Falha na Atualização",
+    upgradeFailedDescription: "Não foi possível processar sua atualização. Tente novamente ou entre em contato com o suporte.",
+    loginRequiredForProTitle: "Login Necessário",
+    loginRequiredForProDescription: "Faça login ou crie uma conta para atualizar para PRO.",
   },
 };
+

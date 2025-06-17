@@ -273,4 +273,19 @@ body {
     box-shadow: 0 0 0 0 hsl(var(--primary) / 0);
   }
 }
+
+/* Subtle pulse for PRO button */
+@keyframes pulse-glow-subtle {
+  0%, 100% {
+    box-shadow: 0 0 4px hsl(40 90% 55% / 0.5), 0 0 8px hsl(40 90% 55% / 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 10px hsl(40 90% 55% / 0.7), 0 0 18px hsl(40 90% 55% / 0.6);
+    transform: scale(1.02);
+  }
+}
+.animate-pulse-glow-subtle {
+  animation: pulse-glow-subtle 3s infinite ease-in-out;
+}
     
