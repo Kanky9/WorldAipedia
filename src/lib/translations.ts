@@ -242,7 +242,7 @@ export type CoreTranslationKey =
   | 'accessDeniedTitle'
   | 'accessDeniedDescription'
   | 'permissionDeniedErrorToastDesc'
-  // Tag Keys (ensure these are also in the translations objects below if they need to be translated)
+  // Tag Keys
   | 'Programming'
   | 'IDE'
   | 'Agile Development'
