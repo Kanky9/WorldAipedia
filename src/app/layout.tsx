@@ -10,6 +10,7 @@ import Mascot from '@/components/layout/Mascot';
 import { ChatProvider } from '@/contexts/ChatContext';
 import ChatElements from '@/components/layout/ChatElements'; 
 import UpgradeProButton from '@/components/layout/UpgradeProButton';
+import ClientOnly from '@/components/layout/ClientOnly';
 
 
 export const metadata: Metadata = {
@@ -39,7 +40,9 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
-              <Mascot />
+              <ClientOnly>
+                <Mascot />
+              </ClientOnly>
               <ChatElements />
               <UpgradeProButton /> {/* Add PRO button here */}
               <Toaster />

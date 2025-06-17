@@ -18,7 +18,7 @@ const Mascot = () => {
   const { t, language } = useLanguage();
   const { isChatOpen } = useChat();
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname();
+  const pathname = usePathname(); // This is a Next.js hook
 
   const [initialGreeting, setInitialGreeting] = useState('');
   const [isMascotVisible, setIsMascotVisible] = useState(false);
