@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation'; // Use useSearchParams
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,7 @@ const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams(); // Use hook for search params
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
 
@@ -71,43 +72,65 @@ export default function CreatePostPage() {
   const [detailImageHint2, setDetailImageHint2] = useState('');
   const detailImage2FileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!authLoading) {
-      if (!currentUser || !currentUser.isAdmin) {
-        toast({
-          variant: "destructive",
-          title: t('adminPostAccessDeniedTitle', "Access Denied"),
-          description: t('adminPostAccessDeniedDesc', "You do not have permission to view this page."),
-        });
-        router.replace('/');
-      }
-    }
-  }, [currentUser, authLoading, router, toast, t]);
-
   const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
     if (!value) return '';
     if (typeof value === 'string') return value;
     return value[lang as keyof LocalizedString] || value.en || '';
   };
 
+  // Effect 1: Determine mode (create/edit) based on URL query and reset form if entering create mode
   useEffect(() => {
-    if (authLoading || !currentUser?.isAdmin) return;
+    if (authLoading || (currentUser && !currentUser.isAdmin)) return; // Auth checks
 
-    const searchParams = new URLSearchParams(window.location.search);
     const id = searchParams.get('id');
+
     if (id) {
-      setPostIdFromQuery(id);
-      setIsEditMode(true);
-      setIsLoadingData(true);
-      getPostFromFirestore(id).then(existingPost => {
+      if (postIdFromQuery !== id) { // Only if ID actually changes or set for the first time
+        setPostIdFromQuery(id);
+        setIsEditMode(true);
+        // Fetching and initial population will be handled by the next effect
+      }
+    } else { // No ID in query params, so it's create mode
+      if (isEditMode || postIdFromQuery !== null) { // If previously in edit mode or postId was set
+        // Resetting form for a new entry
+        setIsEditMode(false);
+        setPostIdFromQuery(null);
+        setExistingPostDataForForm(null);
+        setTitle('');
+        setShortDescription('');
+        setLongDescription('');
+        clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
+        clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
+        clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
+        clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
+        setCategory('');
+        setTags('');
+        setPublishedDate(new Date().toISOString().split('T')[0]);
+        setLinkTool('');
+      }
+      setIsLoadingData(false);
+    }
+  }, [searchParams, authLoading, currentUser, isEditMode, postIdFromQuery]);
+
+  // Effect 2: Fetch post data when in edit mode and postIdFromQuery is set
+  useEffect(() => {
+    if (!isEditMode || !postIdFromQuery || authLoading || (currentUser && !currentUser.isAdmin)) {
+      if (!isEditMode) setIsLoadingData(false); // ensure loading is false for create mode
+      return;
+    }
+
+    setIsLoadingData(true);
+    getPostFromFirestore(postIdFromQuery)
+      .then(existingPost => {
         if (existingPost) {
           setExistingPostDataForForm(existingPost);
+          // Initial population of form fields based on the *current* language
           setTitle(getLocalizedStringDefault(existingPost.title, language));
           setShortDescription(getLocalizedStringDefault(existingPost.shortDescription, language));
           setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
 
           setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
-          setMainImageDataUri(existingPost.imageUrl || '');
+          setMainImageDataUri(existingPost.imageUrl || ''); // If it's a data URI, it will be set here
           setMainImageHint(existingPost.imageHint || '');
 
           setLogoUrlForPreview(existingPost.logoUrl || DEFAULT_LOGO_PLACEHOLDER);
@@ -129,27 +152,44 @@ export default function CreatePostPage() {
           setPublishedDate(pDate instanceof Date ? pDate.toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
           setLinkTool(existingPost.link || '');
         } else {
-          toast({ variant: "destructive", title: t('adminPostErrorTitle', "Error loading post"), description: t('adminPostNotFound', "Post with ID {id} not found.", {id}) });
+          toast({ variant: "destructive", title: t('adminPostErrorTitle', "Error loading post"), description: t('adminPostNotFound', "Post with ID {id} not found.", { id: postIdFromQuery }) });
           router.push('/admin');
         }
-        setIsLoadingData(false);
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error("Error fetching post for edit:", error);
         toast({ variant: "destructive", title: t('adminPostErrorTitle', "Error loading post"), description: t('adminPostErrorDesc', "Failed to load post data.") });
-        setIsLoadingData(false);
         router.push('/admin');
+      })
+      .finally(() => {
+        setIsLoadingData(false);
       });
-    } else {
-      setIsEditMode(false);
-      setExistingPostDataForForm(null);
-      setTitle(''); setShortDescription(''); setLongDescription('');
-      clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
-      clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
-      clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
-      clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
-      setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
+  }, [postIdFromQuery, isEditMode, language, router, t, toast, authLoading, currentUser]); // Language added here for initial correct population
+
+  // Effect 3: React to language changes when in edit mode and data is already loaded
+  useEffect(() => {
+    if (isEditMode && existingPostDataForForm) {
+      setTitle(getLocalizedStringDefault(existingPostDataForForm.title, language));
+      setShortDescription(getLocalizedStringDefault(existingPostDataForForm.shortDescription, language));
+      setLongDescription(getLocalizedStringDefault(existingPostDataForForm.longDescription, language));
+      // Category SelectItems will update their display automatically based on language prop used in their rendering.
+      // The `category` state (slug) doesn't change with language.
     }
-  }, [postIdFromQuery, language, router, t, toast, authLoading, currentUser]);
+    // No action needed for create mode, user input should be preserved.
+  }, [language, isEditMode, existingPostDataForForm]);
+
+
+  useEffect(() => {
+    if (!authLoading && (!currentUser || !currentUser.isAdmin)) {
+      toast({
+        variant: "destructive",
+        title: t('adminPostAccessDeniedTitle', "Access Denied"),
+        description: t('adminPostAccessDeniedDesc', "You do not have permission to view this page."),
+      });
+      router.replace('/');
+    }
+  }, [currentUser, authLoading, router, toast, t]);
+
 
   const handleImageFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -214,11 +254,21 @@ export default function CreatePostPage() {
     ): UpdatedLocalizedFieldReturnType => {
       const base = typeof existingFieldData === 'object' && existingFieldData !== null
         ? { ...existingFieldData }
-        : { en: '' };
-      const typedBase = base as UpdatedLocalizedFieldReturnType;
+        : { en: '' }; // Default to { en: '' } if no existing data or it's a string
+      
+      // Ensure base is an object that can be spread and assigned to
+      const typedBase: Partial<Record<LanguageCode, string>> & { en?: string } = 
+        typeof base === 'string' ? { en: base } : { ...base };
+
       typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) typedBase.en = newValue;
-      return typedBase;
+      if (!typedBase.en && newValue) { // If 'en' is missing or empty, and we have a new value, populate 'en'
+        typedBase.en = newValue;
+      }
+      // Ensure 'en' always exists, even if it's an empty string from initialization
+      if (typeof typedBase.en === 'undefined') {
+          typedBase.en = '';
+      }
+      return typedBase as UpdatedLocalizedFieldReturnType;
     };
     
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
@@ -226,7 +276,7 @@ export default function CreatePostPage() {
         toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Main Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
         finalMainImageUrl = DEFAULT_MAIN_PLACEHOLDER;
     } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER && !mainImageDataUri) {
-        finalMainImageUrl = '';
+        finalMainImageUrl = ''; // Allow saving with no image if it was never set beyond default
     }
 
     let finalLogoUrl = logoDataUri || logoUrlForPreview;
@@ -290,13 +340,14 @@ export default function CreatePostPage() {
           description: t('createdInSession', 'Post "{title}" has been saved.', { title: postTitleForToast }),
           action: <CheckCircle className="text-green-500" />,
         });
+        // Reset form for next new post
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
         clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
         clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
         clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null);
+        setExistingPostDataForForm(null); // Clear any existing data from edit mode
       }
       router.push('/admin');
     } catch (error) {
@@ -381,7 +432,7 @@ export default function CreatePostPage() {
     );
   }
 
-  if (isLoadingData && isEditMode) {
+  if (isLoadingData && isEditMode) { // Only show full page loader in edit mode while fetching initial data
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -411,17 +462,17 @@ export default function CreatePostPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="title">{t('adminPostTitleLabel', 'Post Title')}</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isSubmitting || isLoadingData} />
+              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isSubmitting || isLoadingData && isEditMode} />
             </div>
 
             <div>
               <Label htmlFor="shortDescription">{t('adminPostShortDescLabel', 'Short Description')}</Label>
-              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isSubmitting || isLoadingData} />
+              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isSubmitting || isLoadingData && isEditMode} />
             </div>
 
             <div>
               <Label htmlFor="longDescription">{t('adminPostLongDescLabel', 'Long Description (Content)')}</Label>
-              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isSubmitting || isLoadingData} />
+              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isSubmitting || isLoadingData && isEditMode} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
@@ -479,7 +530,7 @@ export default function CreatePostPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
-                <Select value={category} onValueChange={setCategory} required disabled={isSubmitting || isLoadingData}>
+                <Select value={category} onValueChange={setCategory} required disabled={isSubmitting || isLoadingData && isEditMode}>
                   <SelectTrigger id="category">
                     <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder', 'Select a category')} />
                   </SelectTrigger>
@@ -495,23 +546,23 @@ export default function CreatePostPage() {
 
               <div>
                 <Label htmlFor="tags">{t('adminPostTagsLabel', 'Tags (comma-separated)')}</Label>
-                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} disabled={isSubmitting || isLoadingData} />
+                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} disabled={isSubmitting || isLoadingData && isEditMode} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="publishedDate">{t('adminPostPublishedDateLabel', 'Published Date')}</Label>
-                <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required disabled={isSubmitting || isLoadingData} />
+                <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required disabled={isSubmitting || isLoadingData && isEditMode} />
               </div>
               <div>
                 <Label htmlFor="linkTool">{t('adminPostLinkToolLabel', 'Link to Tool (Optional)')}</Label>
-                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} disabled={isSubmitting || isLoadingData} />
+                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} disabled={isSubmitting || isLoadingData && isEditMode} />
               </div>
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting || isLoadingData}>
+              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting || (isLoadingData && isEditMode)}>
                 {(isSubmitting || (isLoadingData && isEditMode)) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                 {isEditMode ? t('adminPostButtonUpdate', 'Update Post') : t('adminPostButtonCreate', 'Create Post')}
               </Button>
@@ -522,3 +573,5 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+
