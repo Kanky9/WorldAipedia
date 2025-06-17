@@ -3,6 +3,7 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: 'export', // Ensures build output goes to the 'out' directory for Firebase Hosting
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,14 +20,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    allowedDevOrigins: [
-      // Add the origin from the warning message
-      "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
-      // It's good practice to also allow the standard localhost for local development outside of Studio
-      "http://localhost:9002",
-    ],
-  },
+  // allowedDevOrigins should be at the root level if used,
+  // but removing it for now as it was causing build warnings
+  // and is primarily for 'next dev'
+  // allowedDevOrigins: [
+  //   "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
+  //   "http://localhost:9002",
+  // ],
 };
 
 export default nextConfig;
