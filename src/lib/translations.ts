@@ -1644,4 +1644,10 @@ export const translations: Translations = {
 };
 
 // Helper type for LocalizedString, ensuring 'en' is always a possible key and a fallback.
-export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; };
+export type LocalizedString =
+  | string
+  | ({
+      [key in Exclude<LanguageCode, "en">]?: string;
+    } & {
+      en: string;
+    });
