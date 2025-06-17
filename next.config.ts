@@ -1,8 +1,9 @@
 
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: 'export', // ✅ Esta línea es la clave
+
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -19,7 +20,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Add allowedDevOrigins at the root level for 'next dev'
   allowedDevOrigins: [
     "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
     "http://localhost:9002",

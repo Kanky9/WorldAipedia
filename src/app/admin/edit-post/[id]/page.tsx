@@ -1,13 +1,28 @@
 
 "use client";
 
-// This page now effectively redirects or reuses the logic from create-post page
-// by leveraging query parameters. For a truly distinct edit page component,
-// you would duplicate and adapt the form from /admin/create-post/page.tsx here.
-// However, using query params on the create page is a simpler approach for a prototype.
-
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { getAllPostsFromFirestore } from '@/lib/firebase';
+import type { Post as PostType } from '@/lib/types';
+
+// This function runs at build time (server-side)
+export async function generateStaticParams() {
+  try {
+    // Fetch all posts to get their IDs
+    const posts: PostType[] = await getAllPostsFromFirestore();
+    
+    // Map over the posts to create an array of objects with the `id` parameter
+    return posts.map((post) => ({
+      id: post.id,
+    }));
+  } catch (error) {
+    console.error("Failed to generate static params for /admin/edit-post/[id]:", error);
+    // In case of an error (e.g., Firestore not reachable at build time),
+    // return an empty array to prevent build failure, though no paths will be pre-rendered.
+    return []; 
+  }
+}
 
 export default function EditPostRedirectPage() {
   const router = useRouter();
