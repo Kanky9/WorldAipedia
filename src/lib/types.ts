@@ -3,7 +3,13 @@ import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
 import type { Timestamp } from 'firebase/firestore';
 
-export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; }; // Ensure 'en' is always present as a fallback
+export type LocalizedString =
+  | string
+  | ({
+      [key in Exclude<LanguageCode, "en">]?: string;
+    } & {
+      en: string;
+    });
 
 export interface Post {
   id: string; // Firestore document ID
@@ -64,3 +70,9 @@ export interface AiToolChatContext {
   link: string;
 }
 
+export interface GameHighScore {
+  id: string; // userId
+  username: string;
+  score: number;
+  timestamp: Timestamp | Date;
+}

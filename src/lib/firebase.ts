@@ -27,7 +27,8 @@ import {
   deleteDoc,
   Timestamp,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  limit
 } from 'firebase/firestore';
 import {
   getStorage,
@@ -38,7 +39,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType } from './types';
+import type { Post as PostType, GameHighScore } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -157,6 +158,48 @@ export const deleteCommentFromFirestore = async (postId: string, commentId: stri
   const commentRef = doc(db, 'posts', postId, 'comments', commentId);
   await deleteDoc(commentRef);
 };
+
+// Dinosaur Game Firestore Functions
+const DINO_GAME_HIGH_SCORES_COLLECTION = 'dinoGameHighScores';
+
+export const saveDinoGameHighScore = async (userId: string, username: string, score: number): Promise<void> => {
+  const highScoreRef = doc(db, DINO_GAME_HIGH_SCORES_COLLECTION, userId);
+  const currentHighScoreSnap = await getDoc(highScoreRef);
+
+  if (currentHighScoreSnap.exists()) {
+    const currentHighScoreData = currentHighScoreSnap.data() as GameHighScore;
+    if (score > currentHighScoreData.score) {
+      await updateDoc(highScoreRef, {
+        score: score,
+        username: username, // Update username in case it changed
+        timestamp: serverTimestamp(),
+      });
+    }
+  } else {
+    await setDoc(highScoreRef, {
+      userId: userId,
+      username: username,
+      score: score,
+      timestamp: serverTimestamp(),
+    });
+  }
+};
+
+export const getDinoGameTopHighScores = async (count: number = 100): Promise<GameHighScore[]> => {
+  const highScoresCol = collection(db, DINO_GAME_HIGH_SCORES_COLLECTION);
+  const q = query(highScoresCol, orderBy('score', 'desc'), limit(count));
+  const querySnapshot = await getDocs(q);
+  const highScores: GameHighScore[] = [];
+  querySnapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    if (data.timestamp && data.timestamp instanceof Timestamp) {
+        data.timestamp = data.timestamp.toDate();
+    }
+    highScores.push({ id: docSnap.id, ...data } as GameHighScore);
+  });
+  return highScores;
+};
+
 
 export {
   app,

@@ -2,8 +2,8 @@
 'use client';
 
 import { useLanguage } from '@/hooks/useLanguage';
-import { useEffect, useState } from 'react';
-import { useChat } from '@/contexts/ChatContext';
+import { useEffect, useState, useRef } from 'react';
+import { useChat, type MascotAdHocMessage } from '@/contexts/ChatContext';
 import type { CoreTranslationKey } from '@/lib/translations';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -16,24 +16,21 @@ const CHAT_BUTTON_OFFSET_REM = 1.5; // bottom-6 right-6 (24px)
 
 const Mascot = () => {
   const { t, language } = useLanguage();
-  const { isChatOpen } = useChat();
+  const { isChatOpen, mascotDisplayMode, setMascotDisplayMode, mascotAdHocMessages, setMascotAdHocMessages } = useChat();
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname(); // This is a Next.js hook
+  const pathname = usePathname();
 
-  const [initialGreeting, setInitialGreeting] = useState('');
   const [isMascotVisible, setIsMascotVisible] = useState(false);
-  const [showDefaultBubble, setShowDefaultBubble] = useState(true);
-
-  const chatBubbleMessagesKeys: CoreTranslationKey[] = ['mascotChatGreeting1', 'mascotChatGreeting2'];
-  const [currentChatBubbleIndex, setCurrentChatBubbleIndex] = useState(-1);
-  const [currentChatBubbleText, setCurrentChatBubbleText] = useState('');
+  const [currentBubbleText, setCurrentBubbleText] = useState('');
+  
+  const adHocMessageIndexRef = useRef(0);
+  const adHocMessageTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [windowSize, setWindowSize] = useState<{ width: number; height: number }>({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
-
-  const isSmallScreen = windowSize.width < 640; // Tailwind 'sm' breakpoint (640px)
+  const isSmallScreen = windowSize.width < 640;
 
   useEffect(() => {
     setMounted(true);
@@ -46,53 +43,98 @@ const Mascot = () => {
     }
   }, []);
 
-
+  // Initial visibility timer
   useEffect(() => {
-    setInitialGreeting(t('mascotGreeting'));
     const visibilityTimer = setTimeout(() => {
       if (!isChatOpen) {
         setIsMascotVisible(true);
       }
     }, 700);
+    return () => clearTimeout(visibilityTimer);
+  }, [isChatOpen]);
 
-    return () => {
-      clearTimeout(visibilityTimer);
-    };
-  }, [t, isChatOpen]);
-
+  // Speech bubble logic based on mascotDisplayMode
   useEffect(() => {
-    let bubbleTimer: NodeJS.Timeout | undefined;
+    let messageTimer: NodeJS.Timeout | null = null;
+    
+    const clearTimers = () => {
+      if (messageTimer) clearTimeout(messageTimer);
+      if (adHocMessageTimerRef.current) clearTimeout(adHocMessageTimerRef.current);
+    };
 
-    if (isChatOpen) {
-      setIsMascotVisible(true);
-      setShowDefaultBubble(false);
-
-      if (currentChatBubbleIndex === -1) {
-        setCurrentChatBubbleIndex(0);
-      } else if (currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
-        setCurrentChatBubbleText(t(chatBubbleMessagesKeys[currentChatBubbleIndex]));
-        bubbleTimer = setTimeout(() => {
-          setCurrentChatBubbleIndex(prevIndex => prevIndex + 1);
-        }, 4000);
+    if (mascotDisplayMode === 'default') {
+      if (!isChatOpen && isMascotVisible) {
+        setCurrentBubbleText(t('mascotGreeting'));
       } else {
-        setCurrentChatBubbleText('');
+        setCurrentBubbleText('');
       }
+    } else if (mascotDisplayMode === 'chat_contextual') {
+      // This mode could be used for specific greetings when chat is opened with context
+      // For now, let's use a generic chat greeting or specific logic if aiContextForChat exists
+      setCurrentBubbleText(t('mascotChatGreeting1')); // Example
+      messageTimer = setTimeout(() => {
+        if (isChatOpen) setCurrentBubbleText(t('mascotChatGreeting2'));
+         messageTimer = setTimeout(() => {
+            if(isChatOpen && mascotDisplayMode === 'chat_contextual') setCurrentBubbleText(''); // Clear after a bit
+        }, 4000);
+      }, 4000);
+    } else if (mascotDisplayMode === 'ranking_intro') {
+      setCurrentBubbleText(t('rankingProInfo1'));
+      messageTimer = setTimeout(() => {
+        if (mascotDisplayMode === 'ranking_intro') { // Check mode again in case it changed
+           setCurrentBubbleText(t('rankingProInfo2'));
+           messageTimer = setTimeout(() => {
+             if (mascotDisplayMode === 'ranking_intro') {
+                setCurrentBubbleText('');
+                // Revert mode after sequence. Could also be done by the component that set this mode.
+                // setMascotDisplayMode('default'); // Or let DinosaurGame handle reverting
+             }
+           }, 5000);
+        }
+      }, 5000);
+    } else if (mascotDisplayMode === 'custom_queue' && mascotAdHocMessages.length > 0) {
+      adHocMessageIndexRef.current = 0;
+      const showNextAdHocMessage = () => {
+        if (adHocMessageIndexRef.current < mascotAdHocMessages.length) {
+          const msg = mascotAdHocMessages[adHocMessageIndexRef.current];
+          setCurrentBubbleText(t(msg.textKey));
+          adHocMessageIndexRef.current++;
+          adHocMessageTimerRef.current = setTimeout(showNextAdHocMessage, msg.duration);
+        } else {
+          setCurrentBubbleText('');
+          setMascotAdHocMessages([]); // Clear the queue
+          // setMascotDisplayMode('default'); // Revert after queue
+        }
+      };
+      showNextAdHocMessage();
     } else {
-      setCurrentChatBubbleIndex(-1);
-      setCurrentChatBubbleText('');
-      setShowDefaultBubble(true);
+       setCurrentBubbleText(''); // Default clear
     }
 
-    return () => {
-      if (bubbleTimer) clearTimeout(bubbleTimer);
-    };
-  }, [isChatOpen, currentChatBubbleIndex, t, language, chatBubbleMessagesKeys]);
+    return () => clearTimers();
+  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language]);
+
+
+  useEffect(() => {
+    // If chat opens, ensure mascot is visible
+    if (isChatOpen) {
+      setIsMascotVisible(true);
+    }
+    // If chat closes, and mascot was only visible due to chat, decide if it should hide or show default bubble
+    // This part is handled by the `mascotDisplayMode` changes and `isMascotVisible` logic
+  }, [isChatOpen]);
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen) {
-      setShowDefaultBubble(prev => !prev);
+    if (!isChatOpen && mascotDisplayMode === 'default') {
+       // Toggle default bubble or trigger some other interaction
+       if (currentBubbleText === t('mascotGreeting')) {
+           setCurrentBubbleText('');
+       } else {
+           setCurrentBubbleText(t('mascotGreeting'));
+       }
     }
+    // If chat is open, or other modes, clicking mascot might do nothing or something else
   };
 
   if (pathname && pathname.startsWith('/admin')) {
@@ -105,68 +147,35 @@ const Mascot = () => {
 
   if (!isMascotVisible && !isChatOpen) return null;
 
-  let bubbleContent = '';
-  let shouldShowSpeechBubble = false;
-
-  if (isChatOpen && currentChatBubbleIndex >= 0 && currentChatBubbleIndex < chatBubbleMessagesKeys.length) {
-    bubbleContent = currentChatBubbleText;
-    shouldShowSpeechBubble = !!currentChatBubbleText;
-  } else if (!isChatOpen && showDefaultBubble) {
-    bubbleContent = initialGreeting;
-    shouldShowSpeechBubble = !!bubbleContent;
-  }
+  const shouldShowSpeechBubble = !!currentBubbleText;
 
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
   const mascotOpacity = (isMascotVisible || isChatOpen) ? 1 : 0;
 
-  // Base style properties
-  const baseStyle: React.CSSProperties = {
-    animation: mascotAnimation,
-    opacity: mascotOpacity,
-  };
-
-  // Determine position-specific style properties
   let positionSpecificStyle: React.CSSProperties = {};
   if (isChatOpen) {
     if (isSmallScreen) {
       positionSpecificStyle = {
-        top: '3vh',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        right: 'auto',
-        bottom: 'auto',
+        top: '3vh', left: '50%', transform: 'translateX(-50%)', right: 'auto', bottom: 'auto',
       };
     } else {
-      // Style for larger screens when chat is open
       positionSpecificStyle = {
         top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`,
         left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`,
-        right: 'auto',
-        bottom: 'auto',
-        transform: 'none',
+        right: 'auto', bottom: 'auto', transform: 'none',
       };
     }
   } else {
-    // Style when chat is closed
     const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1;
     positionSpecificStyle = {
-      bottom: '1.25rem',
-      right: `${mascotRightOffsetRem}rem`,
-      top: 'auto',
-      left: 'auto',
-      transform: 'none',
+      bottom: '1.25rem', right: `${mascotRightOffsetRem}rem`, top: 'auto', left: 'auto', transform: 'none',
     };
   }
-
-  // Combine base and position-specific styles
-  const mascotPositionStyle: React.CSSProperties = { ...baseStyle, ...positionSpecificStyle };
+  const mascotPositionStyle: React.CSSProperties = { animation: mascotAnimation, opacity: mascotOpacity, ...positionSpecificStyle };
 
   return (
-    <div
-      className={cn(mascotBaseClasses)}
-      style={mascotPositionStyle}
-    >
+    <div className={cn(mascotBaseClasses)} style={mascotPositionStyle}>
       {shouldShowSpeechBubble && (
         <div
           className={cn(
@@ -177,7 +186,7 @@ const Mascot = () => {
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
         >
           <div className="bg-card text-card-foreground p-3 rounded-lg shadow-xl text-sm text-center border border-border">
-            {bubbleContent}
+            {currentBubbleText}
           </div>
           <div className="absolute left-1/2 bottom-[-7px] transform -translate-x-1/2 w-3.5 h-3.5 bg-card rotate-45 shadow-sm border-b border-r border-border"></div>
         </div>
@@ -193,29 +202,19 @@ const Mascot = () => {
         data-ai-hint="friendly AI robot"
       >
         <defs>
-          <linearGradient id="robotMetallicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="robotMetallicGradientMascot" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style={{stopColor: "hsl(var(--secondary))"}} />
             <stop offset="50%" style={{stopColor: "hsl(var(--muted))"}} />
             <stop offset="100%" style={{stopColor: "hsl(var(--secondary))"}} />
           </linearGradient>
-           <filter id="subtleRobotGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="1" result="blur"/>
-            <feComponentTransfer in="blur" result="softBlur">
-                <feFuncA type="linear" slope="0.5"/>
-            </feComponentTransfer>
-            <feMerge>
-              <feMergeNode in="softBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
         </defs>
         <line x1="45" y1="12" x2="45" y2="2" stroke="hsl(var(--foreground) / 0.7)" strokeWidth="2.5" />
         <circle cx="45" cy="12" r="4" fill="hsl(var(--primary))" className="antenna-light-animation" />
-        <rect x="25" y="18" width="40" height="30" rx="8" fill="url(#robotMetallicGradient)" stroke="hsl(var(--border))" strokeWidth="1.5" />
+        <rect x="25" y="18" width="40" height="30" rx="8" fill="url(#robotMetallicGradientMascot)" stroke="hsl(var(--border))" strokeWidth="1.5" />
         <rect x="30" y="25" width="30" height="12" rx="3" fill="hsl(var(--background))" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1"/>
         <rect x="33" y="28" width="4" height="6" rx="1.5" fill="hsl(var(--primary))" className="eye-scan-animation"/>
         <rect x="40" y="48" width="10" height="5" fill="hsl(var(--muted))" />
-        <rect x="20" y="53" width="50" height="35" rx="8" fill="url(#robotMetallicGradient)" stroke="hsl(var(--border))" strokeWidth="1.5" />
+        <rect x="20" y="53" width="50" height="35" rx="8" fill="url(#robotMetallicGradientMascot)" stroke="hsl(var(--border))" strokeWidth="1.5" />
         <rect x="10" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-left-animation" />
         <rect x="72" y="58" width="8" height="25" rx="4" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1" className="robot-arm-right-animation" />
         <rect x="30" y="88" width="30" height="12" rx="5" fill="hsl(var(--muted))" stroke="hsl(var(--border))" strokeWidth="1.5"/>
@@ -243,7 +242,7 @@ const Mascot = () => {
           }
           @keyframes eye-scan {
             0%, 100% { transform: translateX(0px); }
-            50% { transform: translateX(22px); }
+            50% { transform: translateX(22px); } /* Max X for eye scan */
           }
           .robot-arm-left-animation {
             transform-origin: 50% 15%;
@@ -283,7 +282,3 @@ const Mascot = () => {
 };
 
 export default Mascot;
-    
-    
-
-    

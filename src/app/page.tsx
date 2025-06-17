@@ -10,6 +10,7 @@ import { BookOpen, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { Post } from '@/lib/types';
 import { getAllPostsFromFirestore } from '@/lib/firebase';
+import DinosaurGame from '@/components/game/DinosaurGame'; // Import the game
 
 const MAX_POSTS_ON_HOMEPAGE = 9;
 
@@ -140,6 +141,11 @@ export default function HomePage() {
             </Link>
          </Button>
        </section>
+
+      {/* Dinosaur Game Section */}
+      <section className="container mx-auto py-8 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
+        <DinosaurGame />
+      </section>
     </div>
   );
 }

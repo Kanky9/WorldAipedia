@@ -3,13 +3,24 @@
 import type { ReactNode } from 'react';
 import { createContext, useState, useCallback, useContext } from 'react';
 import type { AiToolChatContext as AiToolChatContextType } from '@/lib/types'; // Renamed import to avoid conflict
+import type { CoreTranslationKey } from '@/lib/translations';
+
+
+export type MascotDisplayMode = 'default' | 'chat_contextual' | 'ranking_intro' | 'custom_queue';
+export interface MascotAdHocMessage {
+  textKey: CoreTranslationKey;
+  duration: number; // in milliseconds
+}
 
 interface ChatContextValue {
   isChatOpen: boolean;
   aiContextForChat: AiToolChatContextType | null;
   openChat: (context?: AiToolChatContextType) => void;
   closeChat: () => void;
-  // setAiContext: (context: AiToolChatContextType | null) => void; // Not strictly needed if context is set on open
+  mascotDisplayMode: MascotDisplayMode;
+  setMascotDisplayMode: (mode: MascotDisplayMode) => void;
+  mascotAdHocMessages: MascotAdHocMessage[];
+  setMascotAdHocMessages: (messages: MascotAdHocMessage[]) => void;
 }
 
 export const ChatContext = createContext<ChatContextValue | undefined>(undefined);
@@ -17,28 +28,58 @@ export const ChatContext = createContext<ChatContextValue | undefined>(undefined
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [aiContextForChat, setAiContextForChat] = useState<AiToolChatContextType | null>(null);
+  const [mascotDisplayMode, setMascotDisplayModeState] = useState<MascotDisplayMode>('default');
+  const [mascotAdHocMessages, setMascotAdHocMessagesState] = useState<MascotAdHocMessage[]>([]);
+
 
   const openChat = useCallback((context?: AiToolChatContextType) => {
     if (context) {
       setAiContextForChat(context);
+      setMascotDisplayModeState('chat_contextual'); // Set mode for contextual chat intro
     } else {
       setAiContextForChat(null); 
+      setMascotDisplayModeState('default'); // Or 'chat_contextual' if mascot should always greet on chat open
     }
     setIsChatOpen(true);
   }, []);
 
   const closeChat = useCallback(() => {
     setIsChatOpen(false);
-    // Optionally reset context when chat is closed, or let it persist until next openChat
-    // setAiContextForChat(null); 
+    setMascotDisplayModeState('default'); // Reset mascot mode when chat closes
   }, []);
   
-  // const setAiContext = useCallback((context: AiToolChatContextType | null) => {
-  //    setAiContextForChat(context);
-  // }, []);
+  const setMascotDisplayMode = useCallback((mode: MascotDisplayMode) => {
+    setMascotDisplayModeState(mode);
+  }, []);
+
+  const setMascotAdHocMessages = useCallback((messages: MascotAdHocMessage[]) => {
+    if (messages.length > 0) {
+      setMascotDisplayModeState('custom_queue');
+      setMascotAdHocMessagesState(messages);
+    } else {
+      setMascotAdHocMessagesState([]);
+      // Revert to default or previous sensible mode if queue is cleared
+      // This part might need more sophisticated logic depending on desired behavior
+      if (isChatOpen) {
+        setMascotDisplayModeState(aiContextForChat ? 'chat_contextual' : 'default');
+      } else {
+        setMascotDisplayModeState('default');
+      }
+    }
+  }, [isChatOpen, aiContextForChat]);
+
 
   return (
-    <ChatContext.Provider value={{ isChatOpen, aiContextForChat, openChat, closeChat }}>
+    <ChatContext.Provider value={{ 
+      isChatOpen, 
+      aiContextForChat, 
+      openChat, 
+      closeChat, 
+      mascotDisplayMode, 
+      setMascotDisplayMode,
+      mascotAdHocMessages,
+      setMascotAdHocMessages
+    }}>
       {children}
     </ChatContext.Provider>
   );
