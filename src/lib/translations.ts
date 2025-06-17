@@ -148,6 +148,8 @@ export type CoreTranslationKey =
   | 'adminPostErrorDesc'
   | 'adminPostNotFound'
   | 'adminPostImageTooLarge'
+  | 'imageFileTooLargeTitle'
+  | 'imageFileTooLargeDesc'
   | 'adminPostImageSizeHint'
   | 'adminPostRequiredFields'
   | 'adminPostAccessDeniedTitle'
@@ -237,11 +239,21 @@ export type CoreTranslationKey =
   | 'errorText'
   | 'errorDefaultTitle'
   | 'errorDefaultDesc'
-  | 'imageFileTooLargeTitle'
-  | 'imageFileTooLargeDesc'
   | 'accessDeniedTitle'
   | 'accessDeniedDescription'
-  | 'permissionDeniedErrorToastDesc';
+  | 'permissionDeniedErrorToastDesc'
+  // Tag Keys
+  | 'Programming'
+  | 'IDE'
+  | 'Agile Development'
+  | 'Images'
+  | 'Creativity'
+  | 'Chatbot'
+  | 'Lenguaje'
+  | 'Asistente'
+  | 'AI'
+  | 'Machine Learning'
+  | 'NLP';
 
 
 export type TranslationSet = {
@@ -485,6 +497,18 @@ export const translations: Translations = {
     errorDefaultDesc: 'An unexpected error occurred.',
     accessDeniedTitle: 'Access Denied',
     accessDeniedDescription: 'You do not have permission to perform this action.',
+    // Tag Keys (ensure these match exactly how they are in CoreTranslationKey)
+    'Programming': 'Programming',
+    'IDE': 'IDE',
+    'Agile Development': 'Agile Development',
+    'Images': 'Images',
+    'Creativity': 'Creativity',
+    'Chatbot': 'Chatbot',
+    'Lenguaje': 'Language',
+    'Asistente': 'Assistant',
+    'AI': 'AI',
+    'Machine Learning': 'Machine Learning',
+    'NLP': 'NLP',
   },
   es: {
     navHome: 'Inicio',
@@ -523,7 +547,7 @@ export const translations: Translations = {
     laceChatImagePreviewAlt: 'Vista previa de la imagen seleccionada',
     laceChatErrorWelcomeGeneral: "¡Hola! Soy Lace, tu asistente de IA. ¿Cómo puedo ayudarte hoy?",
     laceChatErrorWelcomeTool: "Estoy teniendo un pequeño problema para presentar esta herramienta, ¡pero no dudes en preguntarme cualquier cosa sobre ella u otros temas!",
-    categoriesTitle: 'Explora Publicaciones por Categoría',
+    categoriesTitle: 'Explora Publicaciones por Categoria',
     categoriesSubtitle: 'Encuentra publicaciones adaptadas a tus intereses, organizadas en categorías relevantes para facilitar la navegación.',
     viewPostsButton: 'Ver Publicaciones',
     noCategoriesAvailable: 'No hay categorías disponibles en este momento.',
@@ -703,6 +727,18 @@ export const translations: Translations = {
     errorDefaultDesc: 'Ocurrió un error inesperado.',
     accessDeniedTitle: 'Acceso Denegado',
     accessDeniedDescription: 'No tienes permiso para realizar esta acción.',
+    // Tag Keys
+    'Programming': 'Programación',
+    'IDE': 'IDE',
+    'Agile Development': 'Desarrollo Ágil',
+    'Images': 'Imágenes',
+    'Creativity': 'Creatividad',
+    'Chatbot': 'Chatbot',
+    'Lenguaje': 'Lenguaje',
+    'Asistente': 'Asistente',
+    'AI': 'IA',
+    'Machine Learning': 'Aprendizaje Automático',
+    'NLP': 'PLN',
   },
   it: {
     navHome: 'Home',
@@ -921,6 +957,18 @@ export const translations: Translations = {
     errorDefaultDesc: 'Si è verificato un errore imprevisto.',
     accessDeniedTitle: 'Accesso Negato',
     accessDeniedDescription: 'Non hai il permesso di eseguire questa azione.',
+    // Tag Keys
+    'Programming': 'Programmazione',
+    'IDE': 'IDE',
+    'Agile Development': 'Sviluppo Agile',
+    'Images': 'Immagini',
+    'Creativity': 'Creatività',
+    'Chatbot': 'Chatbot',
+    'Lenguaje': 'Linguaggio',
+    'Asistente': 'Assistente',
+    'AI': 'IA',
+    'Machine Learning': 'Apprendimento Automatico',
+    'NLP': 'PNL',
   },
   zh: {
     navHome: '首页',
@@ -1139,6 +1187,18 @@ export const translations: Translations = {
     errorDefaultDesc: '发生意外错误。',
     accessDeniedTitle: '访问被拒绝',
     accessDeniedDescription: '您无权执行此操作。',
+    // Tag Keys
+    'Programming': '编程',
+    'IDE': 'IDE',
+    'Agile Development': '敏捷开发',
+    'Images': '图片',
+    'Creativity': '创造力',
+    'Chatbot': '聊天机器人',
+    'Lenguaje': '语言',
+    'Asistente': '助手',
+    'AI': '人工智能',
+    'Machine Learning': '机器学习',
+    'NLP': '自然语言处理',
   },
   ja: {
     navHome: 'ホーム',
@@ -1357,6 +1417,18 @@ export const translations: Translations = {
     errorDefaultDesc: '予期しないエラーが発生しました。',
     accessDeniedTitle: 'アクセス拒否',
     accessDeniedDescription: 'この操作を実行する権限がありません。',
+    // Tag Keys
+    'Programming': 'プログラミング',
+    'IDE': 'IDE',
+    'Agile Development': 'アジャイル開発',
+    'Images': '画像',
+    'Creativity': '創造性',
+    'Chatbot': 'チャットボット',
+    'Lenguaje': '言語',
+    'Asistente': 'アシスタント',
+    'AI': 'AI',
+    'Machine Learning': '機械学習',
+    'NLP': '自然言語処理',
   },
   pt: {
     navHome: 'Início',
@@ -1575,5 +1647,20 @@ export const translations: Translations = {
     errorDefaultDesc: 'Ocorreu um erro inesperado.',
     accessDeniedTitle: 'Acesso Negado',
     accessDeniedDescription: 'Você não tem permissão para realizar esta ação.',
+    // Tag Keys
+    'Programming': 'Programação',
+    'IDE': 'IDE',
+    'Agile Development': 'Desenvolvimento Ágil',
+    'Images': 'Imagens',
+    'Creativity': 'Criatividade',
+    'Chatbot': 'Chatbot',
+    'Lenguaje': 'Linguagem',
+    'Asistente': 'Assistente',
+    'AI': 'IA',
+    'Machine Learning': 'Aprendizado de Máquina',
+    'NLP': 'PNL',
   },
 };
+
+// Helper type for LocalizedString, ensuring 'en' is always a possible key and a fallback.
+export type LocalizedString = string | { [key in LanguageCode]?: string; en: string; };

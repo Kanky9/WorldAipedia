@@ -12,6 +12,7 @@ import { getCategoryByName } from '@/data/posts';
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; // Direct import of locales
 import { CalendarDays, Tag } from 'lucide-react';
+import type { CoreTranslationKey } from '@/lib/translations';
 
 interface PostCardProps {
   post: Post;
@@ -55,7 +56,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
         </Link>
         <div className="flex items-center text-xs text-muted-foreground mt-1 gap-2">
           <CalendarDays className="h-3.5 w-3.5" />
-          <span>{postDateLocale ? format(new Date(post.publishedDate), 'MMM d, yyyy', { locale: postDateLocale }) : new Date(post.publishedDate).toLocaleDateString()}</span>
+          <span>{postDateLocale ? format(new Date(post.publishedDate as Date), 'MMM d, yyyy', { locale: postDateLocale }) : new Date(post.publishedDate as Date).toLocaleDateString()}</span>
         </div>
         {category && (
           <Link href={`/categories/${category.slug}`} className="w-fit">
@@ -72,7 +73,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
       <CardFooter className="flex-col items-start">
         <div className="flex flex-wrap gap-1 mb-3">
           {post.tags.slice(0, 3).map(tag => (
-            <Badge key={tag} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{tag}</Badge>
+            <Badge key={tag} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{t(tag as CoreTranslationKey, tag)}</Badge>
           ))}
         </div>
         <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
