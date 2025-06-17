@@ -242,7 +242,7 @@ export type CoreTranslationKey =
   | 'accessDeniedTitle'
   | 'accessDeniedDescription'
   | 'permissionDeniedErrorToastDesc'
-  // Tag Keys
+  // Tag Keys (ensure these are also in the translations objects below if they need to be translated)
   | 'Programming'
   | 'IDE'
   | 'Agile Development'
@@ -254,7 +254,6 @@ export type CoreTranslationKey =
   | 'AI'
   | 'Machine Learning'
   | 'NLP';
-
 
 export type TranslationSet = {
   [key in CoreTranslationKey]?: string;
@@ -469,7 +468,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: 'Are you sure you want to delete this comment? This action cannot be undone.',
     commentDeletedSuccess: 'Comment deleted successfully.',
     commentDeleteError: 'Failed to delete comment.',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "Go PRO",
     proButtonTooltip: "Upgrade to PRO",
     upgradeToProTitleDialog: "Upgrade to World AI PRO",
@@ -491,13 +489,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "Could not process your upgrade. Please try again or contact support.",
     loginRequiredForProTitle: "Login Required",
     loginRequiredForProDescription: "Please log in or create an account to upgrade to PRO.",
-    // Generic
     errorText: 'Error',
     errorDefaultTitle: 'Error',
     errorDefaultDesc: 'An unexpected error occurred.',
     accessDeniedTitle: 'Access Denied',
     accessDeniedDescription: 'You do not have permission to perform this action.',
-    // Tag Keys (ensure these match exactly how they are in CoreTranslationKey)
     'Programming': 'Programming',
     'IDE': 'IDE',
     'Agile Development': 'Agile Development',
@@ -699,7 +695,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: '¿Estás seguro de que quieres eliminar este comentario? Esta acción no se puede deshacer.',
     commentDeletedSuccess: 'Comentario eliminado exitosamente.',
     commentDeleteError: 'Error al eliminar el comentario.',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "Hazte PRO",
     proButtonTooltip: "Actualizar a PRO",
     upgradeToProTitleDialog: "Actualiza a World AI PRO",
@@ -721,13 +716,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "No se pudo procesar tu actualización. Por favor, inténtalo de nuevo o contacta con soporte.",
     loginRequiredForProTitle: "Inicio de Sesión Requerido",
     loginRequiredForProDescription: "Por favor, inicia sesión o crea una cuenta para actualizar a PRO.",
-    // Generic
     errorText: 'Error',
     errorDefaultTitle: 'Error',
     errorDefaultDesc: 'Ocurrió un error inesperado.',
     accessDeniedTitle: 'Acceso Denegado',
     accessDeniedDescription: 'No tienes permiso para realizar esta acción.',
-    // Tag Keys
     'Programming': 'Programación',
     'IDE': 'IDE',
     'Agile Development': 'Desarrollo Ágil',
@@ -929,7 +922,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: 'Sei sicuro di voler eliminare questo commento? Questa azione non può essere annullata.',
     commentDeletedSuccess: 'Commento eliminato con successo.',
     commentDeleteError: 'Errore nell\'eliminazione del commento.',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "Diventa PRO",
     proButtonTooltip: "Passa a PRO",
     upgradeToProTitleDialog: "Passa a World AI PRO",
@@ -951,13 +943,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "Impossibile elaborare il tuo aggiornamento. Riprova o contatta l'assistenza.",
     loginRequiredForProTitle: "Accesso Richiesto",
     loginRequiredForProDescription: "Effettua l'accesso o crea un account per passare a PRO.",
-    // Generic
     errorText: 'Errore',
     errorDefaultTitle: 'Errore',
     errorDefaultDesc: 'Si è verificato un errore imprevisto.',
     accessDeniedTitle: 'Accesso Negato',
     accessDeniedDescription: 'Non hai il permesso di eseguire questa azione.',
-    // Tag Keys
     'Programming': 'Programmazione',
     'IDE': 'IDE',
     'Agile Development': 'Sviluppo Agile',
@@ -1159,7 +1149,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: '您确定要删除此评论吗？此操作无法撤销。',
     commentDeletedSuccess: '评论已成功删除。',
     commentDeleteError: '删除评论失败。',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "升级PRO",
     proButtonTooltip: "升级到PRO",
     upgradeToProTitleDialog: "升级到 World AI PRO",
@@ -1181,13 +1170,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "无法处理您的升级。请重试或联系支持。",
     loginRequiredForProTitle: "需要登录",
     loginRequiredForProDescription: "请登录或创建账户以升级到PRO。",
-    // Generic
     errorText: '错误',
     errorDefaultTitle: '错误',
     errorDefaultDesc: '发生意外错误。',
     accessDeniedTitle: '访问被拒绝',
     accessDeniedDescription: '您无权执行此操作。',
-    // Tag Keys
     'Programming': '编程',
     'IDE': 'IDE',
     'Agile Development': '敏捷开发',
@@ -1389,7 +1376,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: 'このコメントを削除してもよろしいですか？この操作は元に戻せません。',
     commentDeletedSuccess: 'コメントが正常に削除されました。',
     commentDeleteError: 'コメントの削除に失敗しました。',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "PROにアップグレード",
     proButtonTooltip: "PROにアップグレード",
     upgradeToProTitleDialog: "World AI PROにアップグレード",
@@ -1411,13 +1397,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "アップグレードを処理できませんでした。もう一度試すか、サポートにお問い合わせください。",
     loginRequiredForProTitle: "ログインが必要です",
     loginRequiredForProDescription: "PROにアップグレードするには、ログインまたはアカウントを作成してください。",
-    // Generic
     errorText: 'エラー',
     errorDefaultTitle: 'エラー',
     errorDefaultDesc: '予期しないエラーが発生しました。',
     accessDeniedTitle: 'アクセス拒否',
     accessDeniedDescription: 'この操作を実行する権限がありません。',
-    // Tag Keys
     'Programming': 'プログラミング',
     'IDE': 'IDE',
     'Agile Development': 'アジャイル開発',
@@ -1619,7 +1603,6 @@ export const translations: Translations = {
     deleteCommentConfirmDescription: 'Tem certeza de que deseja excluir este comentário? Esta ação não pode ser desfeita.',
     commentDeletedSuccess: 'Comentário excluído com sucesso.',
     commentDeleteError: 'Falha ao excluir o comentário.',
-    // PRO Upgrade Button & Dialog
     proButtonLabel: "Seja PRO",
     proButtonTooltip: "Atualizar para PRO",
     upgradeToProTitleDialog: "Atualize para World AI PRO",
@@ -1641,13 +1624,11 @@ export const translations: Translations = {
     upgradeFailedDescription: "Não foi possível processar sua atualização. Tente novamente ou entre em contato com o suporte.",
     loginRequiredForProTitle: "Login Necessário",
     loginRequiredForProDescription: "Faça login ou crie uma conta para atualizar para PRO.",
-    // Generic
     errorText: 'Erro',
     errorDefaultTitle: 'Erro',
     errorDefaultDesc: 'Ocorreu um erro inesperado.',
     accessDeniedTitle: 'Acesso Negado',
     accessDeniedDescription: 'Você não tem permissão para realizar esta ação.',
-    // Tag Keys
     'Programming': 'Programação',
     'IDE': 'IDE',
     'Agile Development': 'Desenvolvimento Ágil',
