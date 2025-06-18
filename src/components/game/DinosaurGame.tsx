@@ -18,22 +18,26 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { useChat } from '@/contexts/ChatContext'; // For mascot interaction
+import { useChat } from '@/contexts/ChatContext';
 import './DinosaurGame.css';
 
-const GAME_WIDTH = 600; // Corresponds to max-width in CSS
-const GAME_HEIGHT = 200; // Corresponds to height in CSS (desktop)
-const PLAYER_WIDTH = 30;
-const PLAYER_HEIGHT = 30;
-const OBSTACLE_MIN_WIDTH = 15;
-const OBSTACLE_MAX_WIDTH = 25;
-const OBSTACLE_MIN_HEIGHT = 30;
-const OBSTACLE_MAX_HEIGHT = 50;
+const GAME_WIDTH = 600;
+const GAME_HEIGHT_DESKTOP = 200;
+const GAME_HEIGHT_MOBILE = 150;
+
+const LACE_WIDTH = 35; // Adjusted for a slightly different aspect ratio
+const LACE_HEIGHT = 45;
+const COMPUTER_MIN_WIDTH = 20;
+const COMPUTER_MAX_WIDTH = 30;
+const COMPUTER_MIN_HEIGHT = 35;
+const COMPUTER_MAX_HEIGHT = 55;
+
 const GRAVITY = 0.7;
 const JUMP_STRENGTH = 15;
-const OBSTACLE_SPEED = 5;
-const OBSTACLE_SPAWN_INTERVAL_MIN = 1200; // ms
-const OBSTACLE_SPAWN_INTERVAL_MAX = 2500; // ms
+const BASE_OBSTACLE_SPEED = 5;
+const OBSTACLE_SPEED_INCREMENT = 0.2; // Adjusted increment for noticeable change
+const OBSTACLE_SPEED_INCREMENT_INTERVAL = 10000; // 10 seconds
+
 const SCORE_INCREMENT_INTERVAL = 100; // ms, score increases every 100ms
 
 interface PlayerState {
@@ -58,38 +62,51 @@ export default function DinosaurGame() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0); // Local high score this session
+  const [highScore, setHighScore] = useState(0);
   const [player, setPlayer] = useState<PlayerState>({ y: 0, vy: 0, isJumping: false });
   const [obstacles, setObstacles] = useState<ObstacleState[]>([]);
+  const [currentObstacleSpeed, setCurrentObstacleSpeed] = useState(BASE_OBSTACLE_SPEED);
   
   const gameAreaRef = useRef<HTMLDivElement>(null);
-  const playerRef = useRef<HTMLDivElement>(null);
   const gameLoopRef = useRef<number | null>(null);
   const scoreIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const obstacleSpawnTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const speedIncreaseIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [showRanking, setShowRanking] = useState(false);
   const [rankingScores, setRankingScores] = useState<GameHighScore[]>([]);
   const [isLoadingRanking, setIsLoadingRanking] = useState(false);
 
-  const gameHeight = gameAreaRef.current?.clientHeight || GAME_HEIGHT;
-  const groundY = gameHeight - PLAYER_HEIGHT;
+  const [gameHeight, setGameHeight] = useState(GAME_HEIGHT_DESKTOP);
+  const groundY = gameHeight - LACE_HEIGHT;
 
-  // Reset game state
-  const resetGame = useCallback(() => {
-    setPlayer({ y: 0, vy: 0, isJumping: false }); // Player starts at bottom:0 in CSS
-    setObstacles([]);
-    setScore(0);
-    setIsGameOver(false);
-    setIsPlaying(true); // Automatically start playing on reset if not game over
+  useEffect(() => {
+    const updateGameHeight = () => {
+      if (window.innerWidth < 640) { // sm breakpoint
+        setGameHeight(GAME_HEIGHT_MOBILE);
+      } else {
+        setGameHeight(GAME_HEIGHT_DESKTOP);
+      }
+    };
+    updateGameHeight();
+    window.addEventListener('resize', updateGameHeight);
+    return () => window.removeEventListener('resize', updateGameHeight);
   }, []);
 
-  // Start game
+
+  const resetGame = useCallback(() => {
+    setPlayer({ y: 0, vy: 0, isJumping: false });
+    setObstacles([]);
+    setScore(0);
+    setCurrentObstacleSpeed(BASE_OBSTACLE_SPEED);
+    setIsGameOver(false);
+    setIsPlaying(true);
+  }, []);
+
   const startGame = () => {
     resetGame();
   };
 
-  // Game over logic
   const handleGameOver = useCallback(async () => {
     setIsPlaying(false);
     setIsGameOver(true);
@@ -107,27 +124,28 @@ export default function DinosaurGame() {
   }, [score, highScore, currentUser, t, toast]);
   
 
-  // Game loop
   useEffect(() => {
     if (!isPlaying || isGameOver) {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
       if (obstacleSpawnTimeoutRef.current) clearTimeout(obstacleSpawnTimeoutRef.current);
+      if (speedIncreaseIntervalRef.current) clearInterval(speedIncreaseIntervalRef.current);
       return;
     }
 
-    // Score interval
     scoreIntervalRef.current = setInterval(() => {
       setScore(prevScore => prevScore + 1);
     }, SCORE_INCREMENT_INTERVAL);
 
-    // Obstacle spawning
     const scheduleNextObstacle = () => {
       if (!isPlaying || isGameOver) return;
-      const delay = Math.random() * (OBSTACLE_SPAWN_INTERVAL_MAX - OBSTACLE_SPAWN_INTERVAL_MIN) + OBSTACLE_SPAWN_INTERVAL_MIN;
+      const minInterval = 1200 / (currentObstacleSpeed / BASE_OBSTACLE_SPEED); // Faster spawn as speed increases
+      const maxInterval = 2500 / (currentObstacleSpeed / BASE_OBSTACLE_SPEED);
+      const delay = Math.random() * (maxInterval - minInterval) + minInterval;
+
       obstacleSpawnTimeoutRef.current = setTimeout(() => {
-        const newObstacleHeight = Math.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT;
-        const newObstacleWidth = Math.random() * (OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH) + OBSTACLE_MIN_WIDTH;
+        const newObstacleHeight = Math.random() * (COMPUTER_MAX_HEIGHT - COMPUTER_MIN_HEIGHT) + COMPUTER_MIN_HEIGHT;
+        const newObstacleWidth = Math.random() * (COMPUTER_MAX_WIDTH - COMPUTER_MIN_WIDTH) + COMPUTER_MIN_WIDTH;
         setObstacles(prev => [...prev, { 
           id: Date.now(), 
           x: GAME_WIDTH, 
@@ -139,17 +157,19 @@ export default function DinosaurGame() {
     };
     scheduleNextObstacle();
 
-    // Main game loop
+    speedIncreaseIntervalRef.current = setInterval(() => {
+        setCurrentObstacleSpeed(prevSpeed => prevSpeed + OBSTACLE_SPEED_INCREMENT);
+    }, OBSTACLE_SPEED_INCREMENT_INTERVAL);
+
     const loop = () => {
       if (!isPlaying || isGameOver) return;
 
-      // Player physics
       setPlayer(prev => {
         let newVy = prev.vy - GRAVITY;
         let newY = prev.y + newVy;
         let newIsJumping = prev.isJumping;
 
-        if (newY <= 0) { // Player on ground
+        if (newY <= 0) {
           newY = 0;
           newVy = 0;
           newIsJumping = false;
@@ -157,34 +177,31 @@ export default function DinosaurGame() {
         return { y: newY, vy: newVy, isJumping: newIsJumping };
       });
 
-      // Move obstacles & collision detection
       setObstacles(prevObstacles => 
-        prevObstacles.map(obs => ({ ...obs, x: obs.x - OBSTACLE_SPEED })).filter(obs => {
-          if (obs.x + obs.width < 0) return false; // Off-screen left
+        prevObstacles.map(obs => ({ ...obs, x: obs.x - currentObstacleSpeed })).filter(obs => {
+          if (obs.x + obs.width < 0) return false;
 
-          // Collision detection
           const playerRect = {
-            x: 20, // Player's fixed X position
-            y: groundY - player.y - PLAYER_HEIGHT, // CSS bottom is 0, so Y needs to be calculated from top
-            width: PLAYER_WIDTH,
-            height: PLAYER_HEIGHT
+            x: 20, 
+            y: groundY - player.y, // CSS bottom is 0, player.y is offset from ground
+            width: LACE_WIDTH,
+            height: LACE_HEIGHT
           };
           const obstacleRect = {
             x: obs.x,
-            y: gameHeight - obs.height, // Obstacle bottom is 0
+            y: gameHeight - obs.height, 
             width: obs.width,
             height: obs.height
           };
           
-          // AABB collision detection
           if (
             playerRect.x < obstacleRect.x + obstacleRect.width &&
             playerRect.x + playerRect.width > obstacleRect.x &&
-            playerRect.y < obstacleRect.y + obstacleRect.height &&
-            playerRect.y + playerRect.height > obstacleRect.y
+            playerRect.y < obstacleRect.y + obstacleRect.height && // Top of player < Bottom of obstacle
+            playerRect.y + playerRect.height > obstacleRect.y    // Bottom of player > Top of obstacle
           ) {
             handleGameOver();
-            return false; // Remove collided obstacle (or handle game over differently)
+            return false; 
           }
           return true;
         })
@@ -197,53 +214,61 @@ export default function DinosaurGame() {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
       if (obstacleSpawnTimeoutRef.current) clearTimeout(obstacleSpawnTimeoutRef.current);
+      if (speedIncreaseIntervalRef.current) clearInterval(speedIncreaseIntervalRef.current);
     };
-  }, [isPlaying, isGameOver, groundY, gameHeight, player.y, handleGameOver]);
+  }, [isPlaying, isGameOver, groundY, gameHeight, player.y, handleGameOver, currentObstacleSpeed]);
 
 
-  // Player jump
   const handleJump = useCallback(() => {
     if (!isGameOver && !player.isJumping) {
       setPlayer(prev => ({ ...prev, vy: JUMP_STRENGTH, isJumping: true }));
     }
   }, [isGameOver, player.isJumping]);
 
-  // Event listener for jump (click or spacebar)
   useEffect(() => {
-    const jumpHandler = (event: MouseEvent | TouchEvent | KeyboardEvent) => {
+    const jumpHandler = (event: KeyboardEvent | TouchEvent | MouseEvent) => {
       if (!isPlaying || isGameOver) return;
-      if (event.type === 'keydown' && (event as KeyboardEvent).key !== ' ') return;
-      if (gameAreaRef.current && gameAreaRef.current.contains(event.target as Node)) {
-         event.preventDefault(); // Prevent spacebar scroll if game area focused
-         handleJump();
-      } else if (event.type !== 'keydown') { // allow jump on general click/touch
-         handleJump();
+      
+      if (event.type === 'keydown' && (event as KeyboardEvent).key === ' ') {
+        event.preventDefault(); 
+        handleJump();
+      } else if (event.type === 'touchstart' || event.type === 'click') {
+         // Check if the event target is within the game area
+        if (gameAreaRef.current && gameAreaRef.current.contains(event.target as Node)) {
+            event.preventDefault();
+            handleJump();
+        }
       }
     };
 
     const gameAreaNode = gameAreaRef.current;
     if (gameAreaNode) {
-        gameAreaNode.addEventListener('click', jumpHandler);
-        // For touch devices, you might want to listen on a larger area or the whole game container
+        gameAreaNode.addEventListener('touchstart', jumpHandler, { passive: false });
+        gameAreaNode.addEventListener('click', jumpHandler, { passive: false }); // Also allow click for desktop testing
     }
     window.addEventListener('keydown', jumpHandler);
     
     return () => {
-      if (gameAreaNode) gameAreaNode.removeEventListener('click', jumpHandler);
+      if (gameAreaNode) {
+        gameAreaNode.removeEventListener('touchstart', jumpHandler);
+        gameAreaNode.removeEventListener('click', jumpHandler);
+      }
       window.removeEventListener('keydown', jumpHandler);
     };
   }, [handleJump, isPlaying, isGameOver]);
 
 
-  // Fetch ranking
   const handleShowRanking = async () => {
     setShowRanking(true);
     setIsLoadingRanking(true);
     try {
       const scores = await getDinoGameTopHighScores(100);
       setRankingScores(scores);
-      // Instruct Mascot
-      setMascotDisplayMode('ranking_intro');
+      setMascotDisplayMode('custom_queue');
+      setMascotAdHocMessages([
+          { textKey: 'rankingProInfo1', duration: 5000 },
+          { textKey: 'rankingProInfo2', duration: 5000 },
+      ]);
     } catch (error) {
       console.error("Error fetching ranking:", error);
       toast({ title: t('fetchScoresError', "Error fetching scores."), variant: "destructive" });
@@ -255,45 +280,45 @@ export default function DinosaurGame() {
 
   const handleCloseRanking = () => {
     setShowRanking(false);
-    setMascotDisplayMode('default'); // Revert mascot mode
+    setMascotDisplayMode('default'); 
   };
 
   return (
-    <section className="dino-game-container" aria-labelledby="dino-game-title">
-      <h2 id="dino-game-title" className="text-2xl font-headline text-primary mb-4">{t('dinoGameTitle', "Dino Dash!")}</h2>
+    <section className="lace-jump-game-container" aria-labelledby="lace-jump-game-title">
+      <h2 id="lace-jump-game-title" className="text-2xl font-headline text-primary mb-4">{t('laceJumpGameTitle', "Lace Jump")}</h2>
       <div 
         ref={gameAreaRef} 
-        className="dino-game-area"
+        className="lace-jump-game-area"
+        style={{ height: `${gameHeight}px` }}
         role="application"
-        tabIndex={0} // Make it focusable for keyboard events
-        aria-label={t('dinoGameAreaLabel', "Dinosaur game area, press space or click to jump")}
+        tabIndex={0} 
+        aria-label={t('laceJumpGameAreaLabel', "Lace Jump game area, press space or tap to jump over computers")}
       >
-        <div className="ground"></div>
+        <div className="ground-line"></div>
         <div 
-          ref={playerRef} 
-          className={`dino-player ${player.isJumping ? 'jump' : ''}`}
-          style={{ bottom: `${player.y}px` }}
-          aria-label="Player"
+          className={`lace-player ${player.isJumping ? 'jump' : ''}`}
+          style={{ bottom: `${player.y}px`, width: `${LACE_WIDTH}px`, height: `${LACE_HEIGHT}px` }}
+          aria-label="Lace character"
         ></div>
         {obstacles.map(obs => (
           <div 
             key={obs.id} 
-            className="dino-obstacle" 
+            className="computer-obstacle" 
             style={{ 
               left: `${obs.x}px`, 
               width: `${obs.width}px`, 
               height: `${obs.height}px` 
             }}
-            aria-hidden="true" // Obstacles are decorative for screen readers
+            aria-hidden="true"
           ></div>
         ))}
         {isGameOver && (
-          <div className="dino-game-over-screen">
+          <div className="lace-jump-game-over-screen">
             <div>
-              <h3 className="dino-game-over-title">{t('gameOverTitle', "Game Over!")}</h3>
-              <p className="dino-final-score">{t('scoreLabel', "Score: {score}", {score: score.toString()})}</p>
+              <h3 className="lace-jump-game-over-title">{t('gameOverTitle', "Game Over!")}</h3>
+              <p className="lace-jump-final-score">{t('scoreLabel', "Score: {score}", {score: score.toString()})}</p>
               {currentUser && highScore > 0 && (
-                <p className="dino-final-score text-sm text-muted-foreground">{t('highScoreLabel', "Your High Score: {score}", { score: highScore.toString() })}</p>
+                <p className="lace-jump-final-score text-sm text-muted-foreground">{t('highScoreLabel', "Your High Score: {score}", { score: highScore.toString() })}</p>
               )}
               <Button onClick={startGame} className="bg-primary hover:bg-primary/80">
                 <RefreshCw className="mr-2 h-4 w-4" />
@@ -303,12 +328,12 @@ export default function DinosaurGame() {
           </div>
         )}
       </div>
-      <div className="dino-score-display" aria-live="polite">
+      <div className="lace-jump-score-display" aria-live="polite">
         {t('scoreLabel', "Score: {score}", {score: score.toString()})}
       </div>
       
       {!isPlaying && !isGameOver && (
-        <div className="dino-game-controls">
+        <div className="lace-jump-game-controls">
           <Button onClick={startGame} size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
             <Play className="mr-2 h-5 w-5" />
             {t('playNowButton', "Play Now")}
@@ -323,9 +348,9 @@ export default function DinosaurGame() {
 
       <Dialog open={showRanking} onOpenChange={(open) => {
         if (!open) handleCloseRanking();
-        else handleShowRanking(); // If opened externally somehow, ensure data is fetched
+        else handleShowRanking();
       }}>
-        <DialogContent className="sm:max-w-md dino-ranking-modal-content">
+        <DialogContent className="sm:max-w-md lace-jump-ranking-modal-content">
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Trophy className="mr-2 h-5 w-5 text-primary" />
@@ -340,7 +365,7 @@ export default function DinosaurGame() {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : rankingScores.length > 0 ? (
-            <ul className="dino-ranking-list">
+            <ul className="lace-jump-ranking-list">
               {rankingScores.map((entry, index) => (
                 <li key={entry.id}>
                   <span className="rank-position">{index + 1}.</span>
@@ -350,7 +375,7 @@ export default function DinosaurGame() {
               ))}
             </ul>
           ) : (
-            <p className="text-center text-muted-foreground py-4">{t('noScoresYet', "No scores yet. Be the first PRO user to set one!")}</p>
+            <p className="text-center text-muted-foreground py-4">{t('noScoresYetRanking', "No scores yet. Be the first PRO user to set one!")}</p>
           )}
           <DialogFooter>
             <DialogClose asChild>
@@ -364,3 +389,4 @@ export default function DinosaurGame() {
     </section>
   );
 }
+

@@ -234,9 +234,9 @@ export type CoreTranslationKey =
   | 'upgradeFailedDescription'
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
-  // Dinosaur Game
-  | 'dinoGameTitle'
-  | 'dinoGameAreaLabel'
+  // Lace Jump Game (formerly Dinosaur Game)
+  | 'laceJumpGameTitle' // Renamed from dinoGameTitle
+  | 'laceJumpGameAreaLabel' // Renamed from dinoGameAreaLabel
   | 'playNowButton'
   | 'retryButton'
   | 'rankingButton'
@@ -506,8 +506,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "Could not process your upgrade. Please try again or contact support.",
     loginRequiredForProTitle: "Login Required",
     loginRequiredForProDescription: "Please log in or create an account to upgrade to PRO.",
-    dinoGameTitle: "Dino Dash!",
-    dinoGameAreaLabel: "Dinosaur game area, press space or click to jump",
+    laceJumpGameTitle: "Lace Jump",
+    laceJumpGameAreaLabel: "Lace Jump game area, press space or tap to jump over computers",
     playNowButton: "Play Now",
     retryButton: "Retry",
     rankingButton: "Ranking",
@@ -749,8 +749,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "No se pudo procesar tu actualización. Por favor, inténtalo de nuevo o contacta con soporte.",
     loginRequiredForProTitle: "Inicio de Sesión Requerido",
     loginRequiredForProDescription: "Por favor, inicia sesión o crea una cuenta para actualizar a PRO.",
-    dinoGameTitle: "¡Dino Carrera!",
-    dinoGameAreaLabel: "Área del juego del dinosaurio, presiona espacio o haz clic para saltar",
+    laceJumpGameTitle: "Salto de Lace",
+    laceJumpGameAreaLabel: "Área de juego Salto de Lace, presiona espacio o toca para saltar sobre las computadoras",
     playNowButton: "Jugar Ahora",
     retryButton: "Reintentar",
     rankingButton: "Ranking",
@@ -992,8 +992,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "Impossibile elaborare il tuo aggiornamento. Riprova o contatta l'assistenza.",
     loginRequiredForProTitle: "Accesso Richiesto",
     loginRequiredForProDescription: "Effettua l'accesso o crea un account per passare a PRO.",
-    dinoGameTitle: "Dino Corsa!",
-    dinoGameAreaLabel: "Area di gioco del dinosauro, premi spazio o clicca per saltare",
+    laceJumpGameTitle: "Salto di Lace",
+    laceJumpGameAreaLabel: "Area di gioco Salto di Lace, premi spazio o tocca per saltare sui computer",
     playNowButton: "Gioca Ora",
     retryButton: "Riprova",
     rankingButton: "Classifica",
@@ -1004,7 +1004,7 @@ export const translations: Translations = {
     rankingProUsersOnly: "Solo i punteggi degli utenti PRO vengono registrati nella classifica.",
     closeButton: "Chiudi",
     rankingProInfo1: "Vuoi apparire in classifica?",
-    rankingProInfo2: "Ottieni la versione PRO!",
+    rankingProInfo2: "Ottieni la versione PRO per salvare i tuoi punteggi!",
     saveScoreError: "Errore nel salvataggio del punteggio.",
     fetchScoresError: "Errore nel caricamento dei punteggi.",
     noScoresYetRanking: "Nessun punteggio ancora. Sii il primo utente PRO a stabilirne uno!",
@@ -1235,8 +1235,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "无法处理您的升级。请重试或联系支持。",
     loginRequiredForProTitle: "需要登录",
     loginRequiredForProDescription: "请登录或创建账户以升级到PRO。",
-    dinoGameTitle: "恐龙快跑！",
-    dinoGameAreaLabel: "恐龙游戏区，按空格键或点击跳跃",
+    laceJumpGameTitle: "Lace跳跃",
+    laceJumpGameAreaLabel: "Lace跳跃游戏区，按空格键或点击跳过电脑",
     playNowButton: "开始游戏",
     retryButton: "再试一次",
     rankingButton: "排行榜",
@@ -1478,8 +1478,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "アップグレードを処理できませんでした。もう一度試すか、サポートにお問い合わせください。",
     loginRequiredForProTitle: "ログインが必要です",
     loginRequiredForProDescription: "PROにアップグレードするには、ログインまたはアカウントを作成してください。",
-    dinoGameTitle: "ダイノダッシュ！",
-    dinoGameAreaLabel: "恐竜ゲームエリア、スペースキーを押すかクリックしてジャンプ",
+    laceJumpGameTitle: "レースジャンプ",
+    laceJumpGameAreaLabel: "レースジャンプゲームエリア、スペースキーを押すかタップしてコンピューターをジャンプ",
     playNowButton: "今すぐプレイ",
     retryButton: "リトライ",
     rankingButton: "ランキング",
@@ -1721,8 +1721,8 @@ export const translations: Translations = {
     upgradeFailedDescription: "Não foi possível processar sua atualização. Tente novamente ou entre em contato com o suporte.",
     loginRequiredForProTitle: "Login Necessário",
     loginRequiredForProDescription: "Faça login ou crie uma conta para atualizar para PRO.",
-    dinoGameTitle: "Corrida Dino!",
-    dinoGameAreaLabel: "Área do jogo do dinossauro, pressione espaço ou clique para pular",
+    laceJumpGameTitle: "Pulo da Lace",
+    laceJumpGameAreaLabel: "Área do jogo Pulo da Lace, pressione espaço ou toque para pular sobre os computadores",
     playNowButton: "Jogar Agora",
     retryButton: "Tentar Novamente",
     rankingButton: "Ranking",
@@ -1757,10 +1757,10 @@ export const translations: Translations = {
 };
 
 // Helper type for LocalizedString, ensuring 'en' is always a possible key and a fallback.
-export type LocalizedString =
-  | string
-  | ({
-      [key in Exclude<LanguageCode, "en">]?: string;
+export type LocalizedString = 
+  | string 
+  | ({ 
+      [key in Exclude<LanguageCode, "en">]?: string; 
     } & {
       en: string;
     });

@@ -1,57 +1,53 @@
 
-.dino-game-container {
+.lace-jump-game-container {
   width: 100%;
-  max-width: 600px; /* Max width on larger screens */
+  max-width: 600px; 
   margin: 2rem auto;
   padding: 1rem;
   border: 2px solid hsl(var(--border));
   border-radius: var(--radius);
   background-color: hsl(var(--card));
   box-shadow: 0 4px 12px hsla(var(--foreground), 0.1);
-  overflow: hidden; /* Important for elements moving off-screen */
-  position: relative; /* For absolute positioning of game elements and overlays */
+  overflow: hidden; 
+  position: relative; 
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.dino-game-area {
+.lace-jump-game-area {
   width: 100%;
-  height: 200px; /* Adjust as needed */
-  background-color: hsl(var(--background)); /* Or a light ground color */
+  /* height is set by JS now */
+  background-color: hsl(var(--background)); 
   border: 1px solid hsl(var(--border));
   position: relative;
-  overflow: hidden; /* Crucial for moving elements */
+  overflow: hidden; 
   margin-bottom: 1rem;
   border-radius: calc(var(--radius) - 2px);
+  cursor: pointer; /* Indicate it's clickable/tappable */
 }
 
-.dino-player {
-  width: 30px;
-  height: 30px;
-  background-color: hsl(var(--primary)); /* Player color */
+.lace-player {
+  /* width and height set by JS */
+  background-color: hsl(var(--accent)); /* Lace's color */
+  position: absolute;
+  bottom: 0; /* Initialized here, controlled by JS `player.y` */
+  left: 20px; 
+  border-radius: 4px; /* Slightly rounded for a softer look */
+  transition: bottom 0.1s ease-out; /* Smoother jump animation */
+  box-shadow: 0 2px 4px hsla(var(--accent), 0.5);
+}
+
+.computer-obstacle {
+  /* width and height set by JS */
+  background-color: hsl(var(--muted-foreground)); /* Computer color - a darker gray */
   position: absolute;
   bottom: 0;
-  left: 20px; /* Initial position */
   border-radius: 3px;
-  transition: bottom 0.15s ease-out; /* Smooth jump */
+  border: 1px solid hsl(var(--border)); /* Subtle border for computers */
 }
 
-.dino-player.jump {
-  /* bottom will be set by JS */
-}
-
-.dino-obstacle {
-  width: 20px;
-  height: 40px;
-  background-color: hsl(var(--destructive)); /* Obstacle color */
-  position: absolute;
-  bottom: 0;
-  /* right will be set by JS, initially off-screen */
-  border-radius: 3px;
-}
-
-.dino-score-display {
+.lace-jump-score-display {
   font-size: 1.25rem;
   font-weight: bold;
   color: hsl(var(--primary));
@@ -59,16 +55,16 @@
   text-align: center;
 }
 
-.dino-game-controls, .dino-game-over-screen {
+.lace-jump-game-controls, .lace-jump-game-over-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem; /* Space between buttons/text */
+  gap: 0.75rem; 
   padding: 1rem;
   width: 100%;
 }
 
-.dino-game-over-screen {
+.lace-jump-game-over-screen {
   position: absolute;
   top: 0;
   left: 0;
@@ -84,7 +80,7 @@
   border-radius: calc(var(--radius) - 2px);
 }
 
-.dino-game-over-screen > div {
+.lace-jump-game-over-screen > div {
     background-color: hsl(var(--card));
     padding: 2rem;
     border-radius: var(--radius);
@@ -92,41 +88,40 @@
     border: 1px solid hsl(var(--border));
 }
 
-.dino-game-over-title {
+.lace-jump-game-over-title {
   font-size: 2rem;
   font-weight: bold;
   color: hsl(var(--destructive));
   margin-bottom: 0.5rem;
 }
 
-.dino-final-score {
+.lace-jump-final-score {
   font-size: 1.2rem;
   color: hsl(var(--foreground));
   margin-bottom: 1rem;
 }
 
-.dino-game-area .ground {
+.lace-jump-game-area .ground-line {
   position: absolute;
-  bottom: 0;
+  bottom: -1px; /* Ensure it's visually connected or slightly below for effect */
   left: 0;
   width: 100%;
-  height: 5px;
+  height: 2px; /* Thicker ground line */
   background-color: hsl(var(--muted-foreground));
 }
 
-/* Ranking Modal specific styles can go here if needed, but prefer ShadCN Dialog */
-.dino-ranking-modal-content {
+.lace-jump-ranking-modal-content {
   max-height: 70vh;
   overflow-y: auto;
 }
 
-.dino-ranking-list {
+.lace-jump-ranking-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.dino-ranking-list li {
+.lace-jump-ranking-list li {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem 0.25rem;
@@ -134,44 +129,42 @@
   font-size: 0.9rem;
 }
 
-.dino-ranking-list li:last-child {
+.lace-jump-ranking-list li:last-child {
   border-bottom: none;
 }
 
-.dino-ranking-list .rank-position {
+.lace-jump-ranking-list .rank-position {
   font-weight: bold;
   color: hsl(var(--primary));
   margin-right: 0.75rem;
   min-width: 25px;
   text-align: right;
 }
-.dino-ranking-list .rank-username {
+.lace-jump-ranking-list .rank-username {
   flex-grow: 1;
   color: hsl(var(--foreground));
 }
-.dino-ranking-list .rank-score {
+.lace-jump-ranking-list .rank-score {
   font-weight: bold;
   color: hsl(var(--accent));
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) { /* sm breakpoint */
-  .dino-game-area {
-    height: 150px; /* Smaller game area on mobile */
+  .lace-jump-game-area {
+    /* height: 150px;  Height is now dynamic via JS */
   }
-  .dino-player {
-    width: 25px;
-    height: 25px;
+  .lace-player {
+    /* width and height are now dynamic via JS, but can set base if needed */
     left: 15px;
   }
-  .dino-obstacle {
-    width: 15px;
-    height: 30px;
+  .computer-obstacle {
+     /* width and height are now dynamic via JS */
   }
-  .dino-game-over-title {
+  .lace-jump-game-over-title {
     font-size: 1.5rem;
   }
-  .dino-final-score {
+  .lace-jump-final-score {
     font-size: 1rem;
   }
 }
