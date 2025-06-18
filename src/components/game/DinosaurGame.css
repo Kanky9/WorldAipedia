@@ -1,15 +1,15 @@
 
 .lace-jump-game-container {
   width: 100%;
-  max-width: 600px; 
+  max-width: 600px;
   margin: 2rem auto;
   padding: 1rem;
   border: 2px solid hsl(var(--border));
   border-radius: var(--radius);
   background-color: hsl(var(--card));
   box-shadow: 0 4px 12px hsla(var(--foreground), 0.1);
-  overflow: hidden; 
-  position: relative; 
+  overflow: hidden;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -18,27 +18,31 @@
 .lace-jump-game-area {
   width: 100%;
   /* height is set by JS now */
-  background-color: hsl(var(--background)); 
+  background-color: hsl(var(--background));
   border: 1px solid hsl(var(--border));
   position: relative;
-  overflow: hidden; 
+  overflow: hidden;
   margin-bottom: 1rem;
   border-radius: calc(var(--radius) - 2px);
   cursor: pointer; /* Indicate it's clickable/tappable */
 }
 
 .lace-player {
-  /* width and height set by JS */
-  background-color: hsl(var(--accent)); /* Lace's color */
   position: absolute;
-  bottom: 0; /* Initialized here, controlled by JS `player.y` */
-  left: 20px; 
-  border-radius: 4px; /* Slightly rounded for a softer look */
+  left: 20px; /* Default starting X position for Lace */
+  /* bottom, width, and height are set by inline styles in the component */
   transition: bottom 0.1s ease-out; /* Smoother jump animation */
-  box-shadow: 0 2px 4px hsla(var(--accent), 0.5);
+  /* Visuals are now handled by the SVG child */
 }
 
-.star-obstacle { /* Renamed from .computer-obstacle */
+.lace-player svg { /* Styles for the SVG element itself */
+  display: block; /* Removes extra space below inline SVGs */
+  width: 100%;
+  height: 100%;
+}
+
+
+.star-obstacle {
   /* width and height set by JS */
   background-color: hsl(var(--primary)); /* Star color - using primary theme color */
   position: absolute;
@@ -60,7 +64,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem; 
+  gap: 0.75rem;
   padding: 1rem;
   width: 100%;
 }
@@ -104,10 +108,10 @@
 
 .lace-jump-game-area .ground-line {
   position: absolute;
-  bottom: -1px; 
+  bottom: -1px;
   left: 0;
   width: 100%;
-  height: 2px; 
+  height: 2px;
   background-color: hsl(var(--muted-foreground));
 }
 
@@ -159,7 +163,7 @@
     /* width and height are now dynamic via JS, but can set base if needed */
     left: 15px;
   }
-  .star-obstacle { /* Changed from .computer-obstacle */
+  .star-obstacle {
      /* width and height are now dynamic via JS */
   }
   .lace-jump-game-over-title {
