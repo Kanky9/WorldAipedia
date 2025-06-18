@@ -2,7 +2,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // ✅ This line is THE KEY for static export builds
+  // output: 'export', // ✅ This line is THE KEY for static export builds
 
   typescript: {
     ignoreBuildErrors: true,
