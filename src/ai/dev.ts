@@ -1,6 +1,7 @@
 
 // Flows will be imported for their side effects in this file.
-import './flows/pageExplainerFlow';
-import './flows/chatFlow'; 
-import './flows/aiToolWelcomeFlow';
+// import './flows/pageExplainerFlow';
+// import './flows/chatFlow'; 
+// import './flows/aiToolWelcomeFlow';
     
+// console.log("DEBUG: src/ai/dev.ts processed, Genkit flows are currently commented out for debugging server startup issues.");
