@@ -29,8 +29,5 @@ export default async function PostDynamicPage({ params }: PostDynamicPageProps) 
   // This is a Server Component.
   // It receives params from the dynamic route.
   // It then renders the Client Component, passing the postId.
-  // The "params.id used params.id" error should be resolved by having generateStaticParams
-  // correctly defined for an export build, ensuring params are stable.
   return <PostPageClient postId={params.id} />;
 }
-

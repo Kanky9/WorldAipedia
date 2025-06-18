@@ -232,7 +232,11 @@ export default function CreatePostPage() {
       return;
     }
 
-    if (!title || !shortDescription || !longDescription || (!mainImageDataUri && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
+    const trimmedTitle = title.trim();
+    const trimmedShortDescription = shortDescription.trim();
+    const trimmedLongDescription = longDescription.trim();
+
+    if (!trimmedTitle || !trimmedShortDescription || !trimmedLongDescription || (!mainImageDataUri && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
       toast({
         variant: "destructive",
         title: t('adminPostErrorTitle', "Error submitting post"),
@@ -246,9 +250,9 @@ export default function CreatePostPage() {
     const currentEditingLanguage = language as LanguageCode;
     
     const sourceTexts = {
-      title: title.trim(),
-      shortDescription: shortDescription.trim(),
-      longDescription: longDescription.trim(),
+      title: trimmedTitle,
+      shortDescription: trimmedShortDescription,
+      longDescription: trimmedLongDescription,
     };
 
     const finalTranslations: {
@@ -262,14 +266,12 @@ export default function CreatePostPage() {
     };
 
     const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
-    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && !allAppLanguageCodes.includes('en')) {
-        languagesToTranslateTo.push('en');
-    } else if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && allAppLanguageCodes.includes('en')) {
-        languagesToTranslateTo.push('en'); // Always ensure 'en' is a target if not the source and is an app language
+    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && allAppLanguageCodes.includes('en')) {
+        languagesToTranslateTo.push('en'); 
     }
     
     const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
-        const textsToTranslateForThisLang: Record<string, string> = {};
+        const textsToTranslateForThisLang: { title?: string; shortDescription?: string; longDescription?: string; } = {};
         if (sourceTexts.title) textsToTranslateForThisLang.title = sourceTexts.title;
         if (sourceTexts.shortDescription) textsToTranslateForThisLang.shortDescription = sourceTexts.shortDescription;
         if (sourceTexts.longDescription) textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
@@ -279,14 +281,15 @@ export default function CreatePostPage() {
         }
         try {
             const result = await translatePostContents({
-            textsToTranslate: textsToTranslateForThisLang,
-            targetLanguageCode: targetLangCode,
-            sourceLanguageCode: currentEditingLanguage,
+              textsToTranslate: textsToTranslateForThisLang,
+              targetLanguageCode: targetLangCode,
+              sourceLanguageCode: currentEditingLanguage,
             });
             return { lang: targetLangCode, translations: result.translatedTexts };
         } catch (error) {
-            console.error(`Error translating to ${targetLangCode} for fields ${Object.keys(textsToTranslateForThisLang).join(', ')}:`, error);
-            toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content to ${targetLangCode}. Original text will be used if English.`});
+            const fieldsAttempted = Object.keys(textsToTranslateForThisLang).join(', ');
+            console.error(`Error translating to ${targetLangCode} for fields: [${fieldsAttempted}]. Original error:`, error);
+            toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content (${fieldsAttempted}) to ${targetLangCode}. Original text will be used if English.`});
             return { lang: targetLangCode, translations: {} }; 
         }
     });
@@ -299,7 +302,7 @@ export default function CreatePostPage() {
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
     
-    // Ensure English versions exist, falling back to source text if direct 'en' translation wasn't performed
+    // Ensure English versions exist, falling back to source text if direct 'en' translation wasn't performed AND source text was non-empty
     if (!finalTranslations.title.en && sourceTexts.title) finalTranslations.title.en = sourceTexts.title;
     if (!finalTranslations.shortDescription.en && sourceTexts.shortDescription) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
     if (!finalTranslations.longDescription.en && sourceTexts.longDescription) finalTranslations.longDescription.en = sourceTexts.longDescription;
@@ -348,7 +351,7 @@ export default function CreatePostPage() {
       logoHint: logoHint,
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
-      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag), // Tags are saved as entered, not translated by this flow
+      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
       link: linkTool,
       detailImageUrl1: finalDetailImageUrl1 || undefined,
@@ -611,4 +614,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-
