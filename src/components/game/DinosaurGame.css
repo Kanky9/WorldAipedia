@@ -29,14 +29,12 @@
 
 .lace-player {
   position: absolute;
-  left: 20px; /* Default starting X position for Lace */
-  /* bottom, width, and height are set by inline styles in the component */
-  transition: bottom 0.1s ease-out; /* Smoother jump animation */
-  /* Visuals are now handled by the SVG child */
+  /* left, bottom, width, and height are set by inline styles in the component */
+  transition: bottom 0.1s ease-out; /* Smoother jump animation for visual effect only, physics handles actual position */
 }
 
-.lace-player svg { /* Styles for the SVG element itself */
-  display: block; /* Removes extra space below inline SVGs */
+.lace-player svg { 
+  display: block; 
   width: 100%;
   height: 100%;
 }
@@ -46,10 +44,9 @@
   /* width and height set by JS */
   background-color: hsl(var(--primary)); /* Star color - using primary theme color */
   position: absolute;
-  bottom: 0;
-  border-radius: 3px;
-  /* Optional: add a slight glow or different border for "star" effect */
-  /* box-shadow: 0 0 5px hsl(var(--primary) / 0.7); */
+  bottom: 0px; /* Obstacles are on the ground */
+  border-radius: 3px; /* Slightly rounded corners */
+  /* box-shadow: 0 0 3px hsl(var(--primary) / 0.5); /* Optional: slight glow for stars */
 }
 
 .lace-jump-score-display {
@@ -108,12 +105,14 @@
 
 .lace-jump-game-area .ground-line {
   position: absolute;
-  bottom: -1px;
+  bottom: -1px; /* Positioned at the very bottom */
   left: 0;
   width: 100%;
-  height: 2px;
-  background-color: hsl(var(--muted-foreground));
+  height: 2px; /* Thickness of the line */
+  background-color: hsl(var(--muted-foreground)); /* Color of the ground line */
+  z-index: 0; /* Behind player and obstacles */
 }
+
 
 .lace-jump-ranking-modal-content {
   max-height: 70vh;
@@ -156,16 +155,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 640px) { /* sm breakpoint */
-  .lace-jump-game-area {
-    /* height: 150px;  Height is now dynamic via JS */
-  }
-  .lace-player {
-    /* width and height are now dynamic via JS, but can set base if needed */
-    left: 15px;
-  }
-  .star-obstacle {
-     /* width and height are now dynamic via JS */
-  }
   .lace-jump-game-over-title {
     font-size: 1.5rem;
   }
@@ -173,3 +162,4 @@
     font-size: 1rem;
   }
 }
+
