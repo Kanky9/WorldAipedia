@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { getCategoryByName } from '@/data/posts';
-import { getPostFromFirestore, deleteCommentFromFirestore, db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
+import { getAllPostsFromFirestore, getPostFromFirestore, deleteCommentFromFirestore, db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -29,6 +29,18 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from "@/hooks/use-toast";
 
+// This function runs at build time (server-side)
+export async function generateStaticParams() {
+  try {
+    const posts: PostType[] = await getAllPostsFromFirestore();
+    return posts.map((post) => ({
+      id: post.id,
+    }));
+  } catch (error) {
+    console.error("Failed to generate static params for /posts/[id]:", error);
+    return []; 
+  }
+}
 
 export default function PostPage() {
   const params = useParams();
@@ -455,3 +467,5 @@ export default function PostPage() {
     </div>
   );
 }
+
+    
