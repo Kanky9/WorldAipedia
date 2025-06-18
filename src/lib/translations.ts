@@ -234,9 +234,9 @@ export type CoreTranslationKey =
   | 'upgradeFailedDescription'
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
-  // Lace Jump Game (formerly Dinosaur Game)
-  | 'laceJumpGameTitle' // Renamed from dinoGameTitle
-  | 'laceJumpGameAreaLabel' // Renamed from dinoGameAreaLabel
+  // Lace Jump Game
+  | 'laceJumpGameTitle'
+  | 'laceJumpGameAreaLabel'
   | 'playNowButton'
   | 'retryButton'
   | 'rankingButton'
@@ -507,7 +507,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "Login Required",
     loginRequiredForProDescription: "Please log in or create an account to upgrade to PRO.",
     laceJumpGameTitle: "Lace Jump",
-    laceJumpGameAreaLabel: "Lace Jump game area, press space or tap to jump over computers",
+    laceJumpGameAreaLabel: "Lace Jump game area, press space or tap to jump over stars",
     playNowButton: "Play Now",
     retryButton: "Retry",
     rankingButton: "Ranking",
@@ -750,7 +750,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "Inicio de Sesión Requerido",
     loginRequiredForProDescription: "Por favor, inicia sesión o crea una cuenta para actualizar a PRO.",
     laceJumpGameTitle: "Salto de Lace",
-    laceJumpGameAreaLabel: "Área de juego Salto de Lace, presiona espacio o toca para saltar sobre las computadoras",
+    laceJumpGameAreaLabel: "Área de juego Salto de Lace, presiona espacio o toca para saltar sobre las estrellas",
     playNowButton: "Jugar Ahora",
     retryButton: "Reintentar",
     rankingButton: "Ranking",
@@ -993,7 +993,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "Accesso Richiesto",
     loginRequiredForProDescription: "Effettua l'accesso o crea un account per passare a PRO.",
     laceJumpGameTitle: "Salto di Lace",
-    laceJumpGameAreaLabel: "Area di gioco Salto di Lace, premi spazio o tocca per saltare sui computer",
+    laceJumpGameAreaLabel: "Area di gioco Salto di Lace, premi spazio o tocca per saltare sulle stelle",
     playNowButton: "Gioca Ora",
     retryButton: "Riprova",
     rankingButton: "Classifica",
@@ -1236,7 +1236,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "需要登录",
     loginRequiredForProDescription: "请登录或创建账户以升级到PRO。",
     laceJumpGameTitle: "Lace跳跃",
-    laceJumpGameAreaLabel: "Lace跳跃游戏区，按空格键或点击跳过电脑",
+    laceJumpGameAreaLabel: "Lace跳跃游戏区，按空格键或点击跳过星星",
     playNowButton: "开始游戏",
     retryButton: "再试一次",
     rankingButton: "排行榜",
@@ -1479,7 +1479,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "ログインが必要です",
     loginRequiredForProDescription: "PROにアップグレードするには、ログインまたはアカウントを作成してください。",
     laceJumpGameTitle: "レースジャンプ",
-    laceJumpGameAreaLabel: "レースジャンプゲームエリア、スペースキーを押すかタップしてコンピューターをジャンプ",
+    laceJumpGameAreaLabel: "レースジャンプゲームエリア、スペースキーを押すかタップして星をジャンプ",
     playNowButton: "今すぐプレイ",
     retryButton: "リトライ",
     rankingButton: "ランキング",
@@ -1722,7 +1722,7 @@ export const translations: Translations = {
     loginRequiredForProTitle: "Login Necessário",
     loginRequiredForProDescription: "Faça login ou crie uma conta para atualizar para PRO.",
     laceJumpGameTitle: "Pulo da Lace",
-    laceJumpGameAreaLabel: "Área do jogo Pulo da Lace, pressione espaço ou toque para pular sobre os computadores",
+    laceJumpGameAreaLabel: "Área do jogo Pulo da Lace, pressione espaço ou toque para pular sobre as estrelas",
     playNowButton: "Jogar Agora",
     retryButton: "Tentar Novamente",
     rankingButton: "Ranking",

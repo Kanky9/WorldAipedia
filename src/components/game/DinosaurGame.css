@@ -38,13 +38,14 @@
   box-shadow: 0 2px 4px hsla(var(--accent), 0.5);
 }
 
-.computer-obstacle {
+.star-obstacle { /* Renamed from .computer-obstacle */
   /* width and height set by JS */
-  background-color: hsl(var(--muted-foreground)); /* Computer color - a darker gray */
+  background-color: hsl(var(--primary)); /* Star color - using primary theme color */
   position: absolute;
   bottom: 0;
   border-radius: 3px;
-  border: 1px solid hsl(var(--border)); /* Subtle border for computers */
+  /* Optional: add a slight glow or different border for "star" effect */
+  /* box-shadow: 0 0 5px hsl(var(--primary) / 0.7); */
 }
 
 .lace-jump-score-display {
@@ -103,10 +104,10 @@
 
 .lace-jump-game-area .ground-line {
   position: absolute;
-  bottom: -1px; /* Ensure it's visually connected or slightly below for effect */
+  bottom: -1px; 
   left: 0;
   width: 100%;
-  height: 2px; /* Thicker ground line */
+  height: 2px; 
   background-color: hsl(var(--muted-foreground));
 }
 
@@ -158,7 +159,7 @@
     /* width and height are now dynamic via JS, but can set base if needed */
     left: 15px;
   }
-  .computer-obstacle {
+  .star-obstacle { /* Changed from .computer-obstacle */
      /* width and height are now dynamic via JS */
   }
   .lace-jump-game-over-title {

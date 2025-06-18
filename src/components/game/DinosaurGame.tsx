@@ -25,17 +25,17 @@ const GAME_WIDTH = 600;
 const GAME_HEIGHT_DESKTOP = 200;
 const GAME_HEIGHT_MOBILE = 150;
 
-const LACE_WIDTH = 35; // Adjusted for a slightly different aspect ratio
+const LACE_WIDTH = 35; 
 const LACE_HEIGHT = 45;
-const COMPUTER_MIN_WIDTH = 20;
-const COMPUTER_MAX_WIDTH = 30;
-const COMPUTER_MIN_HEIGHT = 35;
-const COMPUTER_MAX_HEIGHT = 55;
+const OBSTACLE_MIN_WIDTH = 20; // Renamed from COMPUTER_MIN_WIDTH
+const OBSTACLE_MAX_WIDTH = 30; // Renamed from COMPUTER_MAX_WIDTH
+const OBSTACLE_MIN_HEIGHT = 35; // Renamed from COMPUTER_MIN_HEIGHT
+const OBSTACLE_MAX_HEIGHT = 55; // Renamed from COMPUTER_MAX_HEIGHT
 
 const GRAVITY = 0.7;
 const JUMP_STRENGTH = 15;
 const BASE_OBSTACLE_SPEED = 5;
-const OBSTACLE_SPEED_INCREMENT = 0.2; // Adjusted increment for noticeable change
+const OBSTACLE_SPEED_INCREMENT = 0.2; 
 const OBSTACLE_SPEED_INCREMENT_INTERVAL = 10000; // 10 seconds
 
 const SCORE_INCREMENT_INTERVAL = 100; // ms, score increases every 100ms
@@ -57,7 +57,7 @@ export default function DinosaurGame() {
   const { t, language } = useLanguage();
   const { currentUser } = useAuth();
   const { toast } = useToast();
-  const { setMascotDisplayMode } = useChat();
+  const { setMascotDisplayMode, setMascotAdHocMessages } = useChat();
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -82,7 +82,7 @@ export default function DinosaurGame() {
 
   useEffect(() => {
     const updateGameHeight = () => {
-      if (window.innerWidth < 640) { // sm breakpoint
+      if (window.innerWidth < 640) { 
         setGameHeight(GAME_HEIGHT_MOBILE);
       } else {
         setGameHeight(GAME_HEIGHT_DESKTOP);
@@ -139,13 +139,13 @@ export default function DinosaurGame() {
 
     const scheduleNextObstacle = () => {
       if (!isPlaying || isGameOver) return;
-      const minInterval = 1200 / (currentObstacleSpeed / BASE_OBSTACLE_SPEED); // Faster spawn as speed increases
+      const minInterval = 1200 / (currentObstacleSpeed / BASE_OBSTACLE_SPEED); 
       const maxInterval = 2500 / (currentObstacleSpeed / BASE_OBSTACLE_SPEED);
       const delay = Math.random() * (maxInterval - minInterval) + minInterval;
 
       obstacleSpawnTimeoutRef.current = setTimeout(() => {
-        const newObstacleHeight = Math.random() * (COMPUTER_MAX_HEIGHT - COMPUTER_MIN_HEIGHT) + COMPUTER_MIN_HEIGHT;
-        const newObstacleWidth = Math.random() * (COMPUTER_MAX_WIDTH - COMPUTER_MIN_WIDTH) + COMPUTER_MIN_WIDTH;
+        const newObstacleHeight = Math.random() * (OBSTACLE_MAX_HEIGHT - OBSTACLE_MIN_HEIGHT) + OBSTACLE_MIN_HEIGHT; // Use renamed constants
+        const newObstacleWidth = Math.random() * (OBSTACLE_MAX_WIDTH - OBSTACLE_MIN_WIDTH) + OBSTACLE_MIN_WIDTH;   // Use renamed constants
         setObstacles(prev => [...prev, { 
           id: Date.now(), 
           x: GAME_WIDTH, 
@@ -183,7 +183,7 @@ export default function DinosaurGame() {
 
           const playerRect = {
             x: 20, 
-            y: groundY - player.y, // CSS bottom is 0, player.y is offset from ground
+            y: groundY - player.y, 
             width: LACE_WIDTH,
             height: LACE_HEIGHT
           };
@@ -197,8 +197,8 @@ export default function DinosaurGame() {
           if (
             playerRect.x < obstacleRect.x + obstacleRect.width &&
             playerRect.x + playerRect.width > obstacleRect.x &&
-            playerRect.y < obstacleRect.y + obstacleRect.height && // Top of player < Bottom of obstacle
-            playerRect.y + playerRect.height > obstacleRect.y    // Bottom of player > Top of obstacle
+            playerRect.y < obstacleRect.y + obstacleRect.height && 
+            playerRect.y + playerRect.height > obstacleRect.y    
           ) {
             handleGameOver();
             return false; 
@@ -233,7 +233,6 @@ export default function DinosaurGame() {
         event.preventDefault(); 
         handleJump();
       } else if (event.type === 'touchstart' || event.type === 'click') {
-         // Check if the event target is within the game area
         if (gameAreaRef.current && gameAreaRef.current.contains(event.target as Node)) {
             event.preventDefault();
             handleJump();
@@ -244,7 +243,7 @@ export default function DinosaurGame() {
     const gameAreaNode = gameAreaRef.current;
     if (gameAreaNode) {
         gameAreaNode.addEventListener('touchstart', jumpHandler, { passive: false });
-        gameAreaNode.addEventListener('click', jumpHandler, { passive: false }); // Also allow click for desktop testing
+        gameAreaNode.addEventListener('click', jumpHandler, { passive: false }); 
     }
     window.addEventListener('keydown', jumpHandler);
     
@@ -292,7 +291,7 @@ export default function DinosaurGame() {
         style={{ height: `${gameHeight}px` }}
         role="application"
         tabIndex={0} 
-        aria-label={t('laceJumpGameAreaLabel', "Lace Jump game area, press space or tap to jump over computers")}
+        aria-label={t('laceJumpGameAreaLabel', "Lace Jump game area, press space or tap to jump over stars")}
       >
         <div className="ground-line"></div>
         <div 
@@ -303,7 +302,7 @@ export default function DinosaurGame() {
         {obstacles.map(obs => (
           <div 
             key={obs.id} 
-            className="computer-obstacle" 
+            className="star-obstacle"  // Changed class name
             style={{ 
               left: `${obs.x}px`, 
               width: `${obs.width}px`, 
@@ -389,4 +388,3 @@ export default function DinosaurGame() {
     </section>
   );
 }
-
