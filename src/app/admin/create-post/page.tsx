@@ -262,8 +262,10 @@ export default function CreatePostPage() {
     };
 
     const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
-    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en')) {
+    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && !allAppLanguageCodes.includes('en')) {
         languagesToTranslateTo.push('en');
+    } else if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && allAppLanguageCodes.includes('en')) {
+        languagesToTranslateTo.push('en'); // Always ensure 'en' is a target if not the source and is an app language
     }
     
     const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
@@ -283,7 +285,7 @@ export default function CreatePostPage() {
             });
             return { lang: targetLangCode, translations: result.translatedTexts };
         } catch (error) {
-            console.error(`Error translating to ${targetLangCode}:`, error);
+            console.error(`Error translating to ${targetLangCode} for fields ${Object.keys(textsToTranslateForThisLang).join(', ')}:`, error);
             toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content to ${targetLangCode}. Original text will be used if English.`});
             return { lang: targetLangCode, translations: {} }; 
         }
@@ -297,6 +299,7 @@ export default function CreatePostPage() {
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
     
+    // Ensure English versions exist, falling back to source text if direct 'en' translation wasn't performed
     if (!finalTranslations.title.en && sourceTexts.title) finalTranslations.title.en = sourceTexts.title;
     if (!finalTranslations.shortDescription.en && sourceTexts.shortDescription) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
     if (!finalTranslations.longDescription.en && sourceTexts.longDescription) finalTranslations.longDescription.en = sourceTexts.longDescription;
@@ -345,7 +348,7 @@ export default function CreatePostPage() {
       logoHint: logoHint,
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
-      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+      tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag), // Tags are saved as entered, not translated by this flow
       publishedDate: new Date(publishedDate),
       link: linkTool,
       detailImageUrl1: finalDetailImageUrl1 || undefined,
