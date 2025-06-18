@@ -1,10 +1,10 @@
 
-"use client";
+// This file is now primarily for server-side concerns like generateStaticParams
+// and then delegates client-side rendering/logic to EditPostRedirectClient.
 
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import { getAllPostsFromFirestore } from '@/lib/firebase';
 import type { Post as PostType } from '@/lib/types';
+import EditPostRedirectClient from '@/components/admin/EditPostRedirectClient';
 
 // This function runs at build time (server-side)
 export async function generateStaticParams() {
@@ -24,22 +24,13 @@ export async function generateStaticParams() {
   }
 }
 
-export default function EditPostRedirectPage() {
-  const router = useRouter();
-  const params = useParams();
-  const postId = typeof params.id === 'string' ? params.id : null;
+interface EditPostPageProps {
+  params: { id: string };
+}
 
-  useEffect(() => {
-    if (postId) {
-      // Redirect to the create-post page with the ID as a query parameter
-      // This allows reusing the same form for both create and edit.
-      router.replace(`/admin/create-post?id=${postId}`);
-    } else {
-      // If no ID, perhaps redirect to admin overview or show an error
-      router.replace('/admin');
-    }
-  }, [postId, router]);
-
-  // Render null or a loading state while redirecting
-  return null; 
+// This is a Server Component.
+export default async function EditPostPage({ params }: EditPostPageProps) {
+  // It receives params from the dynamic route.
+  // It then renders the Client Component, passing the postId.
+  return <EditPostRedirectClient postId={params.id} />;
 }
