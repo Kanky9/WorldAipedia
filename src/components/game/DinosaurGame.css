@@ -30,7 +30,7 @@
 .lace-player {
   position: absolute;
   /* left, bottom, width, and height are set by inline styles in the component */
-  /* Removed CSS transition for bottom to rely on JS updates for smoother physics-based animation */
+  /* CSS transition for bottom removed for JS-controlled physics-based animation */
 }
 
 .lace-player svg { 
@@ -51,6 +51,19 @@
   display: block;
   width: 100%;
   height: 100%;
+  animation: star-glow-pulse 1.5s infinite ease-in-out;
+  /* filter: drop-shadow(0 0 3px hsl(0, 100%, 70%)) drop-shadow(0 0 6px hsl(0, 100%, 80%)); */ /* Static glow */
+}
+
+@keyframes star-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px hsl(0, 100%, 65%)) drop-shadow(0 0 5px hsl(0, 100%, 75%));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 5px hsl(0, 100%, 60%)) drop-shadow(0 0 10px hsl(0, 100%, 70%));
+    transform: scale(1.02);
+  }
 }
 
 
