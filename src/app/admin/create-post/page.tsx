@@ -263,7 +263,7 @@ export default function CreatePostPage() {
 
     const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
     if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en')) {
-        languagesToTranslateTo.push('en'); // Ensure English is always a target if not the source
+        languagesToTranslateTo.push('en');
     }
     
     const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
@@ -297,10 +297,9 @@ export default function CreatePostPage() {
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
     
-    // Ensure 'en' is present and filled, using source if it was English, or translated value
-    if (!finalTranslations.title.en) finalTranslations.title.en = sourceTexts.title; // Fallback to source if 'en' translation failed or wasn't source
-    if (!finalTranslations.shortDescription.en) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
-    if (!finalTranslations.longDescription.en) finalTranslations.longDescription.en = sourceTexts.longDescription;
+    if (!finalTranslations.title.en && sourceTexts.title) finalTranslations.title.en = sourceTexts.title;
+    if (!finalTranslations.shortDescription.en && sourceTexts.shortDescription) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
+    if (!finalTranslations.longDescription.en && sourceTexts.longDescription) finalTranslations.longDescription.en = sourceTexts.longDescription;
     
     setIsTranslating(false);
     
@@ -609,3 +608,4 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
