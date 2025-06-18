@@ -1,141 +1,29 @@
+// This file is now primarily for server-side concerns like generateStaticParams
+// and then delegates rendering to a Client Component.
 
-"use client";
+import { categories } from '@/data/posts';
+import type { Category as CategoryType } from '@/lib/types';
+import CategoryDetailPageClient from '@/components/categories/CategoryDetailPageClient';
 
-import { notFound, useParams } from 'next/navigation';
-import { getCategoryBySlug } from '@/data/posts'; // Categories are still from mock
-import { getPostsByCategorySlugFromFirestore } from '@/lib/firebase'; // Posts from Firestore
-import PostCard from '@/components/blog/PostCard';
-import CategoryIcon from '@/components/ai/CategoryIcon';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, AlertTriangle } from 'lucide-react';
-import { useLanguage } from '@/hooks/useLanguage';
-import { useEffect, useState, useCallback } from 'react';
-import type { Category as CategoryType, Post as PostType } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
-
-
-export default function CategoryDetailPage() {
-  const params = useParams();
-  const categorySlugFromUrl = typeof params.categoryName === 'string' ? params.categoryName : '';
-  const { t } = useLanguage();
-
-  const [category, setCategory] = useState<CategoryType | null | undefined>(undefined);
-  const [postsInCategory, setPostsInCategory] = useState<PostType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [animationClass, setAnimationClass] = useState('');
-
-
-  const fetchCategoryData = useCallback(async () => {
-    if (categorySlugFromUrl) {
-      setIsLoading(true);
-      setError(null);
-      // Use getCategoryBySlug (which is now case-insensitive) to find the category definition
-      const currentCategory = getCategoryBySlug(categorySlugFromUrl);
-      setCategory(currentCategory);
-
-      if (currentCategory) {
-        try {
-          // Use the canonical slug from currentCategory for Firestore query
-          const posts = await getPostsByCategorySlugFromFirestore(currentCategory.slug);
-          setPostsInCategory(posts);
-          setAnimationClass('animate-fade-in');
-        } catch (err) {
-          console.error("Error fetching posts for category:", err);
-          setError("Failed to load posts for this category.");
-          setPostsInCategory([]);
-          setAnimationClass('');
-        }
-      } else {
-        setAnimationClass(''); // No category found, will lead to notFound()
-      }
-      setIsLoading(false);
-    }
-  }, [categorySlugFromUrl]);
-
-  useEffect(() => {
-    fetchCategoryData();
-  }, [fetchCategoryData]);
-
-  if (isLoading || category === undefined) {
-     return (
-      <div className="space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Skeleton className="h-8 w-8 sm:h-10 sm:w-10 rounded-full" />
-              <Skeleton className="h-8 w-36 sm:h-10 sm:w-48" />
-            </div>
-            <Skeleton className="h-5 w-60 sm:h-6 sm:w-72" />
-          </div>
-          <Skeleton className="h-9 w-32 sm:h-10 sm:w-40" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1,2,3].map(i => <Skeleton key={i} className="h-96 w-full rounded-lg" />)}
-        </div>
-      </div>
-    );
+// This function runs at build time (server-side)
+export async function generateStaticParams() {
+  try {
+    return categories.map((category: CategoryType) => ({
+      categoryName: category.slug,
+    }));
+  } catch (error) {
+    console.error("Failed to generate static params for /categories/[categoryName]:", error);
+    return [];
   }
-
-  if (!category) { // Category not found after loading attempt
-    notFound();
-  }
-  
-  if (error && !isLoading) { // Error fetching posts
-    return (
-      <div className="container mx-auto py-8 px-4 text-center">
-        <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-destructive mb-2">Error Loading Posts</h2>
-        <p className="text-muted-foreground mb-4">{error}</p>
-        <Button onClick={fetchCategoryData}>Try Again</Button>
-      </div>
-    );
-  }
-
-
-  const localizedCategoryName = t(category.name);
-  const localizedCategoryDescription = t(category.description);
-
-  return (
-    <div className={`space-y-8 ${animationClass}`}>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <CategoryIcon categoryName={typeof category.name === 'string' ? category.name : category.name.en!} className="h-8 w-8 sm:h-10 sm:w-10 text-primary" />
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold text-primary">{localizedCategoryName}</h1>
-          </div>
-          <p className="text-base sm:text-lg text-muted-foreground">{localizedCategoryDescription}</p>
-        </div>
-        <Button variant="outline" asChild className="text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
-          <Link href="/categories" className="flex items-center gap-2">
-            <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-            {t('allCategoriesButton', 'All Categories')}
-          </Link>
-        </Button>
-      </div>
-
-      {postsInCategory.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsInCategory.map((post, index) => (
-            <div key={post.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.07}s`}}>
-              <PostCard post={post} />
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-lg sm:text-xl text-muted-foreground mb-4">
-            {t('noPostsInCategory', 'No posts found in the "{categoryName}" category yet.', {categoryName: localizedCategoryName})}
-          </p>
-          <p className="text-muted-foreground">
-            {t('noPostsInCategorySuggestion', 'Check back soon, or explore other categories!')}
-          </p>
-        </div>
-      )}
-    </div>
-  );
 }
 
+interface CategoryDynamicPageProps {
+  params: { categoryName: string };
+}
 
-    
+export default async function CategoryDynamicPage({ params }: CategoryDynamicPageProps) {
+  // This is a Server Component.
+  // It receives params from the dynamic route.
+  // It then renders the Client Component, passing the categoryName.
+  return <CategoryDetailPageClient categorySlug={params.categoryName} />;
+}
