@@ -2,7 +2,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // ✅ Esta línea es la clave
+  // output: 'export', // ✅ Esta línea es la clave --- Temporarily commented out for dev server troubleshooting
 
   typescript: {
     ignoreBuildErrors: true,
