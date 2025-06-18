@@ -1639,7 +1639,7 @@ export const translations: Translations = {
     adminPostImageTooLarge: 'A imagem é muito grande. Usando placeholder. Máx ~1MB para salvamento direto.',
     imageFileTooLargeTitle: 'Arquivo de Imagem Muito Grande',
     imageFileTooLargeDesc: 'Por favor, selecione um arquivo de imagem menor que 5MB. Imagens maiores podem não ser salvas corretamente.',
-    adminPostImageSizeHint: 'Usando placeholder. Máx ~1MB para salvamento direto.',
+    adminPostImageSizeHint: 'Usando placeholder. Máx ~1MB para salvamento directo.',
     adminPostRequiredFields: "Preencha todos os campos obrigatórios (Título, Descrições, Imagem Principal, Categoria, Data de Publicação). Certifique-se de que a imagem principal foi carregada ou definida.",
     adminPostAccessDeniedTitle: 'Acesso Negado',
     adminPostAccessDeniedDesc: 'Você não tem permissão para visualizar esta página.',

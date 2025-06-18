@@ -25,25 +25,25 @@ const GAME_WIDTH = 600;
 const GAME_HEIGHT_DESKTOP = 200;
 const GAME_HEIGHT_MOBILE = 150;
 
-const LACE_X_POSITION = 20; // Lace's fixed X position
+const LACE_X_POSITION = 20;
 const LACE_WIDTH = 35;
 const LACE_HEIGHT = 45;
 
-const OBSTACLE_MIN_WIDTH = 20;
-const OBSTACLE_MAX_WIDTH = 30;
-const OBSTACLE_MIN_HEIGHT = 35;
-const OBSTACLE_MAX_HEIGHT = 55;
+const OBSTACLE_MIN_WIDTH = 25; // Adjusted for star shape visibility
+const OBSTACLE_MAX_WIDTH = 35; // Adjusted
+const OBSTACLE_MIN_HEIGHT = 25; // Adjusted
+const OBSTACLE_MAX_HEIGHT = 35; // Adjusted
 
-const GRAVITY = 0.7;
-const JUMP_STRENGTH = 15;
-const BASE_OBSTACLE_SPEED = 5;
-const OBSTACLE_SPEED_INCREMENT = 0.2; 
-const OBSTACLE_SPEED_INCREMENT_INTERVAL = 10000; // 10 seconds
+const GRAVITY = 0.6; // Reduced for a slightly floatier jump
+const JUMP_STRENGTH = 14; // Slightly adjusted if needed
+const BASE_OBSTACLE_SPEED = 4.5; // Initial speed
+const OBSTACLE_SPEED_INCREMENT = 0.075; // Smaller increment
+const OBSTACLE_SPEED_INCREMENT_INTERVAL = 7000; // Increase speed every 7 seconds
 
 const SCORE_INCREMENT_INTERVAL = 100; // ms, score increases every 100ms
 
 interface PlayerState {
-  y: number; // Distance from the bottom of the game area
+  y: number;
   vy: number;
   isJumping: boolean;
 }
@@ -79,6 +79,19 @@ const LacePlayerSVG = () => (
   </svg>
 );
 
+const StarObstacleSVG = () => (
+  <svg
+    width="100%"
+    height="100%"
+    viewBox="0 0 50 50" // A square viewBox for a more uniform star
+    xmlns="http://www.w3.org/2000/svg"
+    className="star-obstacle-svg"
+    fill="hsl(var(--primary))" // Star color
+  >
+    <polygon points="25,2.5 31.25,18.75 47.5,18.75 35,28.75 38.75,45 25,35 11.25,45 15,28.75 2.5,18.75 18.75,18.75" />
+  </svg>
+);
+
 
 export default function DinosaurGame() {
   const { t } = useLanguage();
@@ -89,7 +102,7 @@ export default function DinosaurGame() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0); // Local high score for the session
+  const [highScore, setHighScore] = useState(0);
   const [player, setPlayer] = useState<PlayerState>({ y: 0, vy: 0, isJumping: false });
   const [obstacles, setObstacles] = useState<ObstacleState[]>([]);
   const [currentObstacleSpeed, setCurrentObstacleSpeed] = useState(BASE_OBSTACLE_SPEED);
@@ -105,13 +118,10 @@ export default function DinosaurGame() {
   const [isLoadingRanking, setIsLoadingRanking] = useState(false);
 
   const [gameHeight, setGameHeight] = useState(GAME_HEIGHT_DESKTOP);
-  // groundY is the y-coordinate where player's feet are on the ground (player.y = 0)
-  // This definition isn't strictly needed if player.y is always distance from bottom.
 
-  // Refs for state values to be used in requestAnimationFrame loop
   const isPlayingRef = useRef(isPlaying);
   const isGameOverRef = useRef(isGameOver);
-  const playerRef = useRef(player); // Store whole player state in ref for collision
+  const playerRef = useRef(player);
   const currentObstacleSpeedRef = useRef(currentObstacleSpeed);
 
   useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
@@ -122,7 +132,7 @@ export default function DinosaurGame() {
 
   useEffect(() => {
     const updateGameHeight = () => {
-      if (window.innerWidth < 640) { // sm breakpoint
+      if (window.innerWidth < 640) {
         setGameHeight(GAME_HEIGHT_MOBILE);
       } else {
         setGameHeight(GAME_HEIGHT_DESKTOP);
@@ -139,22 +149,18 @@ export default function DinosaurGame() {
     setScore(0);
     setCurrentObstacleSpeed(BASE_OBSTACLE_SPEED);
     setIsGameOver(false);
-    // isPlaying will be set by startGame
   }, []);
 
   const startGame = () => {
     resetGame();
-    setIsPlaying(true); // This triggers the game loop useEffect
+    setIsPlaying(true);
   };
 
   const handleGameOverCallback = useCallback(async () => {
-    // This function is primarily for setting state and triggering side effects for score saving
     setIsPlaying(false);
     setIsGameOver(true);
-    // Score saving logic will be handled by another useEffect watching isGameOver
   }, [setIsPlaying, setIsGameOver]);
 
-  // Effect for handling score saving when game is over
   useEffect(() => {
     if (isGameOver) {
       if (score > highScore) {
@@ -171,7 +177,6 @@ export default function DinosaurGame() {
   }, [isGameOver, score, highScore, currentUser, t, toast, setHighScore]);
 
 
-  // Main Game Loop using requestAnimationFrame
   useEffect(() => {
     if (!isPlaying || isGameOver) {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
@@ -179,18 +184,17 @@ export default function DinosaurGame() {
     }
 
     const loop = () => {
-      if (!isPlayingRef.current || isGameOverRef.current) { // Check refs for immediate stop
+      if (!isPlayingRef.current || isGameOverRef.current) {
         if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
         return;
       }
 
-      // Player physics
       setPlayer(prevPlayer => {
         let newVy = prevPlayer.vy - GRAVITY;
         let newY = prevPlayer.y + newVy;
         let newIsJumping = prevPlayer.isJumping;
 
-        if (newY <= 0) { // Player is on or below ground
+        if (newY <= 0) {
           newY = 0;
           newVy = 0;
           newIsJumping = false;
@@ -198,22 +202,21 @@ export default function DinosaurGame() {
         return { y: newY, vy: newVy, isJumping: newIsJumping };
       });
 
-      // Obstacle movement and collision detection
       setObstacles(prevObstacles =>
         prevObstacles
           .map(obs => ({ ...obs, x: obs.x - currentObstacleSpeedRef.current }))
           .filter(obs => {
-            if (obs.x + obs.width < 0) return false; // Remove off-screen obstacles
+            if (obs.x + obs.width < 0) return false;
 
             const pRect = {
               x: LACE_X_POSITION,
-              yBottom: playerRef.current.y, // playerRef.current.y is bottom offset from ground
+              yBottom: playerRef.current.y,
               yTop: playerRef.current.y + LACE_HEIGHT,
               width: LACE_WIDTH,
             };
             const oRect = {
               x: obs.x,
-              yBottom: 0, // Obstacles are on the ground
+              yBottom: 0,
               yTop: obs.height,
               width: obs.width,
             };
@@ -222,10 +225,10 @@ export default function DinosaurGame() {
             const yOverlap = pRect.yBottom < oRect.yTop && pRect.yTop > oRect.yBottom;
             
             if (xOverlap && yOverlap) {
-              if (!isGameOverRef.current) { // Ensure gameOver is called only once
+              if (!isGameOverRef.current) {
                  handleGameOverCallback();
               }
-              return false; // Remove collided obstacle, or game over handles scene
+              return false;
             }
             return true;
           })
@@ -241,7 +244,6 @@ export default function DinosaurGame() {
   }, [isPlaying, isGameOver, handleGameOverCallback]);
 
 
-  // Score Interval
   useEffect(() => {
     if (isPlaying && !isGameOver) {
       scoreIntervalRef.current = setInterval(() => {
@@ -253,15 +255,14 @@ export default function DinosaurGame() {
     }
   }, [isPlaying, isGameOver]);
 
-  // Obstacle Spawning Interval
   useEffect(() => {
     if (isPlaying && !isGameOver) {
       const scheduleNextObstacle = () => {
         if (!isPlayingRef.current || isGameOverRef.current) return;
 
         const speedFactor = Math.max(1, currentObstacleSpeedRef.current / BASE_OBSTACLE_SPEED);
-        const minInterval = 800 / speedFactor; // Adjust base intervals for desired difficulty
-        const maxInterval = 2000 / speedFactor;
+        const minInterval = 900 / speedFactor; 
+        const maxInterval = 2200 / speedFactor;
         const delay = Math.random() * (maxInterval - minInterval) + minInterval;
         
         obstacleSpawnTimeoutRef.current = setTimeout(() => {
@@ -272,14 +273,14 @@ export default function DinosaurGame() {
           
           setObstacles(prev => [...prev, {
             id: Date.now() + Math.random(),
-            x: GAME_WIDTH, // Spawn at the right edge
+            x: GAME_WIDTH,
             width: newObstacleWidth,
             height: newObstacleHeight
           }]);
           scheduleNextObstacle();
         }, delay);
       };
-      scheduleNextObstacle(); // Initial call for this game session
+      scheduleNextObstacle();
 
       return () => {
         if (obstacleSpawnTimeoutRef.current) clearTimeout(obstacleSpawnTimeoutRef.current);
@@ -288,7 +289,6 @@ export default function DinosaurGame() {
   }, [isPlaying, isGameOver]);
 
 
-  // Speed Increase Interval
   useEffect(() => {
     if (isPlaying && !isGameOver) {
       speedIncreaseIntervalRef.current = setInterval(() => {
@@ -302,13 +302,12 @@ export default function DinosaurGame() {
 
 
   const handleJump = useCallback(() => {
-    // Check refs for game state because player state might be stale in event handler closure
     if (!isGameOverRef.current && !playerRef.current.isJumping) {
       setPlayer(prev => ({ ...prev, vy: JUMP_STRENGTH, isJumping: true }));
     }
-  }, []); // No dependencies needed if it only calls setPlayer with internal logic
+  }, []);
 
-  // Jump Controls (Spacebar and Tap)
+
   useEffect(() => {
     const jumpHandler = (event: KeyboardEvent | TouchEvent | MouseEvent) => {
       if (!isPlayingRef.current || isGameOverRef.current) return;
@@ -316,9 +315,9 @@ export default function DinosaurGame() {
       if (event.type === 'keydown' && (event as KeyboardEvent).code === 'Space') {
         event.preventDefault();
         handleJump();
-      } else if (event.type === 'touchstart' || event.type === 'mousedown') { // Changed click to mousedown
+      } else if (event.type === 'touchstart' || event.type === 'mousedown') {
         if (gameAreaRef.current && gameAreaRef.current.contains(event.target as Node)) {
-            event.preventDefault(); // Prevent text selection or other default actions
+            event.preventDefault();
             handleJump();
         }
       }
@@ -326,7 +325,6 @@ export default function DinosaurGame() {
 
     const gameAreaNode = gameAreaRef.current;
     if (gameAreaNode) {
-        // Use mousedown for tap-like behavior on desktop too
         gameAreaNode.addEventListener('touchstart', jumpHandler, { passive: false });
         gameAreaNode.addEventListener('mousedown', jumpHandler, { passive: false });
     }
@@ -339,7 +337,7 @@ export default function DinosaurGame() {
       }
       window.removeEventListener('keydown', jumpHandler);
     };
-  }, [handleJump]); // handleJump is stable
+  }, [handleJump]);
 
 
   const handleShowRanking = async () => {
@@ -375,17 +373,17 @@ export default function DinosaurGame() {
         className="lace-jump-game-area"
         style={{ height: `${gameHeight}px` }}
         role="application"
-        tabIndex={0} // Make it focusable for keyboard events if needed, though window listener is used
+        tabIndex={0}
         aria-label={t('laceJumpGameAreaLabel', "Lace Jump game area, press space or tap to jump over stars")}
       >
-        <div className="ground-line" style={{ bottom: '-1px' }}></div> {/* Ensure ground line is visually correct */}
+        <div className="ground-line" style={{ bottom: '-1px' }}></div>
         <div
           className="lace-player"
           style={{
-            bottom: `${player.y}px`, // player.y is the offset from the bottom
+            bottom: `${player.y}px`,
             width: `${LACE_WIDTH}px`,
             height: `${LACE_HEIGHT}px`,
-            left: `${LACE_X_POSITION}px`, // Fixed X position
+            left: `${LACE_X_POSITION}px`,
           }}
           aria-label="Lace character"
         >
@@ -399,17 +397,19 @@ export default function DinosaurGame() {
               left: `${obs.x}px`,
               width: `${obs.width}px`,
               height: `${obs.height}px`,
-              bottom: '0px', // Stars are on the ground
+              bottom: '0px',
             }}
             aria-hidden="true"
-          ></div>
+          >
+            <StarObstacleSVG />
+          </div>
         ))}
         {isGameOver && (
           <div className="lace-jump-game-over-screen">
             <div>
               <h3 className="lace-jump-game-over-title">{t('gameOverTitle', "Game Over!")}</h3>
               <p className="lace-jump-final-score">{t('scoreLabel', "Score: {score}", {score: score.toString()})}</p>
-              {currentUser && highScore > 0 && ( // Show local high score for the session
+              {currentUser && highScore > 0 && (
                 <p className="lace-jump-final-score text-sm text-muted-foreground">{t('highScoreLabel', "Your High Score: {score}", { score: highScore.toString() })}</p>
               )}
               <Button onClick={startGame} className="bg-primary hover:bg-primary/80">
@@ -440,7 +440,7 @@ export default function DinosaurGame() {
 
       <Dialog open={showRanking} onOpenChange={(open) => {
         if (!open) handleCloseRanking();
-        else handleShowRanking(); // This might re-fetch if already open, consider a flag
+        else handleShowRanking();
       }}>
         <DialogContent className="sm:max-w-md lace-jump-ranking-modal-content">
           <DialogHeader>
@@ -481,4 +481,3 @@ export default function DinosaurGame() {
     </section>
   );
 }
-
