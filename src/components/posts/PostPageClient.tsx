@@ -7,7 +7,7 @@ import { getCategoryByName } from '@/data/posts';
 // getAllPostsFromFirestore is not needed here as it's for generateStaticParams
 import { getPostFromFirestore, deleteCommentFromFirestore, db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import AILink from '@/components/ai/AILink';
-import CategoryIcon from '@/componentsai/CategoryIcon';
+import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
 import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2, AlertTriangle } from 'lucide-react';
