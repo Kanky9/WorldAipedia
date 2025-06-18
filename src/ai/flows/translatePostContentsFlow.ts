@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A Genkit flow to translate post content (title, short description, long description) to a target language.
@@ -18,14 +19,16 @@ const TextsToTranslateSchema = z.object({
   longDescription: z.string().optional().describe('The long description (content) to translate.'),
 }).describe('An object containing text fields to be translated. All fields are optional.');
 
-export const TranslatePostContentsInputSchema = z.object({
+// NOT EXPORTED: Zod schema for input - used internally and for type inference
+const TranslatePostContentsInputSchema = z.object({
   textsToTranslate: TextsToTranslateSchema,
   targetLanguageCode: z.string().describe('The ISO 639-1 code of the language to translate to (e.g., "es", "fr", "ja").'),
   sourceLanguageCode: z.string().describe('The ISO 639-1 code of the source language of the texts (e.g., "en", "es").'),
 });
 export type TranslatePostContentsInput = z.infer<typeof TranslatePostContentsInputSchema>;
 
-export const TranslatePostContentsOutputSchema = z.object({
+// NOT EXPORTED: Zod schema for output - used internally and for type inference
+const TranslatePostContentsOutputSchema = z.object({
   translatedTexts: TextsToTranslateSchema.describe('An object containing the translated text fields.'),
 });
 export type TranslatePostContentsOutput = z.infer<typeof TranslatePostContentsOutputSchema>;
