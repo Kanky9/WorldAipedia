@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation'; // Use useSearchParams
+import { useRouter, useSearchParams } from 'next/navigation'; 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert, Languages } from 'lucide-react';
 import { categories as allCategories } from '@/data/posts';
 import type { Post as PostType, LocalizedString } from '@/lib/types';
 import {
@@ -25,16 +25,20 @@ import {
 import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
+import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
+import { languages as appLanguagesObject } from '@/lib/translations';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
 const DEFAULT_LOGO_PLACEHOLDER = 'https://placehold.co/50x50.png';
 const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
+const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
+
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
-  const searchParams = useSearchParams(); // Use hook for search params
+  const searchParams = useSearchParams(); 
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
 
@@ -42,6 +46,7 @@ export default function CreatePostPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const [existingPostDataForForm, setExistingPostDataForForm] = useState<PostType | null>(null);
 
   const [title, setTitle] = useState('');
@@ -78,21 +83,18 @@ export default function CreatePostPage() {
     return value[lang as keyof LocalizedString] || value.en || '';
   };
 
-  // Effect 1: Determine mode (create/edit) based on URL query and reset form if entering create mode
   useEffect(() => {
-    if (authLoading || (currentUser && !currentUser.isAdmin)) return; // Auth checks
+    if (authLoading || (currentUser && !currentUser.isAdmin)) return; 
 
     const id = searchParams.get('id');
 
     if (id) {
-      if (postIdFromQuery !== id) { // Only if ID actually changes or set for the first time
+      if (postIdFromQuery !== id) { 
         setPostIdFromQuery(id);
         setIsEditMode(true);
-        // Fetching and initial population will be handled by the next effect
       }
-    } else { // No ID in query params, so it's create mode
-      if (isEditMode || postIdFromQuery !== null) { // If previously in edit mode or postId was set
-        // Resetting form for a new entry
+    } else { 
+      if (isEditMode || postIdFromQuery !== null) { 
         setIsEditMode(false);
         setPostIdFromQuery(null);
         setExistingPostDataForForm(null);
@@ -112,10 +114,9 @@ export default function CreatePostPage() {
     }
   }, [searchParams, authLoading, currentUser, isEditMode, postIdFromQuery]);
 
-  // Effect 2: Fetch post data when in edit mode and postIdFromQuery is set
   useEffect(() => {
     if (!isEditMode || !postIdFromQuery || authLoading || (currentUser && !currentUser.isAdmin)) {
-      if (!isEditMode) setIsLoadingData(false); // ensure loading is false for create mode
+      if (!isEditMode) setIsLoadingData(false); 
       return;
     }
 
@@ -124,13 +125,12 @@ export default function CreatePostPage() {
       .then(existingPost => {
         if (existingPost) {
           setExistingPostDataForForm(existingPost);
-          // Initial population of form fields based on the *current* language
           setTitle(getLocalizedStringDefault(existingPost.title, language));
           setShortDescription(getLocalizedStringDefault(existingPost.shortDescription, language));
           setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
 
           setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
-          setMainImageDataUri(existingPost.imageUrl || ''); // If it's a data URI, it will be set here
+          setMainImageDataUri(existingPost.imageUrl || ''); 
           setMainImageHint(existingPost.imageHint || '');
 
           setLogoUrlForPreview(existingPost.logoUrl || DEFAULT_LOGO_PLACEHOLDER);
@@ -164,19 +164,14 @@ export default function CreatePostPage() {
       .finally(() => {
         setIsLoadingData(false);
       });
-  }, [postIdFromQuery, isEditMode, language, router, t, toast, authLoading, currentUser]); // Language added here for initial correct population
+  }, [postIdFromQuery, isEditMode, language, router, t, toast, authLoading, currentUser]);
 
-  // Effect 3: React to language changes when in edit mode and data is already loaded
   useEffect(() => {
     if (isEditMode && existingPostDataForForm) {
       setTitle(getLocalizedStringDefault(existingPostDataForForm.title, language));
       setShortDescription(getLocalizedStringDefault(existingPostDataForForm.shortDescription, language));
       setLongDescription(getLocalizedStringDefault(existingPostDataForForm.longDescription, language));
-      // Category SelectItems will update their display automatically based on language prop used in their rendering.
-      // The `category` state (slug) doesn't change with language.
-      // The `tags` state (string) also doesn't change with language as it's not localized.
     }
-    // No action needed for create mode, user input should be preserved.
   }, [language, isEditMode, existingPostDataForForm]);
 
 
@@ -246,29 +241,68 @@ export default function CreatePostPage() {
       return;
     }
     setIsSubmitting(true);
+    setIsTranslating(true);
 
     const currentEditingLanguage = language as LanguageCode;
-    type UpdatedLocalizedFieldReturnType = { [key in LanguageCode]?: string; } & { en: string; };
-    const getUpdatedLocalizedField = (
-      existingFieldData: LocalizedString | undefined,
-      newValue: string
-    ): UpdatedLocalizedFieldReturnType => {
-      const base = typeof existingFieldData === 'object' && existingFieldData !== null
-        ? { ...existingFieldData }
-        : { en: '' }; 
-      
-      const typedBase: Partial<Record<LanguageCode, string>> & { en?: string } = 
-        typeof base === 'string' ? { en: base } : { ...base };
-
-      typedBase[currentEditingLanguage] = newValue;
-      if (!typedBase.en && newValue) { 
-        typedBase.en = newValue;
-      }
-      if (typeof typedBase.en === 'undefined') {
-          typedBase.en = '';
-      }
-      return typedBase as UpdatedLocalizedFieldReturnType;
+    
+    const sourceTexts = {
+      title: title.trim(),
+      shortDescription: shortDescription.trim(),
+      longDescription: longDescription.trim(),
     };
+
+    const finalTranslations: {
+      title: Partial<Record<LanguageCode, string>>;
+      shortDescription: Partial<Record<LanguageCode, string>>;
+      longDescription: Partial<Record<LanguageCode, string>>;
+    } = {
+      title: { [currentEditingLanguage]: sourceTexts.title },
+      shortDescription: { [currentEditingLanguage]: sourceTexts.shortDescription },
+      longDescription: { [currentEditingLanguage]: sourceTexts.longDescription },
+    };
+
+    const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
+    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en')) {
+        languagesToTranslateTo.push('en'); // Ensure English is always a target if not the source
+    }
+    
+    const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
+        const textsToTranslateForThisLang: Record<string, string> = {};
+        if (sourceTexts.title) textsToTranslateForThisLang.title = sourceTexts.title;
+        if (sourceTexts.shortDescription) textsToTranslateForThisLang.shortDescription = sourceTexts.shortDescription;
+        if (sourceTexts.longDescription) textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
+
+        if (Object.keys(textsToTranslateForThisLang).length === 0) {
+            return { lang: targetLangCode, translations: {} };
+        }
+        try {
+            const result = await translatePostContents({
+            textsToTranslate: textsToTranslateForThisLang,
+            targetLanguageCode: targetLangCode,
+            sourceLanguageCode: currentEditingLanguage,
+            });
+            return { lang: targetLangCode, translations: result.translatedTexts };
+        } catch (error) {
+            console.error(`Error translating to ${targetLangCode}:`, error);
+            toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content to ${targetLangCode}. Original text will be used if English.`});
+            return { lang: targetLangCode, translations: {} }; 
+        }
+    });
+
+    const translationResults = await Promise.all(translationPromises);
+
+    translationResults.forEach(result => {
+        if (result.translations.title) finalTranslations.title[result.lang] = result.translations.title;
+        if (result.translations.shortDescription) finalTranslations.shortDescription[result.lang] = result.translations.shortDescription;
+        if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
+    });
+    
+    // Ensure 'en' is present and filled, using source if it was English, or translated value
+    if (!finalTranslations.title.en) finalTranslations.title.en = sourceTexts.title; // Fallback to source if 'en' translation failed or wasn't source
+    if (!finalTranslations.shortDescription.en) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
+    if (!finalTranslations.longDescription.en) finalTranslations.longDescription.en = sourceTexts.longDescription;
+    
+    setIsTranslating(false);
     
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
@@ -303,9 +337,9 @@ export default function CreatePostPage() {
     }
 
     const postDetailsToSave = {
-      title: getUpdatedLocalizedField(existingPostDataForForm?.title, title),
-      shortDescription: getUpdatedLocalizedField(existingPostDataForForm?.shortDescription, shortDescription),
-      longDescription: getUpdatedLocalizedField(existingPostDataForForm?.longDescription, longDescription),
+      title: finalTranslations.title as Record<LanguageCode, string> & { en: string },
+      shortDescription: finalTranslations.shortDescription as Record<LanguageCode, string> & { en: string },
+      longDescription: finalTranslations.longDescription as Record<LanguageCode, string> & { en: string },
       imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
       logoUrl: finalLogoUrl || undefined,
@@ -339,14 +373,13 @@ export default function CreatePostPage() {
           description: t('createdInSession', 'Post "{title}" has been saved.', { title: postTitleForToast }),
           action: <CheckCircle className="text-green-500" />,
         });
-        // Reset form for next new post
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
         clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
         clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
         clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null); // Clear any existing data from edit mode
+        setExistingPostDataForForm(null); 
       }
       router.push('/admin');
     } catch (error) {
@@ -359,6 +392,7 @@ export default function CreatePostPage() {
       });
     } finally {
       setIsSubmitting(false);
+      setIsTranslating(false);
     }
   };
 
@@ -439,6 +473,8 @@ export default function CreatePostPage() {
     );
   }
 
+  const isProcessRunning = isSubmitting || (isLoadingData && isEditMode) || isTranslating;
+
   return (
     <div className="container mx-auto py-8 px-4">
       <Button variant="outline" asChild className="mb-6">
@@ -461,17 +497,17 @@ export default function CreatePostPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <Label htmlFor="title">{t('adminPostTitleLabel', 'Post Title')}</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isSubmitting || isLoadingData && isEditMode} />
+              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isProcessRunning} />
             </div>
 
             <div>
               <Label htmlFor="shortDescription">{t('adminPostShortDescLabel', 'Short Description')}</Label>
-              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isSubmitting || isLoadingData && isEditMode} />
+              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isProcessRunning} />
             </div>
 
             <div>
               <Label htmlFor="longDescription">{t('adminPostLongDescLabel', 'Long Description (Content)')}</Label>
-              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isSubmitting || isLoadingData && isEditMode} />
+              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isProcessRunning} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
@@ -529,7 +565,7 @@ export default function CreatePostPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
-                <Select value={category} onValueChange={setCategory} required disabled={isSubmitting || isLoadingData && isEditMode}>
+                <Select value={category} onValueChange={setCategory} required disabled={isProcessRunning}>
                   <SelectTrigger id="category">
                     <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder', 'Select a category')} />
                   </SelectTrigger>
@@ -545,24 +581,25 @@ export default function CreatePostPage() {
 
               <div>
                 <Label htmlFor="tags">{t('adminPostTagsLabel', 'Tags (comma-separated)')}</Label>
-                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} disabled={isSubmitting || isLoadingData && isEditMode} />
+                <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t('adminPostTagsPlaceholder', 'e.g., AI, Machine Learning, NLP')} disabled={isProcessRunning} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="publishedDate">{t('adminPostPublishedDateLabel', 'Published Date')}</Label>
-                <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required disabled={isSubmitting || isLoadingData && isEditMode} />
+                <Input id="publishedDate" type="date" value={publishedDate} onChange={(e) => setPublishedDate(e.target.value)} required disabled={isProcessRunning} />
               </div>
               <div>
                 <Label htmlFor="linkTool">{t('adminPostLinkToolLabel', 'Link to Tool (Optional)')}</Label>
-                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} disabled={isSubmitting || isLoadingData && isEditMode} />
+                <Input id="linkTool" value={linkTool} onChange={(e) => setLinkTool(e.target.value)} placeholder={t('adminPostLinkToolPlaceholder', 'https://example.com/tool')} disabled={isProcessRunning} />
               </div>
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isSubmitting || (isLoadingData && isEditMode)}>
-                {(isSubmitting || (isLoadingData && isEditMode)) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isProcessRunning}>
+                {isTranslating && <Languages className="mr-2 h-4 w-4 animate-pulse"/>}
+                {(isSubmitting || (isLoadingData && isEditMode) && !isTranslating) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                 {isEditMode ? t('adminPostButtonUpdate', 'Update Post') : t('adminPostButtonCreate', 'Create Post')}
               </Button>
             </div>
@@ -572,5 +609,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-
-    
