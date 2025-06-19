@@ -3,7 +3,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   // output: 'export', // ✅ This line is THE KEY for static export builds
-  output: 'export', // Ensure this is active
+  // output: 'export', // Temporarily commented to enable server-side features for Genkit
 
   typescript: {
     ignoreBuildErrors: true,
