@@ -302,12 +302,29 @@ export default function CreatePostPage() {
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
     
-    // Ensure English fallback if source wasn't English and English translation failed/wasn't requested explicitly
-    if (!finalTranslations.title.en && sourceTexts.title) finalTranslations.title.en = sourceTexts.title;
-    if (!finalTranslations.shortDescription.en && sourceTexts.shortDescription) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
-    if (!finalTranslations.longDescription.en && sourceTexts.longDescription) finalTranslations.longDescription.en = sourceTexts.longDescription;
-    
     setIsTranslating(false);
+    
+    // Ensure 'en' field is present in all localizable fields, defaulting to "" if not set
+    // This is crucial for type consistency and Firestore storage.
+    const fieldsToEnsureEn: (keyof typeof finalTranslations)[] = ['title', 'shortDescription', 'longDescription'];
+    fieldsToEnsureEn.forEach(fieldKey => {
+        const fieldTranslations = finalTranslations[fieldKey];
+        // If 'en' is undefined after translation attempts:
+        // - If editing in 'en', the original value (possibly "") is already set.
+        // - If editing in non-'en' and 'en' translation failed/skipped, set to "".
+        if (fieldTranslations.en === undefined) {
+            if (currentEditingLanguage === 'en') {
+                // This case implies sourceTexts[fieldKey] was an empty string,
+                // and finalTranslations[fieldKey].en was initialized to "". So, this branch might not be hit often.
+                // However, to be safe, ensure it's an empty string if it somehow became undefined.
+                 fieldTranslations.en = sourceTexts[fieldKey] || "";
+            } else {
+                // Editing in non-English, and 'en' translation was not successful or returned undefined.
+                // Default 'en' to empty string to satisfy LocalizedString type.
+                fieldTranslations.en = "";
+            }
+        }
+    });
     
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
