@@ -140,9 +140,6 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
       parts: msg.parts.map(part => {
         const genkitPart: any = {};
         if (part.text) genkitPart.text = part.text;
-        // For history, only send text representation of media if you want the AI to "know" an image was sent.
-        // Don't resend the actual media data URI for past messages unless the flow specifically needs it.
-        // The current chatFlow's history schema expects text parts.
         if (part.media) genkitPart.text = (genkitPart.text ? genkitPart.text + " " : "") + t('laceChatImagePreviewAlt', "[User sent an image previously]");
         return genkitPart;
       }),
@@ -177,7 +174,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea type="always" className="flex-grow min-h-0 px-6" ref={scrollAreaRef}>
+        <ScrollArea type="always" className="flex-1 min-h-0 px-6" ref={scrollAreaRef}>
           <div className="space-y-4 py-4">
             {isInitialLoading && messages.length === 0 && (
               <div className="flex items-center justify-center p-4">
