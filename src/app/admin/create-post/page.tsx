@@ -25,7 +25,7 @@ import {
 import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
-import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
+// import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
 import { languages as appLanguagesObject } from '@/lib/translations';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
@@ -34,6 +34,18 @@ const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
 const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
+
+// Dummy fallback for translatePostContents
+const translatePostContents = async (input: {
+  textsToTranslate: { title?: string; shortDescription?: string; longDescription?: string; };
+  targetLanguageCode: string;
+  sourceLanguageCode: string;
+}) => {
+  console.warn("translatePostContents called in static export mode. AI translation disabled. Returning source texts.");
+  await new Promise(resolve => setTimeout(resolve, 100)); // Simulate async
+  return { translatedTexts: { ...input.textsToTranslate } };
+};
+
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
@@ -249,20 +261,20 @@ export default function CreatePostPage() {
 
     const currentEditingLanguage = language as LanguageCode;
     
-    const sourceTexts = {
-      title: trimmedTitle,
-      shortDescription: trimmedShortDescription,
-      longDescription: trimmedLongDescription,
-    };
+    const sourceTexts: { title?: string; shortDescription?: string; longDescription?: string } = {};
+    if (trimmedTitle) sourceTexts.title = trimmedTitle;
+    if (trimmedShortDescription) sourceTexts.shortDescription = trimmedShortDescription;
+    if (trimmedLongDescription) sourceTexts.longDescription = trimmedLongDescription;
+
 
     const finalTranslations: {
       title: Partial<Record<LanguageCode, string>>;
       shortDescription: Partial<Record<LanguageCode, string>>;
       longDescription: Partial<Record<LanguageCode, string>>;
     } = {
-      title: { [currentEditingLanguage]: sourceTexts.title },
-      shortDescription: { [currentEditingLanguage]: sourceTexts.shortDescription },
-      longDescription: { [currentEditingLanguage]: sourceTexts.longDescription },
+      title: { [currentEditingLanguage]: sourceTexts.title || "" },
+      shortDescription: { [currentEditingLanguage]: sourceTexts.shortDescription || "" },
+      longDescription: { [currentEditingLanguage]: sourceTexts.longDescription || "" },
     };
 
     const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
@@ -272,9 +284,9 @@ export default function CreatePostPage() {
     
     const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
         const textsToTranslateForThisLang: { title?: string; shortDescription?: string; longDescription?: string; } = {};
-        if (sourceTexts.title) textsToTranslateForThisLang.title = sourceTexts.title;
-        if (sourceTexts.shortDescription) textsToTranslateForThisLang.shortDescription = sourceTexts.shortDescription;
-        if (sourceTexts.longDescription) textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
+        if (sourceTexts.title && sourceTexts.title.trim() !== '') textsToTranslateForThisLang.title = sourceTexts.title;
+        if (sourceTexts.shortDescription && sourceTexts.shortDescription.trim() !== '') textsToTranslateForThisLang.shortDescription = sourceTexts.shortDescription;
+        if (sourceTexts.longDescription && sourceTexts.longDescription.trim() !== '') textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
 
         if (Object.keys(textsToTranslateForThisLang).length === 0) {
             return { lang: targetLangCode, translations: {} };
@@ -302,7 +314,6 @@ export default function CreatePostPage() {
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
     
-    // Ensure English versions exist, falling back to source text if direct 'en' translation wasn't performed AND source text was non-empty
     if (!finalTranslations.title.en && sourceTexts.title) finalTranslations.title.en = sourceTexts.title;
     if (!finalTranslations.shortDescription.en && sourceTexts.shortDescription) finalTranslations.shortDescription.en = sourceTexts.shortDescription;
     if (!finalTranslations.longDescription.en && sourceTexts.longDescription) finalTranslations.longDescription.en = sourceTexts.longDescription;
@@ -614,3 +625,5 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+    

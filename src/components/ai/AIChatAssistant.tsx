@@ -10,9 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, User, Bot, Paperclip, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { explainPage } from '@/ai/flows/pageExplainerFlow';
-import { chatWithLace } from '@/ai/flows/chatFlow';
-import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow';
+// import { explainPage } from '@/ai/flows/pageExplainerFlow';
+// import { chatWithLace } from '@/ai/flows/chatFlow';
+// import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { AiToolChatContext } from '@/lib/types';
 
@@ -32,6 +32,23 @@ interface Message {
   parts: MessagePart[];
   timestamp: Date;
 }
+
+// Dummy/Fallback functions
+const explainPage = async (input: { language: string }) => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return { explanation: `Hello! Welcome to World AI (AI features temporarily unavailable in this view). Your language: ${input.language}` };
+};
+
+const getAiToolWelcome = async (input: { toolTitle: string; toolDescription: string; toolLink: string; language: string }) => {
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return { welcomeMessage: `Hi! You're viewing ${input.toolTitle}. (AI features temporarily unavailable in this view). Language: ${input.language}` };
+};
+
+const chatWithLace = async (input: any) => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return { aiResponse: "I'm currently unable to process AI requests in this view. Please try again later." };
+};
+
 
 const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initialContext }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -287,3 +304,5 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
 };
 
 export default AIChatAssistant;
+
+    
