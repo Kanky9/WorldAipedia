@@ -10,11 +10,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, User, Bot, Paperclip, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { explainPage } from '@/ai/flows/pageExplainerFlow';
-import { chatWithLace } from '@/ai/flows/chatFlow';
-import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow';
+// import { explainPage } from '@/ai/flows/pageExplainerFlow'; // Commented for static export
+// import { chatWithLace } from '@/ai/flows/chatFlow'; // Commented for static export
+// import { getAiToolWelcome } from '@/ai/flows/aiToolWelcomeFlow'; // Commented for static export
 import { useLanguage } from '@/hooks/useLanguage';
 import type { AiToolChatContext } from '@/lib/types';
+
+// Dummy functions for static export
+const explainPage = async (input: { language: string }) => {
+  console.warn("AIChatAssistant: explainPage called in static mode. AI features disabled.");
+  return ({ explanation: `Welcome to World AI! (Static Mode - Language: ${input.language})` });
+};
+const chatWithLace = async (input: any) => {
+  console.warn("AIChatAssistant: chatWithLace called in static mode. AI features disabled.");
+  return ({ aiResponse: "I'm Lace, your AI assistant. (Static Mode - AI features disabled)" });
+};
+const getAiToolWelcome = async (input: any) => {
+  console.warn("AIChatAssistant: getAiToolWelcome called in static mode. AI features disabled.");
+  return ({ welcomeMessage: `Welcome to ${input.toolTitle}! (Static Mode - AI features disabled)` });
+};
+
 
 interface AIChatAssistantProps {
   open: boolean;
