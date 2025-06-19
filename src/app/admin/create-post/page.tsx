@@ -25,7 +25,7 @@ import {
 import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
-// import { translatePostContents } from '@/ai/flows/translatePostContentsFlow'; // Commented for static export
+import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
 import { languages as appLanguagesObject } from '@/lib/translations';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
@@ -34,22 +34,6 @@ const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
 const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
-
-// Dummy function for static export
-const translatePostContents = async (input: {
-  textsToTranslate: { title?: string; shortDescription?: string; longDescription?: string };
-  targetLanguageCode: LanguageCode;
-  sourceLanguageCode: LanguageCode;
-}) => {
-  console.warn("CreatePostPage: translatePostContents called in static mode. Translation will not occur for target:", input.targetLanguageCode, "Source:", input.sourceLanguageCode);
-  // Return the source texts as "translated" for the target language to ensure the structure is maintained
-  const translatedTexts: Partial<Record<keyof typeof input.textsToTranslate, string>> = {};
-  if (input.textsToTranslate.title) translatedTexts.title = input.textsToTranslate.title;
-  if (input.textsToTranslate.shortDescription) translatedTexts.shortDescription = input.textsToTranslate.shortDescription;
-  if (input.textsToTranslate.longDescription) translatedTexts.longDescription = input.textsToTranslate.longDescription;
-  return { translatedTexts };
-};
-
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();

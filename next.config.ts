@@ -2,9 +2,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // output: 'export', // ✅ This line is THE KEY for static export builds
-  // output: 'export', // Temporarily commented to enable server-side features for Genkit
-
+  // output: 'export', // Comentado para permitir funcionalidades del lado del servidor
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -12,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // Add this line to disable image optimization for static export
+    unoptimized: true, // Mantener esto si se usan placehold.co o si no se quiere optimización en dev/build
     remotePatterns: [
       {
         protocol: 'https',
