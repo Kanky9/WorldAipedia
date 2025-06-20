@@ -254,7 +254,6 @@ export default function CreatePostPage() {
     if (trimmedShortDescription) sourceTexts.shortDescription = trimmedShortDescription;
     if (trimmedLongDescription) sourceTexts.longDescription = trimmedLongDescription;
 
-
     const finalTranslations: {
       title: Partial<Record<LanguageCode, string>>;
       shortDescription: Partial<Record<LanguageCode, string>>;
@@ -304,28 +303,28 @@ export default function CreatePostPage() {
     
     setIsTranslating(false);
     
-    // Ensure 'en' field is present in all localizable fields, defaulting to "" if not set
-    // This is crucial for type consistency and Firestore storage.
     const fieldsToEnsureEn: (keyof typeof finalTranslations)[] = ['title', 'shortDescription', 'longDescription'];
     fieldsToEnsureEn.forEach(fieldKey => {
         const fieldTranslations = finalTranslations[fieldKey];
-        // If 'en' is undefined after translation attempts:
-        // - If editing in 'en', the original value (possibly "") is already set.
-        // - If editing in non-'en' and 'en' translation failed/skipped, set to "".
         if (fieldTranslations.en === undefined) {
             if (currentEditingLanguage === 'en') {
-                // This case implies sourceTexts[fieldKey] was an empty string,
-                // and finalTranslations[fieldKey].en was initialized to "". So, this branch might not be hit often.
-                // However, to be safe, ensure it's an empty string if it somehow became undefined.
                  fieldTranslations.en = sourceTexts[fieldKey] || "";
             } else {
-                // Editing in non-English, and 'en' translation was not successful or returned undefined.
-                // Default 'en' to empty string to satisfy LocalizedString type.
-                fieldTranslations.en = "";
+                // If editing in non-English and 'en' translation wasn't successful for THIS field,
+                // or if 'en' was not a target language (e.g. currentEditingLanguage === 'en'),
+                // we might source 'en' from existingPostData if available and in edit mode,
+                // otherwise default to empty string.
+                if (isEditMode && existingPostDataForForm && existingPostDataForForm[fieldKey]) {
+                    // Check if existing data for 'en' exists.
+                    const existingEnValue = (existingPostDataForForm[fieldKey] as Partial<Record<LanguageCode, string>>)?.en;
+                    fieldTranslations.en = typeof existingEnValue === 'string' ? existingEnValue : "";
+                } else {
+                    fieldTranslations.en = ""; 
+                }
             }
         }
     });
-    
+        
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
         toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Main Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
@@ -631,3 +630,5 @@ export default function CreatePostPage() {
     </div>
   );
 }
+
+    
