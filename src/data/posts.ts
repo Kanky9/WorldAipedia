@@ -137,9 +137,8 @@ export const categories: Category[] = [
 
 // The 'posts' array below is now for reference/seeding only.
 // The application fetches live post data from Firestore.
-export const posts: Post[] = [
+export const posts: Omit<Post, 'id' | 'publishedDate'>[] = [
   {
-    id: 'chatgpt',
     title: LS('The Rise of ChatGPT: A New Era in AI Conversation', 'El Auge de ChatGPT: Una Nueva Era en la Conversación IA'),
     shortDescription: LS(
       'An in-depth look at ChatGPT, its capabilities, and its impact on various industries.',
@@ -151,12 +150,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI conversation interface',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'OpenAI logo',
     category: 'Information', // English name from categories
     categorySlug: 'information',
     tags: ['LLM', 'OpenAI', 'Conversational AI', 'NLP'],
-    publishedDate: new Date('2024-07-01T10:00:00Z'), 
     link: 'https://openai.com/chatgpt',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'chatbot interface concept',
@@ -164,7 +160,6 @@ export const posts: Post[] = [
     detailImageHint2: 'abstract neural network',
   },
   {
-    id: 'midjourney',
     title: LS('Midjourney: Crafting Visual Worlds with AI', 'Midjourney: Creando Mundos Visuales con IA'),
     shortDescription: LS(
       'Explore Midjourney, the AI image generator known for its artistic and surreal outputs.',
@@ -176,12 +171,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'artistic AI generation example',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Midjourney boat logo',
     category: 'Photos',
     categorySlug: 'photos',
     tags: ['AI Art', 'Image Generation', 'Discord', 'Creative AI'],
-    publishedDate: new Date('2024-06-28T11:00:00Z'),
     link: 'https://www.midjourney.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'fantasy landscape art',
@@ -189,7 +181,6 @@ export const posts: Post[] = [
     detailImageHint2: 'abstract digital creation'
   },
   {
-    id: 'github-copilot',
     title: LS('GitHub Copilot: Your AI Pair Programmer', 'GitHub Copilot: Tu Programador de IA en Pareja'),
     shortDescription: LS(
       'A deep dive into GitHub Copilot, the AI assistant that helps you write code faster.',
@@ -201,12 +192,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'code editor AI assistant',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'GitHub Copilot icon',
     category: 'Programming',
     categorySlug: 'programming',
     tags: ['AI Coding', 'Developer Tools', 'OpenAI Codex', 'Productivity'],
-    publishedDate: new Date('2024-06-25T09:00:00Z'),
     link: 'https://copilot.github.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'code suggestions example',
@@ -214,7 +202,6 @@ export const posts: Post[] = [
     detailImageHint2: 'programming workflow diagram'
   },
   {
-    id: 'canva-magic-design',
     title: LS('Canva Magic Design: AI-Powered Creativity', 'Canva Diseño Mágico: Creatividad Impulsada por IA'),
     shortDescription: LS(
       'Discover Canva\'s suite of AI tools that make graphic design accessible to everyone.',
@@ -226,12 +213,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'graphic design interface AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Canva logo C',
     category: 'Design',
     categorySlug: 'design',
     tags: ['Graphic Design', 'AI Tools', 'Canva', 'User-Friendly'],
-    publishedDate: new Date('2024-06-22T14:00:00Z'),
     link: 'https://www.canva.com/magic-design/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'AI generated presentation slide',
@@ -239,7 +223,6 @@ export const posts: Post[] = [
     detailImageHint2: 'social media post design example'
   },
   {
-    id: 'synthesia',
     title: LS('Synthesia: AI Video Generation with Digital Avatars', 'Synthesia: Generación de Video IA con Avatares Digitales'),
     shortDescription: LS(
       'Learn how Synthesia uses AI avatars to create professional videos from text.',
@@ -251,12 +234,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI avatar presenting video',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Synthesia S logo mark',
     category: 'Videos',
     categorySlug: 'videos',
     tags: ['AI Video', 'Avatars', 'Text-to-Video', 'Content Creation'],
-    publishedDate: new Date('2024-06-20T16:00:00Z'),
     link: 'https://www.synthesia.io/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'avatar selection screen interface',
@@ -264,7 +244,6 @@ export const posts: Post[] = [
     detailImageHint2: 'video editing timeline example'
   },
   {
-    id: 'elevenlabs',
     title: LS('ElevenLabs: The Future of AI Voice Synthesis', 'ElevenLabs: El Futuro de la Síntesis de Voz IA'),
     shortDescription: LS(
       'An overview of ElevenLabs and its hyper-realistic text-to-speech and voice cloning AI.',
@@ -276,12 +255,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'audio sound waves interface',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'ElevenLabs E symbol icon',
     category: 'Audio',
     categorySlug: 'audio',
     tags: ['AI Audio', 'Text-to-Speech', 'Voice Cloning', 'Voice AI'],
-    publishedDate: new Date('2024-06-18T10:00:00Z'),
     link: 'https://elevenlabs.io/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'voice selection control panel',
@@ -289,7 +265,6 @@ export const posts: Post[] = [
     detailImageHint2: 'audio waveform editor display'
   },
   {
-    id: 'grammarly',
     title: LS('Grammarly: More Than Just a Spell Checker', 'Grammarly: Más que un Simple Corrector Ortográfico'),
     shortDescription: LS(
       'How Grammarly\'s AI enhances writing clarity, tone, and style for effective communication.',
@@ -301,12 +276,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'text correction software interface',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Grammarly G logo circular',
     category: 'Writing',
     categorySlug: 'writing',
     tags: ['Writing Assistant', 'Grammar', 'AI Editing', 'Communication'],
-    publishedDate: new Date('2024-06-15T13:00:00Z'),
     link: 'https://www.grammarly.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'grammar suggestions example popup',
@@ -314,7 +286,6 @@ export const posts: Post[] = [
     detailImageHint2: 'tone detection analysis feature'
   },
   {
-    id: 'stable-diffusion',
     title: LS('Stable Diffusion: The Open-Source AI Art Revolution', 'Stable Diffusion: La Revolución del Arte IA de Código Abierto'),
     shortDescription: LS(
       'An introduction to Stable Diffusion, its capabilities, and its impact on the open-source AI community.',
@@ -326,12 +297,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'generative abstract art creation',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'StabilityAI S abstract logo',
     category: 'Photos',
     categorySlug: 'photos',
     tags: ['Open Source', 'AI Art', 'Text-to-Image', 'Stability AI'],
-    publishedDate: new Date('2024-06-12T15:00:00Z'),
     link: 'https://stability.ai/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'image generation parameters UI',
@@ -339,7 +307,6 @@ export const posts: Post[] = [
     detailImageHint2: 'collection diverse image styles'
   },
   {
-    id: 'runwayml',
     title: LS('RunwayML: AI Magic Tools for Creators', 'RunwayML: Herramientas Mágicas de IA para Creadores'),
     shortDescription: LS(
       'Explore RunwayML\'s suite of AI tools for video editing, image generation, and more.',
@@ -351,12 +318,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'video editing AI tools suite',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'RunwayML R dynamic logo',
     category: 'Videos',
     categorySlug: 'videos',
     tags: ['Video Editing', 'GenAI', 'Creative Tools', 'Text-to-Video'],
-    publishedDate: new Date('2024-06-10T09:30:00Z'),
     link: 'https://runwayml.com/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'text to video generation interface',
@@ -364,7 +328,6 @@ export const posts: Post[] = [
     detailImageHint2: 'AI motion capture example'
   },
   {
-    id: 'jasper',
     title: LS('Jasper: AI Writing for Marketing and Beyond', 'Jasper: Escritura IA para Marketing y Más Allá'),
     shortDescription: LS(
       'How Jasper, the AI writing assistant, helps create compelling content at scale.',
@@ -376,12 +339,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI writing marketing copy tool',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Jasper J diamond shape logo',
     category: 'Writing',
     categorySlug: 'writing',
     tags: ['AI Writing', 'Marketing', 'Content Creation', 'Copywriting'],
-    publishedDate: new Date('2024-06-07T11:00:00Z'),
     link: 'https://www.jasper.ai/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'content template selection screen',
@@ -389,7 +349,6 @@ export const posts: Post[] = [
     detailImageHint2: 'AI generated blog post draft'
   },
   {
-    id: 'otter-ai',
     title: LS('Otter.ai: Smart Notes for Voice Conversations', 'Otter.ai: Notas Inteligentes para Conversaciones de Voz'),
     shortDescription: LS(
       'Discover how Otter.ai uses AI to transcribe meetings and generate actionable notes.',
@@ -401,12 +360,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'audio transcription meeting software',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'Otter animal face icon',
     category: 'Audio',
     categorySlug: 'audio',
     tags: ['Transcription', 'AI Notes', 'Productivity', 'Meeting Assistant'],
-    publishedDate: new Date('2024-06-05T14:30:00Z'),
     link: 'https://otter.ai/',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'live transcription interface mobile',
@@ -414,7 +370,6 @@ export const posts: Post[] = [
     detailImageHint2: 'meeting notes summary keywords'
   },
   {
-    id: 'deepl',
     title: LS('DeepL Translator: AI-Powered Language Translation', 'Traductor DeepL: Traducción de Idiomas Impulsada por IA'),
     shortDescription: LS(
       'An in-depth look at DeepL, known for its accurate and nuanced AI translations.',
@@ -426,12 +381,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'language translation global map',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'DeepL D letter logo',
     category: 'Information',
     categorySlug: 'information',
     tags: ['Translation', 'AI Language', 'Neural Networks', 'Multilingual'],
-    publishedDate: new Date('2024-06-03T10:00:00Z'),
     link: 'https://www.deepl.com/translator',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'text translation interface boxes',
@@ -439,7 +391,6 @@ export const posts: Post[] = [
     detailImageHint2: 'document translation process'
   },
   {
-    id: 'taskmaster-ai',
     title: LS('TaskMaster AI: Intelligent Task Management', 'TaskMaster AI: Gestión Inteligente de Tareas'),
     shortDescription: LS(
       'Streamline your projects with AI-powered task prioritization and scheduling.',
@@ -451,12 +402,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'task management dashboard AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'checkmark gear logo',
     category: 'Productivity',
     categorySlug: 'productivity',
     tags: ['Task Management', 'Productivity', 'AI Scheduling', 'Project Planning'],
-    publishedDate: new Date('2024-07-18T09:00:00Z'),
     link: '#taskmaster-ai-website', // Placeholder link
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'AI task prioritization list',
@@ -464,7 +412,6 @@ export const posts: Post[] = [
     detailImageHint2: 'gantt chart AI integration'
   },
   {
-    id: 'inboxzero-ai',
     title: LS('InboxZero AI: Conquer Your Email Overload', 'InboxZero AI: Conquista tu Sobrecarga de Correo'),
     shortDescription: LS(
       'Achieve inbox zero with AI-powered email sorting, summarization, and reply suggestions.',
@@ -476,12 +423,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'email inbox AI organization',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'envelope zero logo',
     category: 'Productivity',
     categorySlug: 'productivity',
     tags: ['Email Management', 'AI Productivity', 'Inbox Zero', 'Summarization'],
-    publishedDate: new Date('2024-07-17T10:00:00Z'),
     link: '#inboxzero-ai-website', // Placeholder link
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'AI email summarization example',
@@ -489,7 +433,6 @@ export const posts: Post[] = [
     detailImageHint2: 'email categorization dashboard'
   },
   {
-    id: 'learnsphere-ai',
     title: LS('LearnSphere AI: Personalized Learning Journeys', 'LearnSphere AI: Rutas de Aprendizaje Personalizadas'),
     shortDescription: LS(
       'An AI platform that adapts educational content to individual learning styles and paces.',
@@ -501,12 +444,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI learning platform interface',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'brain globe logo',
     category: 'Education',
     categorySlug: 'education',
     tags: ['AI Education', 'Personalized Learning', 'EdTech', 'Adaptive Learning'],
-    publishedDate: new Date('2024-07-16T11:00:00Z'),
     link: '#learnsphere-ai-website', // Placeholder link
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'personalized learning path diagram',
@@ -514,7 +454,6 @@ export const posts: Post[] = [
     detailImageHint2: 'AI tutor chat interface'
   },
   {
-    id: 'tutorbot-ai',
     title: LS('TutorBot AI: Your Personal Academic Assistant', 'TutorBot AI: Tu Asistente Académico Personal'),
     shortDescription: LS(
       'Get instant homework help, explanations, and study support from an AI tutor.',
@@ -526,12 +465,9 @@ export const posts: Post[] = [
     ),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI tutor helping student',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'robot graduation cap logo',
     category: 'Education',
     categorySlug: 'education',
     tags: ['AI Tutor', 'Homework Help', 'Academic Support', 'Study Tools'],
-    publishedDate: new Date('2024-07-15T14:00:00Z'),
     link: '#tutorbot-ai-website', // Placeholder link
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'math problem solving AI',
@@ -539,18 +475,14 @@ export const posts: Post[] = [
     detailImageHint2: 'interactive quiz interface'
   },
   {
-    id: 'insightfinder',
     title: LS('InsightFinder: Advanced Data Analysis & Research', 'InsightFinder: Análisis Avanzado de Datos e Investigación'),
     shortDescription: LS('AI tool for uncovering trends, patterns, and insights from complex datasets.', 'Herramienta de IA para descubrir tendencias, patrones e ideas de conjuntos de datos complejos.'),
     longDescription: LS('InsightFinder leverages machine learning to perform deep analysis on large datasets. It helps researchers and analysts identify correlations, predict future trends, and extract actionable insights that might be missed by traditional methods. This post explores its capabilities in areas like market research, scientific discovery, and business intelligence. We delve into its user interface, data visualization features, and how it supports hypothesis testing and model building without requiring extensive coding knowledge.', 'InsightFinder aprovecha el aprendizaje automático para realizar análisis profundos en grandes conjuntos de datos. Ayuda a investigadores y analistas a identificar correlaciones, predecir tendencias futuras y extraer ideas accionables que podrían pasar desapercibidas con métodos tradicionales. Esta publicación explora sus capacidades en áreas como la investigación de mercado, el descubrimiento científico y la inteligencia empresarial. Profundizamos en su interfaz de usuario, funciones de visualización de datos y cómo apoya la prueba de hipótesis y la creación de modelos sin requerir un amplio conocimiento de codificación.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'data analysis dashboard charts',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'magnifying glass brain logo',
     category: 'Information',
     categorySlug: 'information',
     tags: ['Data Analysis', 'Machine Learning', 'Research AI', 'Business Intelligence'],
-    publishedDate: new Date('2024-07-26T10:00:00Z'),
     link: '#insightfinder-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'complex data visualization example',
@@ -558,18 +490,14 @@ export const posts: Post[] = [
     detailImageHint2: 'trend prediction graph'
   },
   {
-    id: 'pixelperfect-ai',
     title: LS('PixelPerfect AI: Image Upscaling & Restoration', 'PixelPerfect AI: Escalado y Restauración de Imágenes'),
     shortDescription: LS('Enhance image resolution and restore old or damaged photos with AI precision.', 'Mejora la resolución de imágenes y restaura fotos antiguas o dañadas con precisión de IA.'),
     longDescription: LS('PixelPerfect AI specializes in improving image quality. It uses advanced AI algorithms to upscale low-resolution images without losing detail, remove noise and artifacts, and even colorize black and white photos or restore damaged areas in old photographs. This post showcases its effectiveness with before-and-after examples, discusses the underlying technology, and compares it with traditional image editing techniques. Ideal for photographers, archivists, and anyone looking to breathe new life into their images.', 'PixelPerfect AI se especializa en mejorar la calidad de la imagen. Utiliza algoritmos avanzados de IA para escalar imágenes de baja resolución sin perder detalle, eliminar ruido y artefactos, e incluso colorear fotos en blanco y negro o restaurar áreas dañadas en fotografías antiguas. Esta publicación muestra su efectividad con ejemplos de antes y después, discute la tecnología subyacente y la compara con técnicas de edición de imágenes tradicionales. Ideal para fotógrafos, archivistas y cualquiera que busque dar nueva vida a sus imágenes.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'image upscaling AI comparison',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'pixel arrow logo',
     category: 'Photos',
     categorySlug: 'photos',
     tags: ['Image Enhancement', 'AI Restoration', 'Photo Editing', 'Upscaling'],
-    publishedDate: new Date('2024-07-25T11:00:00Z'),
     link: '#pixelperfect-ai-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'photo restoration before after',
@@ -577,18 +505,14 @@ export const posts: Post[] = [
     detailImageHint2: 'image resolution enhancement tool'
   },
   {
-    id: 'devmate-ai',
     title: LS('DevMate AI: Automated Software Testing', 'DevMate AI: Pruebas de Software Automatizadas'),
     shortDescription: LS('AI-driven platform for generating test cases, executing tests, and identifying bugs.', 'Plataforma impulsada por IA para generar casos de prueba, ejecutar pruebas e identificar errores.'),
     longDescription: LS('DevMate AI assists software developers and QA teams by automating various aspects of the testing lifecycle. It can analyze code to generate relevant test cases, execute UI and API tests, identify anomalies, and provide detailed bug reports. This post explores how DevMate AI integrates with CI/CD pipelines, supports different programming languages and frameworks, and helps improve software quality while reducing manual testing efforts. Learn how AI is making software testing smarter and more efficient.', 'DevMate AI asiste a desarrolladores de software y equipos de QA automatizando varios aspectos del ciclo de vida de las pruebas. Puede analizar código para generar casos de prueba relevantes, ejecutar pruebas de UI y API, identificar anomalías y proporcionar informes de errores detallados. Esta publicación explora cómo DevMate AI se integra con pipelines de CI/CD, admite diferentes lenguajes de programación y frameworks, y ayuda a mejorar la calidad del software mientras reduce los esfuerzos de prueba manual. Aprenda cómo la IA está haciendo que las pruebas de software sean más inteligentes y eficientes.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'software testing automation AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'gears checkmark logo',
     category: 'Programming',
     categorySlug: 'programming',
     tags: ['Software Testing', 'AI Automation', 'QA Tools', 'Bug Detection'],
-    publishedDate: new Date('2024-07-24T14:00:00Z'),
     link: '#devmate-ai-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'test case generation UI',
@@ -596,18 +520,14 @@ export const posts: Post[] = [
     detailImageHint2: 'bug report dashboard AI'
   },
   {
-    id: 'storyweaver-ai',
     title: LS('StoryWeaver AI: Crafting Interactive Narratives', 'StoryWeaver AI: Creando Narrativas Interactivas'),
     shortDescription: LS('AI tool for writers to develop branching storylines, characters, and dialogue.', 'Herramienta de IA para escritores para desarrollar tramas ramificadas, personajes y diálogos.'),
     longDescription: LS('StoryWeaver AI empowers writers and game designers to create complex interactive narratives. It provides tools for outlining branching storylines, developing character arcs with AI-suggested traits and motivations, and generating dynamic dialogue options. This post delves into how StoryWeaver AI can be used for interactive fiction, game development, and educational scenarios. We explore its features for managing narrative complexity and ensuring coherent storytelling across multiple paths.', 'StoryWeaver AI empodera a escritores y diseñadores de juegos para crear narrativas interactivas complejas. Proporciona herramientas para delinear tramas ramificadas, desarrollar arcos de personajes con rasgos y motivaciones sugeridos por IA, y generar opciones de diálogo dinámicas. Esta publicación profundiza en cómo StoryWeaver AI puede usarse para ficción interactiva, desarrollo de juegos y escenarios educativos. Exploramos sus características para gestionar la complejidad narrativa y asegurar una narración coherente a través de múltiples caminos.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'interactive story map AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'quill book logo',
     category: 'Writing',
     categorySlug: 'writing',
     tags: ['Interactive Fiction', 'Narrative Design', 'AI Writing', 'Game Development'],
-    publishedDate: new Date('2024-07-23T09:00:00Z'),
     link: '#storyweaver-ai-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'branching storyline editor UI',
@@ -615,18 +535,14 @@ export const posts: Post[] = [
     detailImageHint2: 'character development AI tool'
   },
   {
-    id: 'artisan-canvas',
     title: LS('Artisan Canvas: AI Texture & Pattern Generation', 'Artisan Canvas: Generación de Texturas y Patrones con IA'),
     shortDescription: LS('Generate unique, seamless textures and artistic patterns with AI for design projects.', 'Genere texturas únicas y sin costuras y patrones artísticos con IA para proyectos de diseño.'),
     longDescription: LS('Artisan Canvas is an AI tool for designers and 3D artists that generates novel textures and patterns from text prompts or image inputs. It can create seamless materials for 3D models, unique backgrounds for graphic design, or inspiration for textile patterns. This post showcases its capabilities, control parameters for style and randomness, and how it integrates into existing design workflows. Explore how AI can expand your creative palette for surface design and visual detailing.', 'Artisan Canvas es una herramienta de IA para diseñadores y artistas 3D que genera texturas y patrones novedosos a partir de indicaciones de texto o entradas de imágenes. Puede crear materiales sin costuras para modelos 3D, fondos únicos para diseño gráfico o inspiración para patrones textiles. Esta publicación muestra sus capacidades, parámetros de control para estilo y aleatoriedad, y cómo se integra en los flujos de trabajo de diseño existentes. Explore cómo la IA puede expandir su paleta creativa para el diseño de superficies y detalles visuales.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'AI generated textures patterns',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'paint palette brush logo',
     category: 'Design',
     categorySlug: 'design',
     tags: ['Texture Generation', 'Pattern Design', 'AI Art', '3D Design'],
-    publishedDate: new Date('2024-07-22T15:00:00Z'),
     link: '#artisan-canvas-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'seamless texture example AI',
@@ -634,18 +550,14 @@ export const posts: Post[] = [
     detailImageHint2: 'pattern generation parameters tool'
   },
   {
-    id: 'lingolink',
     title: LS('LingoLink: AI Document Translation & Referencing', 'LingoLink: Traducción de Documentos y Referencias con IA'),
     shortDescription: LS('Translate complex documents with AI, maintaining formatting and cross-references.', 'Traduzca documentos complejos con IA, manteniendo el formato y las referencias cruzadas.'),
     longDescription: LS('LingoLink goes beyond simple text translation by offering AI-powered translation for entire documents (like PDFs, Word files) while preserving layout and formatting. It also intelligently handles cross-references and terminology consistency across large documents. This post reviews its features for technical manual translation, legal document processing, and academic paper localization. Learn how LingoLink can save significant time and effort in multilingual document workflows.', 'LingoLink va más allá de la simple traducción de texto al ofrecer traducción impulsada por IA para documentos completos (como archivos PDF, Word) mientras conserva el diseño y el formato. También maneja inteligentemente las referencias cruzadas y la coherencia terminológica en documentos extensos. Esta publicación revisa sus características para la traducción de manuales técnicos, el procesamiento de documentos legales y la localización de artículos académicos. Aprenda cómo LingoLink puede ahorrar una cantidad significativa de tiempo y esfuerzo en los flujos de trabajo de documentos multilingües.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'document translation AI interface',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'globe link logo',
     category: 'Information',
     categorySlug: 'information',
     tags: ['Document Translation', 'AI Localization', 'NLP', 'Technical Writing'],
-    publishedDate: new Date('2024-07-21T10:30:00Z'),
     link: '#lingolink-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'pdf translation tool UI',
@@ -653,18 +565,14 @@ export const posts: Post[] = [
     detailImageHint2: 'terminology management AI'
   },
   {
-    id: 'audiosculpt',
     title: LS('AudioSculpt: AI Sound Effect Generation', 'AudioSculpt: Generación de Efectos de Sonido con IA'),
     shortDescription: LS('Create unique sound effects from text prompts or by transforming existing audio.', 'Cree efectos de sonido únicos a partir de indicaciones de texto o transformando audio existente.'),
     longDescription: LS('AudioSculpt is an AI tool for sound designers and content creators that generates novel sound effects. Users can describe the sound they need (e.g., "a futuristic spaceship door opening") or upload an existing sound to be transformed by AI into something new. This post explores its generation capabilities, parameters for controlling sound characteristics, and its applications in game development, filmmaking, and music production. Discover a new way to craft the perfect soundscape with AI.', 'AudioSculpt es una herramienta de IA para diseñadores de sonido y creadores de contenido que genera efectos de sonido novedosos. Los usuarios pueden describir el sonido que necesitan (p. ej., "la puerta de una nave espacial futurista abriéndose") o cargar un sonido existente para que la IA lo transforme en algo nuevo. Esta publicación explora sus capacidades de generación, los parámetros para controlar las características del sonido y sus aplicaciones en el desarrollo de juegos, la realización de películas y la producción musical. Descubra una nueva forma de crear el paisaje sonoro perfecto con IA.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'sound effect generation AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'sound wave sculpt logo',
     category: 'Audio',
     categorySlug: 'audio',
     tags: ['Sound Design', 'AI Audio', 'SFX Generation', 'Game Audio'],
-    publishedDate: new Date('2024-07-20T16:00:00Z'),
     link: '#audiosculpt-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'text to sound effect tool',
@@ -672,25 +580,26 @@ export const posts: Post[] = [
     detailImageHint2: 'audio transformation AI parameters'
   },
   {
-    id: 'devoptimizer',
     title: LS('DevOptimizer: AI Code Performance & Cloud Optimization', 'DevOptimizer: Optimización de Rendimiento de Código y Nube con IA'),
     shortDescription: LS('AI tool to analyze code for performance bottlenecks and suggest cloud optimizations.', 'Herramienta de IA para analizar código en busca de cuellos de botella de rendimiento y sugerir optimizaciones en la nube.'),
     longDescription: LS('DevOptimizer helps developers improve the efficiency of their applications. It uses AI to analyze source code, identify performance bottlenecks, suggest refactoring opportunities, and recommend optimal cloud configurations for deployment. This post covers its static and dynamic analysis capabilities, support for various languages and cloud platforms, and how it can lead to reduced operational costs and better application responsiveness. Learn how to make your software faster and more cost-effective with AI-driven insights.', 'DevOptimizer ayuda a los desarrolladores a mejorar la eficiencia de sus aplicaciones. Utiliza IA para analizar el código fuente, identificar cuellos de botella de rendimiento, sugerir oportunidades de refactorización y recomendar configuraciones óptimas en la nube para la implementación. Esta publicación cubre sus capacidades de análisis estático y dinámico, el soporte para varios lenguajes y plataformas en la nube, y cómo puede conducir a costos operativos reducidos y una mejor capacidad de respuesta de la aplicación. Aprenda a hacer su software más rápido y rentable con información impulsada por IA.'),
     imageUrl: 'https://placehold.co/600x400.png',
     imageHint: 'code performance analysis AI',
-    logoUrl: 'https://placehold.co/50x50.png',
-    logoHint: 'rocket gear logo',
     category: 'Programming',
     categorySlug: 'programming',
     tags: ['Code Optimization', 'Performance AI', 'Cloud Computing', 'DevOps'],
-    publishedDate: new Date('2024-07-19T12:00:00Z'),
     link: '#devoptimizer-website',
     detailImageUrl1: 'https://placehold.co/400x300.png',
     detailImageHint1: 'performance bottleneck report UI',
     detailImageUrl2: 'https://placehold.co/400x300.png',
     detailImageHint2: 'cloud cost optimization AI tool'
   }
-];
+].map(post => ({
+  ...post,
+  // Convert publishedDate only if it's not already a Date object for initial static data
+  // For Firestore, it will be handled by the fetching logic
+  // publishedDate: typeof post.publishedDate === 'string' ? new Date(post.publishedDate) : post.publishedDate,
+}));
 
 // These functions are still useful for working with the static 'categories' array.
 export const getCategoryBySlug = (slug: string): Category | undefined => {
@@ -708,6 +617,3 @@ export const getCategoryByName = (nameEN: string): Category | undefined => {
     return catName === nameEN;
   });
 };
-
-
-    

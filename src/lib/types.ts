@@ -18,8 +18,6 @@ export interface Post {
   longDescription: { [key in LanguageCode]?: string; en: string; }; // Stored as a map
   imageUrl: string; // URL or Data URI
   imageHint?: string;
-  logoUrl?: string;
-  logoHint?: string;
   category: string; // English name of category, from categories.name.en
   categorySlug: string;
   tags: string[];
@@ -76,3 +74,4 @@ export interface GameHighScore {
   score: number;
   timestamp: Timestamp | Date;
 }
+

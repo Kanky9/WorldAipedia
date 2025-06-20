@@ -286,8 +286,6 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
           {post.link && (
              <AILink
               href={post.link}
-              logoUrl={post.logoUrl}
-              logoHint={post.logoHint}
               text={t('visitAiToolWebsiteButton', 'Visit Tool Website')}
             />
           )}

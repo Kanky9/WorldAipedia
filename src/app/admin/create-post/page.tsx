@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation'; 
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,6 @@ import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
 import { languages as appLanguagesObject } from '@/lib/translations';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
-const DEFAULT_LOGO_PLACEHOLDER = 'https://placehold.co/50x50.png';
 const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
@@ -38,7 +37,7 @@ const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
   const router = useRouter();
-  const searchParams = useSearchParams(); 
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
 
@@ -62,11 +61,6 @@ export default function CreatePostPage() {
   const [mainImageHint, setMainImageHint] = useState('');
   const mainImageFileRef = useRef<HTMLInputElement>(null);
 
-  const [logoDataUri, setLogoDataUri] = useState<string>('');
-  const [logoUrlForPreview, setLogoUrlForPreview] = useState<string>(DEFAULT_LOGO_PLACEHOLDER);
-  const [logoHint, setLogoHint] = useState('');
-  const logoFileRef = useRef<HTMLInputElement>(null);
-
   const [detailImage1DataUri, setDetailImage1DataUri] = useState<string>('');
   const [detailImage1UrlForPreview, setDetailImage1UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
   const [detailImageHint1, setDetailImageHint1] = useState('');
@@ -84,17 +78,17 @@ export default function CreatePostPage() {
   };
 
   useEffect(() => {
-    if (authLoading || (currentUser && !currentUser.isAdmin)) return; 
+    if (authLoading || (currentUser && !currentUser.isAdmin)) return;
 
     const id = searchParams.get('id');
 
     if (id) {
-      if (postIdFromQuery !== id) { 
+      if (postIdFromQuery !== id) {
         setPostIdFromQuery(id);
         setIsEditMode(true);
       }
-    } else { 
-      if (isEditMode || postIdFromQuery !== null) { 
+    } else {
+      if (isEditMode || postIdFromQuery !== null) {
         setIsEditMode(false);
         setPostIdFromQuery(null);
         setExistingPostDataForForm(null);
@@ -102,7 +96,6 @@ export default function CreatePostPage() {
         setShortDescription('');
         setLongDescription('');
         clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
-        clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
         clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
         clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
         setCategory('');
@@ -116,7 +109,7 @@ export default function CreatePostPage() {
 
   useEffect(() => {
     if (!isEditMode || !postIdFromQuery || authLoading || (currentUser && !currentUser.isAdmin)) {
-      if (!isEditMode) setIsLoadingData(false); 
+      if (!isEditMode) setIsLoadingData(false);
       return;
     }
 
@@ -130,13 +123,9 @@ export default function CreatePostPage() {
           setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
 
           setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
-          setMainImageDataUri(existingPost.imageUrl || ''); 
+          setMainImageDataUri(existingPost.imageUrl || '');
           setMainImageHint(existingPost.imageHint || '');
 
-          setLogoUrlForPreview(existingPost.logoUrl || DEFAULT_LOGO_PLACEHOLDER);
-          setLogoDataUri(existingPost.logoUrl || '');
-          setLogoHint(existingPost.logoHint || '');
-          
           setDetailImage1UrlForPreview(existingPost.detailImageUrl1 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImage1DataUri(existingPost.detailImageUrl1 || '');
           setDetailImageHint1(existingPost.detailImageHint1 || '');
@@ -194,7 +183,7 @@ export default function CreatePostPage() {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { 
+      if (file.size > 5 * 1024 * 1024) {
         toast({
             variant: "destructive",
             title: t('imageFileTooLargeTitle', "Image File Too Large"),
@@ -213,7 +202,7 @@ export default function CreatePostPage() {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const clearImageHelper = (
     setDataUriState: React.Dispatch<React.SetStateAction<string>>,
     setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
@@ -248,7 +237,7 @@ export default function CreatePostPage() {
     setIsTranslating(true);
 
     const currentEditingLanguage = language as LanguageCode;
-    
+
     const sourceTexts: { title?: string; shortDescription?: string; longDescription?: string } = {};
     if (trimmedTitle) sourceTexts.title = trimmedTitle;
     if (trimmedShortDescription) sourceTexts.shortDescription = trimmedShortDescription;
@@ -266,9 +255,9 @@ export default function CreatePostPage() {
 
     const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
     if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && allAppLanguageCodes.includes('en')) {
-        languagesToTranslateTo.push('en'); 
+        languagesToTranslateTo.push('en');
     }
-    
+
     const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
         const textsToTranslateForThisLang: { title?: string; shortDescription?: string; longDescription?: string; } = {};
         if (sourceTexts.title && sourceTexts.title.trim() !== '') textsToTranslateForThisLang.title = sourceTexts.title;
@@ -289,7 +278,7 @@ export default function CreatePostPage() {
             const fieldsAttempted = Object.keys(textsToTranslateForThisLang).join(', ');
             console.error(`Error translating to ${targetLangCode} for fields: [${fieldsAttempted}]. Original error:`, error);
             toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content (${fieldsAttempted}) to ${targetLangCode}. Original text will be used if English.`});
-            return { lang: targetLangCode, translations: {} }; 
+            return { lang: targetLangCode, translations: {} };
         }
     });
 
@@ -300,9 +289,9 @@ export default function CreatePostPage() {
         if (result.translations.shortDescription) finalTranslations.shortDescription[result.lang] = result.translations.shortDescription;
         if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
     });
-    
+
     setIsTranslating(false);
-    
+
     const fieldsToEnsureEn: (keyof typeof finalTranslations)[] = ['title', 'shortDescription', 'longDescription'];
     fieldsToEnsureEn.forEach(fieldKey => {
         const fieldTranslations = finalTranslations[fieldKey];
@@ -310,35 +299,22 @@ export default function CreatePostPage() {
             if (currentEditingLanguage === 'en') {
                  fieldTranslations.en = sourceTexts[fieldKey] || "";
             } else {
-                // If editing in non-English and 'en' translation wasn't successful for THIS field,
-                // or if 'en' was not a target language (e.g. currentEditingLanguage === 'en'),
-                // we might source 'en' from existingPostData if available and in edit mode,
-                // otherwise default to empty string.
                 if (isEditMode && existingPostDataForForm && existingPostDataForForm[fieldKey]) {
-                    // Check if existing data for 'en' exists.
                     const existingEnValue = (existingPostDataForForm[fieldKey] as Partial<Record<LanguageCode, string>>)?.en;
                     fieldTranslations.en = typeof existingEnValue === 'string' ? existingEnValue : "";
                 } else {
-                    fieldTranslations.en = ""; 
+                    fieldTranslations.en = "";
                 }
             }
         }
     });
-        
+
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
         toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Main Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
         finalMainImageUrl = DEFAULT_MAIN_PLACEHOLDER;
     } else if (finalMainImageUrl === DEFAULT_MAIN_PLACEHOLDER && !mainImageDataUri) {
-        finalMainImageUrl = ''; 
-    }
-
-    let finalLogoUrl = logoDataUri || logoUrlForPreview;
-    if (finalLogoUrl && finalLogoUrl.startsWith('data:image') && finalLogoUrl.length > MAX_DATA_URI_LENGTH) {
-        toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Logo Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB.`) });
-        finalLogoUrl = DEFAULT_LOGO_PLACEHOLDER;
-    } else if (finalLogoUrl === DEFAULT_LOGO_PLACEHOLDER && !logoDataUri) {
-        finalLogoUrl = '';
+        finalMainImageUrl = '';
     }
 
     let finalDetailImageUrl1 = detailImage1DataUri || detailImage1UrlForPreview;
@@ -363,8 +339,6 @@ export default function CreatePostPage() {
       longDescription: finalTranslations.longDescription as Record<LanguageCode, string> & { en: string },
       imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
-      logoUrl: finalLogoUrl || undefined,
-      logoHint: logoHint,
       category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
       categorySlug: category,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
@@ -387,7 +361,7 @@ export default function CreatePostPage() {
         });
       } else {
         const newPostData = { ...postDetailsToSave, publishedDate: postDetailsToSave.publishedDate || new Date() };
-        const newPostId = doc(firestoreCollection(db, 'posts')).id; 
+        const newPostId = doc(firestoreCollection(db, 'posts')).id;
         await addPostToFirestore({ ...newPostData, id: newPostId });
         toast({
           title: t('adminPostCreatedSuccess', "Post Created"),
@@ -396,11 +370,10 @@ export default function CreatePostPage() {
         });
         setTitle(''); setShortDescription(''); setLongDescription('');
         clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
-        clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER); setLogoHint('');
         clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
         clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
         setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null); 
+        setExistingPostDataForForm(null);
       }
       router.push('/admin');
     } catch (error) {
@@ -428,7 +401,7 @@ export default function CreatePostPage() {
     aspectRatio?: string;
     previewSize?: {width: number, height: number};
   }
-  
+
   const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     labelKey, defaultLabel, imageUrlForPreview, onFileChange, onClearImage, fileRef,
     hintValue, onHintChange, hintLabelKey, hintDefaultLabel, hintPlaceholderKey, hintDefaultPlaceholder,
@@ -441,7 +414,7 @@ export default function CreatePostPage() {
           <UploadCloud className="mr-2 h-4 w-4" /> {t('uploadImageButton', 'Upload Image')}
         </Button>
         <Input type="file" accept="image/*" ref={fileRef} onChange={onFileChange} className="hidden" disabled={isSubmitting || isLoadingData} />
-        {(imageUrlForPreview && imageUrlForPreview !== DEFAULT_MAIN_PLACEHOLDER && imageUrlForPreview !== DEFAULT_LOGO_PLACEHOLDER && imageUrlForPreview !== DEFAULT_DETAIL_PLACEHOLDER) && (
+        {(imageUrlForPreview && imageUrlForPreview !== DEFAULT_MAIN_PLACEHOLDER && imageUrlForPreview !== DEFAULT_DETAIL_PLACEHOLDER) && (
           <Button type="button" variant="ghost" size="sm" onClick={onClearImage} disabled={isSubmitting || isLoadingData}>
             <Trash2 className="mr-1 h-4 w-4" /> {t('clearImageButton', 'Clear')}
           </Button>
@@ -486,7 +459,7 @@ export default function CreatePostPage() {
     );
   }
 
-  if (isLoadingData && isEditMode) { 
+  if (isLoadingData && isEditMode) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -542,18 +515,6 @@ export default function CreatePostPage() {
                 hintLabelKey="adminPostMainImageHintLabel" hintDefaultLabel="Main Image AI Hint"
                 hintPlaceholderKey="adminPostMainImageHintPlaceholder" hintDefaultPlaceholder="e.g., abstract technology"
                 previewSize={{width: 300, height: 200}}
-              />
-              <ImageUploadSection
-                labelKey="adminPostLogoLabel" defaultLabel="Tool Logo (Optional)"
-                imageUrlForPreview={logoUrlForPreview}
-                onFileChange={(e) => handleImageFileChange(e, setLogoDataUri, setLogoUrlForPreview)}
-                onClearImage={() => clearImageHelper(setLogoDataUri, setLogoUrlForPreview, logoFileRef, DEFAULT_LOGO_PLACEHOLDER)}
-                fileRef={logoFileRef}
-                hintValue={logoHint} onHintChange={setLogoHint}
-                hintLabelKey="adminPostLogoHintLabel" hintDefaultLabel="Logo AI Hint"
-                hintPlaceholderKey="adminPostLogoHintPlaceholder" hintDefaultPlaceholder="e.g., brand logo"
-                aspectRatio="aspect-square"
-                previewSize={{width:100, height:100}}
               />
             </div>
 
@@ -630,5 +591,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-
-    
