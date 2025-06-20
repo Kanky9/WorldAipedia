@@ -1,4 +1,3 @@
-
 // src/app/terms-and-conditions/page.tsx
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -10,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsAndConditionsPage() {
   const lastUpdatedDate = "July 26, 2024"; // Update this date whenever the terms change
-  const contactEmail = "terms@worldaipedia.com"; // Replace with your actual contact email
+  const contactEmail = "lacelabswebs@gmail.com"; // Updated contact email
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-3xl">
