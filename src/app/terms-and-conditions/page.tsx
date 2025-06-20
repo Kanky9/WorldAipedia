@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function TermsAndConditionsPage() {
-  const lastUpdatedDate = "June 19, 2024"; // Update this date whenever the terms change
+  const lastUpdatedDate = "July 26, 2024"; // Update this date whenever the terms change
   const contactEmail = "terms@worldaipedia.com"; // Replace with your actual contact email
 
   return (

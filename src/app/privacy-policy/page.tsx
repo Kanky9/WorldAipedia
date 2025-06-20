@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacyPolicyPage() {
-  const lastUpdatedDate = "June 19, 2024"; // Update this date whenever the policy changes
+  const lastUpdatedDate = "July 26, 2024"; // Update this date whenever the policy changes
   const contactEmail = "privacy@worldaipedia.com"; // Replace with your actual contact email
 
   return (
