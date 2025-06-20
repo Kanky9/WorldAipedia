@@ -137,7 +137,7 @@ const Mascot = () => {
     // If chat is open, or other modes, clicking mascot might do nothing or something else
   };
 
-  if (pathname && pathname.startsWith('/admin')) {
+  if (pathname === '/account' || pathname === '/admin/create-post' || (pathname && pathname.startsWith('/admin/edit-post/'))) {
     return null;
   }
 
