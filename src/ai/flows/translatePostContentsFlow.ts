@@ -66,7 +66,18 @@ export async function translatePostContents(input: TranslatePostContentsInput): 
     }
 
     const responseData = await res.json();
-    const translatedValues = responseData.translatedText;
+    
+    // Correctly parse the response from LibreTranslate
+    // It returns an array of objects like [{ translatedText: "..." }], not a single object.
+    if (!Array.isArray(responseData)) {
+      console.error('Unexpected response format from LibreTranslate API. Expected an array.', responseData);
+      return { translatedTexts: {} };
+    }
+    
+    const translatedValues: string[] = (responseData as Array<{ translatedText: string }>).map(
+      item => item.translatedText
+    );
+
 
     if (!translatedValues || translatedValues.length !== keysToTranslate.length) {
       console.error('Mismatched translation results from LibreTranslate API.');
