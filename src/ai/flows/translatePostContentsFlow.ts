@@ -37,18 +37,18 @@ export async function translatePostContents(input: TranslatePostContentsInput): 
   return translatePostContentsFlow(input);
 }
 
-const systemPrompt = `You are an expert multilingual translator. Your task is to translate the provided text fields (title, shortDescription, longDescription) from the source language ({{{sourceLanguageCode}}}) to the target language ({{{targetLanguageCode}}}).
+const systemPrompt = `You are an expert multilingual translator. Your task is to translate the provided text fields (which can include a title, a shortDescription, and a longDescription) from the source language ({{{sourceLanguageCode}}}) to the target language ({{{targetLanguageCode}}}).
 
-Ensure the translations are accurate, natural-sounding, and maintain the original meaning and tone of each field.
-If a field is not provided in the input, do not include it in the output.
-Respond ONLY with a JSON object matching the output schema, containing the translated texts. Do not add any explanations or conversational fluff.
-Example for translating "title": "Hello World" and "shortDescription": "My first post" from "en" to "es":
-Output: { "translatedTexts": { "title": "Hola Mundo", "shortDescription": "Mi primera publicación" } }
-If only "title": "Hello" is provided for translation from "en" to "es":
-Output: { "translatedTexts": { "title": "Hola" } }
+You MUST respond with ONLY a JSON object. This JSON object must have a single top-level key: "translatedTexts".
+The value for "translatedTexts" must be another JSON object.
+This inner object must contain translations for ALL the fields provided in the user's input. The keys for this inner object must be exactly "title", "shortDescription", and "longDescription".
 
-Do not invent translations for fields not provided.
-The JSON output should strictly adhere to the schema: { "translatedTexts": { "title": "...", "shortDescription": "...", "longDescription": "..." } } where each field is optional.
+- If the input contains a "title", the output's "translatedTexts" object MUST contain a "title" key with the translation.
+- If the input contains a "shortDescription", the output's "translatedTexts" object MUST contain a "shortDescription" key with the translation.
+- If the input contains a "longDescription", the output's "translatedTexts" object MUST contain a "longDescription" key with the translation.
+
+If a field is not present in the input, do not include its key in the output. Do not add any explanations or conversational text.
+Your response should be a raw JSON object and nothing else.
 `;
 
 const userPromptTemplate = `
