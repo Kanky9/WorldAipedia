@@ -265,7 +265,7 @@ export default function CreatePostPage() {
         if (sourceTexts.longDescription && sourceTexts.longDescription.trim() !== '') textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
 
         if (Object.keys(textsToTranslateForThisLang).length === 0) {
-            return { lang: targetLangCode, translations: {} };
+            return { lang: targetLangCode, translatedTexts: {} };
         }
         try {
             const result = await translatePostContents({
@@ -273,21 +273,22 @@ export default function CreatePostPage() {
               targetLanguageCode: targetLangCode,
               sourceLanguageCode: currentEditingLanguage,
             });
-            return { lang: targetLangCode, translations: result.translatedTexts };
+            return { lang: targetLangCode, translatedTexts: result.translatedTexts };
         } catch (error) {
             const fieldsAttempted = Object.keys(textsToTranslateForThisLang).join(', ');
             console.error(`Error translating to ${targetLangCode} for fields: [${fieldsAttempted}]. Original error:`, error);
             toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content (${fieldsAttempted}) to ${targetLangCode}. Original text will be used if English.`});
-            return { lang: targetLangCode, translations: {} };
+            return { lang: targetLangCode, translatedTexts: {} };
         }
     });
 
     const translationResults = await Promise.all(translationPromises);
 
     translationResults.forEach(result => {
-        if (result.translations.title) finalTranslations.title[result.lang] = result.translations.title;
-        if (result.translations.shortDescription) finalTranslations.shortDescription[result.lang] = result.translations.shortDescription;
-        if (result.translations.longDescription) finalTranslations.longDescription[result.lang] = result.translations.longDescription;
+        const out = result.translatedTexts;
+        if (out.title) finalTranslations.title[result.lang] = out.title;
+        if (out.shortDescription) finalTranslations.shortDescription[result.lang] = out.shortDescription;
+        if (out.longDescription) finalTranslations.longDescription[result.lang] = out.longDescription;
     });
 
     setIsTranslating(false);
