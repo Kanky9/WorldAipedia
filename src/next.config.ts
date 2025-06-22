@@ -1,9 +1,8 @@
 
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  output: 'export', // ✅ This line is THE KEY for static export builds
+  // output: 'export', // Comentado para permitir funcionalidades del lado del servidor
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -11,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // Add this line to disable image optimization for static export
+    unoptimized: true, // Mantener esto si se usan placehold.co o si no se quiere optimización en dev/build
     remotePatterns: [
       {
         protocol: 'https',
@@ -21,7 +20,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Add allowedDevOrigins at the root level for 'next dev'
   allowedDevOrigins: [
     "https://6000-firebase-studio-1749697659574.cluster-duylic2g3fbzerqpzxxbw6helm.cloudworkstations.dev",
     "http://localhost:9002",
