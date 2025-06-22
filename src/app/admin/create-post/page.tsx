@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert, Languages } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, UploadCloud, Trash2, Loader2, ShieldAlert } from 'lucide-react';
 import { categories as allCategories } from '@/data/posts';
 import type { Post as PostType, LocalizedString } from '@/lib/types';
 import {
@@ -25,7 +26,6 @@ import {
 import { doc, collection as firestoreCollection, Timestamp } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
-import { translatePostContents } from '@/ai/flows/translatePostContentsFlow';
 import { languages as appLanguagesObject } from '@/lib/translations';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
@@ -33,6 +33,20 @@ const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
 const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
 const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
+
+type LocalizedContent = {
+  [key in LanguageCode]?: {
+    title: string;
+    shortDescription: string;
+    longDescription: string;
+  };
+};
+
+const initialLocalizedContent: LocalizedContent = allAppLanguageCodes.reduce((acc, langCode) => {
+  acc[langCode] = { title: '', shortDescription: '', longDescription: '' };
+  return acc;
+}, {} as LocalizedContent);
+
 
 export default function CreatePostPage() {
   const { t, language } = useLanguage();
@@ -45,38 +59,39 @@ export default function CreatePostPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [existingPostDataForForm, setExistingPostDataForForm] = useState<PostType | null>(null);
 
-  const [title, setTitle] = useState('');
-  const [shortDescription, setShortDescription] = useState('');
-  const [longDescription, setLongDescription] = useState('');
+  // State for language-specific content
+  const [localizedContent, setLocalizedContent] = useState<LocalizedContent>(initialLocalizedContent);
+
+  // State for common fields
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
-
   const [mainImageDataUri, setMainImageDataUri] = useState<string>('');
   const [mainImageUrlForPreview, setMainImageUrlForPreview] = useState<string>(DEFAULT_MAIN_PLACEHOLDER);
   const [mainImageHint, setMainImageHint] = useState('');
   const mainImageFileRef = useRef<HTMLInputElement>(null);
-
   const [detailImage1DataUri, setDetailImage1DataUri] = useState<string>('');
   const [detailImage1UrlForPreview, setDetailImage1UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
   const [detailImageHint1, setDetailImageHint1] = useState('');
   const detailImage1FileRef = useRef<HTMLInputElement>(null);
-
   const [detailImage2DataUri, setDetailImage2DataUri] = useState<string>('');
   const [detailImage2UrlForPreview, setDetailImage2UrlForPreview] = useState<string>(DEFAULT_DETAIL_PLACEHOLDER);
   const [detailImageHint2, setDetailImageHint2] = useState('');
   const detailImage2FileRef = useRef<HTMLInputElement>(null);
 
-  const getLocalizedStringDefault = (value: LocalizedString | undefined, lang: string = 'en'): string => {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    return value[lang as keyof LocalizedString] || value.en || '';
+  const resetForm = () => {
+    setLocalizedContent(initialLocalizedContent);
+    setCategory('');
+    setTags('');
+    setPublishedDate(new Date().toISOString().split('T')[0]);
+    setLinkTool('');
+    clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
+    clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
+    clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
   };
-
+  
   useEffect(() => {
     if (authLoading || (currentUser && !currentUser.isAdmin)) return;
 
@@ -91,17 +106,7 @@ export default function CreatePostPage() {
       if (isEditMode || postIdFromQuery !== null) {
         setIsEditMode(false);
         setPostIdFromQuery(null);
-        setExistingPostDataForForm(null);
-        setTitle('');
-        setShortDescription('');
-        setLongDescription('');
-        clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
-        clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
-        clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
-        setCategory('');
-        setTags('');
-        setPublishedDate(new Date().toISOString().split('T')[0]);
-        setLinkTool('');
+        resetForm();
       }
       setIsLoadingData(false);
     }
@@ -117,23 +122,25 @@ export default function CreatePostPage() {
     getPostFromFirestore(postIdFromQuery)
       .then(existingPost => {
         if (existingPost) {
-          setExistingPostDataForForm(existingPost);
-          setTitle(getLocalizedStringDefault(existingPost.title, language));
-          setShortDescription(getLocalizedStringDefault(existingPost.shortDescription, language));
-          setLongDescription(getLocalizedStringDefault(existingPost.longDescription, language));
+            const contentToLoad: LocalizedContent = {};
+            allAppLanguageCodes.forEach(langCode => {
+                contentToLoad[langCode] = {
+                    title: existingPost.title?.[langCode] || '',
+                    shortDescription: existingPost.shortDescription?.[langCode] || '',
+                    longDescription: existingPost.longDescription?.[langCode] || '',
+                };
+            });
+            setLocalizedContent(contentToLoad);
 
           setMainImageUrlForPreview(existingPost.imageUrl || DEFAULT_MAIN_PLACEHOLDER);
           setMainImageDataUri(existingPost.imageUrl || '');
           setMainImageHint(existingPost.imageHint || '');
-
           setDetailImage1UrlForPreview(existingPost.detailImageUrl1 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImage1DataUri(existingPost.detailImageUrl1 || '');
           setDetailImageHint1(existingPost.detailImageHint1 || '');
-
           setDetailImage2UrlForPreview(existingPost.detailImageUrl2 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImage2DataUri(existingPost.detailImageUrl2 || '');
           setDetailImageHint2(existingPost.detailImageHint2 || '');
-
           setCategory(existingPost.categorySlug);
           setTags(existingPost.tags.join(', '));
           let pDate = existingPost.publishedDate;
@@ -153,15 +160,7 @@ export default function CreatePostPage() {
       .finally(() => {
         setIsLoadingData(false);
       });
-  }, [postIdFromQuery, isEditMode, language, router, t, toast, authLoading, currentUser]);
-
-  useEffect(() => {
-    if (isEditMode && existingPostDataForForm) {
-      setTitle(getLocalizedStringDefault(existingPostDataForForm.title, language));
-      setShortDescription(getLocalizedStringDefault(existingPostDataForForm.shortDescription, language));
-      setLongDescription(getLocalizedStringDefault(existingPostDataForForm.longDescription, language));
-    }
-  }, [language, isEditMode, existingPostDataForForm]);
+  }, [postIdFromQuery, isEditMode, router, t, toast, authLoading, currentUser]);
 
 
   useEffect(() => {
@@ -203,6 +202,16 @@ export default function CreatePostPage() {
     }
   };
 
+  const handleLocalizedContentChange = (langCode: LanguageCode, field: 'title' | 'shortDescription' | 'longDescription', value: string) => {
+    setLocalizedContent(prev => ({
+      ...prev,
+      [langCode]: {
+        ...prev[langCode],
+        [field]: value,
+      },
+    }));
+  };
+
   const clearImageHelper = (
     setDataUriState: React.Dispatch<React.SetStateAction<string>>,
     setPreviewUrlState: React.Dispatch<React.SetStateAction<string>>,
@@ -221,94 +230,42 @@ export default function CreatePostPage() {
       return;
     }
 
-    const trimmedTitle = title.trim();
-    const trimmedShortDescription = shortDescription.trim();
-    const trimmedLongDescription = longDescription.trim();
-
-    if (!trimmedTitle || !trimmedShortDescription || !trimmedLongDescription || (!mainImageDataUri && mainImageUrlForPreview === DEFAULT_MAIN_PLACEHOLDER) || !category || !publishedDate) {
+    if (!localizedContent.en?.title?.trim()) {
       toast({
         variant: "destructive",
-        title: t('adminPostErrorTitle', "Error submitting post"),
-        description: t('adminPostRequiredFields', "Please fill in all required fields (Title, Descriptions, Main Image, Category, Published Date). Ensure main image is uploaded or set."),
+        title: t('adminPostRequiredFields', "Missing Required Field"),
+        description: t('adminPostTitlePlaceholder', "The English title is required to save the post."),
       });
       return;
     }
+
+    if (!category || !publishedDate) {
+         toast({
+            variant: "destructive",
+            title: t('adminPostRequiredFields', "Missing Required Field"),
+            description: "Please select a category and a published date.",
+         });
+         return;
+    }
+    
     setIsSubmitting(true);
-    setIsTranslating(true);
-
-    const currentEditingLanguage = language as LanguageCode;
-
-    const sourceTexts: { title?: string; shortDescription?: string; longDescription?: string } = {};
-    if (trimmedTitle) sourceTexts.title = trimmedTitle;
-    if (trimmedShortDescription) sourceTexts.shortDescription = trimmedShortDescription;
-    if (trimmedLongDescription) sourceTexts.longDescription = trimmedLongDescription;
 
     const finalTranslations: {
       title: Partial<Record<LanguageCode, string>>;
       shortDescription: Partial<Record<LanguageCode, string>>;
       longDescription: Partial<Record<LanguageCode, string>>;
     } = {
-      title: { [currentEditingLanguage]: sourceTexts.title || "" },
-      shortDescription: { [currentEditingLanguage]: sourceTexts.shortDescription || "" },
-      longDescription: { [currentEditingLanguage]: sourceTexts.longDescription || "" },
+      title: {},
+      shortDescription: {},
+      longDescription: {},
     };
 
-    const languagesToTranslateTo = allAppLanguageCodes.filter(langCode => langCode !== currentEditingLanguage);
-    if (currentEditingLanguage !== 'en' && !languagesToTranslateTo.includes('en') && allAppLanguageCodes.includes('en')) {
-        languagesToTranslateTo.push('en');
+    for (const langCode in localizedContent) {
+        const content = localizedContent[langCode as LanguageCode];
+        if (content?.title?.trim()) finalTranslations.title[langCode as LanguageCode] = content.title;
+        if (content?.shortDescription?.trim()) finalTranslations.shortDescription[langCode as LanguageCode] = content.shortDescription;
+        if (content?.longDescription?.trim()) finalTranslations.longDescription[langCode as LanguageCode] = content.longDescription;
     }
-
-    const translationPromises = languagesToTranslateTo.map(async (targetLangCode) => {
-        const textsToTranslateForThisLang: { title?: string; shortDescription?: string; longDescription?: string; } = {};
-        if (sourceTexts.title && sourceTexts.title.trim() !== '') textsToTranslateForThisLang.title = sourceTexts.title;
-        if (sourceTexts.shortDescription && sourceTexts.shortDescription.trim() !== '') textsToTranslateForThisLang.shortDescription = sourceTexts.shortDescription;
-        if (sourceTexts.longDescription && sourceTexts.longDescription.trim() !== '') textsToTranslateForThisLang.longDescription = sourceTexts.longDescription;
-
-        if (Object.keys(textsToTranslateForThisLang).length === 0) {
-            return { lang: targetLangCode, translatedTexts: {} };
-        }
-        try {
-            const result = await translatePostContents({
-              textsToTranslate: textsToTranslateForThisLang,
-              targetLanguageCode: targetLangCode,
-              sourceLanguageCode: currentEditingLanguage,
-            });
-            return { lang: targetLangCode, translatedTexts: result.translatedTexts };
-        } catch (error) {
-            const fieldsAttempted = Object.keys(textsToTranslateForThisLang).join(', ');
-            console.error(`Error translating to ${targetLangCode} for fields: [${fieldsAttempted}]. Original error:`, error);
-            toast({ variant: "destructive", title: `Translation Error (${targetLangCode})`, description: `Failed to translate content (${fieldsAttempted}) to ${targetLangCode}. Original text will be used if English.`});
-            return { lang: targetLangCode, translatedTexts: {} };
-        }
-    });
-
-    const translationResults = await Promise.all(translationPromises);
-
-    translationResults.forEach(result => {
-        const out = result.translatedTexts;
-        if (out.title) finalTranslations.title[result.lang] = out.title;
-        if (out.shortDescription) finalTranslations.shortDescription[result.lang] = out.shortDescription;
-        if (out.longDescription) finalTranslations.longDescription[result.lang] = out.longDescription;
-    });
-
-    setIsTranslating(false);
-
-    const fieldsToEnsureEn: (keyof typeof finalTranslations)[] = ['title', 'shortDescription', 'longDescription'];
-    fieldsToEnsureEn.forEach(fieldKey => {
-        const fieldTranslations = finalTranslations[fieldKey];
-        if (fieldTranslations.en === undefined) {
-            if (currentEditingLanguage === 'en') {
-                 fieldTranslations.en = sourceTexts[fieldKey] || "";
-            } else {
-                if (isEditMode && existingPostDataForForm && existingPostDataForForm[fieldKey]) {
-                    const existingEnValue = (existingPostDataForForm[fieldKey] as Partial<Record<LanguageCode, string>>)?.en;
-                    fieldTranslations.en = typeof existingEnValue === 'string' ? existingEnValue : "";
-                } else {
-                    fieldTranslations.en = "";
-                }
-            }
-        }
-    });
 
     let finalMainImageUrl = mainImageDataUri || mainImageUrlForPreview;
     if (finalMainImageUrl && finalMainImageUrl.startsWith('data:image') && finalMainImageUrl.length > MAX_DATA_URI_LENGTH) {
@@ -352,7 +309,7 @@ export default function CreatePostPage() {
     };
 
     try {
-      const postTitleForToast = getLocalizedStringDefault(postDetailsToSave.title, language);
+      const postTitleForToast = postDetailsToSave.title.en;
       if (isEditMode && postIdFromQuery) {
         await updatePostInFirestore(postIdFromQuery, postDetailsToSave);
         toast({
@@ -369,12 +326,7 @@ export default function CreatePostPage() {
           description: t('createdInSession', 'Post "{title}" has been saved.', { title: postTitleForToast }),
           action: <CheckCircle className="text-green-500" />,
         });
-        setTitle(''); setShortDescription(''); setLongDescription('');
-        clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER); setMainImageHint('');
-        clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint1('');
-        clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER); setDetailImageHint2('');
-        setCategory(''); setTags(''); setPublishedDate(new Date().toISOString().split('T')[0]); setLinkTool('');
-        setExistingPostDataForForm(null);
+        resetForm();
       }
       router.push('/admin');
     } catch (error) {
@@ -387,7 +339,6 @@ export default function CreatePostPage() {
       });
     } finally {
       setIsSubmitting(false);
-      setIsTranslating(false);
     }
   };
 
@@ -468,7 +419,7 @@ export default function CreatePostPage() {
     );
   }
 
-  const isProcessRunning = isSubmitting || (isLoadingData && isEditMode) || isTranslating;
+  const isProcessRunning = isSubmitting || (isLoadingData && isEditMode);
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -485,25 +436,59 @@ export default function CreatePostPage() {
             {isEditMode ? t('adminEditTitle', 'Edit Post') : t('adminCreateTitle', 'Create New Post')}
           </CardTitle>
           <CardDescription>
-            {isEditMode && existingPostDataForForm ? `${t('adminEditTitle', 'Edit Post')}: ${getLocalizedStringDefault(existingPostDataForForm.title, language)}` : t('adminPostLongDescPlaceholder', 'Fill in the details to create a new blog post.')}
+            {isEditMode ? `${t('adminEditTitle', 'Edit Post')}: ${localizedContent.en?.title || '...'}` : t('adminPostLongDescPlaceholder', 'Fill in the details to create a new blog post.')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <Label htmlFor="title">{t('adminPostTitleLabel', 'Post Title')}</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('adminPostTitlePlaceholder', 'Enter post title')} required disabled={isProcessRunning} />
-            </div>
-
-            <div>
-              <Label htmlFor="shortDescription">{t('adminPostShortDescLabel', 'Short Description')}</Label>
-              <Textarea id="shortDescription" value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} placeholder={t('adminPostShortDescPlaceholder', 'Enter a brief summary')} required disabled={isProcessRunning} />
-            </div>
-
-            <div>
-              <Label htmlFor="longDescription">{t('adminPostLongDescLabel', 'Long Description (Content)')}</Label>
-              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder={t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} rows={8} required disabled={isProcessRunning} />
-            </div>
+            
+            <Tabs defaultValue="en" className="w-full">
+                <TabsList>
+                    {allAppLanguageCodes.map((code) => (
+                        <TabsTrigger key={code} value={code}>
+                           {appLanguagesObject[code].flag} {appLanguagesObject[code].name}
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+                {allAppLanguageCodes.map((code) => (
+                    <TabsContent key={code} value={code}>
+                        <div className="space-y-4 mt-4">
+                            <div>
+                                <Label htmlFor={`title-${code}`}>{t('adminPostTitleLabel', 'Post Title')} ({appLanguagesObject[code].name})</Label>
+                                <Input 
+                                    id={`title-${code}`} 
+                                    value={localizedContent[code]?.title || ''} 
+                                    onChange={(e) => handleLocalizedContentChange(code as LanguageCode, 'title', e.target.value)} 
+                                    placeholder={`${t('adminPostTitlePlaceholder', 'Enter post title')} (${code})`}
+                                    required={code === 'en'}
+                                    disabled={isProcessRunning} 
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor={`shortDescription-${code}`}>{t('adminPostShortDescLabel', 'Short Description')} ({appLanguagesObject[code].name})</Label>
+                                <Textarea 
+                                    id={`shortDescription-${code}`} 
+                                    value={localizedContent[code]?.shortDescription || ''} 
+                                    onChange={(e) => handleLocalizedContentChange(code as LanguageCode, 'shortDescription', e.target.value)} 
+                                    placeholder={`${t('adminPostShortDescPlaceholder', 'Enter a brief summary')} (${code})`}
+                                    disabled={isProcessRunning} 
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor={`longDescription-${code}`}>{t('adminPostLongDescLabel', 'Long Description (Content)')} ({appLanguagesObject[code].name})</Label>
+                                <Textarea 
+                                    id={`longDescription-${code}`} 
+                                    value={localizedContent[code]?.longDescription || ''} 
+                                    onChange={(e) => handleLocalizedContentChange(code as LanguageCode, 'longDescription', e.target.value)} 
+                                    placeholder={`${t('adminPostLongDescPlaceholder', 'Write the full content of the post here...')} (${code})`}
+                                    rows={8}
+                                    disabled={isProcessRunning} 
+                                />
+                            </div>
+                        </div>
+                    </TabsContent>
+                ))}
+            </Tabs>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border p-4 rounded-md">
               <ImageUploadSection
@@ -555,7 +540,7 @@ export default function CreatePostPage() {
                   <SelectContent>
                     {allCategories.map(cat => (
                       <SelectItem key={cat.slug} value={cat.slug}>
-                        {getLocalizedStringDefault(cat.name, language)}
+                        {t(cat.name)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -581,8 +566,7 @@ export default function CreatePostPage() {
 
             <div className="flex justify-end pt-4">
               <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isProcessRunning}>
-                {isTranslating && <Languages className="mr-2 h-4 w-4 animate-pulse"/>}
-                {(isSubmitting || (isLoadingData && isEditMode) && !isTranslating) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                {(isSubmitting || (isLoadingData && isEditMode)) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                 {isEditMode ? t('adminPostButtonUpdate', 'Update Post') : t('adminPostButtonCreate', 'Create Post')}
               </Button>
             </div>
