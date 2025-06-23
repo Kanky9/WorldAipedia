@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -44,7 +43,7 @@ export default function RegisterPage() {
     try {
       await signUpWithEmailAndPassword(email, password, username);
       toast({ title: t('registerPageTitle', "Registration Successful"), description: t('registrationAttemptMessage', "Welcome! Your account has been created.")});
-      router.push('/account');
+      router.push('/');
     } catch (error: any) {
       console.error("Registration failed:", error);
       toast({ variant: "destructive", title: t('errorDefaultTitle', "Registration Failed"), description: error.message || t('errorDefaultDesc', "An unknown error occurred.") });
@@ -59,7 +58,7 @@ export default function RegisterPage() {
     try {
       await signInWithGoogle();
       toast({ title: t('loginPageTitle', 'Welcome Back!'), description: t('socialLoginAttemptMessage', "Successfully logged in with Google!", {provider: "Google"})});
-      router.push('/account');
+      router.push('/');
     } catch (error: any) {
       console.error("Google login failed:", error);
       toast({ variant: "destructive", title: t('errorDefaultTitle', "Google Login Failed"), description: error.message || t('errorDefaultDesc', "An unknown error occurred.") });
