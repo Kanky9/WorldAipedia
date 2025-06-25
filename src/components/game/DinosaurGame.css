@@ -177,14 +177,13 @@
     margin: 1rem auto;
   }
   .lace-jump-game-over-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
   .lace-jump-final-score {
     font-size: 1rem;
   }
   .lace-jump-game-over-screen > div {
-    padding: 1.5rem;
+    width: 90%;
+    padding: 1rem;
   }
 }
-
-    
