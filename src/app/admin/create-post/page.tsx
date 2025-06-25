@@ -443,7 +443,7 @@ export default function CreatePostPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <Tabs defaultValue="en" className="w-full">
-                <TabsList>
+                <TabsList className="h-auto flex-wrap justify-start">
                     {allAppLanguageCodes.map((code) => (
                         <TabsTrigger key={code} value={code}>
                            {appLanguagesObject[code].flag} {appLanguagesObject[code].name}
