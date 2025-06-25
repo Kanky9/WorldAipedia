@@ -1,4 +1,5 @@
 
+
 .lace-jump-game-container {
   width: 100%;
   max-width: 600px;
@@ -26,6 +27,10 @@
   margin-bottom: 1rem;
   border-radius: calc(var(--radius) - 2px);
   cursor: pointer;
+}
+
+.lace-jump-game-area.game-over {
+  overflow: visible;
 }
 
 .lace-player {

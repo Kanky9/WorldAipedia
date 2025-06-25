@@ -191,10 +191,13 @@ export default function DinosaurGame() {
       }
       
       setPlayer(prev => {
-        // First, calculate the new position based on the current velocity
-        const newY = Math.max(0, prev.y + prev.vy);
-        // Then, calculate the new velocity for the next frame
-        const newVy = newY > 0 ? prev.vy - gravity : 0;
+        let newVy = prev.vy - gravity;
+        let newY = prev.y + newVy;
+
+        if (newY <= 0) {
+          newY = 0;
+          newVy = 0;
+        }
 
         return {
           ...prev,
@@ -317,7 +320,7 @@ export default function DinosaurGame() {
       <h2 id="lace-jump-game-title" className="text-2xl font-headline text-primary mb-4">{t('laceJumpGameTitle', "Lace Jump")}</h2>
       <div
         ref={gameAreaRef}
-        className="lace-jump-game-area"
+        className={`lace-jump-game-area ${isGameOver ? 'game-over' : ''}`}
         role="application"
         tabIndex={0}
         aria-label={t('laceJumpGameAreaLabel', "Lace Jump game area, press space or tap to jump over stars")}
