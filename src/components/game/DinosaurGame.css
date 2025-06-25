@@ -17,20 +17,19 @@
 
 .lace-jump-game-area {
   width: 100%;
-  /* height is set by JS now */
+  height: auto;
+  aspect-ratio: 3 / 1;
   background-color: hsl(var(--background));
   border: 1px solid hsl(var(--border));
   position: relative;
   overflow: hidden;
   margin-bottom: 1rem;
   border-radius: calc(var(--radius) - 2px);
-  cursor: pointer; /* Indicate it's clickable/tappable */
+  cursor: pointer;
 }
 
 .lace-player {
   position: absolute;
-  /* left, bottom, width, and height are set by inline styles in the component */
-  /* CSS transition for bottom removed for JS-controlled physics-based animation */
 }
 
 .lace-player svg { 
@@ -39,12 +38,9 @@
   height: 100%;
 }
 
-
 .star-obstacle {
-  /* width and height set by JS, this div is the collision box */
   position: absolute;
-  bottom: 0px; /* Obstacles are on the ground */
-  /* Background color removed, SVG will provide visuals */
+  bottom: 0px;
 }
 
 .star-obstacle svg {
@@ -52,7 +48,6 @@
   width: 100%;
   height: 100%;
   animation: star-glow-pulse 1.5s infinite ease-in-out;
-  /* filter: drop-shadow(0 0 3px hsl(0, 100%, 70%)) drop-shadow(0 0 6px hsl(0, 100%, 80%)); */ /* Static glow */
 }
 
 @keyframes star-glow-pulse {
@@ -65,7 +60,6 @@
     transform: scale(1.02);
   }
 }
-
 
 .lace-jump-score-display {
   font-size: 1.25rem;
@@ -82,6 +76,11 @@
   gap: 0.75rem;
   padding: 1rem;
   width: 100%;
+}
+
+.lace-jump-game-controls > button {
+    width: 100%;
+    max-width: 280px;
 }
 
 .lace-jump-game-over-screen {
@@ -106,6 +105,8 @@
     border-radius: var(--radius);
     box-shadow: 0 4px 10px hsla(var(--foreground), 0.15);
     border: 1px solid hsl(var(--border));
+    width: 80%;
+    max-width: 350px;
 }
 
 .lace-jump-game-over-title {
@@ -123,14 +124,13 @@
 
 .lace-jump-game-area .ground-line {
   position: absolute;
-  bottom: -1px; /* Positioned at the very bottom */
+  bottom: -1px;
   left: 0;
   width: 100%;
-  height: 2px; /* Thickness of the line */
-  background-color: hsl(var(--muted-foreground)); /* Color of the ground line */
-  z-index: 0; /* Behind player and obstacles */
+  height: 2px;
+  background-color: hsl(var(--muted-foreground));
+  z-index: 0;
 }
-
 
 .lace-jump-ranking-modal-content {
   max-height: 70vh;
@@ -171,12 +171,20 @@
   color: hsl(var(--accent));
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) { /* sm breakpoint */
+@media (max-width: 640px) {
+  .lace-jump-game-container {
+    padding: 0.5rem;
+    margin: 1rem auto;
+  }
   .lace-jump-game-over-title {
     font-size: 1.5rem;
   }
   .lace-jump-final-score {
     font-size: 1rem;
   }
+  .lace-jump-game-over-screen > div {
+    padding: 1.5rem;
+  }
 }
+
+    
