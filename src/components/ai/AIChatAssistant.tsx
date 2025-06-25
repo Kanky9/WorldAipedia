@@ -41,7 +41,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { language, t } = useLanguage();
 
@@ -85,13 +85,9 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
   }, [open, initialContext, language, t, messages.length]);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollableViewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-      if (scrollableViewport) {
-        scrollableViewport.scrollTop = scrollableViewport.scrollHeight;
-      }
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -174,7 +170,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           </DialogDescription>
         </DialogHeader>
         
-        <ScrollArea type="always" className="flex-1 min-h-0 px-6" ref={scrollAreaRef}>
+        <ScrollArea type="always" className="flex-1 min-h-0 px-6">
           <div className="space-y-4 py-4">
             {isInitialLoading && messages.length === 0 && (
               <div className="flex items-center justify-center p-4">
@@ -226,6 +222,7 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
 
