@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Send, User, Bot, Paperclip, XCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { explainPage } from '@/ai/flows/pageExplainerFlow';
@@ -170,62 +169,58 @@ const AIChatAssistant: FC<AIChatAssistantProps> = ({ open, onOpenChange, initial
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex-1 min-h-0 px-6">
-          <ScrollArea type="always" className="h-full">
-            <div className="space-y-4 py-4">
-              {isInitialLoading && messages.length === 0 && (
-                <div className="flex items-center justify-center p-4">
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  <p className="ml-2">{t('laceChatConnecting', 'Lace is connecting...')}</p>
-                </div>
-              )}
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex items-end gap-2 ${
-                    msg.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  {msg.role === 'model' && <Bot className="h-6 w-6 text-primary flex-shrink-0 mb-1" />}
-                  <div
-                    className={`max-w-[75%] rounded-lg px-3 py-2 shadow-sm ${
-                      msg.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-card text-card-foreground border'
-                    }`}
-                  >
-                    {msg.parts.map((part, index) => (
-                      <div key={index}>
-                        {part.text && <p className="text-sm whitespace-pre-wrap">{part.text}</p>}
-                        {part.media && part.media.type === 'image' && (
-                          <Image 
-                            src={part.media.url} 
-                            alt={t('laceChatImagePreviewAlt', 'Selected image preview')}
-                            width={200} 
-                            height={150} 
-                            className="rounded-md mt-2 max-w-full h-auto" 
-                          />
-                        )}
-                      </div>
-                    ))}
-                    <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-primary-foreground/70 text-right' : 'text-muted-foreground text-left'}`}>
-                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  </div>
-                  {msg.role === 'user' && <User className="h-6 w-6 text-muted-foreground flex-shrink-0 mb-1" />}
-                </div>
-              ))}
-               {isLoading && messages.length > 0 && messages[messages.length-1].role === 'user' && (
-                <div className="flex items-center justify-start p-4">
-                  <Bot className="h-6 w-6 text-primary flex-shrink-0 mb-1" />
-                  <div className="max-w-[75%] rounded-lg px-3 py-2 shadow-sm bg-card text-card-foreground border">
-                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
+        <div className="flex-1 min-h-0 px-6 overflow-y-auto space-y-4 py-4">
+          {isInitialLoading && messages.length === 0 && (
+            <div className="flex items-center justify-center p-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <p className="ml-2">{t('laceChatConnecting', 'Lace is connecting...')}</p>
             </div>
-          </ScrollArea>
+          )}
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex items-end gap-2 ${
+                msg.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              {msg.role === 'model' && <Bot className="h-6 w-6 text-primary flex-shrink-0 mb-1" />}
+              <div
+                className={`max-w-[75%] rounded-lg px-3 py-2 shadow-sm ${
+                  msg.role === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card text-card-foreground border'
+                }`}
+              >
+                {msg.parts.map((part, index) => (
+                  <div key={index}>
+                    {part.text && <p className="text-sm whitespace-pre-wrap">{part.text}</p>}
+                    {part.media && part.media.type === 'image' && (
+                      <Image 
+                        src={part.media.url} 
+                        alt={t('laceChatImagePreviewAlt', 'Selected image preview')}
+                        width={200} 
+                        height={150} 
+                        className="rounded-md mt-2 max-w-full h-auto" 
+                      />
+                    )}
+                  </div>
+                ))}
+                <p className={`text-xs mt-1 ${msg.role === 'user' ? 'text-primary-foreground/70 text-right' : 'text-muted-foreground text-left'}`}>
+                  {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+              {msg.role === 'user' && <User className="h-6 w-6 text-muted-foreground flex-shrink-0 mb-1" />}
+            </div>
+          ))}
+           {isLoading && messages.length > 0 && messages[messages.length-1].role === 'user' && (
+            <div className="flex items-center justify-start p-4">
+              <Bot className="h-6 w-6 text-primary flex-shrink-0 mb-1" />
+              <div className="max-w-[75%] rounded-lg px-3 py-2 shadow-sm bg-card text-card-foreground border">
+                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
 
         <DialogFooter className="p-6 pt-2 border-t flex-col space-y-2">
