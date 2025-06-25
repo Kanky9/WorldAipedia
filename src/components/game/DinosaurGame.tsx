@@ -190,12 +190,19 @@ export default function DinosaurGame() {
         return;
       }
       
-      setPlayer(prev => ({
-        ...prev,
-        vy: prev.y > 0 ? prev.vy - gravity : 0,
-        y: Math.max(0, prev.y + (prev.vy - gravity)),
-        isJumping: prev.y > 0,
-      }));
+      setPlayer(prev => {
+        // First, calculate the new position based on the current velocity
+        const newY = Math.max(0, prev.y + prev.vy);
+        // Then, calculate the new velocity for the next frame
+        const newVy = newY > 0 ? prev.vy - gravity : 0;
+
+        return {
+          ...prev,
+          y: newY,
+          vy: newVy,
+          isJumping: newY > 0,
+        };
+      });
       
       setObstacles(prev =>
         prev
@@ -417,5 +424,3 @@ export default function DinosaurGame() {
     </section>
   );
 }
-
-    
