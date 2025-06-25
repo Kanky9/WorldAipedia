@@ -432,7 +432,7 @@ export default function CreatePostPage() {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-headline text-primary">
+          <CardTitle className="text-xl sm:text-2xl font-headline text-primary">
             {isEditMode ? t('adminEditTitle', 'Edit Post') : t('adminCreateTitle', 'Create New Post')}
           </CardTitle>
           <CardDescription>
@@ -565,7 +565,7 @@ export default function CreatePostPage() {
             </div>
 
             <div className="flex justify-end pt-4">
-              <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isProcessRunning}>
+              <Button type="submit" className="bg-primary hover:bg-primary/90 w-full sm:w-auto" disabled={isProcessRunning}>
                 {(isSubmitting || (isLoadingData && isEditMode)) && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
                 {isEditMode ? t('adminPostButtonUpdate', 'Update Post') : t('adminPostButtonCreate', 'Create Post')}
               </Button>
