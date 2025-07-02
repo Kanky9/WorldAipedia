@@ -5,10 +5,16 @@ import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useChat } from '@/contexts/ChatContext';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { usePathname } from 'next/navigation';
 
 export default function FloatingChatButton() {
   const { openChat } = useChat();
   const { t } = useLanguage();
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <TooltipProvider>

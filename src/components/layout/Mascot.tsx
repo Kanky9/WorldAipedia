@@ -121,7 +121,7 @@ const Mascot = () => {
       setIsMascotVisible(true);
     }
     // If chat closes, and mascot was only visible due to chat, decide if it should hide or show default bubble
-    // This part is handled by the `mascotDisplayMode` changes and `isMascotVisible` logic
+    // This part is handled by the \`mascotDisplayMode\` changes and \`isMascotVisible\` logic
   }, [isChatOpen]);
 
 
@@ -137,7 +137,7 @@ const Mascot = () => {
     // If chat is open, or other modes, clicking mascot might do nothing or something else
   };
 
-  if (pathname === '/account' || pathname === '/admin/create-post' || (pathname && pathname.startsWith('/admin/edit-post/'))) {
+  if (pathname.startsWith('/admin')) {
     return null;
   }
 
