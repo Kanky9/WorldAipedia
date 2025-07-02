@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { posts as allPosts } from '@/data/posts';
 import { isPostNew } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 
 const Header = () => {
@@ -28,6 +29,7 @@ const Header = () => {
   const { currentUser, logout, loading } = useAuth(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [hasNewPosts, setHasNewPosts] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!loading) { 
@@ -61,13 +63,16 @@ const Header = () => {
         
         <div className="flex items-center gap-1 sm:gap-2">
           <nav className="hidden sm:flex items-center gap-1">
-            {navLinks.map(link => (
-              <Button variant="ghost" asChild key={link.href} className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
-                <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
-              </Button>
-            ))}
+            {navLinks.map(link => {
+              const isActive = (link.href === '/' && pathname === '/') || (link.href !== '/' && pathname.startsWith(link.href));
+              return (
+                <Button variant={isActive ? "secondary" : "ghost"} asChild key={link.href} className="text-sm sm:text-base rounded-md">
+                  <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
+                </Button>
+              )
+            })}
             {currentUser?.isAdmin && (
-              <Button variant="ghost" asChild className="text-sm sm:text-base hover:bg-accent/50 rounded-md">
+              <Button variant={pathname.startsWith('/admin') ? "secondary" : "ghost"} asChild className="text-sm sm:text-base rounded-md">
                   <Link href="/admin">{t('navAdmin', 'Admin')}</Link>
               </Button>
             )}
