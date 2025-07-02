@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, Sparkles } from 'lucide-react';
+import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, Sparkles, BookCopy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -48,6 +48,7 @@ const Header = () => {
   const navLinks = [
     { href: "/", labelKey: "navHome", icon: ListOrdered },
     { href: "/categories", labelKey: "navCategories", icon: Settings },
+    { href: "/books", labelKey: "navBooks", icon: BookCopy },
   ];
 
   return (

@@ -1,4 +1,3 @@
-
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -39,7 +38,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore } from './types';
+import type { Post as PostType, GameHighScore, Book as BookType } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -158,6 +157,59 @@ export const deleteCommentFromFirestore = async (postId: string, commentId: stri
   const commentRef = doc(db, 'posts', postId, 'comments', commentId);
   await deleteDoc(commentRef);
 };
+
+// Book Firestore Functions
+export const addBookToFirestore = async (bookData: Omit<BookType, 'id' | 'createdAt'> & { id?: string }): Promise<string> => {
+  const bookId = bookData.id || doc(collection(db, 'books')).id;
+  const bookRef = doc(db, 'books', bookId);
+  
+  const dataToSave = { 
+    ...bookData,
+    createdAt: serverTimestamp()
+  };
+
+  const { id, ...firestoreData } = dataToSave;
+  await setDoc(bookRef, firestoreData);
+  return bookId;
+};
+
+export const updateBookInFirestore = async (bookId: string, bookData: Partial<Omit<BookType, 'id'>>): Promise<void> => {
+  const bookRef = doc(db, 'books', bookId);
+  await updateDoc(bookRef, bookData);
+};
+
+export const getAllBooksFromFirestore = async (): Promise<BookType[]> => {
+  const booksCol = collection(db, 'books');
+  const q = query(booksCol, orderBy('createdAt', 'desc'));
+  const booksSnapshot = await getDocs(q);
+  const booksList = booksSnapshot.docs.map(docSnap => {
+    const data = docSnap.data();
+    if (data.createdAt && data.createdAt instanceof Timestamp) {
+      data.createdAt = data.createdAt.toDate();
+    }
+    return { id: docSnap.id, ...data } as BookType;
+  });
+  return booksList;
+};
+
+export const getBookFromFirestore = async (bookId: string): Promise<BookType | null> => {
+  const bookRef = doc(db, 'books', bookId);
+  const bookSnap = await getDoc(bookRef);
+  if (bookSnap.exists()) {
+    const data = bookSnap.data();
+    if (data.createdAt && data.createdAt instanceof Timestamp) {
+      data.createdAt = data.createdAt.toDate();
+    }
+    return { id: bookSnap.id, ...data } as BookType;
+  }
+  return null;
+}
+
+export const deleteBookFromFirestore = async (bookId: string): Promise<void> => {
+  const bookRef = doc(db, 'books', bookId);
+  await deleteDoc(bookRef);
+};
+
 
 // Dinosaur Game Firestore Functions
 const DINO_GAME_HIGH_SCORES_COLLECTION = 'dinoGameHighScores';

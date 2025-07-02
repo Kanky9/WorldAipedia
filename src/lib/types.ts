@@ -1,4 +1,3 @@
-
 import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
 import type { Timestamp } from 'firebase/firestore';
@@ -28,6 +27,17 @@ export interface Post {
   detailImageUrl2?: string;
   detailImageHint2?: string;
   // Comments are a subcollection in Firestore, not directly part of the Post document.
+}
+
+export interface Book {
+  id: string;
+  title: LocalizedString;
+  description: LocalizedString;
+  imageUrl: string;
+  imageHint?: string;
+  link: string;
+  source: 'amazon' | 'mercadolibre';
+  createdAt: Timestamp | Date;
 }
 
 export interface Category {
@@ -74,4 +84,3 @@ export interface GameHighScore {
   score: number;
   timestamp: Timestamp | Date;
 }
-
