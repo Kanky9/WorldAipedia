@@ -28,8 +28,6 @@ export type CoreTranslationKey =
   // Mascot
   | 'mascotGreeting'
   | 'mascotChatGreeting1'
-  | 'mascotChatGreeting2'
-  | 'mascotCategoriesGreeting'
   | 'mascotCategoriesGreeting1'
   | 'mascotCategoriesGreeting2'
   | 'mascotBooksGreeting1'
@@ -318,7 +316,6 @@ export type TranslationSet = {
   newAIsAvailableShort: string;
   newAIsAvailableTooltip: string;
   newPostsInCategoryTooltip: string;
-  mascotCategoriesGreeting: string;
   laceChatErrorWelcomeGeneral: string;
   laceChatErrorWelcomeTool: string;
 };
@@ -343,9 +340,7 @@ export const translations: Translations = {
     newAIsAvailableShort: 'New!',
     newAIsAvailableTooltip: 'New AI posts available!',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
-    mascotChatGreeting1: 'Chat with me!',
-    mascotChatGreeting2: 'I can inform you about whatever you need.',
-    mascotCategoriesGreeting: 'Explore categories based on your goals!',
+    mascotChatGreeting1: 'You can chat with me here!',
     mascotCategoriesGreeting1: 'This is the categories section',
     mascotCategoriesGreeting2: 'Here you will find the AI you need',
     mascotBooksGreeting1: 'Here you will find books to learn and feed your curiosity',
@@ -615,9 +610,7 @@ export const translations: Translations = {
     newAIsAvailableShort: '¡Nuevo!',
     newAIsAvailableTooltip: '¡Nuevas publicaciones de IA disponibles!',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
-    mascotChatGreeting1: '¡Chatea conmigo!',
-    mascotChatGreeting2: 'Puedo informarte sobre lo que necesites.',
-    mascotCategoriesGreeting: '¡Explora las categorías según tus objetivos!',
+    mascotChatGreeting1: '¡Aquí puedes chatear conmigo!',
     mascotCategoriesGreeting1: 'Este es el apartado de categorías',
     mascotCategoriesGreeting2: 'Aquí vas a encontrar la IA que necesites',
     mascotBooksGreeting1: 'Aqui encontraras libros para aprender y alimentar tu curiosidad',
@@ -887,9 +880,7 @@ export const translations: Translations = {
     newAIsAvailableShort: 'Novità!',
     newAIsAvailableTooltip: 'Nuovi post AI disponibili!',
     mascotGreeting: "Ciao, sono Lace! Pronto a esplorare l'IA?",
-    mascotChatGreeting1: "Chatta con me!",
-    mascotChatGreeting2: "Posso informarti su ciò di cui hai bisogno.",
-    mascotCategoriesGreeting: 'Esplora le categorie in base ai tuoi obiettivi!',
+    mascotChatGreeting1: "Puoi chattare con me qui!",
     mascotCategoriesGreeting1: 'Questa è la sezione delle categorie',
     mascotCategoriesGreeting2: 'Qui troverai l\'IA di cui hai bisogno',
     mascotBooksGreeting1: 'Qui troverai libri per imparare e nutrire la tua curiosità',
@@ -1159,9 +1150,7 @@ export const translations: Translations = {
     newAIsAvailableShort: '最新!',
     newAIsAvailableTooltip: '有新的人工智能帖子!',
     mascotGreeting: "你好，我是Lace！准备好探索AI了吗？",
-    mascotChatGreeting1: "和我聊天！",
-    mascotChatGreeting2: "我可以告诉你任何你需要的信息。",
-    mascotCategoriesGreeting: '根据您的目标探索类别！',
+    mascotChatGreeting1: "你可以在这里跟我聊天！",
     mascotCategoriesGreeting1: '这里是分类区',
     mascotCategoriesGreeting2: '在这里您将找到您需要的人工智能',
     mascotBooksGreeting1: '在这里，您会找到学习和满足好奇心的书籍',
@@ -1431,9 +1420,7 @@ export const translations: Translations = {
     newAIsAvailableShort: '新着!',
     newAIsAvailableTooltip: '新しいAI投稿があります！',
     mascotGreeting: "こんにちは、レースです！AIを探求する準備はできましたか？",
-    mascotChatGreeting1: "私とチャットしましょう！",
-    mascotChatGreeting2: "必要な情報をお知らせできます。",
-    mascotCategoriesGreeting: '目標に合わせてカテゴリを探索してください！',
+    mascotChatGreeting1: "ここで私とチャットできます！",
     mascotCategoriesGreeting1: 'ここはカテゴリーのセクションです',
     mascotCategoriesGreeting2: 'ここで必要なAIを見つけることができます',
     mascotBooksGreeting1: 'ここでは、学び、好奇心を満たすための本を見つけることができます',
@@ -1703,9 +1690,7 @@ export const translations: Translations = {
     newAIsAvailableShort: 'Novo!',
     newAIsAvailableTooltip: 'Novas postagens de IA disponíveis!',
     mascotGreeting: "Olá, sou a Lace! Pronto para explorar a IA?",
-    mascotChatGreeting1: "Converse comigo!",
-    mascotChatGreeting2: "Posso informar sobre o que você precisar.",
-    mascotCategoriesGreeting: 'Explore categorias com base nos seus objetivos!',
+    mascotChatGreeting1: "Você pode conversar comigo aqui!",
     mascotCategoriesGreeting1: 'Esta é a seção de categorias',
     mascotCategoriesGreeting2: 'Aqui você encontrará a IA que precisa',
     mascotBooksGreeting1: 'Aqui você encontrará livros para aprender e alimentar sua curiosidade',

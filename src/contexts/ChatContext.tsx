@@ -35,11 +35,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const openChat = useCallback((context?: AiToolChatContextType) => {
     if (context) {
       setAiContextForChat(context);
-      setMascotDisplayModeState('chat_contextual'); // Set mode for contextual chat intro
     } else {
       setAiContextForChat(null); 
-      setMascotDisplayModeState('default'); // Or 'chat_contextual' if mascot should always greet on chat open
     }
+    setMascotDisplayModeState('chat_contextual');
     setIsChatOpen(true);
   }, []);
 
@@ -59,14 +58,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     } else {
       setMascotAdHocMessagesState([]);
       // Revert to default or previous sensible mode if queue is cleared
-      // This part might need more sophisticated logic depending on desired behavior
       if (isChatOpen) {
-        setMascotDisplayModeState(aiContextForChat ? 'chat_contextual' : 'default');
+        setMascotDisplayModeState('default');
       } else {
         setMascotDisplayModeState('default');
       }
     }
-  }, [isChatOpen, aiContextForChat]);
+  }, [isChatOpen]);
 
 
   return (

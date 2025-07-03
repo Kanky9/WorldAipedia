@@ -62,10 +62,21 @@ const Mascot = () => {
       if (adHocMessageTimerRef.current) clearTimeout(adHocMessageTimerRef.current);
     };
 
-    if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
+    if (mascotDisplayMode === 'chat_contextual') {
+      // This mode is for the greeting when chat opens.
+      setCurrentBubbleText(t('mascotChatGreeting1'));
+      messageTimer = setTimeout(() => {
+        // After showing the message, revert to a neutral state
+        // so the message doesn't reappear on subsequent renders.
+        setCurrentBubbleText('');
+        if(isChatOpen) { // Check if chat is still open
+            setMascotDisplayMode('default'); 
+        }
+      }, 3000);
+
+    } else if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
       setCurrentBubbleText(t('mascotCategoriesGreeting1'));
       messageTimer = setTimeout(() => {
-        // Check again in case user navigated away during the timeout
         if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
           setCurrentBubbleText(t('mascotCategoriesGreeting2'));
         }
@@ -83,30 +94,6 @@ const Mascot = () => {
       } else {
         setCurrentBubbleText('');
       }
-    } else if (mascotDisplayMode === 'chat_contextual') {
-      // This mode could be used for specific greetings when chat is opened with context
-      // For now, let's use a generic chat greeting or specific logic if aiContextForChat exists
-      setCurrentBubbleText(t('mascotChatGreeting1')); // Example
-      messageTimer = setTimeout(() => {
-        if (isChatOpen) setCurrentBubbleText(t('mascotChatGreeting2'));
-         messageTimer = setTimeout(() => {
-            if(isChatOpen && mascotDisplayMode === 'chat_contextual') setCurrentBubbleText(''); // Clear after a bit
-        }, 4000);
-      }, 4000);
-    } else if (mascotDisplayMode === 'ranking_intro') {
-      setCurrentBubbleText(t('rankingProInfo1'));
-      messageTimer = setTimeout(() => {
-        if (mascotDisplayMode === 'ranking_intro') { // Check mode again in case it changed
-           setCurrentBubbleText(t('rankingProInfo2'));
-           messageTimer = setTimeout(() => {
-             if (mascotDisplayMode === 'ranking_intro') {
-                setCurrentBubbleText('');
-                // Revert mode after sequence. Could also be done by the component that set this mode.
-                // setMascotDisplayMode('default'); // Or let DinosaurGame handle reverting
-             }
-           }, 5000);
-        }
-      }, 5000);
     } else if (mascotDisplayMode === 'custom_queue' && mascotAdHocMessages.length > 0) {
       adHocMessageIndexRef.current = 0;
       const showNextAdHocMessage = () => {
@@ -118,7 +105,6 @@ const Mascot = () => {
         } else {
           setCurrentBubbleText('');
           setMascotAdHocMessages([]); // Clear the queue
-          // setMascotDisplayMode('default'); // Revert after queue
         }
       };
       showNextAdHocMessage();
@@ -127,7 +113,7 @@ const Mascot = () => {
     }
 
     return () => clearTimers();
-  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname]);
+  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode]);
 
 
   useEffect(() => {
@@ -135,8 +121,6 @@ const Mascot = () => {
     if (isChatOpen) {
       setIsMascotVisible(true);
     }
-    // If chat closes, and mascot was only visible due to chat, decide if it should hide or show default bubble
-    // This part is handled by the `mascotDisplayMode` changes and `isMascotVisible` logic
   }, [isChatOpen]);
 
 
@@ -149,7 +133,6 @@ const Mascot = () => {
            setCurrentBubbleText(t('mascotGreeting'));
        }
     }
-    // If chat is open, or other modes, clicking mascot might do nothing or something else
   };
 
   if (pathname.startsWith('/admin')) {
