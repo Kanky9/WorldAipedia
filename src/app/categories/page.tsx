@@ -22,7 +22,7 @@ export default function CategoriesPage() {
   }, []);
 
   return (
-    <div className={`space-y-8 ${animationClass}`}>
+    <div className={`space-y-8 pb-8 ${animationClass}`}>
       <section className="text-center">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore Posts by Category')}</h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
