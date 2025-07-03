@@ -20,6 +20,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 
 const Header = () => {
@@ -32,11 +33,10 @@ const Header = () => {
     if (!loading) { 
         setIsMobileMenuOpen(false);
     }
-  }, [currentUser, loading]);
+  }, [currentUser, loading, pathname]);
 
   const handleLogout = async () => {
     await logout();
-    setIsMobileMenuOpen(false);
   };
 
   const navLinks = [
@@ -46,11 +46,13 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-card/80 backdrop-blur-md border-b border-border/50 shadow-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <BrainCircuit className="h-8 w-8 sm:h-10 sm:w-10 text-primary transition-transform group-hover:rotate-[15deg] duration-300" />
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80">World AI</h1>
+    <header className="py-3 sm:py-4">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4
+                      md:max-w-4xl lg:max-w-5xl md:rounded-full md:border md:bg-card/80 md:px-6 md:shadow-lg md:backdrop-blur-md">
+        
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+          <BrainCircuit className="h-8 w-8 text-primary transition-transform group-hover:rotate-[15deg] duration-300" />
+          <h1 className="text-xl sm:text-2xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80 hidden sm:block">World AI</h1>
         </Link>
         
         <div className="flex items-center gap-1 sm:gap-2">
@@ -58,13 +60,13 @@ const Header = () => {
             {navLinks.map(link => {
               const isActive = (link.href === '/' && pathname === '/') || (link.href !== '/' && pathname.startsWith(link.href));
               return (
-                <Button variant={isActive ? "secondary" : "ghost"} asChild key={link.href} className="text-sm sm:text-base rounded-md">
+                <Button variant="ghost" asChild key={link.href} className={cn("text-muted-foreground hover:text-foreground", isActive && "font-semibold text-foreground")}>
                   <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
                 </Button>
               )
             })}
             {currentUser?.isAdmin && (
-              <Button variant={pathname.startsWith('/admin') ? "secondary" : "ghost"} asChild className="text-sm sm:text-base rounded-md">
+              <Button variant="ghost" asChild className={cn("text-muted-foreground hover:text-foreground", pathname.startsWith('/admin') && "font-semibold text-foreground")}>
                   <Link href="/admin">{t('navAdmin', 'Admin')}</Link>
               </Button>
             )}
@@ -78,29 +80,20 @@ const Header = () => {
             </div>
           ) : currentUser ? (
             <DropdownMenu>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
-                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-                          {currentUser.photoURL ? (
-                            <AvatarImage src={currentUser.photoURL} alt={currentUser.displayName || currentUser.username || 'User'} data-ai-hint="user profile avatar"/>
-                          ) : <AvatarFallback className="bg-muted text-muted-foreground text-xs sm:text-sm">{(currentUser.displayName || currentUser.username || 'U').substring(0, 2).toUpperCase()}</AvatarFallback>}
-                        </Avatar>
-                        {currentUser.isSubscribed && (
-                          <Badge variant="default" className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 leading-none border-2 border-background bg-primary text-primary-foreground shadow-md">
-                            PRO
-                          </Badge>
-                        )}
-                      </Button>
-                    </DropdownMenuTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t('myProfileTooltip', 'My Account')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0">
+                    <Avatar className="h-9 w-9">
+                      {currentUser.photoURL ? (
+                        <AvatarImage src={currentUser.photoURL} alt={currentUser.displayName || currentUser.username || 'User'} data-ai-hint="user profile avatar"/>
+                      ) : <AvatarFallback className="bg-muted text-muted-foreground">{(currentUser.displayName || currentUser.username || 'U').substring(0, 2).toUpperCase()}</AvatarFallback>}
+                    </Avatar>
+                    {currentUser.isSubscribed && (
+                      <Badge variant="default" className="absolute -bottom-1 -right-1 text-[8px] px-1 py-0.5 leading-none border-2 border-background bg-primary text-primary-foreground shadow-md">
+                        PRO
+                      </Badge>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
@@ -128,11 +121,8 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden sm:flex items-center gap-2">
-              <Button asChild variant="ghost" size="sm" className="text-xs sm:text-sm">
-                <Link href="/login">{t('loginButton', 'Login')}</Link>
-              </Button>
-              <Button asChild variant="default" size="sm" className="text-xs sm:text-sm bg-primary text-primary-foreground hover:bg-primary/90">
+             <div className="hidden sm:flex items-center gap-2">
+              <Button asChild variant="outline" className="rounded-full">
                  <Link href="/register">{t('registerButton', 'Sign Up')}</Link>
               </Button>
             </div>
