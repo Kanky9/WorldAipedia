@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -16,7 +17,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Star, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import Script from 'next/script'; // Using Next.js Script component is better than manual script injection.
+import Script from 'next/script';
 
 // Extend window type to include paypal
 declare global {
@@ -48,7 +49,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
       
       // Clear previous buttons and render a new one
       if (paypalButtonContainer) {
-        paypalButtonContainer.innerHTML = ''; // Clear previous instances
+        paypalButtonContainer.innerHTML = ''; // Clear previous instances to avoid duplicates
         window.paypal.Buttons({
           style: {
             shape: 'pill',
@@ -121,9 +122,10 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     <>
       <Script 
         src={`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&vault=true&intent=subscription`}
-        onLoad={() => {
+        onReady={() => {
           setIsSDKReady(true);
         }}
+        data-sdk-integration-source="button-factory"
       />
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
