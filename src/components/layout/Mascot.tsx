@@ -70,6 +70,13 @@ const Mascot = () => {
           setCurrentBubbleText(t('mascotCategoriesGreeting2'));
         }
       }, 3000);
+    } else if (pathname === '/books' && !isChatOpen && isMascotVisible) {
+      setCurrentBubbleText(t('mascotBooksGreeting1'));
+      messageTimer = setTimeout(() => {
+        if (pathname === '/books' && !isChatOpen && isMascotVisible) {
+          setCurrentBubbleText(t('mascotBooksGreeting2'));
+        }
+      }, 3000);
     } else if (mascotDisplayMode === 'default') {
       if (!isChatOpen && isMascotVisible) {
         setCurrentBubbleText(t('mascotGreeting'));

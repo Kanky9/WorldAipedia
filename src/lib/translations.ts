@@ -32,6 +32,8 @@ export type CoreTranslationKey =
   | 'mascotCategoriesGreeting'
   | 'mascotCategoriesGreeting1'
   | 'mascotCategoriesGreeting2'
+  | 'mascotBooksGreeting1'
+  | 'mascotBooksGreeting2'
   // Homepage (Blog Listing)
   | 'blogTitle'
   | 'blogSubtitle'
@@ -346,6 +348,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: 'Explore categories based on your goals!',
     mascotCategoriesGreeting1: 'This is the categories section',
     mascotCategoriesGreeting2: 'Here you will find the AI you need',
+    mascotBooksGreeting1: 'Here you will find books to learn and feed your curiosity',
+    mascotBooksGreeting2: 'Find the one you like the most and buy it!',
     blogTitle: 'The World AI Blog',
     blogSubtitle: 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.',
     exploreCategoriesButton: 'Explore Categories',
@@ -616,6 +620,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: '¡Explora las categorías según tus objetivos!',
     mascotCategoriesGreeting1: 'Este es el apartado de categorías',
     mascotCategoriesGreeting2: 'Aquí vas a encontrar la IA que necesites',
+    mascotBooksGreeting1: 'Aqui encontraras libros para aprender y alimentar tu curiosidad',
+    mascotBooksGreeting2: '¡Encuentra el que más te guste y cómpralo!',
     blogTitle: 'El Blog de World AI',
     blogSubtitle: 'Mantente actualizado con las últimas noticias, ideas y herramientas en el mundo de la Inteligencia Artificial.',
     exploreCategoriesButton: 'Explorar Categorías',
@@ -886,6 +892,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: 'Esplora le categorie in base ai tuoi obiettivi!',
     mascotCategoriesGreeting1: 'Questa è la sezione delle categorie',
     mascotCategoriesGreeting2: 'Qui troverai l\'IA di cui hai bisogno',
+    mascotBooksGreeting1: 'Qui troverai libri per imparare e nutrire la tua curiosità',
+    mascotBooksGreeting2: 'Trova quello che ti piace di più e compralo!',
     blogTitle: 'Il Blog di World AI',
     blogSubtitle: 'Rimani aggiornato con le ultime notizie, approfondimenti e strumenti nel mondo dell\'Intelligenza Artificiale.',
     exploreCategoriesButton: 'Esplora Categorie',
@@ -1156,6 +1164,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: '根据您的目标探索类别！',
     mascotCategoriesGreeting1: '这里是分类区',
     mascotCategoriesGreeting2: '在这里您将找到您需要的人工智能',
+    mascotBooksGreeting1: '在这里，您会找到学习和满足好奇心的书籍',
+    mascotBooksGreeting2: '找到您最喜欢的一本并购买它！',
     blogTitle: 'World AI 博客',
     blogSubtitle: '了解人工智能世界的最新新闻、见解和工具。',
     exploreCategoriesButton: '探索分类',
@@ -1426,6 +1436,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: '目標に合わせてカテゴリを探索してください！',
     mascotCategoriesGreeting1: 'ここはカテゴリーのセクションです',
     mascotCategoriesGreeting2: 'ここで必要なAIを見つけることができます',
+    mascotBooksGreeting1: 'ここでは、学び、好奇心を満たすための本を見つけることができます',
+    mascotBooksGreeting2: '一番好きなものを見つけて購入してください！',
     blogTitle: 'World AI ブログ',
     blogSubtitle: '人工知能の世界における最新ニュース、洞察、ツールを常に入手してください。',
     exploreCategoriesButton: 'カテゴリーを探す',
@@ -1696,6 +1708,8 @@ export const translations: Translations = {
     mascotCategoriesGreeting: 'Explore categorias com base nos seus objetivos!',
     mascotCategoriesGreeting1: 'Esta é a seção de categorias',
     mascotCategoriesGreeting2: 'Aqui você encontrará a IA que precisa',
+    mascotBooksGreeting1: 'Aqui você encontrará livros para aprender e alimentar sua curiosidade',
+    mascotBooksGreeting2: 'Encontre o que você mais gosta e compre-o!',
     blogTitle: 'O Blog World AI',
     blogSubtitle: 'Mantenha-se atualizado com as últimas notícias, insights e ferramentas no mundo da Inteligência Artificial.',
     exploreCategoriesButton: 'Explorar Categorias',
