@@ -1,3 +1,4 @@
+
 export const languages = {
   en: { name: 'English', flag: '🇬🇧' },
   es: { name: 'Español', flag: '🇪🇸' },
@@ -29,6 +30,8 @@ export type CoreTranslationKey =
   | 'mascotChatGreeting1'
   | 'mascotChatGreeting2'
   | 'mascotCategoriesGreeting'
+  | 'mascotCategoriesGreeting1'
+  | 'mascotCategoriesGreeting2'
   // Homepage (Blog Listing)
   | 'blogTitle'
   | 'blogSubtitle'
@@ -341,6 +344,8 @@ export const translations: Translations = {
     mascotChatGreeting1: 'Chat with me!',
     mascotChatGreeting2: 'I can inform you about whatever you need.',
     mascotCategoriesGreeting: 'Explore categories based on your goals!',
+    mascotCategoriesGreeting1: 'This is the categories section',
+    mascotCategoriesGreeting2: 'Here you will find the AI you need',
     blogTitle: 'The World AI Blog',
     blogSubtitle: 'Stay updated with the latest news, insights, and tools in the world of Artificial Intelligence.',
     exploreCategoriesButton: 'Explore Categories',
@@ -609,6 +614,8 @@ export const translations: Translations = {
     mascotChatGreeting1: '¡Chatea conmigo!',
     mascotChatGreeting2: 'Puedo informarte sobre lo que necesites.',
     mascotCategoriesGreeting: '¡Explora las categorías según tus objetivos!',
+    mascotCategoriesGreeting1: 'Este es el apartado de categorías',
+    mascotCategoriesGreeting2: 'Aquí vas a encontrar la IA que necesites',
     blogTitle: 'El Blog de World AI',
     blogSubtitle: 'Mantente actualizado con las últimas noticias, ideas y herramientas en el mundo de la Inteligencia Artificial.',
     exploreCategoriesButton: 'Explorar Categorías',
@@ -877,6 +884,8 @@ export const translations: Translations = {
     mascotChatGreeting1: "Chatta con me!",
     mascotChatGreeting2: "Posso informarti su ciò di cui hai bisogno.",
     mascotCategoriesGreeting: 'Esplora le categorie in base ai tuoi obiettivi!',
+    mascotCategoriesGreeting1: 'Questa è la sezione delle categorie',
+    mascotCategoriesGreeting2: 'Qui troverai l\'IA di cui hai bisogno',
     blogTitle: 'Il Blog di World AI',
     blogSubtitle: 'Rimani aggiornato con le ultime notizie, approfondimenti e strumenti nel mondo dell\'Intelligenza Artificiale.',
     exploreCategoriesButton: 'Esplora Categorie',
@@ -1145,6 +1154,8 @@ export const translations: Translations = {
     mascotChatGreeting1: "和我聊天！",
     mascotChatGreeting2: "我可以告诉你任何你需要的信息。",
     mascotCategoriesGreeting: '根据您的目标探索类别！',
+    mascotCategoriesGreeting1: '这里是分类区',
+    mascotCategoriesGreeting2: '在这里您将找到您需要的人工智能',
     blogTitle: 'World AI 博客',
     blogSubtitle: '了解人工智能世界的最新新闻、见解和工具。',
     exploreCategoriesButton: '探索分类',
@@ -1413,6 +1424,8 @@ export const translations: Translations = {
     mascotChatGreeting1: "私とチャットしましょう！",
     mascotChatGreeting2: "必要な情報をお知らせできます。",
     mascotCategoriesGreeting: '目標に合わせてカテゴリを探索してください！',
+    mascotCategoriesGreeting1: 'ここはカテゴリーのセクションです',
+    mascotCategoriesGreeting2: 'ここで必要なAIを見つけることができます',
     blogTitle: 'World AI ブログ',
     blogSubtitle: '人工知能の世界における最新ニュース、洞察、ツールを常に入手してください。',
     exploreCategoriesButton: 'カテゴリーを探す',
@@ -1681,6 +1694,8 @@ export const translations: Translations = {
     mascotChatGreeting1: "Converse comigo!",
     mascotChatGreeting2: "Posso informar sobre o que você precisar.",
     mascotCategoriesGreeting: 'Explore categorias com base nos seus objetivos!',
+    mascotCategoriesGreeting1: 'Esta é a seção de categorias',
+    mascotCategoriesGreeting2: 'Aqui você encontrará a IA que precisa',
     blogTitle: 'O Blog World AI',
     blogSubtitle: 'Mantenha-se atualizado com as últimas notícias, insights e ferramentas no mundo da Inteligência Artificial.',
     exploreCategoriesButton: 'Explorar Categorias',

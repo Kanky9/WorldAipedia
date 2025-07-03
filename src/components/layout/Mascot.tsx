@@ -62,7 +62,15 @@ const Mascot = () => {
       if (adHocMessageTimerRef.current) clearTimeout(adHocMessageTimerRef.current);
     };
 
-    if (mascotDisplayMode === 'default') {
+    if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
+      setCurrentBubbleText(t('mascotCategoriesGreeting1'));
+      messageTimer = setTimeout(() => {
+        // Check again in case user navigated away during the timeout
+        if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
+          setCurrentBubbleText(t('mascotCategoriesGreeting2'));
+        }
+      }, 3000);
+    } else if (mascotDisplayMode === 'default') {
       if (!isChatOpen && isMascotVisible) {
         setCurrentBubbleText(t('mascotGreeting'));
       } else {
@@ -112,7 +120,7 @@ const Mascot = () => {
     }
 
     return () => clearTimers();
-  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language]);
+  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname]);
 
 
   useEffect(() => {
@@ -121,7 +129,7 @@ const Mascot = () => {
       setIsMascotVisible(true);
     }
     // If chat closes, and mascot was only visible due to chat, decide if it should hide or show default bubble
-    // This part is handled by the \`mascotDisplayMode\` changes and \`isMascotVisible\` logic
+    // This part is handled by the `mascotDisplayMode` changes and `isMascotVisible` logic
   }, [isChatOpen]);
 
 
