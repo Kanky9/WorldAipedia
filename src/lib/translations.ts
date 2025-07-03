@@ -253,6 +253,7 @@ export type CoreTranslationKey =
   | 'proBenefit3'
   | 'upgradeToProPrice'
   | 'paymentMethodsTitle'
+  | 'paypalGatewayInfo'
   | 'creditCardLabel'
   | 'paypalLabel'
   | 'applePayLabel'
@@ -550,7 +551,8 @@ export const translations: Translations = {
     proBenefit2: "Comment and rate AI tools",
     proBenefit3: "Priority support",
     upgradeToProPrice: "Just $1/month!",
-    paymentMethodsTitle: "Select Payment Method",
+    paymentMethodsTitle: "Secure Payment via PayPal",
+    paypalGatewayInfo: "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.",
     creditCardLabel: "Credit/Debit Card",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -820,7 +822,8 @@ export const translations: Translations = {
     proBenefit2: "Comenta y califica herramientas de IA",
     proBenefit3: "Soporte prioritario",
     upgradeToProPrice: "¡Solo $1/mes!",
-    paymentMethodsTitle: "Seleccionar Método de Pago",
+    paymentMethodsTitle: "Pago Seguro a través de PayPal",
+    paypalGatewayInfo: "Todos los pagos se procesan de forma segura a través de PayPal. Puedes usar tu saldo de PayPal o cualquier tarjeta de crédito/débito principal.",
     creditCardLabel: "Tarjeta de Crédito/Débito",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -1090,7 +1093,8 @@ export const translations: Translations = {
     proBenefit2: "Commenta e valuta gli strumenti AI",
     proBenefit3: "Supporto prioritario",
     upgradeToProPrice: "Solo $1/mese!",
-    paymentMethodsTitle: "Seleziona Metodo di Pagamento",
+    paymentMethodsTitle: "Pagamento Sicuro tramite PayPal",
+    paypalGatewayInfo: "Tutti i pagamenti vengono elaborati in modo sicuro tramite PayPal. Puoi utilizzare il tuo saldo PayPal o qualsiasi carta di credito/debito principale.",
     creditCardLabel: "Carta di Credito/Debito",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -1360,7 +1364,8 @@ export const translations: Translations = {
     proBenefit2: "评论和评价AI工具",
     proBenefit3: "优先支持",
     upgradeToProPrice: "仅需 $1/月！",
-    paymentMethodsTitle: "选择付款方式",
+    paymentMethodsTitle: "通过PayPal安全支付",
+    paypalGatewayInfo: "所有付款均通过PayPal安全处理。您可以使用您的PayPal余额或任何主流信用卡/借记卡。",
     creditCardLabel: "信用卡/借记卡",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -1630,7 +1635,8 @@ export const translations: Translations = {
     proBenefit2: "AIツールのコメントと評価",
     proBenefit3: "優先サポート",
     upgradeToProPrice: "月額わずか$1！",
-    paymentMethodsTitle: "支払い方法を選択",
+    paymentMethodsTitle: "PayPalによる安全な支払い",
+    paypalGatewayInfo: "すべての支払いはPayPalを通じて安全に処理されます。PayPal残高または主要なクレジットカード/デビットカードをご利用いただけます。",
     creditCardLabel: "クレジットカード/デビットカード",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -1900,7 +1906,8 @@ export const translations: Translations = {
     proBenefit2: "Comente e avalie ferramentas de IA",
     proBenefit3: "Suporte prioritário",
     upgradeToProPrice: "Apenas $1/mês!",
-    paymentMethodsTitle: "Selecionar Método de Pagamento",
+    paymentMethodsTitle: "Pagamento Seguro via PayPal",
+    paypalGatewayInfo: "Todos os pagamentos são processados de forma segura através do PayPal. Você pode usar seu saldo do PayPal ou qualquer cartão de crédito/débito principal.",
     creditCardLabel: "Cartão de Crédito/Débito",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",

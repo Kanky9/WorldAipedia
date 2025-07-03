@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -154,19 +153,26 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
               <p className="text-xs text-muted-foreground">({t('cancelButton', "Billed monthly, cancel anytime")})</p>
             </div>
             
-            <div className="relative min-h-[150px] flex items-center justify-center">
-              {isProcessing && (
-                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
-                    <p className="text-sm text-muted-foreground">Processing your subscription...</p>
-                </div>
-              )}
-              {!isSDKReady && !isProcessing && (
-                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
-                 </div>
-              )}
-              <div id="paypal-button-container" className="w-full"></div>
+            <div className="border-t pt-4">
+              <h3 className="text-sm font-medium text-center text-muted-foreground mb-2">{t('paymentMethodsTitle', "Secure Payment via PayPal")}</h3>
+              <p className="text-xs text-center text-muted-foreground mb-4">
+                {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
+              </p>
+              
+              <div className="relative min-h-[150px] flex items-center justify-center">
+                {isProcessing && (
+                  <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
+                      <p className="text-sm text-muted-foreground">Processing your subscription...</p>
+                  </div>
+                )}
+                {!isSDKReady && !isProcessing && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
+                  </div>
+                )}
+                <div id="paypal-button-container" className="w-full"></div>
+              </div>
             </div>
           </div>
 
