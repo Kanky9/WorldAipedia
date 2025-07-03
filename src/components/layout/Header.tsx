@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, Sparkles, BookCopy } from 'lucide-react';
+import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, BookCopy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -19,8 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { posts as allPosts } from '@/data/posts';
-import { isPostNew } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
 
@@ -28,7 +26,6 @@ const Header = () => {
   const { t } = useLanguage();
   const { currentUser, logout, loading } = useAuth(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [hasNewPosts, setHasNewPosts] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -36,11 +33,6 @@ const Header = () => {
         setIsMobileMenuOpen(false);
     }
   }, [currentUser, loading]);
-
-  useEffect(() => {
-    const anyNew = allPosts.some(post => isPostNew(post));
-    setHasNewPosts(anyNew);
-  }, []); 
 
   const handleLogout = async () => {
     await logout();
@@ -79,25 +71,6 @@ const Header = () => {
           </nav>
 
           <LanguageSwitcher />
-
-          {hasNewPosts && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href="/categories" className="new-ai-bubble-link hidden sm:block">
-                    <div className="new-ai-bubble">
-                      <Sparkles className="h-3.5 w-3.5 mr-1.5 inline-block text-yellow-300" />
-                      {t('newAIsAvailableShort', 'New!')}
-                    </div>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <p>{t('newAIsAvailableTooltip', 'New AI posts available!')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
 
           {loading ? (
             <div className="h-10 w-20 flex items-center justify-center"> 
@@ -181,11 +154,6 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="sm:hidden absolute top-20 left-0 right-0 w-full bg-card shadow-lg p-4 z-40 border-b border-t border-border">
           <nav className="flex flex-col gap-2">
-            {hasNewPosts && (
-                 <Link href="/categories" className="text-base font-medium py-2 px-3 rounded-md bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-2" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Sparkles className="h-4 w-4 text-primary"/>{t('newAIsAvailableShort', 'New AIs!')}
-                  </Link>
-            )}
             {navLinks.map(link => (
                <Link 
                 href={link.href} 
