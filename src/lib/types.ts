@@ -57,6 +57,7 @@ export interface User {
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
   subscriptionPlan?: string; // From Firestore
+  paypalSubscriptionID?: string; // For PayPal integration
   isAdmin?: boolean; // Added for admin role
 }
 
