@@ -154,7 +154,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
       await setDoc(userRef, newUser);
       setCurrentUser(newUser); // Optimistically set, but onAuthStateChanged confirms
-      // setLoading(false) will be handled by onAuthStateChanged
       return newUser;
     } catch (error) {
       console.error("Error signing up:", error);
@@ -169,7 +168,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const userCredential = await firebaseSignInEmail(auth, email, pass);
       const user = await handleUser(userCredential.user); 
-      // setLoading(false) will be handled by onAuthStateChanged
       return user;
     } catch (error) {
       console.error("Error signing in with email:", error);
@@ -182,32 +180,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithGoogle = async (): Promise<void> => {
     const provider = new GoogleAuthProvider();
     try {
-      // Using signInWithPopup instead of signInWithRedirect
       await signInWithPopup(auth, provider);
-      // After a successful sign-in via popup, the onAuthStateChanged listener
-      // (configured in the useEffect hook) will automatically detect the new auth state.
-      // It will then call handleUser, which updates currentUser.
-      // The global loading state (AuthContext's loading) is managed by the useEffect.
     } catch (error: any) {
+      // This error code means the user closed the popup. It's a normal action,
+      // so we can ignore it and not treat it as a failure.
+      if (error.code === 'auth/popup-closed-by-user') {
+        return;
+      }
+      // For all other errors, we should still log them and let the caller handle it.
       console.error("Error during Google signInWithPopup:", error);
-      // Re-throw the error so the calling component can handle it (e.g., show a toast).
-      // No need to set loading or currentUser here as the existing auth state should persist
-      // or be updated by onAuthStateChanged if the auth state genuinely changes.
       throw error;
     }
   };
 
   const logout = async () => {
-    // setLoading(true); // Not strictly necessary here as UI should react quickly
     try {
       await firebaseSignOut(auth);
-      // onAuthStateChanged will set currentUser to null and setLoading(false)
       router.push('/'); 
     } catch (error) {
       console.error("Error signing out:", error);
-      // setLoading(false); // Ensure loading is false if signout fails
     }
-    // setLoading(false) will be handled by onAuthStateChanged's finally block
   };
 
   const updateUserProfileInFirestore = async (uid: string, data: Partial<User>) => {
