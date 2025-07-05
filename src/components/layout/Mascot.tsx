@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -135,7 +134,8 @@ const Mascot = () => {
     }
   };
 
-  if (pathname.startsWith('/admin')) {
+  const authPages = ['/login', '/register'];
+  if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
     return null;
   }
 

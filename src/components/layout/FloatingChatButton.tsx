@@ -1,4 +1,3 @@
-
 'use client';
 import { Button } from '@/components/ui/button';
 import { MessageCircle } from 'lucide-react';
@@ -12,7 +11,8 @@ export default function FloatingChatButton() {
   const { t } = useLanguage();
   const pathname = usePathname();
 
-  if (pathname.startsWith('/admin')) {
+  const authPages = ['/login', '/register'];
+  if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
     return null;
   }
 

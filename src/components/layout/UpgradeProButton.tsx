@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -13,6 +13,7 @@ const UpgradeProButton = () => {
   const { t } = useLanguage();
   const { currentUser, loading } = useAuth();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const pathname = usePathname();
 
   if (loading) {
     return null; // Don't show anything while auth state is loading
@@ -20,6 +21,11 @@ const UpgradeProButton = () => {
 
   if (currentUser?.isSubscribed) {
     return null; // Don't show if user is already PRO
+  }
+
+  const authPages = ['/login', '/register'];
+  if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
+    return null;
   }
 
   return (
