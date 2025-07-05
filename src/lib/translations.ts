@@ -23,8 +23,6 @@ export type CoreTranslationKey =
   | 'navAdmin'
   | 'navAccount'
   | 'proMemberLabel'
-  | 'newAIsAvailableShort'
-  | 'newAIsAvailableTooltip'
   // Mascot
   | 'mascotGreeting'
   | 'mascotChatGreeting1'
@@ -314,8 +312,6 @@ export type TranslationSet = {
   viewAllPostsArchiveButton: string;
   allPostsTitle: string;
   allPostsSubtitle: string;
-  newAIsAvailableShort: string;
-  newAIsAvailableTooltip: string;
   newPostsInCategoryTooltip: string;
   laceChatErrorWelcomeGeneral: string;
   laceChatErrorWelcomeTool: string;
@@ -338,8 +334,6 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'My Account',
     proMemberLabel: 'PRO Member',
-    newAIsAvailableShort: 'New!',
-    newAIsAvailableTooltip: 'New AI posts available!',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
     mascotChatGreeting1: 'You can chat with me here!',
     mascotCategoriesGreeting1: 'This is the categories section',
@@ -377,7 +371,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Find posts tailored to your interests, organized into relevant categories for easy browsing.',
     viewPostsButton: 'View Posts',
     noCategoriesAvailable: 'No categories available at the moment.',
-    newPostsInCategoryTooltip: 'New Posts!',
+    newPostsInCategoryTooltip: 'New posts in this category!',
     noPostsInCategory: 'No posts found in the "{categoryName}" category yet.',
     noPostsInCategorySuggestion: 'Check back soon, or explore other categories!',
     allCategoriesButton: 'All Categories',
@@ -461,7 +455,7 @@ export const translations: Translations = {
     adminPostErrorTitle: 'Error Loading Post',
     adminPostErrorDesc: 'Failed to load post data.',
     adminPostNotFound: 'Post with ID {id} not found.',
-    adminPostImageTooLarge: 'Image is too large. Using placeholder. Max ~1MB for direct save.',
+    adminPostImageTooLarge: 'Image is too large',
     imageFileTooLargeTitle: 'Image File Too Large',
     imageFileTooLargeDesc: 'Please select an image file smaller than 5MB. Larger images may not save correctly.',
     adminPostImageSizeHint: 'Using placeholder. Max ~1MB for direct save.',
@@ -609,8 +603,6 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Mi Cuenta',
     proMemberLabel: 'Miembro PRO',
-    newAIsAvailableShort: '¡Nuevo!',
-    newAIsAvailableTooltip: '¡Nuevas publicaciones de IA disponibles!',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
     mascotChatGreeting1: '¡Aquí puedes chatear conmigo!',
     mascotCategoriesGreeting1: 'Este es el apartado de categorías',
@@ -648,7 +640,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Encuentra publicaciones adaptadas a tus intereses, organizadas en categorías relevantes para facilitar la navegación.',
     viewPostsButton: 'Ver Publicaciones',
     noCategoriesAvailable: 'No hay categorías disponibles en este momento.',
-    newPostsInCategoryTooltip: '¡Nuevas Publicaciones!',
+    newPostsInCategoryTooltip: '¡Nuevas publicaciones en esta categoría!',
     noPostsInCategory: 'Aún no se han encontrado publicaciones en la categoría "{categoryName}".',
     noPostsInCategorySuggestion: '¡Vuelve pronto o explora otras categorías!',
     allCategoriesButton: 'Todas las Categorías',
@@ -732,7 +724,7 @@ export const translations: Translations = {
     adminPostErrorTitle: 'Error al Cargar Publicación',
     adminPostErrorDesc: 'No se pudieron cargar los datos de la publicación.',
     adminPostNotFound: 'No se encontró la publicación con ID {id}.',
-    adminPostImageTooLarge: 'La imagen es demasiado grande. Usando marcador de posición. Máx ~1MB para guardado directo.',
+    adminPostImageTooLarge: 'La imagen es demasiado grande',
     imageFileTooLargeTitle: 'Archivo de Imagen Demasiado Grande',
     imageFileTooLargeDesc: 'Por favor, seleccione un archivo de imagen más pequeño de 5MB. Imágenes más grandes pueden no guardarse correctamente.',
     adminPostImageSizeHint: 'Usando marcador de posición. Máx ~1MB para guardado directo.',
@@ -880,8 +872,6 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Il Mio Account',
     proMemberLabel: 'Membro PRO',
-    newAIsAvailableShort: 'Novità!',
-    newAIsAvailableTooltip: 'Nuovi post AI disponibili!',
     mascotGreeting: "Ciao, sono Lace! Pronto a esplorare l'IA?",
     mascotChatGreeting1: "Puoi chattare con me qui!",
     mascotCategoriesGreeting1: 'Questa è la sezione delle categorie',
@@ -919,7 +909,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Trova post su misura per i tuoi interessi, organizzati in categorie pertinenti per una facile navigazione.',
     viewPostsButton: 'Vedi Post',
     noCategoriesAvailable: 'Nessuna categoria disponibile al momento.',
-    newPostsInCategoryTooltip: 'Nuovi Post!',
+    newPostsInCategoryTooltip: 'Nuovi post in questa categoria!',
     noPostsInCategory: 'Nessun post trovato nella categoria "{categoryName}" per ora.',
     noPostsInCategorySuggestion: 'Torna presto o esplora altre categorie!',
     allCategoriesButton: 'Tutte le Categorie',
@@ -1003,10 +993,10 @@ export const translations: Translations = {
     adminPostErrorTitle: 'Errore Caricamento Post',
     adminPostErrorDesc: 'Impossibile caricare i dati del post.',
     adminPostNotFound: 'Post con ID {id} non trovato.',
-    adminPostImageTooLarge: 'L\'immagine è troppo grande. Uso del placeholder. Max ~1MB per salvataggio diretto.',
+    adminPostImageTooLarge: "L'immagine è troppo grande",
     imageFileTooLargeTitle: 'File Immagine Troppo Grande',
     imageFileTooLargeDesc: 'Seleziona un file immagine più piccolo di 5MB. Immagini più grandi potrebbero non salvarsi correttamente.',
-    adminPostImageSizeHint: 'Uso del placeholder. Max ~1MB per salvataggio diretto.',
+    adminPostImageSizeHint: "Uso del placeholder. Max ~1MB per salvataggio diretto.",
     adminPostRequiredFields: "Compila tutti i campi obbligatori (Titolo, Descrizioni, Immagine Principale, Categoria, Data di Pubblicazione). Assicurati che l'immagine principale sia caricata o impostata.",
     adminPostAccessDeniedTitle: 'Accesso Negato',
     adminPostAccessDeniedDesc: 'Non hai il permesso di visualizzare questa pagina.',
@@ -1151,8 +1141,6 @@ export const translations: Translations = {
     navAdmin: '管理',
     navAccount: '我的账户',
     proMemberLabel: 'PRO会员',
-    newAIsAvailableShort: '最新!',
-    newAIsAvailableTooltip: '有新的人工智能帖子!',
     mascotGreeting: "你好，我是Lace！准备好探索AI了吗？",
     mascotChatGreeting1: "你可以在这里跟我聊天！",
     mascotCategoriesGreeting1: '这里是分类区',
@@ -1190,7 +1178,7 @@ export const translations: Translations = {
     categoriesSubtitle: '根据您的兴趣查找帖子，按相关类别整理以便轻松浏览。',
     viewPostsButton: '查看帖子',
     noCategoriesAvailable: '目前没有可用的分类。',
-    newPostsInCategoryTooltip: '新帖子！',
+    newPostsInCategoryTooltip: '此类别中有新帖子！',
     noPostsInCategory: '在"{categoryName}"分类中暂未找到帖子。',
     noPostsInCategorySuggestion: '请稍后再回来查看，或探索其他分类！',
     allCategoriesButton: '所有分类',
@@ -1274,7 +1262,7 @@ export const translations: Translations = {
     adminPostErrorTitle: '加载帖子错误',
     adminPostErrorDesc: '无法加载帖子数据。',
     adminPostNotFound: '未找到ID为 {id} 的帖子。',
-    adminPostImageTooLarge: '图片太大。使用占位符。直接保存最大约1MB。',
+    adminPostImageTooLarge: '图片太大',
     imageFileTooLargeTitle: '图片文件太大',
     imageFileTooLargeDesc: '请选择小于5MB的图片文件。较大的图片可能无法正确保存。',
     adminPostImageSizeHint: '使用占位符。直接保存最大约1MB。',
@@ -1422,8 +1410,6 @@ export const translations: Translations = {
     navAdmin: '管理',
     navAccount: 'マイアカウント',
     proMemberLabel: 'PROメンバー',
-    newAIsAvailableShort: '新着!',
-    newAIsAvailableTooltip: '新しいAI投稿があります！',
     mascotGreeting: "こんにちは、レースです！AIを探求する準備はできましたか？",
     mascotChatGreeting1: "ここで私とチャットできます！",
     mascotCategoriesGreeting1: 'ここはカテゴリーのセクションです',
@@ -1461,7 +1447,7 @@ export const translations: Translations = {
     categoriesSubtitle: '興味に合わせた記事を、関連するカテゴリーに整理して簡単に見つけられます。',
     viewPostsButton: '記事を見る',
     noCategoriesAvailable: '現在利用可能なカテゴリーはありません。',
-    newPostsInCategoryTooltip: '新しい投稿！',
+    newPostsInCategoryTooltip: 'このカテゴリーの新しい投稿！',
     noPostsInCategory: '「{categoryName}」カテゴリーにはまだ記事が見つかりません。',
     noPostsInCategorySuggestion: 'すぐに確認するか、他のカテゴリーを探してください！',
     allCategoriesButton: 'すべてのカテゴリー',
@@ -1545,7 +1531,7 @@ export const translations: Translations = {
     adminPostErrorTitle: '記事読み込みエラー',
     adminPostErrorDesc: '記事データの読み込みに失敗しました。',
     adminPostNotFound: 'ID {id} の記事が見つかりません。',
-    adminPostImageTooLarge: '画像が大きすぎます。プレースホルダーを使用しています。直接保存の最大サイズは約1MBです。',
+    adminPostImageTooLarge: '画像が大きすぎます',
     imageFileTooLargeTitle: '画像ファイルが大きすぎます',
     imageFileTooLargeDesc: '5MB未満の画像ファイルを選択してください。大きな画像は正しく保存されない場合があります。',
     adminPostImageSizeHint: 'プレースホルダーを使用しています。直接保存の最大サイズは約1MBです。',
@@ -1693,8 +1679,6 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Minha Conta',
     proMemberLabel: 'Membro PRO',
-    newAIsAvailableShort: 'Novo!',
-    newAIsAvailableTooltip: 'Novas postagens de IA disponíveis!',
     mascotGreeting: "Olá, sou a Lace! Pronto para explorar a IA?",
     mascotChatGreeting1: "Você pode conversar comigo aqui!",
     mascotCategoriesGreeting1: 'Esta é a seção de categorias',
@@ -1732,7 +1716,7 @@ export const translations: Translations = {
     categoriesSubtitle: 'Encontre postagens personalizadas para seus interesses, organizadas em categorias relevantes para facilitar a navegação.',
     viewPostsButton: 'Ver Postagens',
     noCategoriesAvailable: 'Nenhuma categoria disponível no momento.',
-    newPostsInCategoryTooltip: 'Novas Postagens!',
+    newPostsInCategoryTooltip: 'Novas postagens nesta categoria!',
     noPostsInCategory: 'Nenhuma postagem encontrada na categoria "{categoryName}" ainda.',
     noPostsInCategorySuggestion: 'Volte em breve ou explore outras categorias!',
     allCategoriesButton: 'Todas as Categorias',
@@ -1816,7 +1800,7 @@ export const translations: Translations = {
     adminPostErrorTitle: 'Erro ao Carregar Postagem',
     adminPostErrorDesc: 'Falha ao carregar dados da postagem.',
     adminPostNotFound: 'Postagem com ID {id} não encontrada.',
-    adminPostImageTooLarge: 'A imagem é muito grande. Usando placeholder. Máx ~1MB para salvamento direto.',
+    adminPostImageTooLarge: 'A imagem é muito grande',
     imageFileTooLargeTitle: 'Arquivo de Imagem Muito Grande',
     imageFileTooLargeDesc: 'Por favor, selecione um arquivo de imagem menor que 5MB. Imagens maiores podem não ser salvas corretamente.',
     adminPostImageSizeHint: 'Usando placeholder. Máx ~1MB para salvamento directo.',
@@ -1962,3 +1946,5 @@ export type LocalizedString =
     } & {
       en: string;
     });
+
+    
