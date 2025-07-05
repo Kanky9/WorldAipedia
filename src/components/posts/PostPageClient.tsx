@@ -141,7 +141,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
       postId: post.id,
       userId: currentUser.uid,
       username: isAnonymousComment ? t('anonymousCommentLabel', "Anonymous") : (currentUser.username || currentUser.displayName || "User"),
-      profileImageUrl: isAnonymousComment ? undefined : currentUser.photoURL,
+      profileImageUrl: isAnonymousComment ? null : (currentUser.photoURL || null),
       isAnonymous: isAnonymousComment,
       rating: newCommentRating,
       text: newCommentText,
