@@ -24,8 +24,8 @@ export default function CategoriesPage() {
   return (
     <div className={`space-y-8 pb-8 ${animationClass}`}>
       <section className="text-center">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore Posts by Category')}</h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
+        <h1 className="text-xl sm:text-3xl md:text-4xl font-headline font-bold mb-4 text-primary">{t('categoriesTitle', 'Explore Posts by Category')}</h1>
+        <p className="text-sm sm:text-lg text-muted-foreground max-w-xl mx-auto">
           {t('categoriesSubtitle', 'Find posts tailored to your interests, organized into relevant categories for easy browsing.')}
         </p>
       </section>
@@ -47,11 +47,11 @@ export default function CategoriesPage() {
                   className="h-full flex flex-col transform transition-all duration-300 hover:shadow-xl hover:border-primary rounded-xl animate-fadeInUp bg-card"
                   style={{animationDelay: `${index * 0.05}s`}}
                 >
-                  <CardHeader>
+                  <CardHeader className="p-4 sm:p-6">
                     <div className="flex items-center justify-between">
                        <div className="flex items-center gap-3 mb-2">
-                        <CategoryIcon categoryName={iconKeyCategoryName} className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                        <CardTitle className="font-headline text-xl sm:text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
+                        <CategoryIcon categoryName={iconKeyCategoryName} className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
+                        <CardTitle className="font-headline text-lg sm:text-2xl group-hover:text-primary transition-colors">{localizedCategoryName}</CardTitle>
                       </div>
                       {hasNewInThisCategory && (
                          <TooltipProvider>
@@ -67,10 +67,10 @@ export default function CategoriesPage() {
                       )}
                     </div>
                   </CardHeader>
-                  <CardContent className="flex-grow">
+                  <CardContent className="flex-grow p-4 sm:p-6">
                     <CardDescription>{localizedCategoryDescription}</CardDescription>
                   </CardContent>
-                  <CardContent>
+                  <CardContent className="p-4 sm:p-6">
                      <p className="text-sm text-primary font-semibold flex items-center">
                        {t('viewPostsButton', 'View Posts')} <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
                      </p>
@@ -86,3 +86,4 @@ export default function CategoriesPage() {
     </div>
   );
 }
+    
