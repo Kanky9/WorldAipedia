@@ -250,7 +250,6 @@ export type CoreTranslationKey =
   | 'proBenefit2'
   | 'proBenefit3'
   | 'upgradeToProPrice'
-  | 'oneTimePaymentLabel'
   | 'paymentMethodsTitle'
   | 'paymentErrorTitle'
   | 'processingPayment'
@@ -548,7 +547,6 @@ export const translations: Translations = {
     proBenefit2: "Comment and rate AI tools",
     proBenefit3: "Priority support",
     upgradeToProPrice: "Just $1.00!",
-    oneTimePaymentLabel: "One-time payment",
     paymentMethodsTitle: "Choose Your Payment Method",
     paymentErrorTitle: "Payment Error",
     processingPayment: "Processing your payment...",
@@ -820,7 +818,6 @@ export const translations: Translations = {
     proBenefit2: "Comenta y califica herramientas de IA",
     proBenefit3: "Soporte prioritario",
     upgradeToProPrice: "¡Solo $1.00!",
-    oneTimePaymentLabel: "Pago único",
     paymentMethodsTitle: "Elige tu método de pago",
     paymentErrorTitle: "Error de Pago",
     processingPayment: "Procesando tu pago...",
@@ -1092,7 +1089,6 @@ export const translations: Translations = {
     proBenefit2: "Commenta e valuta gli strumenti AI",
     proBenefit3: "Supporto prioritario",
     upgradeToProPrice: "Solo $1.00!",
-    oneTimePaymentLabel: "Pagamento una tantum",
     paymentMethodsTitle: "Scegli il tuo metodo di pagamento",
     paymentErrorTitle: "Errore di Pagamento",
     processingPayment: "Elaborazione del pagamento...",
@@ -1364,7 +1360,6 @@ export const translations: Translations = {
     proBenefit2: "评论和评价AI工具",
     proBenefit3: "优先支持",
     upgradeToProPrice: "仅需 $1.00！",
-    oneTimePaymentLabel: "一次性付款",
     paymentMethodsTitle: "选择您的支付方式",
     paymentErrorTitle: "支付错误",
     processingPayment: "正在处理您的付款...",
@@ -1636,7 +1631,6 @@ export const translations: Translations = {
     proBenefit2: "AIツールのコメントと評価",
     proBenefit3: "優先サポート",
     upgradeToProPrice: "わずか $1.00！",
-    oneTimePaymentLabel: "一回払い",
     paymentMethodsTitle: "お支払い方法を選択",
     paymentErrorTitle: "支払いエラー",
     processingPayment: "支払いを処理中...",
@@ -1908,7 +1902,6 @@ export const translations: Translations = {
     proBenefit2: "Comente e avalie ferramentas de IA",
     proBenefit3: "Suporte prioritário",
     upgradeToProPrice: "Apenas $1.00!",
-    oneTimePaymentLabel: "Pagamento único",
     paymentMethodsTitle: "Escolha seu método de pagamento",
     paymentErrorTitle: "Erro de Pagamento",
     processingPayment: "Processando seu pagamento...",

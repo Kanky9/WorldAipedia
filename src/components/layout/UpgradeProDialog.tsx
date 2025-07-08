@@ -14,7 +14,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useLanguage } from '@/hooks/useLanguage';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Star, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { updateUserToPro } from '@/lib/firebase';
@@ -44,10 +44,13 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   
   useEffect(() => {
     if (open) {
+      // Check if the script is already loaded
       if (window.paypal) {
         setIsPaypalSDKReady(true);
         return;
       }
+
+      // If not, poll for it
       const interval = setInterval(() => {
         if (window.paypal) {
           setIsPaypalSDKReady(true);
@@ -55,12 +58,16 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         }
       }, 500);
 
+      // Cleanup on component unmount or when dialog closes
       return () => clearInterval(interval);
     }
   }, [open]);
 
+
   const handleSuccess = useCallback(async (method: 'paypal', subscriptionId?: string) => {
     if (!currentUser) return;
+    setIsProcessing(true);
+    setError('');
     try {
       await updateUserToPro(currentUser.uid, method, subscriptionId);
       toast({
@@ -95,7 +102,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
       if (!PAYPAL_PLAN_ID) {
         setError("PayPal Plan ID is not configured. Please contact support.");
-        console.error("PayPal Plan ID environment variable (NEXT_PUBLIC_PAYPAL_PLAN_ID) is not set.");
+        console.error("PayPal Plan ID environment variable is not set.");
         return;
       }
       
@@ -103,7 +110,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         paypalButtonContainer.innerHTML = ''; // Clear previous instances
         try {
             window.paypal.Buttons({
-              style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
+              style: { shape: 'pill', color: 'black', layout: 'vertical', label: 'subscribe' },
               createSubscription: (data: any, actions: any) => {
                 if (!currentUser) { 
                   handleLoginRedirect(); 
@@ -114,8 +121,6 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 });
               },
               onApprove: (data: any, actions: any) => {
-                setIsProcessing(true);
-                setError('');
                 return handleSuccess('paypal', data.subscriptionID);
               },
               onError: (err: any) => {
@@ -167,7 +172,6 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
           <div className="text-center my-4">
             <p className="text-3xl font-bold text-primary">{t('upgradeToProPrice', "Just $1.00!")}</p>
-            <p className="text-xs text-muted-foreground">({t('oneTimePaymentLabel', "One-time payment")})</p>
           </div>
           
           <div className="border-t pt-4">
