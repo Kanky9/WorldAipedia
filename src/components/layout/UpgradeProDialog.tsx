@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -128,15 +127,26 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   const { toast } = useToast();
   const router = useRouter();
 
-  const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'stripe' | null>('paypal');
+  const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'stripe'>('paypal');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
   const [isPaypalSDKReady, setIsPaypalSDKReady] = useState(false);
   
   useEffect(() => {
-    // Check if paypal is on window to set SDK ready status
-    if (window.paypal) {
+    if (open) {
+      if (window.paypal) {
         setIsPaypalSDKReady(true);
+        return;
+      }
+      // Poll for the PayPal SDK to be ready
+      const interval = setInterval(() => {
+        if (window.paypal) {
+          setIsPaypalSDKReady(true);
+          clearInterval(interval);
+        }
+      }, 500); // Check every 500ms
+
+      return () => clearInterval(interval);
     }
   }, [open]);
 
@@ -173,29 +183,34 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
       const paypalButtonContainer = document.getElementById('paypal-button-container');
       if (paypalButtonContainer) {
         paypalButtonContainer.innerHTML = ''; // Clear previous instances
-        window.paypal.Buttons({
-          style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'pay' },
-          createOrder: (data: any, actions: any) => {
-            return actions.order.create({
-              purchase_units: [{ amount: { value: '1.00' } }]
-            });
-          },
-          onApprove: (data: any, actions: any) => {
-            if (!currentUser) { handleLoginRedirect(); return Promise.reject(new Error("User not logged in")); }
-            setIsProcessing(true);
-            setError('');
-            return actions.order.capture().then(() => {
-                handleSuccess('paypal');
-            });
-          },
-          onError: (err: any) => {
-            console.error("PayPal button error:", err);
-            setError("An error occurred with PayPal. Please try again.");
-          }
-        }).render('#paypal-button-container');
+        try {
+            window.paypal.Buttons({
+              style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'pay' },
+              createOrder: (data: any, actions: any) => {
+                if (!currentUser) { handleLoginRedirect(); return Promise.reject(new Error("User not logged in")); }
+                return actions.order.create({
+                  purchase_units: [{ amount: { value: '1.00' } }]
+                });
+              },
+              onApprove: (data: any, actions: any) => {
+                setIsProcessing(true);
+                setError('');
+                return actions.order.capture().then(() => {
+                    handleSuccess('paypal');
+                });
+              },
+              onError: (err: any) => {
+                console.error("PayPal button error:", err);
+                setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
+              }
+            }).render('#paypal-button-container');
+        } catch (e) {
+            console.error("Failed to render PayPal buttons", e);
+            setError(t('paymentErrorTitle', "Could not render PayPal buttons."));
+        }
       }
     }
-  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing, handleLoginRedirect]);
+  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing, handleLoginRedirect, t]);
   
   const proBenefits = [
     t('proBenefit1', "Full access to all AI tools & posts"),
@@ -238,7 +253,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
           <div className="border-t pt-4">
             <h3 className="text-lg font-semibold text-center mb-4">{t('paymentMethodsTitle', "Choose Your Payment Method")}</h3>
             
-            <RadioGroup value={paymentMethod ?? ''} onValueChange={(value) => setPaymentMethod(value as any)} className="grid grid-cols-2 gap-4 mb-6">
+            <RadioGroup value={paymentMethod} onValueChange={(value) => setPaymentMethod(value as any)} className="grid grid-cols-2 gap-4 mb-6">
               <div>
                 <RadioGroupItem value="stripe" id="r-card" className="peer sr-only" disabled={!stripePromise} />
                 <Label htmlFor="r-card" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
