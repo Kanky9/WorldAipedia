@@ -1,3 +1,4 @@
+
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -250,6 +251,28 @@ export const getDinoGameTopHighScores = async (count: number = 100): Promise<Gam
     highScores.push({ id: docSnap.id, ...data } as GameHighScore);
   });
   return highScores;
+};
+
+// PRO Subscription
+export const updateUserToPro = async (uid: string, method: 'paypal' | 'stripe', subscriptionId?: string) => {
+  const userRef = doc(db, 'users', uid);
+  const subRef = doc(db, 'users', uid, 'subscription', 'current');
+  
+  const subscriptionData = {
+    status: 'active',
+    method,
+    renewedAt: serverTimestamp(),
+    subscriptionId: subscriptionId || null,
+  };
+  
+  // Update the subcollection
+  await setDoc(subRef, subscriptionData, { merge: true });
+  
+  // Also update the main user document for easy access in the app
+  await updateDoc(userRef, {
+    isSubscribed: true,
+    subscriptionPlan: `PRO Monthly (${method})`,
+  });
 };
 
 

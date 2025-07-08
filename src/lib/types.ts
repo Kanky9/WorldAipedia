@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
 import type { Timestamp } from 'firebase/firestore';
@@ -46,6 +47,14 @@ export interface Category {
   iconName: keyof typeof import('lucide-react');
   description: LocalizedString;
 }
+
+export interface Subscription {
+    status: 'active' | 'cancelled' | 'incomplete';
+    method: 'paypal' | 'stripe';
+    renewedAt: Timestamp | Date;
+    subscriptionId?: string; // from PayPal or Stripe
+}
+
 
 // User type representing data from Firebase Auth and Firestore
 export interface User {
