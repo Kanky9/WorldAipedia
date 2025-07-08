@@ -51,7 +51,7 @@ export default function RootLayout({
           </AuthProvider>
         </LanguageProvider>
         <Script 
-          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD`}
+          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`}
           strategy="lazyOnload"
         />
       </body>

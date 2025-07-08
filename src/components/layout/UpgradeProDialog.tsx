@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -150,10 +151,10 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     }
   }, [open]);
 
-  const handleSuccess = async (method: 'paypal' | 'stripe') => {
+  const handleSuccess = useCallback(async (method: 'paypal' | 'stripe', subscriptionId?: string) => {
     if (!currentUser) return;
     try {
-      await updateUserToPro(currentUser.uid, method, undefined);
+      await updateUserToPro(currentUser.uid, method, subscriptionId);
       toast({
         title: t('upgradeSuccessTitle', 'Upgrade Successful!'),
         description: t('upgradeSuccessDescription', 'Welcome to World AI PRO! Your new features are now active.'),
@@ -166,7 +167,8 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [currentUser, onOpenChange, t, toast]);
+
 
   const handleLoginRedirect = useCallback(() => {
     toast({
@@ -181,27 +183,38 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   useEffect(() => {
     if (paymentMethod === 'paypal' && open && isPaypalSDKReady && window.paypal && !isProcessing) {
       const paypalButtonContainer = document.getElementById('paypal-button-container');
+      const PAYPAL_PLAN_ID = process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID;
+
+      if (!PAYPAL_PLAN_ID) {
+        setError("PayPal Plan ID is not configured. Please contact support.");
+        console.error("PayPal Plan ID environment variable (NEXT_PUBLIC_PAYPAL_PLAN_ID) is not set.");
+        return;
+      }
+      
       if (paypalButtonContainer) {
         paypalButtonContainer.innerHTML = ''; // Clear previous instances
         try {
             window.paypal.Buttons({
-              style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'pay' },
-              createOrder: (data: any, actions: any) => {
-                if (!currentUser) { handleLoginRedirect(); return Promise.reject(new Error("User not logged in")); }
-                return actions.order.create({
-                  purchase_units: [{ amount: { value: '1.00' } }]
+              style: { shape: 'pill', color: 'black', layout: 'vertical', label: 'subscribe' },
+              createSubscription: (data: any, actions: any) => {
+                if (!currentUser) { 
+                  handleLoginRedirect(); 
+                  return Promise.reject(new Error("User not logged in")); 
+                }
+                return actions.subscription.create({
+                  plan_id: PAYPAL_PLAN_ID
                 });
               },
               onApprove: (data: any, actions: any) => {
                 setIsProcessing(true);
                 setError('');
-                return actions.order.capture().then(() => {
-                    handleSuccess('paypal');
-                });
+                // The data.subscriptionID is provided by PayPal on success
+                return handleSuccess('paypal', data.subscriptionID);
               },
               onError: (err: any) => {
                 console.error("PayPal button error:", err);
                 setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
+                setIsProcessing(false);
               }
             }).render('#paypal-button-container');
         } catch (e) {
@@ -210,7 +223,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         }
       }
     }
-  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing, handleLoginRedirect, t]);
+  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing, handleLoginRedirect, t, handleSuccess]);
   
   const proBenefits = [
     t('proBenefit1', "Full access to all AI tools & posts"),
@@ -273,7 +286,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
             <div className="min-h-[120px] flex flex-col justify-center">
               {paymentMethod === 'paypal' && (
                 <div id="paypal-button-container" key="paypal-container">
-                  {!isPaypalSDKReady && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
+                  {(!isPaypalSDKReady || !process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID) && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
                 </div>
               )}
               {paymentMethod === 'stripe' && stripePromise && (
