@@ -44,25 +44,19 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   
   useEffect(() => {
     if (open) {
-      // Check if the script is already loaded
       if (window.paypal) {
         setIsPaypalSDKReady(true);
         return;
       }
-
-      // If not, poll for it
       const interval = setInterval(() => {
         if (window.paypal) {
           setIsPaypalSDKReady(true);
           clearInterval(interval);
         }
       }, 500);
-
-      // Cleanup on component unmount or when dialog closes
       return () => clearInterval(interval);
     }
   }, [open]);
-
 
   const handleSuccess = useCallback(async (method: 'paypal', subscriptionId?: string) => {
     if (!currentUser) return;
@@ -110,7 +104,12 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         paypalButtonContainer.innerHTML = ''; // Clear previous instances
         try {
             window.paypal.Buttons({
-              style: { shape: 'pill', color: 'black', layout: 'vertical', label: 'subscribe' },
+              style: {
+                  shape: 'pill',
+                  color: 'black',
+                  layout: 'vertical',
+                  label: 'subscribe'
+              },
               createSubscription: (data: any, actions: any) => {
                 if (!currentUser) { 
                   handleLoginRedirect(); 
@@ -175,8 +174,6 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
           </div>
           
           <div className="border-t pt-4">
-            <h3 className="text-lg font-semibold text-center mb-4">{t('paymentMethodsTitle', "Choose Your Payment Method")}</h3>
-            
             <p className="text-center text-sm text-muted-foreground mb-4">
               {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
             </p>

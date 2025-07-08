@@ -4,6 +4,10 @@ import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
+// This file is no longer used for the PayPal-only flow,
+// but is kept to avoid breaking changes if Stripe is re-introduced.
+// The logic below is for Stripe integration.
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
 });
