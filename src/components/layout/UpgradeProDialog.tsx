@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +17,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Star, CheckCircle, XCircle, Loader2, CreditCard } from 'lucide-react';
-import Script from 'next/script';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { updateUserToPro } from '@/lib/firebase';
@@ -42,10 +41,7 @@ interface UpgradeProDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const PAYPAL_CLIENT_ID = "AVN5icg5lMBN8lqsNdEBdvk2oBbNld31kjvJxpbG3cN8voCELmkA2qoUV6TlI9GdxyzKndAgLj2tKUih";
-const PAYPAL_PLAN_ID = "P-7W9736313L373491LNBTLTLI";
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-
 const stripePromise = STRIPE_PUBLISHABLE_KEY ? loadStripe(STRIPE_PUBLISHABLE_KEY) : null;
 
 const PayPalIcon = () => (
@@ -60,16 +56,24 @@ const StripeCheckoutForm = ({ onSuccess, onError, setProcessing }: { onSuccess: 
   const elements = useElements();
   const { t } = useLanguage();
 
+  const handleCardChange = (event: any) => {
+    if (event.error) {
+      onError(event.error.message);
+    } else {
+      onError('');
+    }
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setProcessing(true);
-    onError('');
-
+    
     if (!stripe || !elements) {
       onError(t('errorDefaultDesc', 'Payment system is not ready.'));
-      setProcessing(false);
       return;
     }
+    
+    setProcessing(true);
+    onError('');
 
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) {
@@ -78,19 +82,21 @@ const StripeCheckoutForm = ({ onSuccess, onError, setProcessing }: { onSuccess: 
       return;
     }
     
-    const { clientSecret } = await fetch('/api/create-payment-intent', {
+    const intentResponse = await fetch('/api/create-payment-intent', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ amount: 100, currency: 'usd' }), // $1.00 USD
-    }).then(res => res.json());
+    });
 
-    if (!clientSecret) {
-      onError(t('errorDefaultDesc', 'Could not initialize payment.'));
+    const intentData = await intentResponse.json();
+
+    if (!intentResponse.ok || !intentData.clientSecret) {
+      onError(intentData.error || t('errorDefaultDesc', 'Could not initialize payment.'));
       setProcessing(false);
       return;
     }
     
-    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(intentData.clientSecret, {
       payment_method: { card: cardElement },
     });
 
@@ -99,15 +105,17 @@ const StripeCheckoutForm = ({ onSuccess, onError, setProcessing }: { onSuccess: 
       setProcessing(false);
     } else if (paymentIntent?.status === 'succeeded') {
       onSuccess();
+    } else {
+      setProcessing(false);
     }
   };
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="p-3 border rounded-md">
-        <CardElement options={{style: {base: {fontSize: '16px'}}}} />
+        <CardElement onChange={handleCardChange} options={{style: {base: {fontSize: '16px'}}}} />
       </div>
-      <Button type="submit" disabled={!stripe} className="w-full bg-primary hover:bg-primary/90">
+      <Button type="submit" disabled={!stripe || !elements} className="w-full bg-primary hover:bg-primary/90">
         {t('upgradeNowButton', 'Pay $1.00')}
       </Button>
     </form>
@@ -116,7 +124,7 @@ const StripeCheckoutForm = ({ onSuccess, onError, setProcessing }: { onSuccess: 
 
 const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange }) => {
   const { t } = useLanguage();
-  const { currentUser, updateUserProfileInFirestore } = useAuth();
+  const { currentUser } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -125,10 +133,17 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   const [error, setError] = useState('');
   const [isPaypalSDKReady, setIsPaypalSDKReady] = useState(false);
   
-  const handleSuccess = async (method: 'paypal' | 'stripe', subscriptionId?: string) => {
+  useEffect(() => {
+    // Check if paypal is on window to set SDK ready status
+    if (window.paypal) {
+        setIsPaypalSDKReady(true);
+    }
+  }, [open]);
+
+  const handleSuccess = async (method: 'paypal' | 'stripe') => {
     if (!currentUser) return;
     try {
-      await updateUserToPro(currentUser.uid, method, subscriptionId);
+      await updateUserToPro(currentUser.uid, method, undefined);
       toast({
         title: t('upgradeSuccessTitle', 'Upgrade Successful!'),
         description: t('upgradeSuccessDescription', 'Welcome to World AI PRO! Your new features are now active.'),
@@ -143,7 +158,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     }
   };
 
-  const handleLoginRedirect = () => {
+  const handleLoginRedirect = useCallback(() => {
     toast({
       title: t('loginRequiredForProTitle', 'Login Required'),
       description: t('loginRequiredForProDescription', 'Please log in or create an account to upgrade to PRO.'),
@@ -151,7 +166,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     });
     onOpenChange(false);
     router.push('/login');
-  };
+  }, [onOpenChange, router, t, toast]);
 
   useEffect(() => {
     if (paymentMethod === 'paypal' && open && isPaypalSDKReady && window.paypal && !isProcessing) {
@@ -159,13 +174,19 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
       if (paypalButtonContainer) {
         paypalButtonContainer.innerHTML = ''; // Clear previous instances
         window.paypal.Buttons({
-          style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'subscribe' },
-          createSubscription: (data: any, actions: any) => actions.subscription.create({ plan_id: PAYPAL_PLAN_ID }),
+          style: { shape: 'pill', color: 'gold', layout: 'vertical', label: 'pay' },
+          createOrder: (data: any, actions: any) => {
+            return actions.order.create({
+              purchase_units: [{ amount: { value: '1.00' } }]
+            });
+          },
           onApprove: (data: any, actions: any) => {
-            if (!currentUser) { handleLoginRedirect(); return; }
+            if (!currentUser) { handleLoginRedirect(); return Promise.reject(new Error("User not logged in")); }
             setIsProcessing(true);
             setError('');
-            handleSuccess('paypal', data.subscriptionID);
+            return actions.order.capture().then(() => {
+                handleSuccess('paypal');
+            });
           },
           onError: (err: any) => {
             console.error("PayPal button error:", err);
@@ -174,7 +195,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         }).render('#paypal-button-container');
       }
     }
-  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing]);
+  }, [open, isPaypalSDKReady, paymentMethod, currentUser, isProcessing, handleLoginRedirect]);
   
   const proBenefits = [
     t('proBenefit1', "Full access to all AI tools & posts"),
@@ -183,104 +204,96 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   ];
 
   return (
-    <>
-      <Script 
-        src={`https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&vault=true&intent=subscription`}
-        onReady={() => setIsPaypalSDKReady(true)}
-        data-sdk-integration-source="button-factory"
-      />
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center text-2xl font-headline text-primary">
-              <Star className="mr-2 h-6 w-6 text-yellow-400 fill-yellow-400" />
-              {t('upgradeToProTitleDialog', "Upgrade to World AI PRO")}
-            </DialogTitle>
-            <DialogDescription className="pt-2">
-              {t('upgradeToProDescriptionDialog', "Unlock exclusive features, enhanced support, and an ad-free experience.")}
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center text-2xl font-headline text-primary">
+            <Star className="mr-2 h-6 w-6 text-yellow-400 fill-yellow-400" />
+            {t('upgradeToProTitleDialog', "Upgrade to World AI PRO")}
+          </DialogTitle>
+          <DialogDescription className="pt-2">
+            {t('upgradeToProDescriptionDialog', "Unlock exclusive features, enhanced support, and an ad-free experience.")}
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="relative py-4 space-y-4">
-            {isProcessing && (
-              <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
-                  <p className="text-sm text-muted-foreground">Processing your subscription...</p>
-              </div>
-            )}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-2">{t('upgradeToProBenefits', "PRO Benefits:")}</h3>
-              <ul className="list-disc list-inside space-y-1 text-sm text-foreground/80">
-                {proBenefits.map((benefit, index) => <li key={index}>{benefit}</li>)}
-              </ul>
+        <div className="relative py-4 space-y-4">
+          {isProcessing && (
+            <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
+                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
+                <p className="text-sm text-muted-foreground">{t('processingPayment', 'Processing your payment...')}</p>
             </div>
-
-            <div className="text-center my-4">
-              <p className="text-3xl font-bold text-primary">{t('upgradeToProPrice', "Just $1/month!")}</p>
-              <p className="text-xs text-muted-foreground">({t('cancelButton', "Billed monthly, cancel anytime")})</p>
-            </div>
-            
-            <div className="border-t pt-4">
-              <h3 className="text-lg font-semibold text-center mb-4">{t('paymentMethodsTitle', "Choose Your Payment Method")}</h3>
-              
-              <RadioGroup value={paymentMethod ?? ''} onValueChange={(value) => setPaymentMethod(value as any)} className="grid grid-cols-2 gap-4 mb-6">
-                <div>
-                  <RadioGroupItem value="stripe" id="r-card" className="peer sr-only" disabled={!stripePromise} />
-                  <Label htmlFor="r-card" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
-                    <CreditCard className="mb-3 h-6 w-6" />
-                    {t('creditCardLabel', 'Credit/Debit Card')}
-                  </Label>
-                </div>
-                <div>
-                  <RadioGroupItem value="paypal" id="r-paypal" className="peer sr-only" />
-                  <Label htmlFor="r-paypal" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <PayPalIcon />
-                    {t('paypalLabel', 'PayPal')}
-                  </Label>
-                </div>
-              </RadioGroup>
-
-              <div className="min-h-[100px] flex flex-col justify-center">
-                {paymentMethod === 'paypal' && (
-                  <div id="paypal-button-container" key="paypal-container">
-                    {!isPaypalSDKReady && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
-                  </div>
-                )}
-                {paymentMethod === 'stripe' && stripePromise && (
-                   <Elements stripe={stripePromise} key="stripe-container">
-                     <StripeCheckoutForm 
-                       setProcessing={setIsProcessing} 
-                       onError={setError} 
-                       onSuccess={() => handleSuccess('stripe')}
-                     />
-                   </Elements>
-                )}
-                {paymentMethod === 'stripe' && !stripePromise && (
-                  <p className='text-center text-sm text-destructive'>Stripe is not configured.</p>
-                )}
-              </div>
-              
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <XCircle className="h-4 w-4"/>
-                  <AlertTitle>Payment Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-            </div>
+          )}
+          <div>
+            <h3 className="text-sm font-medium text-muted-foreground mb-2">{t('upgradeToProBenefits', "PRO Benefits:")}</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-foreground/80">
+              {proBenefits.map((benefit, index) => <li key={index}>{benefit}</li>)}
+            </ul>
           </div>
 
-          <DialogFooter className="sm:justify-end">
-            <DialogClose asChild>
-              <Button type="button" variant="ghost" disabled={isProcessing}>
-                {t('cancelButton', "Cancel")}
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+          <div className="text-center my-4">
+            <p className="text-3xl font-bold text-primary">{t('upgradeToProPrice', "Just $1.00!")}</p>
+            <p className="text-xs text-muted-foreground">({t('oneTimePaymentLabel', "One-time payment")})</p>
+          </div>
+          
+          <div className="border-t pt-4">
+            <h3 className="text-lg font-semibold text-center mb-4">{t('paymentMethodsTitle', "Choose Your Payment Method")}</h3>
+            
+            <RadioGroup value={paymentMethod ?? ''} onValueChange={(value) => setPaymentMethod(value as any)} className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <RadioGroupItem value="stripe" id="r-card" className="peer sr-only" disabled={!stripePromise} />
+                <Label htmlFor="r-card" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+                  <CreditCard className="mb-3 h-6 w-6" />
+                  {t('creditCardLabel', 'Credit/Debit Card')}
+                </Label>
+              </div>
+              <div>
+                <RadioGroupItem value="paypal" id="r-paypal" className="peer sr-only" disabled={!isPaypalSDKReady} />
+                <Label htmlFor="r-paypal" className="flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50">
+                  <PayPalIcon />
+                  {t('paypalLabel', 'PayPal')}
+                </Label>
+              </div>
+            </RadioGroup>
+
+            <div className="min-h-[120px] flex flex-col justify-center">
+              {paymentMethod === 'paypal' && (
+                <div id="paypal-button-container" key="paypal-container">
+                  {!isPaypalSDKReady && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
+                </div>
+              )}
+              {paymentMethod === 'stripe' && stripePromise && (
+                 <Elements stripe={stripePromise} key="stripe-container">
+                   <StripeCheckoutForm 
+                     setProcessing={setIsProcessing} 
+                     onError={setError} 
+                     onSuccess={() => handleSuccess('stripe')}
+                   />
+                 </Elements>
+              )}
+              {paymentMethod === 'stripe' && !stripePromise && (
+                <p className='text-center text-sm text-destructive'>Stripe is not configured.</p>
+              )}
+            </div>
+            
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <XCircle className="h-4 w-4"/>
+                <AlertTitle>{t('paymentErrorTitle', 'Payment Error')}</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+
+        <DialogFooter className="sm:justify-end">
+          <DialogClose asChild>
+            <Button type="button" variant="ghost" disabled={isProcessing}>
+              {t('cancelButton', "Cancel")}
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
-
 export default UpgradeProDialog;

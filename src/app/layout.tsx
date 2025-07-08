@@ -11,6 +11,7 @@ import { ChatProvider } from '@/contexts/ChatContext';
 import ChatElements from '@/components/layout/ChatElements'; 
 import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
+import Script from 'next/script';
 
 
 export const metadata: Metadata = {
@@ -49,6 +50,10 @@ export default function RootLayout({
             </ChatProvider>
           </AuthProvider>
         </LanguageProvider>
+        <Script 
+          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&currency=USD`}
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );
