@@ -106,7 +106,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
             window.paypal.Buttons({
               style: {
                   shape: 'pill',
-                  color: 'black',
+                  color: 'gold',
                   layout: 'vertical',
                   label: 'subscribe'
               },
