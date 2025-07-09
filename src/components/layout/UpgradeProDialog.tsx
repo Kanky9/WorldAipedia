@@ -32,6 +32,8 @@ interface UpgradeProDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const PAYPAL_CONTAINER_ID = 'paypal-button-container-P-7W9736313L373491LNBTLTLI';
+
 const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange }) => {
   const { t } = useLanguage();
   const { currentUser } = useAuth();
@@ -44,6 +46,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   
   useEffect(() => {
     if (open) {
+      setError(''); // Reset error on open
       if (window.paypal) {
         setIsPaypalSDKReady(true);
         return;
@@ -91,7 +94,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
   useEffect(() => {
     if (open && isPaypalSDKReady && window.paypal && !isProcessing) {
-      const paypalButtonContainer = document.getElementById('paypal-button-container');
+      const paypalButtonContainer = document.getElementById(PAYPAL_CONTAINER_ID);
       const PAYPAL_PLAN_ID = process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID;
 
       if (!PAYPAL_PLAN_ID) {
@@ -127,7 +130,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
                 setIsProcessing(false);
               }
-            }).render('#paypal-button-container');
+            }).render(`#${PAYPAL_CONTAINER_ID}`);
         } catch (e) {
             console.error("Failed to render PayPal buttons", e);
             setError(t('paymentErrorTitle', "Could not render PayPal buttons."));
@@ -178,7 +181,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
               {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
             </p>
 
-            <div id="paypal-button-container" className="min-h-[120px] flex flex-col justify-center">
+            <div id={PAYPAL_CONTAINER_ID} className="min-h-[120px] flex flex-col justify-center">
                 {(!isPaypalSDKReady || !process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID) && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
             </div>
             
