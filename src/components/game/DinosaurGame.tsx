@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { useChat } from '@/contexts/ChatContext';
 import './DinosaurGame.css';
+import { cn } from '@/lib/utils';
 
 // Base dimensions and physics for scaling
 const BASE_GAME_WIDTH = 600;
@@ -315,6 +316,28 @@ export default function DinosaurGame() {
     setMascotAdHocMessages([]);
   };
 
+  const getRankClass = (index: number) => {
+    switch (index) {
+        case 0: return 'rank-top rank-top-1';
+        case 1: return 'rank-top rank-top-2';
+        case 2: return 'rank-top rank-top-3';
+        case 3:
+        case 4: return 'rank-top-4-5';
+        default: return '';
+    }
+  };
+
+  const getRankIcon = (index: number) => {
+      if (index < 3) {
+          let color = '';
+          if (index === 0) color = 'text-yellow-400';
+          if (index === 1) color = 'text-gray-400';
+          if (index === 2) color = 'text-orange-400';
+          return <Trophy className={cn("h-4 w-4", color)} />;
+      }
+      return null;
+  }
+
   return (
     <section className="lace-jump-game-container" aria-labelledby="lace-jump-game-title">
       <h2 id="lace-jump-game-title" className="text-2xl font-headline text-primary mb-4">{t('laceJumpGameTitle', "Lace Jump")}</h2>
@@ -388,7 +411,7 @@ export default function DinosaurGame() {
       </Button>
 
       <Dialog open={showRanking} onOpenChange={(open) => !open && handleCloseRanking()}>
-        <DialogContent className="sm:max-w-md lace-jump-ranking-modal-content">
+        <DialogContent className="sm:max-w-lg lace-jump-ranking-modal-content">
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Trophy className="mr-2 h-5 w-5 text-primary" />
@@ -405,8 +428,11 @@ export default function DinosaurGame() {
           ) : rankingScores.length > 0 ? (
             <ul className="lace-jump-ranking-list">
               {rankingScores.map((entry, index) => (
-                <li key={entry.id}>
-                  <span className="rank-position">{index + 1}.</span>
+                <li key={entry.id} className={cn(getRankClass(index))}>
+                  <span className="rank-position">
+                    {getRankIcon(index)}
+                    {index + 1}.
+                  </span>
                   <span className="rank-username">{entry.username}</span>
                   <span className="rank-score">{entry.score}</span>
                 </li>

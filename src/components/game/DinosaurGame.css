@@ -137,8 +137,9 @@
   z-index: 0;
 }
 
+/* Ranking Modal Styles */
 .lace-jump-ranking-modal-content {
-  max-height: 70vh;
+  max-height: 80vh;
   overflow-y: auto;
 }
 
@@ -146,35 +147,85 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .lace-jump-ranking-list li {
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0.25rem;
-  border-bottom: 1px solid hsl(var(--border));
-  font-size: 0.9rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  transition: all 0.2s ease-in-out;
 }
 
-.lace-jump-ranking-list li:last-child {
-  border-bottom: none;
+.lace-jump-ranking-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px hsla(var(--foreground), 0.08);
+  border-color: hsl(var(--primary) / 0.5);
 }
 
 .lace-jump-ranking-list .rank-position {
   font-weight: bold;
+  font-size: 1.1rem;
   color: hsl(var(--primary));
-  margin-right: 0.75rem;
-  min-width: 25px;
+  margin-right: 1rem;
+  min-width: 40px;
   text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
+
 .lace-jump-ranking-list .rank-username {
   flex-grow: 1;
+  font-size: 1rem;
   color: hsl(var(--foreground));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 .lace-jump-ranking-list .rank-score {
   font-weight: bold;
+  font-size: 1.1rem;
   color: hsl(var(--accent));
 }
+
+
+/* Highlighting for top ranks */
+.lace-jump-ranking-list li.rank-top {
+  border-width: 2px;
+  position: relative;
+}
+
+.lace-jump-ranking-list li.rank-top-1 {
+  border-color: #FFD700;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(51 100% 85% / 0.15) 100%);
+  box-shadow: 0 0 12px 2px hsl(51 100% 50% / 0.2);
+}
+
+.lace-jump-ranking-list li.rank-top-2 {
+  border-color: #C0C0C0;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(0 0% 75% / 0.15) 100%);
+  box-shadow: 0 0 10px 2px hsl(0 0% 75% / 0.2);
+}
+
+.lace-jump-ranking-list li.rank-top-3 {
+  border-color: #CD7F32;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(29 56% 50% / 0.15) 100%);
+  box-shadow: 0 0 8px 2px hsl(29 56% 40% / 0.2);
+}
+
+.lace-jump-ranking-list li.rank-top-4-5 {
+  border-color: hsl(var(--primary) / 0.7);
+  background: hsl(var(--primary) / 0.05);
+}
+
 
 @media (max-width: 640px) {
   .lace-jump-game-container {
