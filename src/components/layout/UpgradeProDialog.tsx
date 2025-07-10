@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from "@/hooks/use-toast";
 import { Star, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { updateUserToPro } from '@/lib/firebase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

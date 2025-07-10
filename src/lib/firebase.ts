@@ -254,7 +254,7 @@ export const getDinoGameTopHighScores = async (count: number = 100): Promise<Gam
 };
 
 // PRO Subscription
-export const updateUserToPro = async (uid: string, method: 'paypal' | 'stripe', subscriptionId?: string) => {
+export const updateUserToPro = async (uid: string, method: 'paypal', subscriptionId?: string) => {
   const userRef = doc(db, 'users', uid);
   const subRef = doc(db, 'users', uid, 'subscription', 'current');
   
