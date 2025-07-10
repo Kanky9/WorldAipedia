@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { usePathname } from 'next/navigation';
 
 export default function FloatingChatButton() {
+  
   const { openChat } = useChat();
   const { t } = useLanguage();
   const pathname = usePathname();
