@@ -91,30 +91,33 @@ export default function AccountPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Card className="md:col-span-1 shadow-lg">
-          <CardHeader className="items-center text-center">
-            <Avatar className="h-24 w-24 mb-3 border-2 border-primary">
-              {currentUser.photoURL ? (
-                <AvatarImage src={currentUser.photoURL} alt={currentUser.username || currentUser.displayName || 'User'} data-ai-hint="user profile image"/>
-              ) : (
-                <AvatarFallback className="text-3xl bg-muted text-muted-foreground">
-                  {(currentUser.username || currentUser.displayName || 'U').substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              )}
-            </Avatar>
-             <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: t('profileUpdateSimulated', "Profile picture change via Gravatar/Google (simulated).")})}>
-                <Pencil className="mr-1.5 h-3 w-3"/> {t('changeProfilePictureButton', 'Change Picture')}
-            </Button>
-            <CardTitle className="mt-2">{currentUser.username || currentUser.displayName}</CardTitle>
-            <CardDescription>{currentUser.email}</CardDescription>
-            {currentUser.isSubscribed && (
-              <Badge className="mt-2 bg-primary text-primary-foreground"><Star className="mr-1.5 h-3.5 w-3.5"/> {t('proMemberLabel', 'PRO Member')}</Badge>
-            )}
-          </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
-            <p>{t('memberSinceLabel', 'Member since')}: {formatMemberSince(currentUser.memberSince)}</p>
-          </CardContent>
-        </Card>
+        <div className="md:col-span-1 space-y-8">
+            <Card className="shadow-lg">
+              <CardHeader className="items-center text-center">
+                <Avatar className="h-24 w-24 mb-3 border-2 border-primary">
+                  {currentUser.photoURL ? (
+                    <AvatarImage src={currentUser.photoURL} alt={currentUser.username || currentUser.displayName || 'User'} data-ai-hint="user profile image"/>
+                  ) : (
+                    <AvatarFallback className="text-3xl bg-muted text-muted-foreground">
+                      {(currentUser.username || currentUser.displayName || 'U').substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                 <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: t('profileUpdateSimulated', "Profile picture change via Gravatar/Google (simulated).")})}>
+                    <Pencil className="mr-1.5 h-3 w-3"/> {t('changeProfilePictureButton', 'Change Picture')}
+                </Button>
+                <CardTitle className="mt-2">{currentUser.username || currentUser.displayName}</CardTitle>
+                <CardDescription>{currentUser.email}</CardDescription>
+                {currentUser.isSubscribed && (
+                  <Badge className="mt-2 bg-primary text-primary-foreground"><Star className="mr-1.5 h-3.5 w-3.5"/> {t('proMemberLabel', 'PRO Member')}</Badge>
+                )}
+              </CardHeader>
+              <CardContent className="text-sm text-muted-foreground text-center">
+                <p>{t('memberSinceLabel', 'Member since')}: {formatMemberSince(currentUser.memberSince)}</p>
+              </CardContent>
+            </Card>
+        </div>
+
 
         <div className="md:col-span-2 space-y-8">
           <Card className="shadow-lg">
