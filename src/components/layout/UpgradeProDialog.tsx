@@ -61,12 +61,12 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     }
   }, [open]);
 
-  const handleSuccess = useCallback(async (method: 'paypal', subscriptionId?: string) => {
+  const handleSuccess = useCallback(async (subscriptionId?: string) => {
     if (!currentUser) return;
     setIsProcessing(true);
     setError('');
     try {
-      await updateUserToPro(currentUser.uid, method, subscriptionId);
+      await updateUserToPro(currentUser.uid, 'paypal', subscriptionId);
       toast({
         title: t('upgradeSuccessTitle', 'Upgrade Successful!'),
         description: t('upgradeSuccessDescription', 'Welcome to World AI PRO! Your new features are now active.'),
@@ -123,7 +123,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 });
               },
               onApprove: (data: any, actions: any) => {
-                return handleSuccess('paypal', data.subscriptionID);
+                return handleSuccess(data.subscriptionID);
               },
               onError: (err: any) => {
                 console.error("PayPal button error:", err);
