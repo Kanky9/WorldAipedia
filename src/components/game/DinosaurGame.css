@@ -73,7 +73,7 @@
   margin-bottom: 0.5rem;
   text-align: center;
   /* Fix for flickering score */
-  min-width: 150px; /* Give it a stable width */
+  min-width: 200px; /* Give it a stable width */
   padding: 0.25rem 0.5rem; /* Add some padding */
   border-radius: var(--radius);
   background-color: hsl(var(--muted)/0.5); /* Add a subtle background */
