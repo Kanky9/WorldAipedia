@@ -59,14 +59,16 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
         text: text.trim(),
       };
 
+      let imageUrl;
       if (image) {
         const imageRef = storageRef(storage, `pro-posts/${currentUser.uid}/${Date.now()}`);
         await uploadString(imageRef, image, 'data_url');
-        postData.imageUrl = await getDownloadURL(imageRef);
+        imageUrl = await getDownloadURL(imageRef);
       }
       
       const finalPostData = {
         ...postData,
+        ...(imageUrl && { imageUrl: imageUrl }), // Conditionally add imageUrl
         likes: [],
         likeCount: 0,
         commentCount: 0,
@@ -148,5 +150,3 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
     </Dialog>
   );
 }
-
-    
