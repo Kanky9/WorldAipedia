@@ -219,13 +219,19 @@ export default function PublicationsPage() {
 
   useEffect(() => {
     if (loading) return;
-    if (!currentUser) return; // Wait for auth state
+    if (!currentUser) {
+        setIsLoadingPosts(false); // Not logged in, so not loading posts.
+        return;
+    }
 
     const q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const fetchedPosts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProPost));
       setPosts(fetchedPosts);
       setIsLoadingPosts(false);
+    }, (error) => {
+        console.error("Error fetching publications:", error);
+        setIsLoadingPosts(false);
     });
 
     return () => unsubscribe();
@@ -280,4 +286,3 @@ export default function PublicationsPage() {
     </div>
   );
 }
-
