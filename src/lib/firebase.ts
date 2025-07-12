@@ -304,7 +304,7 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
   });
 };
 
-// Follow System
+// Follow System & User Search
 export const followUser = async (currentUserId: string, targetUserId: string) => {
     const batch = writeBatch(db);
     const currentUserRef = doc(db, 'users', currentUserId);
@@ -337,7 +337,24 @@ export const getUsersByIds = async (uids: string[]): Promise<User[]> => {
 
 export const getTopUsersByFollowers = async (count: number = 7): Promise<User[]> => {
     const usersRef = collection(db, 'users');
-    const q = query(usersRef, orderBy('followers', 'desc'), limit(count));
+    // Note: Firestore requires a composite index for this query.
+    // The error in the console will provide a link to create it.
+    const q = query(usersRef, orderBy('followers.length', 'desc'), limit(count));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as User));
+};
+
+export const searchUsersByUsername = async (searchText: string): Promise<User[]> => {
+    if (!searchText.trim()) return [];
+    const usersRef = collection(db, 'users');
+    // Create a query that looks for usernames that start with the search text.
+    // The '\uf8ff' character is a high-point unicode character that acts as a limit for the query.
+    const q = query(
+        usersRef,
+        where('username', '>=', searchText),
+        where('username', '<', searchText + '\uf8ff'),
+        limit(10)
+    );
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as User));
 };
@@ -376,4 +393,3 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
-

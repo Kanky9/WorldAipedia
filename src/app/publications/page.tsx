@@ -24,7 +24,7 @@ import {
   ref as storageRef,
   deleteObject as deleteFirebaseStorageObject,
 } from 'firebase/storage';
-import { db, storage, deletePublicationFromFirestore, getUsersByIds, getTopUsersByFollowers, followUser, unfollowUser } from '@/lib/firebase';
+import { db, storage, deletePublicationFromFirestore } from '@/lib/firebase';
 import type { ProPost, ProComment, ProReply, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -46,6 +46,7 @@ import {
 import CreatePublicationDialog from '@/components/publications/CreatePublicationDialog';
 import CommentSection from '@/components/publications/CommentSection';
 import { cn } from '@/lib/utils';
+import UserSearch from '@/components/publications/UserSearch';
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
@@ -94,9 +95,9 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
         )}
       </CardHeader>
       <CardContent className="p-4 pt-0">
-        {post.text && <p className="whitespace-pre-wrap mb-4">{post.text}</p>}
+        {post.text && <p className="whitespace-pre-wrap">{post.text}</p>}
         {post.imageUrl && (
-          <div className="relative aspect-video w-full rounded-lg overflow-hidden">
+          <div className="mt-4 relative aspect-video w-full rounded-lg overflow-hidden">
             <Image src={post.imageUrl} alt="Post image" layout="fill" objectFit="cover" data-ai-hint={post.imageHint || "publication image"} />
           </div>
         )}
@@ -114,97 +115,6 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
       {showComments && <CommentSection postId={post.id} postAuthorId={post.authorId} />}
     </Card>
   );
-}
-
-function RightSidebar({ currentUser, onFollowChange }: { currentUser: User | null; onFollowChange: () => void; }) {
-    const [following, setFollowing] = useState<User[]>([]);
-    const [suggested, setSuggested] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
-    
-    const [showAllFollowing, setShowAllFollowing] = useState(false);
-    const [showAllSuggested, setShowAllSuggested] = useState(false);
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                if(currentUser?.following && currentUser.following.length > 0) {
-                    const followingUsers = await getUsersByIds(currentUser.following);
-                    setFollowing(followingUsers);
-                }
-                const suggestedUsers = await getTopUsersByFollowers(20);
-                setSuggested(suggestedUsers);
-            } catch (err) {
-                console.error("Error fetching sidebar data:", err);
-            }
-            setLoading(false);
-        };
-        fetchData();
-    }, [currentUser]);
-
-    const handleFollowToggle = async (targetUserId: string, isFollowing: boolean) => {
-        if (!currentUser) return;
-        if (isFollowing) {
-            await unfollowUser(currentUser.uid, targetUserId);
-        } else {
-            await followUser(currentUser.uid, targetUserId);
-        }
-        onFollowChange(); // Notify parent to refetch data
-    };
-    
-    const UserRow = ({ user }: { user: User }) => {
-        const isFollowing = currentUser?.following?.includes(user.uid) || false;
-        if (user.uid === currentUser?.uid) return null;
-
-        return (
-            <div className="flex items-center gap-2 py-1">
-                <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.photoURL || undefined} />
-                    <AvatarFallback>{user.username?.substring(0, 1) || 'U'}</AvatarFallback>
-                </Avatar>
-                <span className="flex-1 text-sm truncate">{user.username}</span>
-                <Button size="sm" variant={isFollowing ? 'secondary' : 'outline'} onClick={() => handleFollowToggle(user.uid, isFollowing)}>
-                    {isFollowing ? <Check className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
-                </Button>
-            </div>
-        );
-    };
-
-    const followingToShow = showAllFollowing ? following : following.slice(0, 5);
-    const suggestedToShow = showAllSuggested ? suggested : suggested.slice(0, 7);
-
-    if (loading) return <Loader2 className="h-6 w-6 animate-spin"/>;
-    
-    return (
-        <div className="hidden lg:block sticky top-24 self-start space-y-6">
-            {following.length > 0 && (
-                <Card>
-                    <CardHeader><CardTitle className="text-base">Following</CardTitle></CardHeader>
-                    <CardContent className="space-y-2">
-                        {followingToShow.map(user => <UserRow key={user.uid} user={user} />)}
-                        {following.length > 5 && (
-                             <Button variant="link" size="sm" onClick={() => setShowAllFollowing(!showAllFollowing)}>
-                                {showAllFollowing ? 'Show Less' : 'Show More'} {showAllFollowing ? <ChevronUp className="h-4 w-4 ml-1"/> : <ChevronDown className="h-4 w-4 ml-1"/>}
-                             </Button>
-                        )}
-                    </CardContent>
-                </Card>
-            )}
-             {suggested.length > 0 && (
-                <Card>
-                    <CardHeader><CardTitle className="text-base">Suggested Users</CardTitle></CardHeader>
-                    <CardContent className="space-y-2">
-                        {suggestedToShow.map(user => <UserRow key={user.uid} user={user} />)}
-                        {suggested.length > 7 && (
-                             <Button variant="link" size="sm" onClick={() => setShowAllSuggested(!showAllSuggested)}>
-                                {showAllSuggested ? 'Show Less' : 'Show More'} {showAllSuggested ? <ChevronUp className="h-4 w-4 ml-1"/> : <ChevronDown className="h-4 w-4 ml-1"/>}
-                             </Button>
-                        )}
-                    </CardContent>
-                </Card>
-            )}
-        </div>
-    );
 }
 
 
@@ -300,30 +210,39 @@ export default function PublicationsPage() {
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-[240px_1fr_240px] gap-8">
+        <div className="relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8">
             <aside className="hidden lg:block sticky top-24 self-start">
                 <div className="flex flex-col gap-2 w-full">
                     <Button 
-                        variant={filter === 'all' ? 'default' : 'ghost'} 
+                        variant={filter === 'all' ? 'ghost' : 'ghost'} 
                         onClick={() => setFilter('all')} 
                         disabled={!isUserPro} 
-                        className={cn("w-full justify-start", filter === 'all' ? 'bg-primary/20 text-primary hover:bg-primary/30' : 'hover:bg-accent')}
+                        className={cn(
+                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
+                            filter === 'all' ? 'bg-primary/20 text-primary' : ''
+                        )}
                     >
                         <List className="mr-2 h-4 w-4"/> All
                     </Button>
                     <Button 
-                        variant={filter === 'mine' ? 'default' : 'ghost'} 
+                        variant={filter === 'mine' ? 'ghost' : 'ghost'} 
                         onClick={() => setFilter('mine')} 
                         disabled={!isUserPro} 
-                        className={cn("w-full justify-start", filter === 'mine' ? 'bg-primary/20 text-primary hover:bg-primary/30' : 'hover:bg-accent')}
+                        className={cn(
+                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
+                            filter === 'mine' ? 'bg-primary/20 text-primary' : ''
+                        )}
                     >
                         <UserIcon className="mr-2 h-4 w-4"/> My Publications
                     </Button>
                      <Button 
-                        variant={filter === 'liked' ? 'default' : 'ghost'} 
+                        variant={filter === 'liked' ? 'ghost' : 'ghost'} 
                         onClick={() => setFilter('liked')} 
                         disabled={!isUserPro} 
-                        className={cn("w-full justify-start", filter === 'liked' ? 'bg-primary/20 text-primary hover:bg-primary/30' : 'hover:bg-accent')}
+                        className={cn(
+                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
+                            filter === 'liked' ? 'bg-primary/20 text-primary' : ''
+                        )}
                      >
                         <Heart className="mr-2 h-4 w-4"/> My Likes
                     </Button>
@@ -349,7 +268,7 @@ export default function PublicationsPage() {
               )}
             </main>
             
-            {isUserPro && <RightSidebar currentUser={currentUser} onFollowChange={fetchAllPosts} />}
+            {isUserPro && <aside className="hidden lg:block sticky top-24 self-start"><UserSearch /></aside>}
             
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm col-span-full">
@@ -392,4 +311,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
