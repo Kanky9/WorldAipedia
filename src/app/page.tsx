@@ -12,7 +12,6 @@ import type { Post } from '@/lib/types';
 import { getAllPostsFromFirestore } from '@/lib/firebase';
 import DinosaurGame from '@/components/game/DinosaurGame'; // Import the game
 import ClientOnly from '@/components/layout/ClientOnly';
-import AdSenseUnit from '@/components/ads/AdSenseUnit';
 
 const MAX_POSTS_ON_HOMEPAGE = 9;
 
@@ -148,13 +147,6 @@ export default function HomePage() {
       <section className="container mx-auto py-8 animate-fadeInUp" style={{animationDelay: '0.4s'}}>
         <ClientOnly>
           <DinosaurGame />
-        </ClientOnly>
-      </section>
-
-      {/* AdSense Unit Section */}
-      <section className="container mx-auto py-4 animate-fadeInUp" style={{animationDelay: '0.6s'}}>
-        <ClientOnly>
-          <AdSenseUnit />
         </ClientOnly>
       </section>
     </div>
