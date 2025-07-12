@@ -31,6 +31,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8517722132136281"
+          crossOrigin="anonymous"
+          strategy="lazyOnload"
+        />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
@@ -50,11 +56,6 @@ export default function RootLayout({
             </ChatProvider>
           </AuthProvider>
         </LanguageProvider>
-        <Script 
-          src={`https://www.paypal.com/sdk/js?client-id=${process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID}&vault=true&intent=subscription`}
-          data-sdk-integration-source="button-factory"
-          strategy="lazyOnload"
-        />
       </body>
     </html>
   );
