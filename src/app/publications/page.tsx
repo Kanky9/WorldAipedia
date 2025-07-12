@@ -94,9 +94,9 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
         )}
       </CardHeader>
       <CardContent className="p-4 pt-0">
-        <p className="whitespace-pre-wrap">{post.text}</p>
+        <p className="whitespace-pre-wrap mb-4">{post.text}</p>
         {post.imageUrl && (
-          <div className="mt-4 relative aspect-video w-full rounded-lg overflow-hidden">
+          <div className="relative aspect-video w-full rounded-lg overflow-hidden">
             <Image src={post.imageUrl} alt="Post image" layout="fill" objectFit="cover" data-ai-hint={post.imageHint || "publication image"} />
           </div>
         )}
@@ -188,7 +188,7 @@ export default function PublicationsPage() {
         </div>
 
         <div className="relative">
-            <div className={cn("flex justify-between items-center mb-6 gap-4", !isUserPro && "blur-sm pointer-events-none")}>
+            <div className="flex justify-between items-center mb-6 gap-4">
                 <div className="flex gap-2">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro}>
                         <List className="mr-2 h-4 w-4"/> All
