@@ -111,8 +111,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container mx-auto animate-fadeInUp">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-headline font-semibold mb-6 md:mb-8 text-center text-primary/90">{t('featuredPostsTitle', 'Featured Posts')}</h2>
+      <section className="container mx-auto animate-fadeInUp pt-6">
         {isLoadingPosts ? (
           <div className="flex justify-center items-center py-10">
             <Loader2 className="h-10 w-10 animate-spin text-primary" />
