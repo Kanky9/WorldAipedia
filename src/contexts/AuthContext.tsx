@@ -20,6 +20,7 @@ import {
   updateDoc,
   Timestamp,
   type FirebaseUser as AuthFirebaseUser,
+  isUsernameTaken,
 } from '@/lib/firebase';
 import type { User } from '@/lib/types';
 import { useRouter } from 'next/navigation';
@@ -135,6 +136,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signUpWithEmailAndPassword = async (email: string, pass: string, username: string): Promise<User | null> => {
     setLoading(true);
+    
+    // Check if username is already taken
+    const usernameExists = await isUsernameTaken(username);
+    if (usernameExists) {
+        setLoading(false);
+        throw new Error("This username is already taken. Please choose another one.");
+    }
+
     try {
       const userCredential = await firebaseCreateUser(auth, email, pass);
       const firebaseUser = userCredential.user;

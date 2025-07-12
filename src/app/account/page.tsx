@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; 
 import type { Timestamp } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { getUsersByIds } from "@/lib/firebase";
+import { getUsersByIds, updateUsernameAcrossPublications } from "@/lib/firebase";
 import type { User as UserType } from "@/lib/types";
 
 export default function AccountPage() {
@@ -62,10 +62,14 @@ export default function AccountPage() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser || isUpdatingProfile) return;
+    if (!currentUser || isUpdatingProfile || !username.trim() || username.trim() === currentUser.username) return;
+    
     setIsUpdatingProfile(true);
     try {
       await updateUserProfileInFirestore(currentUser.uid, { username });
+      // After successfully updating the profile, propagate the username change.
+      await updateUsernameAcrossPublications(currentUser.uid, username);
+      
       toast({ title: t('profileUpdatedSuccessTitle', "Profile Updated"), description: t('profileUpdatedSuccessDesc', "Your profile has been successfully updated.")});
     } catch (error: any) {
       console.error("Profile update error:", error);
@@ -74,6 +78,7 @@ export default function AccountPage() {
       setIsUpdatingProfile(false);
     }
   };
+
 
   const handleCancelSubscription = () => {
     toast({ title: t('cancelSubscriptionSimulated', "Subscription cancellation (simulated).") });
@@ -169,7 +174,7 @@ export default function AccountPage() {
                     <Input id="email" type="email" value={email} readOnly disabled />
                   </div>
                 </div>
-                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile}>
+                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile || !username.trim() || username.trim() === currentUser.username}>
                   {isUpdatingProfile ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
                   {t('updateProfileButton', 'Update Profile')}
                 </Button>

@@ -304,7 +304,29 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
   });
 };
 
-// Follow System & User Search
+// Follow System, User Search, and Username Propagation
+export const isUsernameTaken = async (username: string): Promise<boolean> => {
+  const usersRef = collection(db, 'users');
+  const q = query(usersRef, where('username', '==', username), limit(1));
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty;
+};
+
+export const updateUsernameAcrossPublications = async (userId: string, newUsername: string) => {
+    const postsRef = collection(db, 'pro-posts');
+    const q = query(postsRef, where('authorId', '==', userId));
+    const querySnapshot = await getDocs(q);
+    
+    const batch = writeBatch(db);
+    querySnapshot.forEach(docSnap => {
+        const postRef = doc(db, 'pro-posts', docSnap.id);
+        batch.update(postRef, { authorName: newUsername });
+    });
+    
+    await batch.commit();
+};
+
+
 export const followUser = async (currentUserId: string, targetUserId: string) => {
     const batch = writeBatch(db);
     const currentUserRef = doc(db, 'users', currentUserId);
