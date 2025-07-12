@@ -195,14 +195,14 @@ export default function PublicationsPage() {
   
   return (
     <>
-      <div className="max-w-4xl mx-auto py-8">
+      <div className="py-8">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
 
-        <div className="relative flex gap-8">
-            <aside className="w-1/4">
+        <div className="relative flex justify-center gap-8">
+            <aside className="hidden md:block w-48 sticky top-24 self-start">
                 <div className="flex flex-col gap-2 items-start">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro} className="w-full justify-start">
                         <List className="mr-2 h-4 w-4"/> All
@@ -219,7 +219,7 @@ export default function PublicationsPage() {
                 </div>
             </aside>
 
-            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
+            <main className={cn("flex-1 space-y-6 max-w-2xl", !isUserPro && "blur-sm pointer-events-none")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
@@ -272,4 +272,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
