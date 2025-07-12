@@ -102,7 +102,7 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
         )}
       </CardContent>
       <CardFooter className="p-4 border-t flex justify-start gap-4">
-        <Button variant={hasLiked ? "default" : "ghost"} size="sm" onClick={handleLike} disabled={!currentUser}>
+        <Button variant="ghost" size="sm" onClick={handleLike} disabled={!currentUser} className={cn(hasLiked && "text-primary")}>
           <Heart className={`mr-2 h-4 w-4 ${hasLiked ? 'fill-current' : ''}`} />
           {post.likeCount}
         </Button>
@@ -203,25 +203,44 @@ export default function PublicationsPage() {
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
 
-        <div className="relative grid grid-cols-1 md:grid-cols-[1fr_2.5fr_1fr] lg:grid-cols-[1fr_2fr_1fr] gap-8">
-            <aside className="hidden md:block sticky top-24 self-start justify-self-start">
-                <div className="flex flex-col gap-2 items-start w-48">
-                    <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro} className="w-full justify-start">
+        <div className="relative grid grid-cols-1 md:grid-cols-[200px_1fr] lg:grid-cols-[240px_1fr] gap-8">
+            <aside className="hidden md:block sticky top-24 self-start">
+                <div className="flex flex-col gap-2 w-full">
+                    <Button 
+                        variant={filter === 'all' ? 'default' : 'ghost'} 
+                        onClick={() => setFilter('all')} 
+                        disabled={!isUserPro} 
+                        className={cn("w-full justify-start", filter === 'all' && 'bg-primary/20 text-primary hover:bg-primary/30')}
+                    >
                         <List className="mr-2 h-4 w-4"/> All
                     </Button>
-                    <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')} disabled={!isUserPro} className="w-full justify-start">
+                    <Button 
+                        variant={filter === 'mine' ? 'default' : 'ghost'} 
+                        onClick={() => setFilter('mine')} 
+                        disabled={!isUserPro} 
+                        className={cn("w-full justify-start", filter === 'mine' && 'bg-primary/20 text-primary hover:bg-primary/30')}
+                    >
                         <User className="mr-2 h-4 w-4"/> My Publications
                     </Button>
-                     <Button variant={filter === 'liked' ? 'default' : 'outline'} onClick={() => setFilter('liked')} disabled={!isUserPro} className="w-full justify-start">
+                     <Button 
+                        variant={filter === 'liked' ? 'default' : 'ghost'} 
+                        onClick={() => setFilter('liked')} 
+                        disabled={!isUserPro} 
+                        className={cn("w-full justify-start", filter === 'liked' && 'bg-primary/20 text-primary hover:bg-primary/30')}
+                     >
                         <Heart className="mr-2 h-4 w-4"/> My Likes
                     </Button>
-                    <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro} className="w-full justify-start mt-4">
+                    <Button 
+                        onClick={() => setIsCreateDialogOpen(true)} 
+                        disabled={!isUserPro} 
+                        className="w-full justify-start mt-4 bg-primary/20 text-primary hover:bg-primary/30"
+                    >
                         <PlusCircle className="mr-2 h-4 w-4"/> New Publication
                     </Button>
                 </div>
             </aside>
 
-            <main className={cn("flex-1 space-y-6 md:col-start-2", !isUserPro && "blur-sm pointer-events-none")}>
+            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
@@ -233,10 +252,8 @@ export default function PublicationsPage() {
               )}
             </main>
             
-            <div className="md:col-start-3"></div>
-            
             {!isUserPro && (
-                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm md:col-span-3">
+                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm">
                    <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
                    <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
                    {currentUser ? (
