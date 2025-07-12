@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2 } from "lucide-react";
+import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2, Users, UserCheck } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,9 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; 
 import type { Timestamp } from 'firebase/firestore';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import { getUsersByIds } from "@/lib/firebase";
+import type { User as UserType } from "@/lib/types";
 
 export default function AccountPage() {
   const { t, language } = useLanguage();
@@ -26,6 +29,10 @@ export default function AccountPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  
+  const [showFollowingDialog, setShowFollowingDialog] = useState(false);
+  const [followingList, setFollowingList] = useState<UserType[]>([]);
+  const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
 
 
   useEffect(() => {
@@ -37,6 +44,21 @@ export default function AccountPage() {
       setEmail(currentUser.email || '');
     }
   }, [currentUser, authLoading, router]);
+  
+  const handleShowFollowing = async () => {
+    if (!currentUser?.following || currentUser.following.length === 0) return;
+    setShowFollowingDialog(true);
+    setIsLoadingFollowing(true);
+    try {
+        const users = await getUsersByIds(currentUser.following);
+        setFollowingList(users);
+    } catch(err) {
+        console.error("Error fetching following list:", err);
+        toast({variant: "destructive", title: "Error", description: "Could not load following list."});
+    } finally {
+        setIsLoadingFollowing(false);
+    }
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +106,7 @@ export default function AccountPage() {
   }
 
   return (
+    <>
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-headline font-bold text-primary">{t('accountPageTitle', 'My Account')}</h1>
@@ -114,6 +137,16 @@ export default function AccountPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground text-center">
                 <p>{t('memberSinceLabel', 'Member since')}: {formatMemberSince(currentUser.memberSince)}</p>
+                <div className="flex justify-center gap-4 mt-4 text-foreground">
+                    <div className="text-center">
+                        <p className="font-bold text-lg">{currentUser.followers?.length || 0}</p>
+                        <p className="text-xs text-muted-foreground">Followers</p>
+                    </div>
+                    <button onClick={handleShowFollowing} className="text-center hover:bg-muted p-2 rounded-lg">
+                        <p className="font-bold text-lg">{currentUser.following?.length || 0}</p>
+                        <p className="text-xs text-muted-foreground">Following</p>
+                    </button>
+                </div>
               </CardContent>
             </Card>
         </div>
@@ -172,5 +205,32 @@ export default function AccountPage() {
         </div>
       </div>
     </div>
+    
+    <Dialog open={showFollowingDialog} onOpenChange={setShowFollowingDialog}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle className="flex items-center gap-2"><UserCheck/> Following</DialogTitle>
+                <DialogDescription>Users you are currently following.</DialogDescription>
+            </DialogHeader>
+            {isLoadingFollowing ? <Loader2 className="h-6 w-6 animate-spin mx-auto"/> : (
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {followingList.map(user => (
+                        <div key={user.uid} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted">
+                            <div className="flex items-center gap-3">
+                                <Avatar className="h-9 w-9">
+                                    <AvatarImage src={user.photoURL || undefined} />
+                                    <AvatarFallback>{user.username?.substring(0,1) || 'U'}</AvatarFallback>
+                                </Avatar>
+                                <span>{user.username}</span>
+                            </div>
+                            <Button variant="outline" size="sm">Unfollow</Button>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </DialogContent>
+    </Dialog>
+    </>
   );
 }
+

@@ -1,4 +1,5 @@
 
+
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -28,7 +29,10 @@ import {
   Timestamp,
   orderBy,
   serverTimestamp,
-  limit
+  limit,
+  writeBatch,
+  arrayUnion,
+  arrayRemove
 } from 'firebase/firestore';
 import {
   getStorage,
@@ -39,7 +43,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore, Book as BookType, ProPost } from './types';
+import type { Post as PostType, GameHighScore, Book as BookType, ProPost, User } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -300,6 +304,44 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
   });
 };
 
+// Follow System
+export const followUser = async (currentUserId: string, targetUserId: string) => {
+    const batch = writeBatch(db);
+    const currentUserRef = doc(db, 'users', currentUserId);
+    const targetUserRef = doc(db, 'users', targetUserId);
+
+    batch.update(currentUserRef, { following: arrayUnion(targetUserId) });
+    batch.update(targetUserRef, { followers: arrayUnion(currentUserId) });
+    
+    await batch.commit();
+};
+
+export const unfollowUser = async (currentUserId: string, targetUserId: string) => {
+    const batch = writeBatch(db);
+    const currentUserRef = doc(db, 'users', currentUserId);
+    const targetUserRef = doc(db, 'users', targetUserId);
+    
+    batch.update(currentUserRef, { following: arrayRemove(targetUserId) });
+    batch.update(targetUserRef, { followers: arrayRemove(currentUserId) });
+
+    await batch.commit();
+};
+
+export const getUsersByIds = async (uids: string[]): Promise<User[]> => {
+    if (uids.length === 0) return [];
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where('uid', 'in', uids));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as User));
+};
+
+export const getTopUsersByFollowers = async (count: number = 7): Promise<User[]> => {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, orderBy('followers', 'desc'), limit(count));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as User));
+};
+
 
 export {
   app,
@@ -334,3 +376,4 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
+

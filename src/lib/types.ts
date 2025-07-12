@@ -102,6 +102,8 @@ export interface User {
   subscriptionPlan?: string; // From Firestore
   paypalSubscriptionID?: string; // For PayPal integration
   isAdmin?: boolean; // Added for admin role
+  followers?: string[]; // Array of UIDs of users following this user
+  following?: string[]; // Array of UIDs of users this user is following
 }
 
 export interface UserComment {
