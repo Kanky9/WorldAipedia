@@ -64,26 +64,28 @@ function CreatePostForm() {
     setIsSubmitting(true);
 
     try {
-      let imageUrl: string | undefined;
-      if (image) {
-        const imageRef = storageRef(storage, `pro-posts/${currentUser.uid}/${Date.now()}`);
-        await uploadString(imageRef, image, 'data_url');
-        imageUrl = await getDownloadURL(imageRef);
-      }
-
-      const postData: Omit<ProPost, 'id'> = {
+      const postData: Omit<ProPost, 'id' | 'createdAt'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous PRO',
         authorAvatarUrl: currentUser.photoURL || undefined,
         text: text.trim(),
-        imageUrl,
         likes: [],
         likeCount: 0,
         commentCount: 0,
-        createdAt: serverTimestamp(),
       };
+
+      if (image) {
+        const imageRef = storageRef(storage, `pro-posts/${currentUser.uid}/${Date.now()}`);
+        await uploadString(imageRef, image, 'data_url');
+        postData.imageUrl = await getDownloadURL(imageRef);
+      }
       
-      await addDoc(collection(db, 'pro-posts'), postData);
+      const finalPostData = {
+        ...postData,
+        createdAt: serverTimestamp(),
+      }
+
+      await addDoc(collection(db, 'pro-posts'), finalPostData);
       setText('');
       setImage(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
