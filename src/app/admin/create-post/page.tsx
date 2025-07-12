@@ -182,16 +182,6 @@ export default function CreatePostPage() {
   ) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-            variant: "destructive",
-            title: t('imageFileTooLargeTitle', "Image File Too Large"),
-            description: t('imageFileTooLargeDesc', "Please select an image file smaller than 5MB. Larger images may not save correctly."),
-            duration: 7000,
-        });
-        if (event.target) event.target.value = "";
-        return;
-      }
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -576,5 +566,3 @@ export default function CreatePostPage() {
     </div>
   );
 }
-
-    
