@@ -60,7 +60,7 @@ function CreatePostForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || !currentUser) return;
+    if (!text.trim() || !currentUser || isSubmitting) return;
     setIsSubmitting(true);
 
     try {
