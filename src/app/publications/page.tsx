@@ -195,31 +195,31 @@ export default function PublicationsPage() {
   
   return (
     <>
-      <div className="max-w-2xl mx-auto py-8">
+      <div className="max-w-4xl mx-auto py-8">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
 
-        <div className="relative">
-            <div className="flex justify-between items-center mb-6 gap-4">
-                <div className="flex gap-2">
-                    <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro}>
+        <div className="relative flex gap-8">
+            <aside className="w-1/4">
+                <div className="flex flex-col gap-2 items-start">
+                    <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro} className="w-full justify-start">
                         <List className="mr-2 h-4 w-4"/> All
                     </Button>
-                    <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')} disabled={!isUserPro}>
+                    <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')} disabled={!isUserPro} className="w-full justify-start">
                         <User className="mr-2 h-4 w-4"/> My Publications
                     </Button>
-                     <Button variant={filter === 'liked' ? 'default' : 'outline'} onClick={() => setFilter('liked')} disabled={!isUserPro}>
+                     <Button variant={filter === 'liked' ? 'default' : 'outline'} onClick={() => setFilter('liked')} disabled={!isUserPro} className="w-full justify-start">
                         <Heart className="mr-2 h-4 w-4"/> My Likes
                     </Button>
+                    <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro} className="w-full justify-start mt-4">
+                        <PlusCircle className="mr-2 h-4 w-4"/> New Publication
+                    </Button>
                 </div>
-                <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro}>
-                    <PlusCircle className="mr-2 h-4 w-4"/> New Publication
-                </Button>
-            </div>
+            </aside>
 
-            <div className={cn("space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
+            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
@@ -229,7 +229,7 @@ export default function PublicationsPage() {
                   <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : 'You have not liked any publications yet.'}</p>
                 </div>
               )}
-            </div>
+            </main>
 
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm">
@@ -272,3 +272,4 @@ export default function PublicationsPage() {
     </>
   );
 }
+
