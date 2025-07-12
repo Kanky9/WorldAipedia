@@ -12,7 +12,7 @@ export default function FloatingChatButton() {
   const { t } = useLanguage();
   const pathname = usePathname();
 
-  const authPages = ['/login', '/register'];
+  const authPages = ['/login', '/register', '/publications'];
   if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
     return null;
   }
@@ -38,3 +38,5 @@ export default function FloatingChatButton() {
     </TooltipProvider>
   );
 }
+
+    

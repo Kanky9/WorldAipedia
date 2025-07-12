@@ -134,7 +134,7 @@ const Mascot = () => {
     }
   };
 
-  const authPages = ['/login', '/register'];
+  const authPages = ['/login', '/register', '/publications'];
   if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
     return null;
   }
@@ -280,3 +280,5 @@ const Mascot = () => {
 };
 
 export default Mascot;
+
+    

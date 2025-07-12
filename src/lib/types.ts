@@ -44,6 +44,26 @@ export interface ProPost {
   createdAt: Timestamp | Date;
 }
 
+export interface ProComment {
+    id: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    text: string;
+    createdAt: Timestamp | Date;
+    replyCount: number;
+}
+
+export interface ProReply {
+    id: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl?: string;
+    text: string;
+    createdAt: Timestamp | Date;
+}
+
+
 export interface Book {
   id: string;
   title: LocalizedString;
@@ -108,3 +128,5 @@ export interface GameHighScore {
   score: number;
   timestamp: Timestamp | Date;
 }
+
+    
