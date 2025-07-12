@@ -39,7 +39,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore, Book as BookType } from './types';
+import type { Post as PostType, GameHighScore, Book as BookType, ProPost } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -157,6 +157,31 @@ export const deletePostFromFirestore = async (postId: string): Promise<void> => 
 export const deleteCommentFromFirestore = async (postId: string, commentId: string): Promise<void> => {
   const commentRef = doc(db, 'posts', postId, 'comments', commentId);
   await deleteDoc(commentRef);
+};
+
+// PRO Publications
+export const deletePublicationFromFirestore = async (postId: string): Promise<void> => {
+  const postRef = doc(db, 'pro-posts', postId);
+  const postSnap = await getDoc(postRef);
+
+  if (postSnap.exists()) {
+    const postData = postSnap.data() as ProPost;
+    // If there's an image, delete it from Storage first
+    if (postData.imageUrl) {
+      try {
+        const imageRef = ref(storage, postData.imageUrl);
+        await deleteFirebaseStorageObject(imageRef);
+      } catch (error: any) {
+        // Log error but don't block Firestore deletion if image deletion fails
+        if (error.code !== 'storage/object-not-found') {
+          console.error("Error deleting publication image from Storage:", error);
+        }
+      }
+    }
+  }
+
+  // Delete the Firestore document
+  await deleteDoc(postRef);
 };
 
 // Book Firestore Functions

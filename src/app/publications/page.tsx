@@ -16,23 +16,34 @@ import {
   onSnapshot,
   doc,
   writeBatch,
+  deleteDoc,
 } from 'firebase/firestore';
 import {
   ref as storageRef,
   uploadString,
   getDownloadURL,
 } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
+import { db, storage, deletePublicationFromFirestore } from '@/lib/firebase';
 import type { ProPost } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Send, ImageIcon, X, Heart, MessageCircle, ShieldAlert } from 'lucide-react';
+import { Loader2, Send, ImageIcon, X, Heart, MessageCircle, ShieldAlert, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { es, enUS, it, ja, pt, zhCN } from 'date-fns/locale';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zh: zhCN
@@ -64,14 +75,11 @@ function CreatePostForm() {
     setIsSubmitting(true);
 
     try {
-      const postData: Omit<ProPost, 'id' | 'createdAt'> = {
+      const postData: Omit<ProPost, 'id' | 'createdAt' | 'likes' | 'likeCount' | 'commentCount'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous PRO',
         authorAvatarUrl: currentUser.photoURL || undefined,
         text: text.trim(),
-        likes: [],
-        likeCount: 0,
-        commentCount: 0,
       };
 
       if (image) {
@@ -82,6 +90,9 @@ function CreatePostForm() {
       
       const finalPostData = {
         ...postData,
+        likes: [],
+        likeCount: 0,
+        commentCount: 0,
         createdAt: serverTimestamp(),
       }
 
@@ -152,7 +163,7 @@ function CreatePostForm() {
   );
 }
 
-function PostCard({ post }: { post: ProPost }) {
+function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string) => void; }) {
   const { currentUser } = useAuth();
   const { t, language } = useLanguage();
 
@@ -174,20 +185,26 @@ function PostCard({ post }: { post: ProPost }) {
   };
   
   const hasLiked = currentUser ? post.likes.includes(currentUser.uid) : false;
+  const canDelete = currentUser && (currentUser.isAdmin || currentUser.uid === post.authorId);
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center gap-4 p-4">
+      <CardHeader className="flex flex-row items-start gap-4 p-4">
         <Avatar>
           <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} data-ai-hint="user avatar" />
           <AvatarFallback>{post.authorName.substring(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
-        <div className="flex flex-col">
+        <div className="flex-1 flex flex-col">
           <span className="font-semibold">{post.authorName}</span>
           <span className="text-xs text-muted-foreground">
             {post.createdAt && formatDistanceToNow( (post.createdAt as any).toDate(), { addSuffix: true, locale: localeMap[language] || enUS })}
           </span>
         </div>
+        {canDelete && (
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => onDelete(post.id)}>
+            <Trash2 className="h-4 w-4"/>
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="p-4 pt-0">
         <p className="whitespace-pre-wrap">{post.text}</p>
@@ -215,9 +232,11 @@ function PostCard({ post }: { post: ProPost }) {
 export default function PublicationsPage() {
   const { currentUser, loading } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const router = useRouter();
   const [posts, setPosts] = useState<ProPost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+  const [postToDelete, setPostToDelete] = useState<ProPost | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -238,6 +257,27 @@ export default function PublicationsPage() {
 
     return () => unsubscribe();
   }, [currentUser, loading]);
+  
+  const handleDeleteClick = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setPostToDelete(post);
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!postToDelete) return;
+    try {
+      await deletePublicationFromFirestore(postToDelete.id);
+      toast({ title: "Publication Deleted", description: "The publication has been successfully removed." });
+    } catch (error) {
+      console.error("Error deleting publication:", error);
+      toast({ variant: "destructive", title: "Deletion Failed", description: "Could not delete the publication." });
+    } finally {
+      setPostToDelete(null);
+    }
+  };
+
 
   if (loading) {
     return <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]"><Loader2 className="h-12 w-12 animate-spin" /></div>;
@@ -266,25 +306,43 @@ export default function PublicationsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
-        <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
-      </div>
-      
-      <CreatePostForm />
+    <>
+      <div className="max-w-2xl mx-auto py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
+          <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
+        </div>
+        
+        <CreatePostForm />
 
-      <div className="space-y-6">
-        {isLoadingPosts ? (
-          <div className="text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
-        ) : posts.length > 0 ? (
-          posts.map(post => <PostCard key={post.id} post={post} />)
-        ) : (
-          <div className="text-center text-muted-foreground py-10">
-            <p>{t('noPublicationsYet')}</p>
-          </div>
-        )}
+        <div className="space-y-6">
+          {isLoadingPosts ? (
+            <div className="text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
+          ) : posts.length > 0 ? (
+            posts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
+          ) : (
+            <div className="text-center text-muted-foreground py-10">
+              <p>{t('noPublicationsYet')}</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <AlertDialog open={!!postToDelete} onOpenChange={(isOpen) => !isOpen && setPostToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this publication? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPostToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
