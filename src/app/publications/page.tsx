@@ -45,9 +45,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import CreatePublicationDialog from '@/components/publications/CreatePublicationDialog';
 import CommentSection from '@/components/publications/CommentSection';
+import { cn } from '@/lib/utils';
 
 const localeMap: { [key: string]: Locale } = {
-  es, en: enUS, it, ja, pt, zh: zhCN
+  es, en: enUS, it, ja, pt, zhCN
 };
 
 function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string) => void; }) {
@@ -130,16 +131,13 @@ export default function PublicationsPage() {
   const [filter, setFilter] = useState<'all' | 'mine'>('all');
 
   useEffect(() => {
-    if (loading) return;
-    if (!currentUser) {
-        setIsLoadingPosts(false);
-        return;
-    }
-
-    let q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
-
-    if (filter === 'mine') {
-        q = query(collection(db, 'pro-posts'), where('authorId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+    // We always fetch the posts to show them in the background
+    setIsLoadingPosts(true);
+    let q;
+    if (filter === 'mine' && currentUser) {
+      q = query(collection(db, 'pro-posts'), where('authorId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+    } else {
+      q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
     }
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -153,7 +151,7 @@ export default function PublicationsPage() {
     });
 
     return () => unsubscribe();
-  }, [currentUser, loading, filter, toast]);
+  }, [currentUser, filter, toast]);
   
   const handleDeleteClick = (postId: string) => {
     const post = posts.find(p => p.id === postId);
@@ -175,32 +173,12 @@ export default function PublicationsPage() {
     }
   };
 
+  const isUserPro = currentUser?.isSubscribed === true;
+
   if (loading) {
     return <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]"><Loader2 className="h-12 w-12 animate-spin" /></div>;
   }
-
-  if (!currentUser) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-20rem)] text-center">
-        <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
-        <p className="text-muted-foreground mb-4">{t('publicationsLoginPrompt')}</p>
-        <Button asChild><Link href="/login">{t('loginButton')}</Link></Button>
-      </div>
-    );
-  }
-
-  if (!currentUser.isSubscribed) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-20rem)] text-center">
-        <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
-        <p className="text-muted-foreground mb-4">{t('publicationsUpgradePrompt')}</p>
-        <Button asChild><Link href="/account">{t('upgradeToProButton')}</Link></Button>
-      </div>
-    );
-  }
-
+  
   return (
     <>
       <div className="max-w-2xl mx-auto py-8">
@@ -208,31 +186,51 @@ export default function PublicationsPage() {
           <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
-        
-        <div className="flex justify-between items-center mb-6 gap-4">
-            <div className="flex gap-2">
-                <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>
-                    <List className="mr-2 h-4 w-4"/> All
-                </Button>
-                <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')}>
-                    <User className="mr-2 h-4 w-4"/> My Publications
-                </Button>
-            </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-                <PlusCircle className="mr-2 h-4 w-4"/> New Publication
-            </Button>
-        </div>
 
-        <div className="space-y-6">
-          {isLoadingPosts ? (
-            <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
-          ) : posts.length > 0 ? (
-            posts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
-          ) : (
-            <div className="text-center text-muted-foreground py-10">
-              <p>{filter === 'all' ? t('noPublicationsYet') : 'You have not created any publications yet.'}</p>
+        <div className="relative">
+            <div className={cn("flex justify-between items-center mb-6 gap-4", !isUserPro && "blur-sm pointer-events-none")}>
+                <div className="flex gap-2">
+                    <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro}>
+                        <List className="mr-2 h-4 w-4"/> All
+                    </Button>
+                    <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')} disabled={!isUserPro}>
+                        <User className="mr-2 h-4 w-4"/> My Publications
+                    </Button>
+                </div>
+                <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro}>
+                    <PlusCircle className="mr-2 h-4 w-4"/> New Publication
+                </Button>
             </div>
-          )}
+
+            <div className={cn("space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
+              {isLoadingPosts ? (
+                <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
+              ) : posts.length > 0 ? (
+                posts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
+              ) : (
+                <div className="text-center text-muted-foreground py-10">
+                  <p>{filter === 'all' ? t('noPublicationsYet') : 'You have not created any publications yet.'}</p>
+                </div>
+              )}
+            </div>
+
+            {!isUserPro && (
+                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm">
+                   <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
+                   <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
+                   {currentUser ? (
+                     <>
+                        <p className="text-muted-foreground mb-4">{t('publicationsUpgradePrompt')}</p>
+                        <Button asChild><Link href="/account">{t('upgradeToProButton')}</Link></Button>
+                     </>
+                   ) : (
+                     <>
+                        <p className="text-muted-foreground mb-4">{t('publicationsLoginPrompt')}</p>
+                        <Button asChild><Link href="/login">{t('loginButton')}</Link></Button>
+                     </>
+                   )}
+                </div>
+            )}
         </div>
       </div>
       
@@ -257,5 +255,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    
