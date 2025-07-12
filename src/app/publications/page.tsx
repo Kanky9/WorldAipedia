@@ -123,7 +123,8 @@ export default function PublicationsPage() {
   const { toast } = useToast();
   const router = useRouter();
   
-  const [posts, setPosts] = useState<ProPost[]>([]);
+  const [allPosts, setAllPosts] = useState<ProPost[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<ProPost[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [postToDelete, setPostToDelete] = useState<ProPost | null>(null);
   
@@ -131,35 +132,37 @@ export default function PublicationsPage() {
   const [filter, setFilter] = useState<'all' | 'mine'>('all');
 
   useEffect(() => {
-    // We always fetch the posts to show them in the background
     setIsLoadingPosts(true);
-    let q;
-    if (filter === 'mine' && currentUser) {
-      q = query(collection(db, 'pro-posts'), where('authorId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
-    } else {
-      q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
-    }
+    const q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const fetchedPosts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProPost));
-      setPosts(fetchedPosts);
+      setAllPosts(fetchedPosts);
       setIsLoadingPosts(false);
     }, (error) => {
         console.error("Error fetching publications:", error);
         toast({ 
           variant: 'destructive', 
           title: t('errorText'), 
-          description: "A Firestore index is likely missing. Check the browser console (F12) for an error message with a link to create the required index.",
-          duration: 15000 // Show for longer to allow user to read it
+          description: "Could not load publications. Please check your network connection and Firestore rules.",
         });
         setIsLoadingPosts(false);
     });
 
     return () => unsubscribe();
-  }, [currentUser, filter, toast, t]);
+  }, [toast, t]);
+
+  useEffect(() => {
+    if (filter === 'mine' && currentUser) {
+        setFilteredPosts(allPosts.filter(p => p.authorId === currentUser.uid));
+    } else {
+        setFilteredPosts(allPosts);
+    }
+  }, [allPosts, filter, currentUser]);
+
   
   const handleDeleteClick = (postId: string) => {
-    const post = posts.find(p => p.id === postId);
+    const post = allPosts.find(p => p.id === postId);
     if (post) {
       setPostToDelete(post);
     }
@@ -210,8 +213,8 @@ export default function PublicationsPage() {
             <div className={cn("space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
-              ) : posts.length > 0 ? (
-                posts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
+              ) : filteredPosts.length > 0 ? (
+                filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
               ) : (
                 <div className="text-center text-muted-foreground py-10">
                   <p>{filter === 'all' ? t('noPublicationsYet') : 'You have not created any publications yet.'}</p>
