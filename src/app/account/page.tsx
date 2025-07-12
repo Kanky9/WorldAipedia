@@ -137,11 +137,11 @@ export default function AccountPage() {
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground text-center">
                 <p>{t('memberSinceLabel', 'Member since')}: {formatMemberSince(currentUser.memberSince)}</p>
-                <div className="flex justify-center gap-4 mt-4 text-foreground">
-                    <div className="text-center">
+                <div className="flex justify-center items-center gap-4 mt-4 text-foreground">
+                    <button className="text-center hover:bg-muted p-2 rounded-lg">
                         <p className="font-bold text-lg">{currentUser.followers?.length || 0}</p>
                         <p className="text-xs text-muted-foreground">Followers</p>
-                    </div>
+                    </button>
                     <button onClick={handleShowFollowing} className="text-center hover:bg-muted p-2 rounded-lg">
                         <p className="font-bold text-lg">{currentUser.following?.length || 0}</p>
                         <p className="text-xs text-muted-foreground">Following</p>
@@ -233,4 +233,3 @@ export default function AccountPage() {
     </>
   );
 }
-
