@@ -52,30 +52,30 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
     setIsSubmitting(true);
 
     try {
-      const postData: Omit<ProPost, 'id' | 'createdAt' | 'likes' | 'likeCount' | 'commentCount'> = {
+      const postData: Omit<ProPost, 'id' | 'createdAt' | 'likes' | 'likeCount' | 'commentCount' | 'imageUrl'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous PRO',
         authorAvatarUrl: currentUser.photoURL || undefined,
         text: text.trim(),
       };
 
-      let imageUrl;
-      if (image) {
-        const imageRef = storageRef(storage, `pro-posts/${currentUser.uid}/${Date.now()}`);
-        await uploadString(imageRef, image, 'data_url');
-        imageUrl = await getDownloadURL(imageRef);
-      }
-      
-      const finalPostData = {
+      const finalPostData: any = {
         ...postData,
-        ...(imageUrl && { imageUrl: imageUrl }), // Conditionally add imageUrl
         likes: [],
         likeCount: 0,
         commentCount: 0,
         createdAt: serverTimestamp(),
       }
 
+      if (image) {
+        const imageRef = storageRef(storage, `pro-posts/${currentUser.uid}/${Date.now()}`);
+        await uploadString(imageRef, image, 'data_url');
+        const imageUrl = await getDownloadURL(imageRef);
+        finalPostData.imageUrl = imageUrl;
+      }
+      
       await addDoc(collection(db, 'pro-posts'), finalPostData);
+      
       resetForm();
       onOpenChange(false);
       toast({ title: t('publicationPostedSuccess') });
