@@ -146,12 +146,17 @@ export default function PublicationsPage() {
       setIsLoadingPosts(false);
     }, (error) => {
         console.error("Error fetching publications:", error);
-        toast({ variant: 'destructive', title: t('errorText'), description: "Failed to load publications." });
+        toast({ 
+          variant: 'destructive', 
+          title: t('errorText'), 
+          description: "A Firestore index is likely missing. Check the browser console (F12) for an error message with a link to create the required index.",
+          duration: 15000 // Show for longer to allow user to read it
+        });
         setIsLoadingPosts(false);
     });
 
     return () => unsubscribe();
-  }, [currentUser, filter, toast]);
+  }, [currentUser, filter, toast, t]);
   
   const handleDeleteClick = (postId: string) => {
     const post = posts.find(p => p.id === postId);
