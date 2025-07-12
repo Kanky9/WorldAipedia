@@ -19,6 +19,7 @@ import type { Timestamp } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { getUsersByIds, updateUsernameAcrossPublications } from "@/lib/firebase";
 import type { User as UserType } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export default function AccountPage() {
   const { t, language } = useLanguage();
@@ -134,7 +135,12 @@ export default function AccountPage() {
                  <Button variant="outline" size="sm" className="text-xs mt-2" onClick={() => toast({description: t('profileUpdateSimulated', "Profile picture change via Gravatar/Google (simulated).")})}>
                     <Pencil className="mr-1.5 h-3 w-3"/> {t('changeProfilePictureButton', 'Change Picture')}
                 </Button>
-                <CardTitle className="mt-2">{currentUser.username || currentUser.displayName}</CardTitle>
+                <CardTitle className={cn(
+                  "mt-2",
+                  currentUser.isAdmin && "text-red-500 [text-shadow:0_0_8px_theme(colors.red.500/0.8)]"
+                )}>
+                  {currentUser.username || currentUser.displayName}
+                </CardTitle>
                 <CardDescription>{currentUser.email}</CardDescription>
                 {currentUser.isSubscribed && (
                   <Badge className="mt-2 bg-primary text-primary-foreground"><Star className="mr-1.5 h-3.5 w-3.5"/> {t('proMemberLabel', 'PRO Member')}</Badge>
