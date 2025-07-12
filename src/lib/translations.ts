@@ -15,6 +15,7 @@ export type CoreTranslationKey =
   | 'navHome'
   | 'navCategories'
   | 'navBooks'
+  | 'navPublications'
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
   | 'logoutButton'
@@ -282,6 +283,19 @@ export type CoreTranslationKey =
   | 'saveScoreError'
   | 'fetchScoresError'
   | 'noScoresYetRanking'
+  // Publications (PRO Feed)
+  | 'publicationsTitle'
+  | 'publicationsSubtitle'
+  | 'publicationsAccessDenied'
+  | 'publicationsLoginPrompt'
+  | 'publicationsUpgradePrompt'
+  | 'createPublicationPlaceholder'
+  | 'createPublicationButton'
+  | 'publicationPostedSuccess'
+  | 'publicationPostError'
+  | 'likeButton'
+  | 'commentButton'
+  | 'noPublicationsYet'
   // Generic
   | 'loadingText'
   | 'errorText'
@@ -328,6 +342,7 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categories',
     navBooks: 'Books',
+    navPublications: 'Publications',
     tooltipLanguageSwitcher: 'Change language',
     loginButton: 'Login',
     logoutButton: 'Logout',
@@ -578,6 +593,18 @@ export const translations: Translations = {
     saveScoreError: "Error saving score.",
     fetchScoresError: "Error fetching scores.",
     noScoresYetRanking: "No scores yet. Be the first PRO user to set one!",
+    publicationsTitle: "PRO Publications",
+    publicationsSubtitle: "A space for PRO members to share and discuss.",
+    publicationsAccessDenied: "This is a PRO members only area.",
+    publicationsLoginPrompt: "Please log in to view publications.",
+    publicationsUpgradePrompt: "Upgrade to PRO to join the conversation!",
+    createPublicationPlaceholder: "What's on your mind, {username}?",
+    createPublicationButton: "Post",
+    publicationPostedSuccess: "Your publication has been posted!",
+    publicationPostError: "Could not post your publication. Please try again.",
+    likeButton: "Like",
+    commentButton: "Comment",
+    noPublicationsYet: "No publications yet. Be the first to post!",
     errorText: 'Error',
     errorDefaultTitle: 'Error',
     errorDefaultDesc: 'An unexpected error occurred.',
@@ -599,6 +626,7 @@ export const translations: Translations = {
     navHome: 'Inicio',
     navCategories: 'Categorías',
     navBooks: 'Libros',
+    navPublications: 'Publicaciones',
     tooltipLanguageSwitcher: 'Cambiar idioma',
     loginButton: 'Iniciar Sesión',
     logoutButton: 'Cerrar Sesión',
@@ -849,6 +877,18 @@ export const translations: Translations = {
     saveScoreError: "Error al guardar puntaje.",
     fetchScoresError: "Error al cargar puntajes.",
     noScoresYetRanking: "Aún no hay puntajes. ¡Sé el primer usuario PRO en establecer uno!",
+    publicationsTitle: "Publicaciones PRO",
+    publicationsSubtitle: "Un espacio para que los miembros PRO compartan y discutan.",
+    publicationsAccessDenied: "Esta es un área solo para miembros PRO.",
+    publicationsLoginPrompt: "Por favor, inicia sesión para ver las publicaciones.",
+    publicationsUpgradePrompt: "¡Actualiza a PRO para unirte a la conversación!",
+    createPublicationPlaceholder: "¿Qué tienes en mente, {username}?",
+    createPublicationButton: "Publicar",
+    publicationPostedSuccess: "¡Tu publicación ha sido publicada!",
+    publicationPostError: "No se pudo publicar tu publicación. Por favor, inténtalo de nuevo.",
+    likeButton: "Me gusta",
+    commentButton: "Comentar",
+    noPublicationsYet: "Aún no hay publicaciones. ¡Sé el primero en publicar!",
     errorText: 'Error',
     errorDefaultTitle: 'Error',
     errorDefaultDesc: 'Ocurrió un error inesperado.',
@@ -870,6 +910,7 @@ export const translations: Translations = {
     navHome: 'Home',
     navCategories: 'Categorie',
     navBooks: 'Libri',
+    navPublications: 'Pubblicazioni',
     tooltipLanguageSwitcher: 'Cambia lingua',
     loginButton: 'Accedi',
     logoutButton: 'Esci',
@@ -1120,6 +1161,18 @@ export const translations: Translations = {
     saveScoreError: "Errore nel salvataggio del punteggio.",
     fetchScoresError: "Errore nel caricamento dei punteggi.",
     noScoresYetRanking: "Nessun punteggio ancora. Sii il primo utente PRO a stabilirne uno!",
+    publicationsTitle: "Pubblicazioni PRO",
+    publicationsSubtitle: "Uno spazio per i membri PRO per condividere e discutere.",
+    publicationsAccessDenied: "Questa è un'area riservata ai membri PRO.",
+    publicationsLoginPrompt: "Effettua il login per visualizzare le pubblicazioni.",
+    publicationsUpgradePrompt: "Passa a PRO per unirti alla conversazione!",
+    createPublicationPlaceholder: "Cosa hai in mente, {username}?",
+    createPublicationButton: "Pubblica",
+    publicationPostedSuccess: "La tua pubblicazione è stata pubblicata!",
+    publicationPostError: "Impossibile pubblicare la tua pubblicazione. Riprova.",
+    likeButton: "Mi piace",
+    commentButton: "Commenta",
+    noPublicationsYet: "Nessuna pubblicazione ancora. Sii il primo a pubblicare!",
     errorText: 'Errore',
     errorDefaultTitle: 'Errore',
     errorDefaultDesc: 'Si è verificato un errore imprevisto.',
@@ -1141,6 +1194,7 @@ export const translations: Translations = {
     navHome: '首页',
     navCategories: '分类',
     navBooks: '书籍',
+    navPublications: '出版物',
     tooltipLanguageSwitcher: '更改语言',
     loginButton: '登录',
     logoutButton: '登出',
@@ -1391,6 +1445,18 @@ export const translations: Translations = {
     saveScoreError: "保存分数错误。",
     fetchScoresError: "获取分数错误。",
     noScoresYetRanking: "暂无分数。成为第一个设置分数的PRO用户吧！",
+    publicationsTitle: "PRO 出版物",
+    publicationsSubtitle: "PRO会员分享和讨论的空间。",
+    publicationsAccessDenied: "这是PRO会员专属区域。",
+    publicationsLoginPrompt: "请登录以查看出版物。",
+    publicationsUpgradePrompt: "升级到PRO以加入对话！",
+    createPublicationPlaceholder: "有什么想法，{username}？",
+    createPublicationButton: "发布",
+    publicationPostedSuccess: "您的出版物已发布！",
+    publicationPostError: "无法发布您的出版物。请重试。",
+    likeButton: "赞",
+    commentButton: "评论",
+    noPublicationsYet: "暂无出版物。成为第一个发布的人！",
     errorText: '错误',
     errorDefaultTitle: '错误',
     errorDefaultDesc: '发生意外错误。',
@@ -1412,6 +1478,7 @@ export const translations: Translations = {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
     navBooks: '書籍',
+    navPublications: '出版物',
     tooltipLanguageSwitcher: '言語を変更',
     loginButton: 'ログイン',
     logoutButton: 'ログアウト',
@@ -1662,6 +1729,18 @@ export const translations: Translations = {
     saveScoreError: "スコアの保存エラー。",
     fetchScoresError: "スコアの取得エラー。",
     noScoresYetRanking: "まだスコアがありません。最初のPROユーザーになってスコアを設定しましょう！",
+    publicationsTitle: "PRO 出版物",
+    publicationsSubtitle: "PROメンバーが共有し議論するスペース。",
+    publicationsAccessDenied: "ここはPROメンバー専用エリアです。",
+    publicationsLoginPrompt: "出版物を表示するにはログインしてください。",
+    publicationsUpgradePrompt: "会話に参加するにはPROにアップグレードしてください！",
+    createPublicationPlaceholder: "何か考えていますか、{username}？",
+    createPublicationButton: "投稿",
+    publicationPostedSuccess: "あなたの出版物が投稿されました！",
+    publicationPostError: "出版物を投稿できませんでした。もう一度お試しください。",
+    likeButton: "いいね！",
+    commentButton: "コメント",
+    noPublicationsYet: "まだ出版物がありません。最初に投稿してください！",
     errorText: 'エラー',
     errorDefaultTitle: 'エラー',
     errorDefaultDesc: '予期しないエラーが発生しました。',
@@ -1683,6 +1762,7 @@ export const translations: Translations = {
     navHome: 'Início',
     navCategories: 'Categorias',
     navBooks: 'Livros',
+    navPublications: 'Publicações',
     tooltipLanguageSwitcher: 'Mudar idioma',
     loginButton: 'Entrar',
     logoutButton: 'Sair',
@@ -1833,7 +1913,7 @@ export const translations: Translations = {
     adminBookLinkLabel: 'Link de Compra',
     adminBookSelectSourcePlaceholder: 'Selecione uma fonte',
     adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLibre: 'MercadoLivre',
+    adminBookSourceMercadoLivre: 'MercadoLivre',
     adminBookLinkPlaceholder: 'https://...',
     adminCreateBookTitle: 'Criar Novo Livro',
     adminEditBookTitle: 'Editar Livro',
@@ -1933,6 +2013,18 @@ export const translations: Translations = {
     saveScoreError: "Erro ao salvar pontuação.",
     fetchScoresError: "Erro ao buscar pontuações.",
     noScoresYetRanking: "Ainda não há pontuações. Seja o primeiro usuário PRO a definir uma!",
+    publicationsTitle: "Publicações PRO",
+    publicationsSubtitle: "Um espaço para membros PRO compartilharem e discutirem.",
+    publicationsAccessDenied: "Esta é uma área exclusiva para membros PRO.",
+    publicationsLoginPrompt: "Faça login para ver as publicações.",
+    publicationsUpgradePrompt: "Atualize para PRO para participar da conversa!",
+    createPublicationPlaceholder: "O que você está pensando, {username}?",
+    createPublicationButton: "Publicar",
+    publicationPostedSuccess: "Sua publicação foi postada!",
+    publicationPostError: "Não foi possível postar sua publicação. Tente novamente.",
+    likeButton: "Gostar",
+    commentButton: "Comentar",
+    noPublicationsYet: "Nenhuma publicação ainda. Seja o primeiro a postar!",
     errorText: 'Erro',
     errorDefaultTitle: 'Erro',
     errorDefaultDesc: 'Ocorreu um erro inesperado.',

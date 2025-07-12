@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, BookCopy } from 'lucide-react';
+import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, BookCopy, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -44,6 +43,10 @@ const Header = () => {
     { href: "/categories", labelKey: "navCategories", icon: Settings },
     { href: "/books", labelKey: "navBooks", icon: BookCopy },
   ];
+  
+  const proNavLinks = [
+    { href: "/publications", labelKey: "navPublications", icon: Share2 },
+  ];
 
   return (
     <header className="py-3 sm:py-4">
@@ -64,6 +67,14 @@ const Header = () => {
                   <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
                 </Button>
               )
+            })}
+             {currentUser?.isSubscribed && proNavLinks.map(link => {
+                const isActive = pathname.startsWith(link.href);
+                return (
+                  <Button variant="ghost" asChild key={link.href} className={cn("text-muted-foreground hover:text-foreground", isActive && "font-semibold text-foreground")}>
+                    <Link href={link.href}>{t(link.labelKey as any, link.labelKey)}</Link>
+                  </Button>
+                )
             })}
             {currentUser?.isAdmin && (
               <Button variant="ghost" asChild className={cn("text-muted-foreground hover:text-foreground", pathname.startsWith('/admin') && "font-semibold text-foreground")}>
@@ -145,6 +156,16 @@ const Header = () => {
         <div className="sm:hidden absolute top-20 left-0 right-0 w-full bg-card shadow-lg p-4 z-40 border-b border-t border-border">
           <nav className="flex flex-col gap-2">
             {navLinks.map(link => (
+               <Link 
+                href={link.href} 
+                key={link.href} 
+                className="text-base font-medium hover:text-primary py-2 px-3 rounded-md hover:bg-accent/50 flex items-center gap-2" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <link.icon className="h-4 w-4"/>{t(link.labelKey as any, link.labelKey)}
+              </Link>
+            ))}
+             {currentUser?.isSubscribed && proNavLinks.map(link => (
                <Link 
                 href={link.href} 
                 key={link.href} 

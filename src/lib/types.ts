@@ -30,6 +30,20 @@ export interface Post {
   // Comments are a subcollection in Firestore, not directly part of the Post document.
 }
 
+export interface ProPost {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorAvatarUrl?: string;
+  text: string;
+  imageUrl?: string;
+  imageHint?: string;
+  likes: string[]; // Array of user UIDs who liked the post
+  likeCount: number;
+  commentCount: number;
+  createdAt: Timestamp | Date;
+}
+
 export interface Book {
   id: string;
   title: LocalizedString;
