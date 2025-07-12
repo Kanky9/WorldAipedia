@@ -90,8 +90,8 @@ export default function AccountPage() {
         <p className="text-muted-foreground">{t('accountPageSubtitle', 'Manage your profile, subscription, and settings.')}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-1 space-y-8">
             <Card className="shadow-lg">
               <CardHeader className="items-center text-center">
                 <Avatar className="h-24 w-24 mb-3 border-2 border-primary">
@@ -119,7 +119,7 @@ export default function AccountPage() {
         </div>
 
 
-        <div className="md:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-8">
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2"><User className="h-5 w-5 text-primary"/> {t('profileDetailsTitle', 'Profile Details')}</CardTitle>

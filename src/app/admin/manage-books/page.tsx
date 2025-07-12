@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -137,7 +138,7 @@ export default function ManageBooksPage() {
           ) : books.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-border">
-                <thead className="bg-muted/50">
+                <thead className="bg-muted/50 hidden md:table-header-group">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Image</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Title</th>
@@ -147,15 +148,12 @@ export default function ManageBooksPage() {
                 </thead>
                 <tbody className="bg-card divide-y divide-border">
                   {books.map((book) => (
-                    <tr key={book.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Image src={book.imageUrl} alt={t(book.title)} width={40} height={60} className="h-16 w-auto object-contain rounded"/>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground">{t(book.title)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <Badge variant={book.source === 'amazon' ? 'default' : 'secondary'} className="capitalize">{book.source}</Badge>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                    <tr key={book.id} className="md:table-row flex flex-col md:flex-row p-4 md:p-0 mb-4 md:mb-0 border rounded-lg md:border-none">
+                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Image: </span><Image src={book.imageUrl} alt={t(book.title)} width={40} height={60} className="h-16 w-auto object-contain rounded inline-block"/></td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground md:table-cell"><span className="font-bold md:hidden">Title: </span>{t(book.title)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Source: </span><Badge variant={book.source === 'amazon' ? 'default' : 'secondary'} className="capitalize">{book.source}</Badge></td>
+                      <td className="px-6 py-4 whitespace-nowrap text-left md:text-right text-sm font-medium space-x-2 md:table-cell">
+                        <span className="font-bold md:hidden">Actions: </span>
                         <Button variant="outline" size="sm" asChild>
                           <Link href={`/admin/create-book?id=${book.id}`}>
                             <Edit className="mr-1 h-4 w-4" /> {t('editButton', 'Edit')}

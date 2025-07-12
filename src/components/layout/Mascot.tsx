@@ -10,6 +10,8 @@ import { usePathname } from 'next/navigation';
 const DIALOG_MAX_WIDTH_PX = 525; // Max width of the chat dialog
 const MASCOT_SVG_HEIGHT_PX = 110;
 const MASCOT_SVG_WIDTH_PX = 90;
+const MASCOT_SVG_MOBILE_HEIGHT_PX = 80;
+const MASCOT_SVG_MOBILE_WIDTH_PX = 65;
 const CHAT_BUTTON_SIZE_REM = 3; // w-12 h-12 (48px)
 const CHAT_BUTTON_OFFSET_REM = 1.5; // bottom-6 right-6 (24px)
 
@@ -61,14 +63,16 @@ const Mascot = () => {
       if (adHocMessageTimerRef.current) clearTimeout(adHocMessageTimerRef.current);
     };
 
+    if (isSmallScreen) {
+        setCurrentBubbleText('');
+        return;
+    }
+
     if (mascotDisplayMode === 'chat_contextual') {
-      // This mode is for the greeting when chat opens.
       setCurrentBubbleText(t('mascotChatGreeting1'));
       messageTimer = setTimeout(() => {
-        // After showing the message, revert to a neutral state
-        // so the message doesn't reappear on subsequent renders.
         setCurrentBubbleText('');
-        if(isChatOpen) { // Check if chat is still open
+        if(isChatOpen) { 
             setMascotDisplayMode('default'); 
         }
       }, 3000);
@@ -103,20 +107,19 @@ const Mascot = () => {
           adHocMessageTimerRef.current = setTimeout(showNextAdHocMessage, msg.duration);
         } else {
           setCurrentBubbleText('');
-          setMascotAdHocMessages([]); // Clear the queue
+          setMascotAdHocMessages([]);
         }
       };
       showNextAdHocMessage();
     } else {
-       setCurrentBubbleText(''); // Default clear
+       setCurrentBubbleText(''); 
     }
 
     return () => clearTimers();
-  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode]);
+  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode, isSmallScreen]);
 
 
   useEffect(() => {
-    // If chat opens, ensure mascot is visible
     if (isChatOpen) {
       setIsMascotVisible(true);
     }
@@ -124,8 +127,7 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen && mascotDisplayMode === 'default') {
-       // Toggle default bubble or trigger some other interaction
+    if (!isChatOpen && mascotDisplayMode === 'default' && !isSmallScreen) {
        if (currentBubbleText === t('mascotGreeting')) {
            setCurrentBubbleText('');
        } else {
@@ -145,7 +147,7 @@ const Mascot = () => {
 
   if (!isMascotVisible && !isChatOpen) return null;
 
-  const shouldShowSpeechBubble = !!currentBubbleText;
+  const shouldShowSpeechBubble = !!currentBubbleText && !isSmallScreen;
 
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
@@ -165,12 +167,15 @@ const Mascot = () => {
       };
     }
   } else {
-    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + 1;
+    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + (isSmallScreen ? 0.5 : 1);
     positionSpecificStyle = {
       bottom: '1.25rem', right: `${mascotRightOffsetRem}rem`, top: 'auto', left: 'auto', transform: 'none',
     };
   }
   const mascotPositionStyle: React.CSSProperties = { animation: mascotAnimation, opacity: mascotOpacity, ...positionSpecificStyle };
+
+  const mascotWidth = isSmallScreen ? MASCOT_SVG_MOBILE_WIDTH_PX : MASCOT_SVG_WIDTH_PX;
+  const mascotHeight = isSmallScreen ? MASCOT_SVG_MOBILE_HEIGHT_PX : MASCOT_SVG_HEIGHT_PX;
 
   return (
     <div className={cn(mascotBaseClasses)} style={mascotPositionStyle}>
@@ -192,8 +197,8 @@ const Mascot = () => {
 
       <svg
         onClick={handleMascotClick}
-        width={MASCOT_SVG_WIDTH_PX}
-        height={MASCOT_SVG_HEIGHT_PX}
+        width={mascotWidth}
+        height={mascotHeight}
         viewBox="0 0 90 110"
         className="drop-shadow-lg transition-transform duration-300 group-hover:scale-105 filter group-hover:brightness-110 cursor-pointer robot-body-animation"
         aria-label="Friendly AI Robot Mascot"
@@ -280,5 +285,3 @@ const Mascot = () => {
 };
 
 export default Mascot;
-
-    

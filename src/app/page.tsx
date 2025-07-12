@@ -10,7 +10,7 @@ import { BookOpen, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import type { Post } from '@/lib/types';
 import { getAllPostsFromFirestore } from '@/lib/firebase';
-import DinosaurGame from '@/components/game/DinosaurGame'; // Import the game
+import DinosaurGame from '@/components/game/DinosaurGame';
 import ClientOnly from '@/components/layout/ClientOnly';
 
 const MAX_POSTS_ON_HOMEPAGE = 9;
