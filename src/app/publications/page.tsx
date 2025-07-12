@@ -104,7 +104,7 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
       <CardFooter className="p-4 border-t flex justify-start gap-4">
         <Button variant={hasLiked ? "default" : "ghost"} size="sm" onClick={handleLike} disabled={!currentUser}>
           <Heart className={`mr-2 h-4 w-4 ${hasLiked ? 'fill-current' : ''}`} />
-          {post.likeCount} {t('likeButton')}
+          {post.likeCount}
         </Button>
         <Button variant="ghost" size="sm" onClick={() => setShowComments(!showComments)}>
           <MessageCircle className="mr-2 h-4 w-4" />
@@ -129,7 +129,7 @@ export default function PublicationsPage() {
   const [postToDelete, setPostToDelete] = useState<ProPost | null>(null);
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'mine'>('all');
+  const [filter, setFilter] = useState<'all' | 'mine' | 'liked'>('all');
 
   useEffect(() => {
     setIsLoadingPosts(true);
@@ -144,7 +144,7 @@ export default function PublicationsPage() {
         toast({ 
           variant: 'destructive', 
           title: t('errorText'), 
-          description: "Could not load publications. Please check your network connection and Firestore rules.",
+          description: "Could not load publications. A Firestore index is likely missing. Check the browser console for a link to create it.",
         });
         setIsLoadingPosts(false);
     });
@@ -153,8 +153,14 @@ export default function PublicationsPage() {
   }, [toast, t]);
 
   useEffect(() => {
-    if (filter === 'mine' && currentUser) {
+    if (!currentUser) {
+      setFilteredPosts(allPosts);
+      return;
+    }
+    if (filter === 'mine') {
         setFilteredPosts(allPosts.filter(p => p.authorId === currentUser.uid));
+    } else if (filter === 'liked') {
+        setFilteredPosts(allPosts.filter(p => p.likes.includes(currentUser.uid)));
     } else {
         setFilteredPosts(allPosts);
     }
@@ -204,6 +210,9 @@ export default function PublicationsPage() {
                     <Button variant={filter === 'mine' ? 'default' : 'outline'} onClick={() => setFilter('mine')} disabled={!isUserPro}>
                         <User className="mr-2 h-4 w-4"/> My Publications
                     </Button>
+                     <Button variant={filter === 'liked' ? 'default' : 'outline'} onClick={() => setFilter('liked')} disabled={!isUserPro}>
+                        <Heart className="mr-2 h-4 w-4"/> My Likes
+                    </Button>
                 </div>
                 <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro}>
                     <PlusCircle className="mr-2 h-4 w-4"/> New Publication
@@ -217,7 +226,7 @@ export default function PublicationsPage() {
                 filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
               ) : (
                 <div className="text-center text-muted-foreground py-10">
-                  <p>{filter === 'all' ? t('noPublicationsYet') : 'You have not created any publications yet.'}</p>
+                  <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : 'You have not liked any publications yet.'}</p>
                 </div>
               )}
             </div>
