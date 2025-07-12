@@ -94,7 +94,7 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
         )}
       </CardHeader>
       <CardContent className="p-4 pt-0">
-        <p className="whitespace-pre-wrap mb-4">{post.text}</p>
+        {post.text && <p className="whitespace-pre-wrap mb-4">{post.text}</p>}
         {post.imageUrl && (
           <div className="relative aspect-video w-full rounded-lg overflow-hidden">
             <Image src={post.imageUrl} alt="Post image" layout="fill" objectFit="cover" data-ai-hint={post.imageHint || "publication image"} />
@@ -153,16 +153,18 @@ export default function PublicationsPage() {
   }, [toast, t]);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (filter === 'all') {
       setFilteredPosts(allPosts);
+      return;
+    }
+    if (!currentUser) {
+      setFilteredPosts([]);
       return;
     }
     if (filter === 'mine') {
         setFilteredPosts(allPosts.filter(p => p.authorId === currentUser.uid));
     } else if (filter === 'liked') {
         setFilteredPosts(allPosts.filter(p => p.likes.includes(currentUser.uid)));
-    } else {
-        setFilteredPosts(allPosts);
     }
   }, [allPosts, filter, currentUser]);
 
@@ -201,9 +203,9 @@ export default function PublicationsPage() {
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
 
-        <div className="relative flex justify-center gap-8">
-            <aside className="hidden md:block w-48 sticky top-24 self-start">
-                <div className="flex flex-col gap-2 items-start">
+        <div className="relative grid grid-cols-1 md:grid-cols-[1fr_2.5fr_1fr] lg:grid-cols-[1fr_2fr_1fr] gap-8">
+            <aside className="hidden md:block sticky top-24 self-start justify-self-start">
+                <div className="flex flex-col gap-2 items-start w-48">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')} disabled={!isUserPro} className="w-full justify-start">
                         <List className="mr-2 h-4 w-4"/> All
                     </Button>
@@ -219,7 +221,7 @@ export default function PublicationsPage() {
                 </div>
             </aside>
 
-            <main className={cn("flex-1 space-y-6 max-w-2xl", !isUserPro && "blur-sm pointer-events-none")}>
+            <main className={cn("flex-1 space-y-6 md:col-start-2", !isUserPro && "blur-sm pointer-events-none")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
@@ -230,9 +232,11 @@ export default function PublicationsPage() {
                 </div>
               )}
             </main>
-
+            
+            <div className="md:col-start-3"></div>
+            
             {!isUserPro && (
-                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm">
+                <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm md:col-span-3">
                    <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
                    <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
                    {currentUser ? (
