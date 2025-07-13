@@ -66,7 +66,7 @@ export interface ProReply {
 }
 
 
-export interface Book {
+export interface Product {
   id: string;
   title: LocalizedString;
   description: LocalizedString;

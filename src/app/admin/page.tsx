@@ -4,7 +4,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/useLanguage";
-import { PlusCircle, Edit, Trash2, ListChecks, Loader2, AlertTriangle, ShieldAlert, BookOpenCheck } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, ListChecks, Loader2, AlertTriangle, ShieldAlert, ShoppingCart } from 'lucide-react';
 import Link from "next/link";
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
@@ -151,9 +151,9 @@ export default function AdminPage() {
         <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary">{t('adminPanelTitle', 'Admin Panel')}</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 w-full sm:w-auto">
-            <Link href="/admin/manage-books">
-              <BookOpenCheck className="mr-2 h-5 w-5" />
-              {t('adminManageBooksTitle', 'Manage Books')}
+            <Link href="/admin/manage-products">
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              {t('adminManageStoreTitle', 'Manage Store')}
             </Link>
           </Button>
           <Button asChild className="bg-primary hover:bg-primary/90 w-full sm:w-auto">

@@ -2,49 +2,49 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { BookOpen, Loader2, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { getAllBooksFromFirestore } from '@/lib/firebase';
-import type { Book } from '@/lib/types';
-import BookCard from '@/components/books/BookCard';
+import { getAllProductsFromFirestore } from '@/lib/firebase';
+import type { Product } from '@/lib/types';
+import ProductCard from '@/components/store/ProductCard';
 
-export default function BooksPage() {
+export default function StorePage() {
   const { t } = useLanguage();
-  const [books, setBooks] = useState<Book[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const fetchProducts = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const fetchedBooks = await getAllBooksFromFirestore();
-        setBooks(fetchedBooks);
+        const fetchedProducts = await getAllProductsFromFirestore();
+        setProducts(fetchedProducts);
       } catch (err) {
-        console.error("Error fetching books:", err);
-        setError("Failed to load books. Please try again later.");
+        console.error("Error fetching products:", err);
+        setError("Failed to load products. Please try again later.");
       } finally {
         setIsLoading(false);
       }
     };
-    fetchBooks();
+    fetchProducts();
   }, []);
 
-  const amazonBooks = books.filter(book => book.source === 'amazon');
-  const mercadoLibreBooks = books.filter(book => book.source === 'mercadolibre');
+  const amazonProducts = products.filter(product => product.source === 'amazon');
+  const mercadoLibreProducts = products.filter(product => product.source === 'mercadolibre');
 
   return (
     <div className="space-y-12 animate-fade-in">
       <section className="text-center py-8">
         <div className="flex justify-center items-center mb-4">
-          <BookOpen className="h-10 w-10 md:h-12 md:w-12 text-primary" />
+          <ShoppingCart className="h-10 w-10 md:h-12 md:w-12 text-primary" />
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold mb-3 text-primary">
-          {t('booksPageTitle', 'Recommended Books')}
+          {t('storePageTitle', 'Official Store')}
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-          {t('booksPageSubtitle', 'A curated collection of books on AI, technology, and more.')}
+          {t('storePageSubtitle', 'A curated collection of recommended products.')}
         </p>
       </section>
 
@@ -59,34 +59,34 @@ export default function BooksPage() {
         </div>
       ) : (
         <>
-          {amazonBooks.length > 0 && (
+          {amazonProducts.length > 0 && (
             <section>
               <h2 className="text-2xl sm:text-3xl font-headline font-semibold mb-6 text-primary/90">{t('amazonProductsTitle', 'From Amazon')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                {amazonBooks.map((book, index) => (
-                  <div key={book.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
-                    <BookCard book={book} />
+                {amazonProducts.map((product, index) => (
+                  <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
+                    <ProductCard product={product} />
                   </div>
                 ))}
               </div>
             </section>
           )}
 
-          {mercadoLibreBooks.length > 0 && (
+          {mercadoLibreProducts.length > 0 && (
             <section>
               <h2 className="text-2xl sm:text-3xl font-headline font-semibold mb-6 text-primary/90">{t('mercadolibreProductsTitle', 'From MercadoLibre')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                {mercadoLibreBooks.map((book, index) => (
-                   <div key={book.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
-                    <BookCard book={book} />
+                {mercadoLibreProducts.map((product, index) => (
+                   <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
+                    <ProductCard product={product} />
                   </div>
                 ))}
               </div>
             </section>
           )}
           
-          {books.length === 0 && (
-             <p className="text-center text-muted-foreground py-10">{t('adminNoBooks', 'No books found.')}</p>
+          {products.length === 0 && (
+             <p className="text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
           )}
         </>
       )}

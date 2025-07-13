@@ -1,5 +1,4 @@
 
-
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -44,7 +43,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore, Book as BookType, ProPost, User, Notification } from './types';
+import type { Post as PostType, GameHighScore, Product as ProductType, ProPost, User, Notification } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -189,56 +188,56 @@ export const deletePublicationFromFirestore = async (postId: string): Promise<vo
   await deleteDoc(postRef);
 };
 
-// Book Firestore Functions
-export const addBookToFirestore = async (bookData: Omit<BookType, 'id' | 'createdAt'> & { id?: string }): Promise<string> => {
-  const bookId = bookData.id || doc(collection(db, 'books')).id;
-  const bookRef = doc(db, 'books', bookId);
+// Product Firestore Functions
+export const addProductToFirestore = async (productData: Omit<ProductType, 'id' | 'createdAt'> & { id?: string }): Promise<string> => {
+  const productId = productData.id || doc(collection(db, 'products')).id;
+  const productRef = doc(db, 'products', productId);
   
   const dataToSave = { 
-    ...bookData,
+    ...productData,
     createdAt: serverTimestamp()
   };
 
   const { id, ...firestoreData } = dataToSave;
-  await setDoc(bookRef, firestoreData);
-  return bookId;
+  await setDoc(productRef, firestoreData);
+  return productId;
 };
 
-export const updateBookInFirestore = async (bookId: string, bookData: Partial<Omit<BookType, 'id'>>): Promise<void> => {
-  const bookRef = doc(db, 'books', bookId);
-  await updateDoc(bookRef, bookData);
+export const updateProductInFirestore = async (productId: string, productData: Partial<Omit<ProductType, 'id'>>): Promise<void> => {
+  const productRef = doc(db, 'products', productId);
+  await updateDoc(productRef, productData);
 };
 
-export const getAllBooksFromFirestore = async (): Promise<BookType[]> => {
-  const booksCol = collection(db, 'books');
-  const q = query(booksCol, orderBy('createdAt', 'desc'));
-  const booksSnapshot = await getDocs(q);
-  const booksList = booksSnapshot.docs.map(docSnap => {
+export const getAllProductsFromFirestore = async (): Promise<ProductType[]> => {
+  const productsCol = collection(db, 'products');
+  const q = query(productsCol, orderBy('createdAt', 'desc'));
+  const productsSnapshot = await getDocs(q);
+  const productsList = productsSnapshot.docs.map(docSnap => {
     const data = docSnap.data();
     if (data.createdAt && data.createdAt instanceof Timestamp) {
       data.createdAt = data.createdAt.toDate();
     }
-    return { id: docSnap.id, ...data } as BookType;
+    return { id: docSnap.id, ...data } as ProductType;
   });
-  return booksList;
+  return productsList;
 };
 
-export const getBookFromFirestore = async (bookId: string): Promise<BookType | null> => {
-  const bookRef = doc(db, 'books', bookId);
-  const bookSnap = await getDoc(bookRef);
-  if (bookSnap.exists()) {
-    const data = bookSnap.data();
+export const getProductFromFirestore = async (productId: string): Promise<ProductType | null> => {
+  const productRef = doc(db, 'products', productId);
+  const productSnap = await getDoc(productRef);
+  if (productSnap.exists()) {
+    const data = productSnap.data();
     if (data.createdAt && data.createdAt instanceof Timestamp) {
       data.createdAt = data.createdAt.toDate();
     }
-    return { id: bookSnap.id, ...data } as BookType;
+    return { id: productSnap.id, ...data } as ProductType;
   }
   return null;
 }
 
-export const deleteBookFromFirestore = async (bookId: string): Promise<void> => {
-  const bookRef = doc(db, 'books', bookId);
-  await deleteDoc(bookRef);
+export const deleteProductFromFirestore = async (productId: string): Promise<void> => {
+  const productRef = doc(db, 'products', productId);
+  await deleteDoc(productRef);
 };
 
 
@@ -508,5 +507,3 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
-
-    

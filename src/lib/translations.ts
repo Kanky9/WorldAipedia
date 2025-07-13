@@ -14,7 +14,7 @@ export type CoreTranslationKey =
   // Header
   | 'navHome'
   | 'navCategories'
-  | 'navBooks'
+  | 'navStore'
   | 'navPublications'
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
@@ -41,14 +41,14 @@ export type CoreTranslationKey =
   // All Posts Page (/blog)
   | 'allPostsTitle'
   | 'allPostsSubtitle'
-  // Books Page
-  | 'booksPageTitle'
-  | 'booksPageSubtitle'
+  // Store Page
+  | 'storePageTitle'
+  | 'storePageSubtitle'
   | 'amazonProductsTitle'
   | 'mercadolibreProductsTitle'
   | 'buyOnAmazonButton'
   | 'buyOnMercadoLibreButton'
-  | 'adminNoBooks'
+  | 'adminNoProducts'
   // Post Card
   | 'readMoreButton'
   // AI Chat Assistant "Lace"
@@ -171,24 +171,24 @@ export type CoreTranslationKey =
   | 'adminDeletePostSuccessTitle'
   | 'adminDeletePostSuccessDesc'
   | 'adminDeletePostErrorTitle'
-  // Admin Books
-  | 'adminManageBooksTitle'
-  | 'adminManageBooksDescription'
-  | 'adminCreateNewBookButton'
-  | 'adminBookSourceLabel'
-  | 'adminBookLinkLabel'
-  | 'adminBookSelectSourcePlaceholder'
-  | 'adminBookSourceAmazon'
-  | 'adminBookSourceMercadoLibre'
-  | 'adminBookLinkPlaceholder'
-  | 'adminCreateBookTitle'
-  | 'adminEditBookTitle'
-  | 'adminBookCreatedSuccess'
-  | 'adminBookUpdatedSuccess'
-  | 'adminDeleteBookSuccessTitle'
-  | 'adminDeleteBookSuccessDesc'
-  | 'adminDeleteBookErrorTitle'
-  | 'deleteBookConfirm'
+  // Admin Products (Store)
+  | 'adminManageStoreTitle'
+  | 'adminManageStoreDescription'
+  | 'adminCreateNewProductButton'
+  | 'adminProductSourceLabel'
+  | 'adminProductLinkLabel'
+  | 'adminProductSelectSourcePlaceholder'
+  | 'adminProductSourceAmazon'
+  | 'adminProductSourceMercadoLibre'
+  | 'adminProductLinkPlaceholder'
+  | 'adminCreateProductTitle'
+  | 'adminEditProductTitle'
+  | 'adminProductCreatedSuccess'
+  | 'adminProductUpdatedSuccess'
+  | 'adminProductDeleteSuccessTitle'
+  | 'adminProductDeleteSuccessDesc'
+  | 'adminProductDeleteErrorTitle'
+  | 'deleteProductConfirm'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -321,7 +321,7 @@ export type TranslationSet = {
 } & {
   navHome: string;
   navCategories: string;
-  navBooks: string;
+  navStore: string;
   featuredPostsTitle: string;
   userReviewsTitle: string;
   loginToCommentPrompt: string;
@@ -341,7 +341,7 @@ export const translations: Translations = {
   en: {
     navHome: 'Home',
     navCategories: 'Categories',
-    navBooks: 'Books',
+    navStore: 'Store',
     navPublications: 'Publications',
     tooltipLanguageSwitcher: 'Change language',
     loginButton: 'Login',
@@ -365,13 +365,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: 'View All Posts',
     allPostsTitle: 'All Blog Posts',
     allPostsSubtitle: 'Browse through our complete collection of articles and insights on AI.',
-    booksPageTitle: 'Recommended Books',
-    booksPageSubtitle: 'A curated collection of books on AI, technology, and more.',
+    storePageTitle: 'Official Store',
+    storePageSubtitle: 'A curated collection of recommended products.',
     amazonProductsTitle: 'From Amazon',
     mercadolibreProductsTitle: 'From MercadoLibre',
     buyOnAmazonButton: 'Buy on Amazon',
     buyOnMercadoLibreButton: 'Buy on MercadoLibre',
-    adminNoBooks: 'No books found.',
+    adminNoProducts: 'No products found.',
     readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
     laceChatDescription: 'I\'m Lace! Ask me about World AI, AI tools, or let\'s just chat.',
@@ -486,23 +486,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: 'Post Deleted',
     adminDeletePostSuccessDesc: 'Post "{title}" has been deleted.',
     adminDeletePostErrorTitle: 'Delete Failed',
-    adminManageBooksTitle: 'Manage Books',
-    adminManageBooksDescription: 'Add, edit, or remove recommended books.',
-    adminCreateNewBookButton: 'Add New Book',
-    adminBookSourceLabel: 'Source',
-    adminBookLinkLabel: 'Purchase Link',
-    adminBookSelectSourcePlaceholder: 'Select a source',
-    adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLibre: 'MercadoLibre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: 'Create New Book',
-    adminEditBookTitle: 'Edit Book',
-    adminBookCreatedSuccess: 'Book Created',
-    adminBookUpdatedSuccess: 'Book Updated',
-    adminDeleteBookSuccessTitle: 'Book Deleted',
-    adminDeleteBookSuccessDesc: 'Book "{title}" has been deleted.',
-    adminDeleteBookErrorTitle: 'Delete Failed',
-    deleteBookConfirm: 'Are you sure you want to delete the book "{title}"?',
+    adminManageStoreTitle: 'Manage Store',
+    adminManageStoreDescription: 'Add, edit, or remove store products.',
+    adminCreateNewProductButton: 'Add New Product',
+    adminProductSourceLabel: 'Source',
+    adminProductLinkLabel: 'Purchase Link',
+    adminProductSelectSourcePlaceholder: 'Select a source',
+    adminProductSourceAmazon: 'Amazon',
+    adminProductSourceMercadoLibre: 'MercadoLibre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: 'Create New Product',
+    adminEditProductTitle: 'Edit Product',
+    adminProductCreatedSuccess: 'Product Created',
+    adminProductUpdatedSuccess: 'Product Updated',
+    adminProductDeleteSuccessTitle: 'Product Deleted',
+    adminProductDeleteSuccessDesc: 'Product "{title}" has been deleted.',
+    adminProductDeleteErrorTitle: 'Delete Failed',
+    deleteProductConfirm: 'Are you sure you want to delete the product "{title}"?',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -625,7 +625,7 @@ export const translations: Translations = {
   es: {
     navHome: 'Inicio',
     navCategories: 'Categorías',
-    navBooks: 'Libros',
+    navStore: 'Tienda',
     navPublications: 'Publicaciones',
     tooltipLanguageSwitcher: 'Cambiar idioma',
     loginButton: 'Iniciar Sesión',
@@ -649,13 +649,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: 'Ver Todas las Publicaciones',
     allPostsTitle: 'Todas las Publicaciones del Blog',
     allPostsSubtitle: 'Navega por nuestra colección completa de artículos e ideas sobre IA.',
-    booksPageTitle: 'Libros Recomendados',
-    booksPageSubtitle: 'Una colección curada de libros sobre IA, tecnología y más.',
+    storePageTitle: 'Tienda Oficial',
+    storePageSubtitle: 'Una colección seleccionada de productos recomendados.',
     amazonProductsTitle: 'De Amazon',
     mercadolibreProductsTitle: 'De MercadoLibre',
     buyOnAmazonButton: 'Comprar en Amazon',
     buyOnMercadoLibreButton: 'Comprar en MercadoLibre',
-    adminNoBooks: 'No se encontraron libros.',
+    adminNoProducts: 'No se encontraron productos.',
     readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
     laceChatDescription: '¡Soy Lace! Pregúntame sobre World AI, herramientas de IA, o simplemente charlemos.',
@@ -770,23 +770,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: 'Publicación Eliminada',
     adminDeletePostSuccessDesc: 'La publicación "{title}" ha sido eliminada.',
     adminDeletePostErrorTitle: 'Error al Eliminar',
-    adminManageBooksTitle: 'Gestionar Libros',
-    adminManageBooksDescription: 'Añadir, editar o eliminar libros recomendados.',
-    adminCreateNewBookButton: 'Añadir Nuevo Libro',
-    adminBookSourceLabel: 'Fuente',
-    adminBookLinkLabel: 'Enlace de Compra',
-    adminBookSelectSourcePlaceholder: 'Seleccione una fuente',
-    adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLibre: 'MercadoLibre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: 'Crear Nuevo Libro',
-    adminEditBookTitle: 'Editar Libro',
-    adminBookCreatedSuccess: 'Libro Creado',
-    adminBookUpdatedSuccess: 'Libro Actualizado',
-    adminDeleteBookSuccessTitle: 'Libro Eliminado',
-    adminDeleteBookSuccessDesc: 'El libro "{title}" ha sido eliminado.',
-    adminDeleteBookErrorTitle: 'Error al Eliminar',
-    deleteBookConfirm: '¿Estás seguro de que quieres eliminar el libro "{title}"?',
+    adminManageStoreTitle: 'Gestionar Tienda',
+    adminManageStoreDescription: 'Añadir, editar o eliminar productos de la tienda.',
+    adminCreateNewProductButton: 'Añadir Nuevo Producto',
+    adminProductSourceLabel: 'Fuente',
+    adminProductLinkLabel: 'Enlace de Compra',
+    adminProductSelectSourcePlaceholder: 'Seleccione una fuente',
+    adminProductSourceAmazon: 'Amazon',
+    adminProductSourceMercadoLibre: 'MercadoLibre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: 'Crear Nuevo Producto',
+    adminEditProductTitle: 'Editar Producto',
+    adminProductCreatedSuccess: 'Producto Creado',
+    adminProductUpdatedSuccess: 'Producto Actualizado',
+    adminProductDeleteSuccessTitle: 'Producto Eliminado',
+    adminProductDeleteSuccessDesc: 'El producto "{title}" ha sido eliminado.',
+    adminProductDeleteErrorTitle: 'Error al Eliminar',
+    deleteProductConfirm: '¿Estás seguro de que quieres eliminar el producto "{title}"?',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -849,7 +849,7 @@ export const translations: Translations = {
     paymentMethodsTitle: "Elige tu método de pago",
     paymentErrorTitle: "Error de Pago",
     processingPayment: "Procesando tu pago...",
-    paypalGatewayInfo: "Todos los pagamentos são processados de forma segura através do PayPal. Você pode usar seu saldo do PayPal ou qualquer cartão de crédito/débito principal.",
+    paypalGatewayInfo: "Todos os pagamentos são processados de forma segura através do PayPal. Você pode usar seu saldo do PayPal ou qualquer cartão de crédito/débito principal.",
     creditCardLabel: "Tarjeta de Crédito/Débito",
     paypalLabel: "PayPal",
     applePayLabel: "Apple Pay",
@@ -909,7 +909,7 @@ export const translations: Translations = {
   it: {
     navHome: 'Home',
     navCategories: 'Categorie',
-    navBooks: 'Libri',
+    navStore: 'Negozio',
     navPublications: 'Pubblicazioni',
     tooltipLanguageSwitcher: 'Cambia lingua',
     loginButton: 'Accedi',
@@ -933,13 +933,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: 'Vedi Tutti i Post',
     allPostsTitle: 'Tutti i Post del Blog',
     allPostsSubtitle: 'Sfoglia la nostra collezione completa di articoli e approfondimenti sull\'IA.',
-    booksPageTitle: 'Libri Consigliati',
-    booksPageSubtitle: 'Una raccolta curata di libri su IA, tecnologia e altro.',
+    storePageTitle: 'Negozio Ufficiale',
+    storePageSubtitle: 'Una raccolta curata di prodotti consigliati.',
     amazonProductsTitle: 'Da Amazon',
     mercadolibreProductsTitle: 'Da MercadoLibre',
     buyOnAmazonButton: 'Compra su Amazon',
     buyOnMercadoLibreButton: 'Compra su MercadoLibre',
-    adminNoBooks: 'Nessun libro trovato.',
+    adminNoProducts: 'Nessun prodotto trovato.',
     readMoreButton: 'Leggi di più',
     laceChatTitle: 'Chatta con Lace',
     laceChatDescription: 'Sono Lace! Chiedimi di World AI, strumenti IA, o semplicemente chattiamo.',
@@ -1054,23 +1054,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: 'Post Eliminato',
     adminDeletePostSuccessDesc: 'Il post "{title}" è stato eliminato.',
     adminDeletePostErrorTitle: 'Eliminazione Fallita',
-    adminManageBooksTitle: 'Gestisci Libri',
-    adminManageBooksDescription: 'Aggiungi, modifica o rimuovi libri consigliati.',
-    adminCreateNewBookButton: 'Aggiungi Nuovo Libro',
-    adminBookSourceLabel: 'Fonte',
-    adminBookLinkLabel: 'Link Acquisto',
-    adminBookSelectSourcePlaceholder: 'Seleziona una fonte',
-    adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLibre: 'MercadoLibre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: 'Crea Nuovo Libro',
-    adminEditBookTitle: 'Modifica Libro',
-    adminBookCreatedSuccess: 'Libro Creato',
-    adminBookUpdatedSuccess: 'Libro Aggiornato',
-    adminDeleteBookSuccessTitle: 'Libro Eliminato',
-    adminDeleteBookSuccessDesc: 'Il libro "{title}" è stato eliminato.',
-    adminDeleteBookErrorTitle: 'Eliminazione Fallita',
-    deleteBookConfirm: 'Sei sicuro di voler eliminare il libro "{title}"?',
+    adminManageStoreTitle: 'Gestisci Negozio',
+    adminManageStoreDescription: 'Aggiungi, modifica o rimuovi prodotti del negozio.',
+    adminCreateNewProductButton: 'Aggiungi Nuovo Prodotto',
+    adminProductSourceLabel: 'Fonte',
+    adminProductLinkLabel: 'Link Acquisto',
+    adminProductSelectSourcePlaceholder: 'Seleziona una fonte',
+    adminProductSourceAmazon: 'Amazon',
+    adminProductSourceMercadoLibre: 'MercadoLibre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: 'Crea Nuovo Prodotto',
+    adminEditProductTitle: 'Modifica Prodotto',
+    adminProductCreatedSuccess: 'Prodotto Creato',
+    adminProductUpdatedSuccess: 'Prodotto Aggiornato',
+    adminProductDeleteSuccessTitle: 'Prodotto Eliminato',
+    adminProductDeleteSuccessDesc: 'Il prodotto "{title}" è stato eliminato.',
+    adminProductDeleteErrorTitle: 'Eliminazione Fallita',
+    deleteProductConfirm: 'Sei sicuro di voler eliminare il prodotto "{title}"?',
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -1193,7 +1193,7 @@ export const translations: Translations = {
   zh: {
     navHome: '首页',
     navCategories: '分类',
-    navBooks: '书籍',
+    navStore: '商店',
     navPublications: '出版物',
     tooltipLanguageSwitcher: '更改语言',
     loginButton: '登录',
@@ -1217,13 +1217,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: '查看所有帖子',
     allPostsTitle: '所有博客帖子',
     allPostsSubtitle: '浏览我们所有关于AI的文章和见解。',
-    booksPageTitle: '推荐书籍',
-    booksPageSubtitle: '精选的关于AI、技术等方面的书籍。',
+    storePageTitle: '官方商店',
+    storePageSubtitle: '精选的推荐产品。',
     amazonProductsTitle: '来自亚马逊',
     mercadolibreProductsTitle: '来自MercadoLibre',
     buyOnAmazonButton: '在亚马逊购买',
     buyOnMercadoLibreButton: '在MercadoLibre购买',
-    adminNoBooks: '未找到书籍。',
+    adminNoProducts: '未找到产品。',
     readMoreButton: '阅读更多',
     laceChatTitle: '与Lace聊天',
     laceChatDescription: '我是Lace！问我关于World AI、AI工具的问题，或者只是聊聊天。',
@@ -1338,23 +1338,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: '帖子已删除',
     adminDeletePostSuccessDesc: '帖子 "{title}" 已删除。',
     adminDeletePostErrorTitle: '删除失败',
-    adminManageBooksTitle: '管理书籍',
-    adminManageBooksDescription: '添加、编辑或删除推荐书籍。',
-    adminCreateNewBookButton: '添加新书',
-    adminBookSourceLabel: '来源',
-    adminBookLinkLabel: '购买链接',
-    adminBookSelectSourcePlaceholder: '选择一个来源',
-    adminBookSourceAmazon: '亚马逊',
-    adminBookSourceMercadoLibre: 'MercadoLibre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: '创建新书',
-    adminEditBookTitle: '编辑书籍',
-    adminBookCreatedSuccess: '书籍已创建',
-    adminBookUpdatedSuccess: '书籍已更新',
-    adminDeleteBookSuccessTitle: '书籍已删除',
-    adminDeleteBookSuccessDesc: '书籍 "{title}" 已删除。',
-    adminDeleteBookErrorTitle: '删除失败',
-    deleteBookConfirm: '您确定要删除书籍“{title}”吗？',
+    adminManageStoreTitle: '管理商店',
+    adminManageStoreDescription: '添加、编辑或删除商店产品。',
+    adminCreateNewProductButton: '添加新产品',
+    adminProductSourceLabel: '来源',
+    adminProductLinkLabel: '购买链接',
+    adminProductSelectSourcePlaceholder: '选择一个来源',
+    adminProductSourceAmazon: '亚马逊',
+    adminProductSourceMercadoLibre: 'MercadoLibre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: '创建新产品',
+    adminEditProductTitle: '编辑产品',
+    adminProductCreatedSuccess: '产品已创建',
+    adminProductUpdatedSuccess: '产品已更新',
+    adminProductDeleteSuccessTitle: '产品已删除',
+    adminProductDeleteSuccessDesc: '产品 "{title}" 已删除。',
+    adminProductDeleteErrorTitle: '删除失败',
+    deleteProductConfirm: '您确定要删除产品“{title}”吗？',
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -1477,7 +1477,7 @@ export const translations: Translations = {
   ja: {
     navHome: 'ホーム',
     navCategories: 'カテゴリー',
-    navBooks: '書籍',
+    navStore: 'ストア',
     navPublications: '出版物',
     tooltipLanguageSwitcher: '言語を変更',
     loginButton: 'ログイン',
@@ -1501,13 +1501,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: 'すべての記事を見る',
     allPostsTitle: 'すべてのブログ記事',
     allPostsSubtitle: 'AIに関する記事や洞察の完全なコレクションをご覧ください。',
-    booksPageTitle: 'おすすめ書籍',
-    booksPageSubtitle: 'AI、テクノロジーなどに関する厳選された書籍コレクション。',
+    storePageTitle: '公式ストア',
+    storePageSubtitle: '厳選されたおすすめ商品のコレクション。',
     amazonProductsTitle: 'Amazonから',
     mercadolibreProductsTitle: 'MercadoLibreから',
     buyOnAmazonButton: 'Amazonで購入',
     buyOnMercadoLibreButton: 'MercadoLibreで購入',
-    adminNoBooks: '書籍が見つかりません。',
+    adminNoProducts: '商品が見つかりません。',
     readMoreButton: '続きを読む',
     laceChatTitle: 'Laceとチャット',
     laceChatDescription: '私はLaceです！World AIやAIツールについて質問したり、ただおしゃべりしたりしましょう。',
@@ -1622,23 +1622,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: '記事が削除されました',
     adminDeletePostSuccessDesc: '記事 "{title}" が削除されました。',
     adminDeletePostErrorTitle: '削除に失敗しました',
-    adminManageBooksTitle: '書籍を管理',
-    adminManageBooksDescription: 'おすすめ書籍を追加、編集、削除します。',
-    adminCreateNewBookButton: '新しい書籍を追加',
-    adminBookSourceLabel: 'ソース',
-    adminBookLinkLabel: '購入リンク',
-    adminBookSelectSourcePlaceholder: 'ソースを選択',
-    adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLibre: 'MercadoLibre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: '新しい書籍を作成',
-    adminEditBookTitle: '書籍を編集',
-    adminBookCreatedSuccess: '書籍が作成されました',
-    adminBookUpdatedSuccess: '書籍が更新されました',
-    adminDeleteBookSuccessTitle: '書籍が削除されました',
-    adminDeleteBookSuccessDesc: '書籍 "{title}" が削除されました。',
-    adminDeleteBookErrorTitle: '削除に失敗しました',
-    deleteBookConfirm: '書籍「{title}」を削除してもよろしいですか？',
+    adminManageStoreTitle: 'ストアを管理',
+    adminManageStoreDescription: 'ストアの商品を追加、編集、削除します。',
+    adminCreateNewProductButton: '新しい商品を追加',
+    adminProductSourceLabel: 'ソース',
+    adminProductLinkLabel: '購入リンク',
+    adminProductSelectSourcePlaceholder: 'ソースを選択',
+    adminProductSourceAmazon: 'Amazon',
+    adminProductSourceMercadoLibre: 'MercadoLibre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: '新しい商品を作成',
+    adminEditProductTitle: '商品を編集',
+    adminProductCreatedSuccess: '商品が作成されました',
+    adminProductUpdatedSuccess: '商品が更新されました',
+    adminProductDeleteSuccessTitle: '商品が削除されました',
+    adminProductDeleteSuccessDesc: '商品 "{title}" が削除されました。',
+    adminProductDeleteErrorTitle: '削除に失敗しました',
+    deleteProductConfirm: '商品「{title}」を削除してもよろしいですか？',
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -1761,7 +1761,7 @@ export const translations: Translations = {
   pt: {
     navHome: 'Início',
     navCategories: 'Categorias',
-    navBooks: 'Livros',
+    navStore: 'Loja',
     navPublications: 'Publicações',
     tooltipLanguageSwitcher: 'Mudar idioma',
     loginButton: 'Entrar',
@@ -1785,13 +1785,13 @@ export const translations: Translations = {
     viewAllPostsArchiveButton: 'Ver Todas as Postagens',
     allPostsTitle: 'Todas as Postagens do Blog',
     allPostsSubtitle: 'Navegue por nossa coleção completa de artigos e insights sobre IA.',
-    booksPageTitle: 'Livros Recomendados',
-    booksPageSubtitle: 'Uma coleção selecionada de livros sobre IA, tecnologia e mais.',
+    storePageTitle: 'Loja Oficial',
+    storePageSubtitle: 'Uma coleção selecionada de produtos recomendados.',
     amazonProductsTitle: 'Da Amazon',
     mercadolibreProductsTitle: 'Do MercadoLivre',
     buyOnAmazonButton: 'Comprar na Amazon',
     buyOnMercadoLibreButton: 'Comprar no MercadoLivre',
-    adminNoBooks: 'Nenhum livro encontrado.',
+    adminNoProducts: 'Nenhum produto encontrado.',
     readMoreButton: 'Leia Mais',
     laceChatTitle: 'Conversar com Lace',
     laceChatDescription: 'Sou a Lace! Pergunte-me sobre o World AI, ferramentas de IA, ou apenas vamos conversar.',
@@ -1906,23 +1906,23 @@ export const translations: Translations = {
     adminDeletePostSuccessTitle: 'Postagem Excluída',
     adminDeletePostSuccessDesc: 'A postagem "{title}" foi excluída.',
     adminDeletePostErrorTitle: 'Falha ao Excluir',
-    adminManageBooksTitle: 'Gerenciar Livros',
-    adminManageBooksDescription: 'Adicione, edite ou remova livros recomendados.',
-    adminCreateNewBookButton: 'Adicionar Novo Livro',
-    adminBookSourceLabel: 'Fonte',
-    adminBookLinkLabel: 'Link de Compra',
-    adminBookSelectSourcePlaceholder: 'Selecione uma fonte',
-    adminBookSourceAmazon: 'Amazon',
-    adminBookSourceMercadoLivre: 'MercadoLivre',
-    adminBookLinkPlaceholder: 'https://...',
-    adminCreateBookTitle: 'Criar Novo Livro',
-    adminEditBookTitle: 'Editar Livro',
-    adminBookCreatedSuccess: 'Livro Criado',
-    adminBookUpdatedSuccess: 'Livro Atualizado',
-    adminDeleteBookSuccessTitle: 'Livro Excluído',
-    adminDeleteBookSuccessDesc: 'O livro "{title}" foi excluído.',
-    adminDeleteBookErrorTitle: 'Falha ao Excluir',
-    deleteBookConfirm: 'Tem certeza de que deseja excluir o livro "{title}"?',
+    adminManageStoreTitle: 'Gerenciar Loja',
+    adminManageStoreDescription: 'Adicione, edite ou remova produtos da loja.',
+    adminCreateNewProductButton: 'Adicionar Novo Produto',
+    adminProductSourceLabel: 'Fonte',
+    adminProductLinkLabel: 'Link de Compra',
+    adminProductSelectSourcePlaceholder: 'Selecione uma fonte',
+    adminProductSourceAmazon: 'Amazon',
+    adminProductSourceMercadoLibre: 'MercadoLivre',
+    adminProductLinkPlaceholder: 'https://...',
+    adminCreateProductTitle: 'Criar Novo Produto',
+    adminEditProductTitle: 'Editar Produto',
+    adminProductCreatedSuccess: 'Produto Criado',
+    adminProductUpdatedSuccess: 'Produto Atualizado',
+    adminProductDeleteSuccessTitle: 'Produto Excluído',
+    adminProductDeleteSuccessDesc: 'O produto "{title}" foi excluído.',
+    adminProductDeleteErrorTitle: 'Falha ao Excluir',
+    deleteProductConfirm: 'Tem certeza de que deseja excluir o produto "{title}"?',
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -14,11 +15,11 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
 import { ArrowLeft, UploadCloud, Trash2, Loader2, ShieldAlert } from 'lucide-react';
-import type { Book as BookType } from '@/lib/types';
+import type { Product as ProductType } from '@/lib/types';
 import {
-  addBookToFirestore,
-  getBookFromFirestore,
-  updateBookInFirestore,
+  addProductToFirestore,
+  getProductFromFirestore,
+  updateProductInFirestore,
   db,
 } from '@/lib/firebase';
 import { doc, collection as firestoreCollection } from 'firebase/firestore';
@@ -26,7 +27,7 @@ import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
 import { languages as appLanguagesObject } from '@/lib/translations';
 
-const DEFAULT_BOOK_PLACEHOLDER = 'https://placehold.co/400x600.png';
+const DEFAULT_PRODUCT_PLACEHOLDER = 'https://placehold.co/400x400.png';
 
 const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
 
@@ -43,14 +44,14 @@ const initialLocalizedContent: LocalizedContent = allAppLanguageCodes.reduce((ac
 }, {} as LocalizedContent);
 
 
-export default function CreateBookPage() {
+export default function CreateProductPage() {
   const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
 
-  const [bookId, setBookId] = useState<string | null>(null);
+  const [productId, setProductId] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +61,7 @@ export default function CreateBookPage() {
   const [link, setLink] = useState('');
   const [source, setSource] = useState<'amazon' | 'mercadolibre' | ''>('');
   const [imageDataUri, setImageDataUri] = useState<string>('');
-  const [imageUrlForPreview, setImageUrlForPreview] = useState<string>(DEFAULT_BOOK_PLACEHOLDER);
+  const [imageUrlForPreview, setImageUrlForPreview] = useState<string>(DEFAULT_PRODUCT_PLACEHOLDER);
   const [imageHint, setImageHint] = useState('');
   const imageFileRef = useRef<HTMLInputElement>(null);
   
@@ -80,7 +81,7 @@ export default function CreateBookPage() {
     }
 
     const id = searchParams.get('id');
-    setBookId(id);
+    setProductId(id);
     if(id) {
         setIsEditMode(true);
     } else {
@@ -90,29 +91,29 @@ export default function CreateBookPage() {
   }, [searchParams, currentUser, authLoading, router]);
 
   useEffect(() => {
-    if (isEditMode && bookId) {
+    if (isEditMode && productId) {
       setIsLoadingData(true);
-      getBookFromFirestore(bookId).then(book => {
-        if (book) {
+      getProductFromFirestore(productId).then(product => {
+        if (product) {
             const contentToLoad: LocalizedContent = {};
             allAppLanguageCodes.forEach(langCode => {
                 contentToLoad[langCode] = {
-                    title: book.title?.[langCode] || '',
-                    description: book.description?.[langCode] || '',
+                    title: product.title?.[langCode] || '',
+                    description: product.description?.[langCode] || '',
                 };
             });
             setLocalizedContent(contentToLoad);
-          setImageUrlForPreview(book.imageUrl || DEFAULT_BOOK_PLACEHOLDER);
-          setImageHint(book.imageHint || '');
-          setLink(book.link);
-          setSource(book.source);
+          setImageUrlForPreview(product.imageUrl || DEFAULT_PRODUCT_PLACEHOLDER);
+          setImageHint(product.imageHint || '');
+          setLink(product.link);
+          setSource(product.source);
         } else {
-            toast({ variant: 'destructive', title: 'Book not found' });
-            router.push('/admin/manage-books');
+            toast({ variant: 'destructive', title: 'Product not found' });
+            router.push('/admin/manage-products');
         }
       }).finally(() => setIsLoadingData(false));
     }
-  }, [isEditMode, bookId, router, toast]);
+  }, [isEditMode, productId, router, toast]);
   
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -136,7 +137,7 @@ export default function CreateBookPage() {
 
   const clearImage = () => {
     setImageDataUri('');
-    setImageUrlForPreview(DEFAULT_BOOK_PLACEHOLDER);
+    setImageUrlForPreview(DEFAULT_PRODUCT_PLACEHOLDER);
     if (imageFileRef.current) imageFileRef.current.value = "";
   };
 
@@ -156,7 +157,7 @@ export default function CreateBookPage() {
         if (content?.description?.trim()) finalTranslations.description[langCode as LanguageCode] = content.description;
     }
 
-    const bookDetails = {
+    const productDetails = {
       title: finalTranslations.title,
       description: finalTranslations.description,
       imageUrl: imageDataUri || imageUrlForPreview,
@@ -166,18 +167,18 @@ export default function CreateBookPage() {
     };
 
     try {
-      if (isEditMode && bookId) {
-        await updateBookInFirestore(bookId, bookDetails as any);
-        toast({ title: t('adminBookUpdatedSuccess', "Book Updated") });
+      if (isEditMode && productId) {
+        await updateProductInFirestore(productId, productDetails as any);
+        toast({ title: t('adminProductUpdatedSuccess', "Product Updated") });
       } else {
-        const newBookId = doc(firestoreCollection(db, 'books')).id;
-        await addBookToFirestore({ ...bookDetails, id: newBookId } as any);
-        toast({ title: t('adminBookCreatedSuccess', "Book Created") });
+        const newProductId = doc(firestoreCollection(db, 'products')).id;
+        await addProductToFirestore({ ...productDetails, id: newProductId } as any);
+        toast({ title: t('adminProductCreatedSuccess', "Product Created") });
       }
-      router.push('/admin/manage-books');
+      router.push('/admin/manage-products');
     } catch (error) {
-      console.error("Error saving book:", error);
-      toast({ variant: "destructive", title: "Save Error", description: "Could not save the book." });
+      console.error("Error saving product:", error);
+      toast({ variant: "destructive", title: "Save Error", description: "Could not save the product." });
     } finally {
       setIsSubmitting(false);
     }
@@ -192,11 +193,11 @@ export default function CreateBookPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <Button variant="outline" asChild className="mb-6"><Link href="/admin/manage-books"><ArrowLeft className="mr-2 h-4 w-4" />Back to Books</Link></Button>
+      <Button variant="outline" asChild className="mb-6"><Link href="/admin/manage-products"><ArrowLeft className="mr-2 h-4 w-4" />Back to Products</Link></Button>
       <Card>
         <CardHeader>
-          <CardTitle>{isEditMode ? t('adminEditBookTitle', 'Edit Book') : t('adminCreateBookTitle', 'Create New Book')}</CardTitle>
-          <CardDescription>Fill in the book details below.</CardDescription>
+          <CardTitle>{isEditMode ? t('adminEditProductTitle', 'Edit Product') : t('adminCreateProductTitle', 'Create New Product')}</CardTitle>
+          <CardDescription>Fill in the product details below.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -220,31 +221,31 @@ export default function CreateBookPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label>{t('adminPostMainImageLabel', 'Book Cover Image')}</Label>
+                <Label>{t('adminPostMainImageLabel', 'Product Image')}</Label>
                 <div className="flex items-center gap-4">
                   <Button type="button" variant="outline" onClick={() => imageFileRef.current?.click()} disabled={isSubmitting}><UploadCloud className="mr-2 h-4 w-4" /> Upload</Button>
                   <Input type="file" accept="image/*" ref={imageFileRef} onChange={handleImageFileChange} className="hidden" />
-                  {imageUrlForPreview !== DEFAULT_BOOK_PLACEHOLDER && <Button type="button" variant="ghost" size="sm" onClick={clearImage} disabled={isSubmitting}><Trash2 className="mr-1 h-4 w-4" /> Clear</Button>}
+                  {imageUrlForPreview !== DEFAULT_PRODUCT_PLACEHOLDER && <Button type="button" variant="ghost" size="sm" onClick={clearImage} disabled={isSubmitting}><Trash2 className="mr-1 h-4 w-4" /> Clear</Button>}
                 </div>
-                {imageUrlForPreview && <Image src={imageUrlForPreview} alt="Book cover preview" width={150} height={225} className="mt-2 rounded border object-cover" />}
+                {imageUrlForPreview && <Image src={imageUrlForPreview} alt="Product image preview" width={200} height={200} className="mt-2 rounded border object-cover aspect-square" />}
                 <Label htmlFor="image-hint">{t('adminPostMainImageHintLabel', 'Image AI Hint')}</Label>
-                <Input id="image-hint" value={imageHint} onChange={e => setImageHint(e.target.value)} placeholder={t('adminPostMainImageHintPlaceholder', 'e.g., book cover science')} disabled={isSubmitting} />
+                <Input id="image-hint" value={imageHint} onChange={e => setImageHint(e.target.value)} placeholder={t('adminPostMainImageHintPlaceholder', 'e.g., modern coffee maker')} disabled={isSubmitting} />
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="source">{t('adminBookSourceLabel', 'Source')}</Label>
+                  <Label htmlFor="source">{t('adminProductSourceLabel', 'Source')}</Label>
                   <Select value={source} onValueChange={(v) => setSource(v as any)} required disabled={isSubmitting}>
-                    <SelectTrigger><SelectValue placeholder={t('adminBookSelectSourcePlaceholder', 'Select a source')} /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('adminProductSelectSourcePlaceholder', 'Select a source')} /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="amazon">{t('adminBookSourceAmazon', 'Amazon')}</SelectItem>
-                      <SelectItem value="mercadolibre">{t('adminBookSourceMercadoLibre', 'MercadoLibre')}</SelectItem>
+                      <SelectItem value="amazon">{t('adminProductSourceAmazon', 'Amazon')}</SelectItem>
+                      <SelectItem value="mercadolibre">{t('adminProductSourceMercadoLibre', 'MercadoLibre')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="link">{t('adminBookLinkLabel', 'Purchase Link')}</Label>
-                  <Input id="link" value={link} onChange={e => setLink(e.target.value)} placeholder={t('adminBookLinkPlaceholder', 'https://...')} required disabled={isSubmitting} />
+                  <Label htmlFor="link">{t('adminProductLinkLabel', 'Purchase Link')}</Label>
+                  <Input id="link" value={link} onChange={e => setLink(e.target.value)} placeholder={t('adminProductLinkPlaceholder', 'https://...')} required disabled={isSubmitting} />
                 </div>
               </div>
             </div>
@@ -252,7 +253,7 @@ export default function CreateBookPage() {
             <div className="flex justify-end pt-4">
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
-                {isEditMode ? t('adminPostButtonUpdate', 'Update Book') : t('adminPostButtonCreate', 'Create Book')}
+                {isEditMode ? t('adminPostButtonUpdate', 'Update Product') : t('adminPostButtonCreate', 'Create Product')}
               </Button>
             </div>
           </form>

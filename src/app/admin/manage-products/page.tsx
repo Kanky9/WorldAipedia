@@ -4,11 +4,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/useLanguage";
-import { PlusCircle, Edit, Trash2, BookOpenCheck, Loader2, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, BookOpenCheck, Loader2, AlertTriangle, ShieldAlert, ShoppingCart } from 'lucide-react';
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
-import type { Book as BookType } from "@/lib/types";
-import { getAllBooksFromFirestore, deleteBookFromFirestore } from "@/lib/firebase";
+import type { Product as ProductType } from "@/lib/types";
+import { getAllProductsFromFirestore, deleteProductFromFirestore } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from 'next/navigation';
@@ -25,17 +25,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
-export default function ManageBooksPage() {
+export default function ManageProductsPage() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [books, setBooks] = useState<BookType[]>([]);
+  const [products, setProducts] = useState<ProductType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [bookToDelete, setBookToDelete] = useState<BookType | null>(null);
+  const [productToDelete, setProductToDelete] = useState<ProductType | null>(null);
 
   useEffect(() => {
     if (!authLoading && (!currentUser || !currentUser.isAdmin)) {
@@ -43,7 +43,7 @@ export default function ManageBooksPage() {
     }
   }, [currentUser, authLoading, router]);
 
-  const fetchBooks = useCallback(async () => {
+  const fetchProducts = useCallback(async () => {
     if (!currentUser?.isAdmin) {
       setIsLoading(false);
       return;
@@ -51,11 +51,11 @@ export default function ManageBooksPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const fetchedBooks = await getAllBooksFromFirestore();
-      setBooks(fetchedBooks);
+      const fetchedProducts = await getAllProductsFromFirestore();
+      setProducts(fetchedProducts);
     } catch (err) {
-      console.error("Error fetching books:", err);
-      setError("Failed to load books.");
+      console.error("Error fetching products:", err);
+      setError("Failed to load products.");
     } finally {
       setIsLoading(false);
     }
@@ -63,26 +63,26 @@ export default function ManageBooksPage() {
 
   useEffect(() => {
     if (currentUser?.isAdmin) {
-      fetchBooks();
+      fetchProducts();
     }
-  }, [fetchBooks, currentUser?.isAdmin]);
+  }, [fetchProducts, currentUser?.isAdmin]);
 
-  const handleDeleteClick = (book: BookType) => {
-    setBookToDelete(book);
+  const handleDeleteClick = (product: ProductType) => {
+    setProductToDelete(product);
     setShowDeleteConfirm(true);
   };
 
   const confirmDelete = async () => {
-    if (!bookToDelete) return;
+    if (!productToDelete) return;
     try {
-      await deleteBookFromFirestore(bookToDelete.id);
-      toast({ title: t('adminDeleteBookSuccessTitle', "Book Deleted"), description: t('adminDeleteBookSuccessDesc', 'Book "{title}" has been deleted.', { title: t(bookToDelete.title) })});
-      setBooks(prevBooks => prevBooks.filter(p => p.id !== bookToDelete.id)); 
+      await deleteProductFromFirestore(productToDelete.id);
+      toast({ title: t('adminProductDeleteSuccessTitle', "Product Deleted"), description: t('adminProductDeleteSuccessDesc', 'Product "{title}" has been deleted.', { title: t(productToDelete.title) })});
+      setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete.id)); 
     } catch (deleteError) {
-      toast({ variant: "destructive", title: t('adminDeleteBookErrorTitle', "Delete Failed"), description: "Could not delete the book." });
+      toast({ variant: "destructive", title: t('adminProductDeleteErrorTitle', "Delete Failed"), description: "Could not delete the product." });
     } finally {
       setShowDeleteConfirm(false);
-      setBookToDelete(null);
+      setProductToDelete(null);
     }
   };
 
@@ -114,11 +114,11 @@ export default function ManageBooksPage() {
         </Link>
       </Button>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary">{t('adminManageBooksTitle', 'Manage Books')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary">{t('adminManageStoreTitle', 'Manage Store')}</h1>
         <Button asChild className="bg-primary hover:bg-primary/90 w-full sm:w-auto">
-          <Link href="/admin/create-book">
+          <Link href="/admin/create-product">
             <PlusCircle className="mr-2 h-5 w-5" />
-            {t('adminCreateNewBookButton', 'Add New Book')}
+            {t('adminCreateNewProductButton', 'Add New Product')}
           </Link>
         </Button>
       </div>
@@ -126,16 +126,16 @@ export default function ManageBooksPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BookOpenCheck /> {t('adminManageBooksTitle', 'Manage Books')}
+            <ShoppingCart /> {t('adminManageStoreTitle', 'Manage Store Products')}
           </CardTitle>
-          <CardDescription>{t('adminManageBooksDescription', 'Here you can edit, delete, and manage all books.')}</CardDescription>
+          <CardDescription>{t('adminManageStoreDescription', 'Here you can edit, delete, and manage all products.')}</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center items-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary"/></div>
           ) : error ? (
             <div className="text-center py-10 text-destructive">{error}</div>
-          ) : books.length > 0 ? (
+          ) : products.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-border">
                 <thead className="bg-muted/50 hidden md:table-header-group">
@@ -147,19 +147,19 @@ export default function ManageBooksPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-card divide-y divide-border">
-                  {books.map((book) => (
-                    <tr key={book.id} className="md:table-row flex flex-col md:flex-row p-4 md:p-0 mb-4 md:mb-0 border rounded-lg md:border-none">
-                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Image: </span><Image src={book.imageUrl} alt={t(book.title)} width={40} height={60} className="h-16 w-auto object-contain rounded inline-block"/></td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground md:table-cell"><span className="font-bold md:hidden">Title: </span>{t(book.title)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Source: </span><Badge variant={book.source === 'amazon' ? 'default' : 'secondary'} className="capitalize">{book.source}</Badge></td>
+                  {products.map((product) => (
+                    <tr key={product.id} className="md:table-row flex flex-col md:flex-row p-4 md:p-0 mb-4 md:mb-0 border rounded-lg md:border-none">
+                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Image: </span><Image src={product.imageUrl} alt={t(product.title)} width={40} height={60} className="h-16 w-auto object-contain rounded inline-block"/></td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground md:table-cell"><span className="font-bold md:hidden">Title: </span>{t(product.title)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Source: </span><Badge variant={product.source === 'amazon' ? 'default' : 'secondary'} className="capitalize">{product.source}</Badge></td>
                       <td className="px-6 py-4 whitespace-nowrap text-left md:text-right text-sm font-medium space-x-2 md:table-cell">
                         <span className="font-bold md:hidden">Actions: </span>
                         <Button variant="outline" size="sm" asChild>
-                          <Link href={`/admin/create-book?id=${book.id}`}>
+                          <Link href={`/admin/create-product?id=${product.id}`}>
                             <Edit className="mr-1 h-4 w-4" /> {t('editButton', 'Edit')}
                           </Link>
                         </Button>
-                        <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(book)}>
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteClick(product)}>
                            <Trash2 className="mr-1 h-4 w-4" /> {t('deleteButton', 'Delete')}
                         </Button>
                       </td>
@@ -169,16 +169,16 @@ export default function ManageBooksPage() {
               </table>
             </div>
           ) : (
-            <p className="text-muted-foreground text-center py-4">{t('adminNoBooks', 'No books found.')}</p>
+            <p className="text-muted-foreground text-center py-4">{t('adminNoProducts', 'No products found.')}</p>
           )}
         </CardContent>
       </Card>
       <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('deleteBookConfirm', "Confirm Deletion")}</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteProductConfirm', "Confirm Deletion")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('deleteBookConfirm', 'Are you sure you want to delete the book "{title}"?', { title: bookToDelete ? t(bookToDelete.title) : '' })}
+              {t('deleteProductConfirm', 'Are you sure you want to delete the product "{title}"?', { title: productToDelete ? t(productToDelete.title) : '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
