@@ -32,7 +32,8 @@ import {
   limit,
   writeBatch,
   arrayUnion,
-  arrayRemove
+  arrayRemove,
+  getCountFromServer
 } from 'firebase/firestore';
 import {
   getStorage,
@@ -457,6 +458,13 @@ export const getNotifications = async (userId: string): Promise<Notification[]> 
     } as Notification));
 };
 
+export const getUnreadNotificationsCount = async (userId: string): Promise<number> => {
+    const notifsRef = collection(db, 'notifications');
+    const q = query(notifsRef, where('recipientId', '==', userId), where('read', '==', false));
+    const snapshot = await getCountFromServer(q);
+    return snapshot.data().count;
+};
+
 export const markNotificationsAsRead = async (notificationIds: string[]) => {
     if (notificationIds.length === 0) return;
     const batch = writeBatch(db);
@@ -500,3 +508,5 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
+
+    

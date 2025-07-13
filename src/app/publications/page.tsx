@@ -24,7 +24,7 @@ import {
   ref as storageRef,
   deleteObject as deleteFirebaseStorageObject,
 } from 'firebase/storage';
-import { db, storage, deletePublicationFromFirestore, savePost, unsavePost, getSavedPosts, createNotification } from '@/lib/firebase';
+import { db, storage, deletePublicationFromFirestore, savePost, unsavePost, getSavedPosts, createNotification, getUnreadNotificationsCount } from '@/lib/firebase';
 import type { ProPost, ProComment, ProReply, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -177,6 +177,7 @@ export default function PublicationsPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'mine' | 'liked' | 'saved'>('all');
   const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   
   const fetchAllPosts = useCallback(() => {
     setIsLoadingPosts(true);
@@ -202,6 +203,7 @@ export default function PublicationsPage() {
   useEffect(() => {
     if(!loading && currentUser?.isSubscribed) {
         const unsubscribe = fetchAllPosts();
+        getUnreadNotificationsCount(currentUser.uid).then(setUnreadNotifications);
         return () => unsubscribe();
     } else if (!loading && !currentUser?.isSubscribed) {
         setIsLoadingPosts(false);
@@ -271,6 +273,11 @@ export default function PublicationsPage() {
     }
   };
 
+  const openNotificationsPanel = () => {
+    setIsNotificationsPanelOpen(true);
+    setUnreadNotifications(0); // Immediately reset UI indicator
+  }
+
   const isUserPro = currentUser?.isSubscribed === true;
 
   if (loading) {
@@ -334,11 +341,19 @@ export default function PublicationsPage() {
                         <Bookmark className="mr-2 h-4 w-4"/> My Saves
                     </Button>
                      <Button 
-                        onClick={() => setIsNotificationsPanelOpen(true)}
+                        variant="ghost"
+                        onClick={openNotificationsPanel}
                         disabled={!isUserPro} 
-                        className="w-full justify-start hover:bg-primary/20 hover:text-primary mt-4"
+                        className="w-full justify-start hover:bg-primary/20 hover:text-primary mt-4 relative"
                      >
-                        <Bell className="mr-2 h-4 w-4"/> Notifications
+                        <Bell className="mr-2 h-4 w-4"/>
+                        <span>Notifications</span>
+                        {unreadNotifications > 0 && (
+                            <span className="absolute top-1 right-2 flex h-2.5 w-2.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                            </span>
+                        )}
                     </Button>
                     <Button 
                         onClick={() => setIsCreateDialogOpen(true)} 
@@ -390,6 +405,7 @@ export default function PublicationsPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
+
             <AlertDialogDescription>
               Are you sure you want to delete this publication? This action cannot be undone.
             </AlertDialogDescription>
@@ -405,3 +421,5 @@ export default function PublicationsPage() {
     </>
   );
 }
+
+    
