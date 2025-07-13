@@ -43,7 +43,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore, Book as BookType, ProPost, User } from './types';
+import type { Post as PostType, GameHighScore, Book as BookType, ProPost, User, Notification } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -381,6 +381,75 @@ export const searchUsersByUsername = async (searchText: string): Promise<User[]>
     return querySnapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as User));
 };
 
+// --- Bookmarking / Saving ---
+export const savePost = async (userId: string, postId: string) => {
+    const userRef = doc(db, 'users', userId);
+    const postRef = doc(db, 'pro-posts', postId);
+    const batch = writeBatch(db);
+
+    batch.update(userRef, { savedPosts: arrayUnion(postId) });
+    batch.update(postRef, { saves: arrayUnion(userId) });
+    batch.update(postRef, { saveCount: (await getDoc(postRef)).data()?.saveCount + 1 || 1 });
+
+    await batch.commit();
+};
+
+export const unsavePost = async (userId: string, postId: string) => {
+    const userRef = doc(db, 'users', userId);
+    const postRef = doc(db, 'pro-posts', postId);
+    const batch = writeBatch(db);
+    const currentSaveCount = (await getDoc(postRef)).data()?.saveCount || 0;
+
+    batch.update(userRef, { savedPosts: arrayRemove(postId) });
+    batch.update(postRef, { saves: arrayRemove(userId) });
+    batch.update(postRef, { saveCount: Math.max(0, currentSaveCount - 1) });
+
+    await batch.commit();
+};
+
+export const getSavedPosts = async (savedPostIds: string[]): Promise<ProPost[]> => {
+    if (savedPostIds.length === 0) return [];
+    const postsRef = collection(db, 'pro-posts');
+    // Firestore 'in' query is limited to 30 items. For more, you'd need multiple queries.
+    const q = query(postsRef, where('__name__', 'in', savedPostIds.slice(0, 30)));
+    const querySnapshot = await getDocs(q);
+    const posts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProPost));
+    // Since Firestore doesn't guarantee order with 'in' queries, we re-order based on the original list
+    return posts.sort((a, b) => savedPostIds.indexOf(b.id) - savedPostIds.indexOf(a.id));
+};
+
+
+// --- Notifications ---
+export const createNotification = async (notification: Omit<Notification, 'id' | 'createdAt' | 'read'>) => {
+    // Avoid notifying user about their own actions
+    if (notification.recipientId === notification.actorId) return;
+
+    await addDoc(collection(db, 'notifications'), {
+        ...notification,
+        read: false,
+        createdAt: serverTimestamp(),
+    });
+};
+
+export const getNotifications = async (userId: string): Promise<Notification[]> => {
+    const notifsRef = collection(db, 'notifications');
+    const q = query(notifsRef, where('recipientId', '==', userId), orderBy('createdAt', 'desc'), limit(50));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+    } as Notification));
+};
+
+export const markNotificationsAsRead = async (notificationIds: string[]) => {
+    if (notificationIds.length === 0) return;
+    const batch = writeBatch(db);
+    notificationIds.forEach(id => {
+        const notifRef = doc(db, 'notifications', id);
+        batch.update(notifRef, { read: true });
+    });
+    await batch.commit();
+};
 
 export {
   app,

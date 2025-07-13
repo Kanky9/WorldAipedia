@@ -9,9 +9,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, doc, getDocs, writeBatch, where, query } from 'firebase/firestore';
 import { ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
+import { db, storage, createNotification } from '@/lib/firebase';
 import type { ProPost } from '@/lib/types';
 import { Loader2, Send, ImageIcon, X } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
     setIsSubmitting(true);
 
     try {
-      const postData: Omit<ProPost, 'id' | 'createdAt' | 'likes' | 'likeCount' | 'commentCount' | 'imageUrl'> = {
+      const postData: Omit<ProPost, 'id' | 'createdAt' | 'likes' | 'likeCount' | 'commentCount' | 'imageUrl' | 'saves' | 'saveCount'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous PRO',
         authorAvatarUrl: currentUser.photoURL || undefined,
@@ -63,6 +63,8 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
         ...postData,
         likes: [],
         likeCount: 0,
+        saves: [],
+        saveCount: 0,
         commentCount: 0,
         createdAt: serverTimestamp(),
       }
@@ -74,7 +76,22 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
         finalPostData.imageUrl = imageUrl;
       }
       
-      await addDoc(collection(db, 'pro-posts'), finalPostData);
+      const newPostRef = await addDoc(collection(db, 'pro-posts'), finalPostData);
+      
+      // Create notifications for followers
+      if (currentUser.followers && currentUser.followers.length > 0) {
+        currentUser.followers.forEach(followerId => {
+          createNotification({
+            recipientId: followerId,
+            actorId: currentUser.uid,
+            actorName: currentUser.username || currentUser.displayName || 'A User',
+            actorAvatarUrl: currentUser.photoURL || undefined,
+            type: 'new_post',
+            postId: newPostRef.id,
+            postTextSnippet: text.substring(0, 50)
+          });
+        });
+      }
       
       resetForm();
       onOpenChange(false);

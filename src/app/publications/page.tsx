@@ -24,12 +24,12 @@ import {
   ref as storageRef,
   deleteObject as deleteFirebaseStorageObject,
 } from 'firebase/storage';
-import { db, storage, deletePublicationFromFirestore } from '@/lib/firebase';
+import { db, storage, deletePublicationFromFirestore, savePost, unsavePost, getSavedPosts, createNotification } from '@/lib/firebase';
 import type { ProPost, ProComment, ProReply, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Loader2, ShieldAlert, Trash2, Heart, MessageCircle, Send, PlusCircle, User as UserIcon, List, UserPlus, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, ShieldAlert, Trash2, Heart, MessageCircle, Send, PlusCircle, User as UserIcon, List, UserPlus, Check, ChevronDown, ChevronUp, Bookmark, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { es, enUS, it, ja, pt, zhCN } from 'date-fns/locale';
@@ -47,6 +47,7 @@ import CreatePublicationDialog from '@/components/publications/CreatePublication
 import CommentSection from '@/components/publications/CommentSection';
 import { cn } from '@/lib/utils';
 import UserSearch from '@/components/publications/UserSearch';
+import NotificationsPanel from '@/components/publications/NotificationsPanel';
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
@@ -56,9 +57,15 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
   const { currentUser } = useAuth();
   const { t, language } = useLanguage();
   const [showComments, setShowComments] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const hasLiked = currentUser ? post.likes.includes(currentUser.uid) : false;
+  const hasSaved = currentUser ? post.saves.includes(currentUser.uid) : false;
 
   const handleLike = async () => {
-    if (!currentUser) return;
+    if (!currentUser || isLiking) return;
+    setIsLiking(true);
     const postRef = doc(db, 'pro-posts', post.id);
     const batch = writeBatch(db);
 
@@ -68,11 +75,52 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
       : [...post.likes, currentUser.uid];
     
     batch.update(postRef, { likes: newLikes, likeCount: newLikes.length });
-    
-    await batch.commit();
+
+    try {
+      await batch.commit();
+       if (!isLiked) {
+         createNotification({
+          recipientId: post.authorId,
+          actorId: currentUser.uid,
+          actorName: currentUser.username || currentUser.displayName || 'A user',
+          actorAvatarUrl: currentUser.photoURL || undefined,
+          type: 'like',
+          postId: post.id,
+          postTextSnippet: post.text.substring(0, 50)
+        });
+      }
+    } catch (e) {
+      console.error("Error liking post", e);
+    } finally {
+        setIsLiking(false);
+    }
+  };
+
+  const handleSave = async () => {
+      if (!currentUser || isSaving) return;
+      setIsSaving(true);
+      try {
+          if (hasSaved) {
+              await unsavePost(currentUser.uid, post.id);
+          } else {
+              await savePost(currentUser.uid, post.id);
+               createNotification({
+                  recipientId: post.authorId,
+                  actorId: currentUser.uid,
+                  actorName: currentUser.username || currentUser.displayName || 'A user',
+                  actorAvatarUrl: currentUser.photoURL || undefined,
+                  type: 'save',
+                  postId: post.id,
+                  postTextSnippet: post.text.substring(0, 50)
+              });
+          }
+      } catch (e) {
+          console.error("Error saving post", e);
+      } finally {
+          setIsSaving(false);
+      }
   };
   
-  const hasLiked = currentUser ? post.likes.includes(currentUser.uid) : false;
   const canDelete = currentUser && (currentUser.isAdmin || currentUser.uid === post.authorId);
 
   return (
@@ -102,14 +150,20 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
           </div>
         )}
       </CardContent>
-      <CardFooter className="p-4 border-t flex justify-start gap-4">
-        <Button variant="ghost" size="sm" onClick={handleLike} disabled={!currentUser} className={cn(hasLiked && "text-primary")}>
-          <Heart className={`mr-2 h-4 w-4 ${hasLiked ? 'fill-current' : ''}`} />
-          {post.likeCount}
-        </Button>
-        <Button variant="ghost" size="sm" onClick={() => setShowComments(!showComments)}>
-          <MessageCircle className="mr-2 h-4 w-4" />
-          {post.commentCount || 0} {t('commentButton')}
+      <CardFooter className="p-4 border-t flex justify-between items-center">
+         <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={handleLike} disabled={!currentUser || isLiking} className={cn("text-muted-foreground", hasLiked && "text-primary")}>
+              <Heart className={`mr-2 h-4 w-4 ${hasLiked ? 'fill-current' : ''}`} />
+              {post.likeCount}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setShowComments(!showComments)} className="text-muted-foreground">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              {post.commentCount || 0}
+            </Button>
+         </div>
+         <Button variant="ghost" size="sm" onClick={handleSave} disabled={!currentUser || isSaving} className={cn("text-muted-foreground", hasSaved && "text-yellow-500")}>
+            <Bookmark className={`mr-2 h-4 w-4 ${hasSaved ? 'fill-current' : ''}`} />
+            {post.saveCount || 0}
         </Button>
       </CardFooter>
       {showComments && <CommentSection postId={post.id} postAuthorId={post.authorId} />}
@@ -130,14 +184,15 @@ export default function PublicationsPage() {
   const [postToDelete, setPostToDelete] = useState<ProPost | null>(null);
   
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'mine' | 'liked'>('all');
+  const [filter, setFilter] = useState<'all' | 'mine' | 'liked' | 'saved'>('all');
+  const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
   
   const fetchAllPosts = useCallback(() => {
     setIsLoadingPosts(true);
     const q = query(collection(db, 'pro-posts'), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const fetchedPosts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as ProPost));
+      const fetchedPosts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), saves: doc.data().saves || [], saveCount: doc.data().saveCount || 0 } as ProPost));
       setAllPosts(fetchedPosts);
       setIsLoadingPosts(false);
     }, (error) => {
@@ -154,26 +209,55 @@ export default function PublicationsPage() {
   }, [toast, t]);
 
   useEffect(() => {
-    const unsubscribe = fetchAllPosts();
-    return () => unsubscribe();
-  }, [fetchAllPosts]);
+    if(!loading && currentUser?.isSubscribed) {
+        const unsubscribe = fetchAllPosts();
+        return () => unsubscribe();
+    } else if (!loading && !currentUser?.isSubscribed) {
+        setIsLoadingPosts(false);
+    }
+  }, [fetchAllPosts, loading, currentUser]);
 
+
+  const fetchAndSetSavedPosts = useCallback(async () => {
+      if (!currentUser || !currentUser.savedPosts || currentUser.savedPosts.length === 0) {
+          setFilteredPosts([]);
+          setIsLoadingPosts(false);
+          return;
+      }
+      setIsLoadingPosts(true);
+      try {
+          const saved = await getSavedPosts(currentUser.savedPosts);
+          setFilteredPosts(saved);
+      } catch (e) {
+          console.error("Error fetching saved posts", e);
+          toast({ variant: 'destructive', title: "Error", description: "Could not fetch saved posts." });
+      } finally {
+          setIsLoadingPosts(false);
+      }
+  }, [currentUser, toast]);
 
   useEffect(() => {
+    setIsLoadingPosts(true);
     if (filter === 'all') {
       setFilteredPosts(allPosts);
-      return;
+      setIsLoadingPosts(false);
+    } else {
+        if (!currentUser) {
+          setFilteredPosts([]);
+          setIsLoadingPosts(false);
+          return;
+        }
+        if (filter === 'mine') {
+            setFilteredPosts(allPosts.filter(p => p.authorId === currentUser.uid));
+            setIsLoadingPosts(false);
+        } else if (filter === 'liked') {
+            setFilteredPosts(allPosts.filter(p => p.likes.includes(currentUser.uid)));
+            setIsLoadingPosts(false);
+        } else if (filter === 'saved') {
+            fetchAndSetSavedPosts();
+        }
     }
-    if (!currentUser) {
-      setFilteredPosts([]);
-      return;
-    }
-    if (filter === 'mine') {
-        setFilteredPosts(allPosts.filter(p => p.authorId === currentUser.uid));
-    } else if (filter === 'liked') {
-        setFilteredPosts(allPosts.filter(p => p.likes.includes(currentUser.uid)));
-    }
-  }, [allPosts, filter, currentUser]);
+  }, [allPosts, filter, currentUser, fetchAndSetSavedPosts]);
 
   
   const handleDeleteClick = (postId: string) => {
@@ -204,7 +288,8 @@ export default function PublicationsPage() {
   
   return (
     <>
-      <div className="py-8">
+      <div className="py-8 relative">
+        <NotificationsPanel isOpen={isNotificationsPanelOpen} onClose={() => setIsNotificationsPanelOpen(false)} />
         <div className="text-center mb-6">
           <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
@@ -247,6 +332,24 @@ export default function PublicationsPage() {
                         <Heart className="mr-2 h-4 w-4"/> My Likes
                     </Button>
                     <Button 
+                        variant={filter === 'saved' ? 'ghost' : 'ghost'} 
+                        onClick={() => setFilter('saved')} 
+                        disabled={!isUserPro} 
+                        className={cn(
+                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
+                            filter === 'saved' ? 'bg-primary/20 text-primary' : ''
+                        )}
+                     >
+                        <Bookmark className="mr-2 h-4 w-4"/> My Saves
+                    </Button>
+                     <Button 
+                        onClick={() => setIsNotificationsPanelOpen(true)}
+                        disabled={!isUserPro} 
+                        className="w-full justify-start hover:bg-primary/20 hover:text-primary mt-4"
+                     >
+                        <Bell className="mr-2 h-4 w-4"/> Notifications
+                    </Button>
+                    <Button 
                         onClick={() => setIsCreateDialogOpen(true)} 
                         disabled={!isUserPro} 
                         className="w-full justify-start mt-4 bg-primary/20 text-primary hover:bg-primary/30"
@@ -263,7 +366,7 @@ export default function PublicationsPage() {
                 filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
               ) : (
                 <div className="text-center text-muted-foreground py-10">
-                  <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : 'You have not liked any publications yet.'}</p>
+                  <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : filter === 'liked' ? 'You have not liked any publications yet.' : 'You have not saved any publications yet.'}</p>
                 </div>
               )}
             </main>

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { db } from '@/lib/firebase';
+import { db, createNotification } from '@/lib/firebase';
 import { collection, query, orderBy, onSnapshot, addDoc, doc, writeBatch, serverTimestamp, getDocs, deleteDoc } from 'firebase/firestore';
 import type { ProComment, ProReply } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -72,6 +72,17 @@ function Comment({ comment, postId, postAuthorId }: CommentProps) {
         batch.update(commentRef, { replyCount: (comment.replyCount || 0) + 1 });
         
         await batch.commit();
+
+        // Notify the original comment author
+        createNotification({
+            recipientId: comment.authorId,
+            actorId: currentUser.uid,
+            actorName: currentUser.username || currentUser.displayName || 'A user',
+            actorAvatarUrl: currentUser.photoURL || undefined,
+            type: 'reply',
+            postId: postId,
+            postTextSnippet: comment.text.substring(0, 50)
+        });
 
         setReplyText('');
         setIsReplying(false);
@@ -176,6 +187,12 @@ export default function CommentSection({ postId, postAuthorId }: { postId: strin
     setIsSubmitting(true);
 
     const postRef = doc(db, 'pro-posts', postId);
+    const postSnap = await getDoc(postRef);
+    if (!postSnap.exists()) {
+        setIsSubmitting(false);
+        return;
+    }
+    const postData = postSnap.data() as ProPost;
     const commentsRef = collection(db, 'pro-posts', postId, 'comments');
 
     const newCommentData: Omit<ProComment, 'id'> = {
@@ -189,9 +206,19 @@ export default function CommentSection({ postId, postAuthorId }: { postId: strin
     
     const batch = writeBatch(db);
     batch.set(doc(commentsRef), newCommentData);
-    batch.update(postRef, { commentCount: (comments.length || 0) + 1 });
+    batch.update(postRef, { commentCount: (postData.commentCount || 0) + 1 });
     
     await batch.commit();
+
+    createNotification({
+      recipientId: postAuthorId,
+      actorId: currentUser.uid,
+      actorName: currentUser.username || currentUser.displayName || 'A user',
+      actorAvatarUrl: currentUser.photoURL || undefined,
+      type: 'comment',
+      postId: postId,
+      postTextSnippet: newComment.substring(0, 50)
+    });
 
     setNewComment('');
     setIsSubmitting(false);
@@ -238,5 +265,3 @@ export default function CommentSection({ postId, postAuthorId }: { postId: strin
     </div>
   );
 }
-
-    

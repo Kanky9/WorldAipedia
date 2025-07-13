@@ -40,6 +40,8 @@ export interface ProPost {
   imageHint?: string;
   likes: string[]; // Array of user UIDs who liked the post
   likeCount: number;
+  saves: string[]; // Array of user UIDs who saved the post
+  saveCount: number;
   commentCount: number;
   createdAt: Timestamp | Date;
 }
@@ -99,11 +101,12 @@ export interface User {
   photoURL?: string | null; // From Firebase Auth Profile (e.g., Google avatar)
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
-  subscriptionPlan?: string; // From Firestore
+  subscriptionPlan?: string; // For display
   paypalSubscriptionID?: string; // For PayPal integration
   isAdmin?: boolean; // Added for admin role
   followers?: string[]; // Array of UIDs of users following this user
   following?: string[]; // Array of UIDs of users this user is following
+  savedPosts?: string[]; // Array of ProPost IDs
 }
 
 export interface UserComment {
@@ -131,4 +134,17 @@ export interface GameHighScore {
   timestamp: Timestamp | Date;
 }
 
-    
+export type NotificationType = 'like' | 'comment' | 'reply' | 'new_post' | 'follow' | 'save';
+
+export interface Notification {
+  id: string;
+  recipientId: string; // UID of the user receiving the notification
+  actorId: string; // UID of the user who performed the action
+  actorName: string; // Denormalized for display
+  actorAvatarUrl?: string;
+  type: NotificationType;
+  postId?: string; // ID of the relevant post
+  postTextSnippet?: string; // A short snippet of the post/comment text
+  read: boolean;
+  createdAt: Timestamp | Date;
+}
