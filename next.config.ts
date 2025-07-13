@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      // This is a workaround for a Genkit dependency issue with Next.js.
+      // It prevents webpack from trying to bundle a specific file from the 'handlebars' package.
+      config.externals.push('handlebars/lib/index.js');
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
