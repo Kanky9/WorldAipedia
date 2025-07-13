@@ -382,7 +382,7 @@ export const searchUsersByUsername = async (searchText: string): Promise<User[]>
 };
 
 // --- Bookmarking / Saving ---
-export const savePost = async (userId: string, postId: string) => {
+export const savePost = async (userId: string, postId: string, postAuthorId: string, postText: string) => {
     const userRef = doc(db, 'users', userId);
     const postRef = doc(db, 'pro-posts', postId);
     const batch = writeBatch(db);
@@ -390,8 +390,24 @@ export const savePost = async (userId: string, postId: string) => {
     batch.update(userRef, { savedPosts: arrayUnion(postId) });
     batch.update(postRef, { saves: arrayUnion(userId) });
     batch.update(postRef, { saveCount: (await getDoc(postRef)).data()?.saveCount + 1 || 1 });
-
+    
     await batch.commit();
+
+    // Create notification after commit
+    const currentUserDoc = await getDoc(userRef);
+    const currentUser = currentUserDoc.data() as User;
+    
+    if (userId !== postAuthorId) {
+        createNotification({
+            recipientId: postAuthorId,
+            actorId: userId,
+            actorName: currentUser.username || currentUser.displayName || 'A user',
+            actorAvatarUrl: currentUser.photoURL || undefined,
+            type: 'save',
+            postId: postId,
+            postTextSnippet: postText.substring(0, 50)
+        });
+    }
 };
 
 export const unsavePost = async (userId: string, postId: string) => {

@@ -4,8 +4,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, createNotification } from '@/lib/firebase';
-import { collection, query, orderBy, onSnapshot, addDoc, doc, writeBatch, serverTimestamp, getDocs, deleteDoc } from 'firebase/firestore';
-import type { ProComment, ProReply } from '@/lib/types';
+import { collection, query, orderBy, onSnapshot, addDoc, doc, writeBatch, serverTimestamp, getDoc, getDocs, deleteDoc, DocumentData } from 'firebase/firestore';
+import type { ProComment, ProReply, ProPost } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -192,7 +192,7 @@ export default function CommentSection({ postId, postAuthorId }: { postId: strin
         setIsSubmitting(false);
         return;
     }
-    const postData = postSnap.data() as ProPost;
+    const postData = postSnap.data() as DocumentData as ProPost;
     const commentsRef = collection(db, 'pro-posts', postId, 'comments');
 
     const newCommentData: Omit<ProComment, 'id'> = {

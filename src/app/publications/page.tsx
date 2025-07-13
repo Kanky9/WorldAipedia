@@ -78,7 +78,7 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
 
     try {
       await batch.commit();
-       if (!isLiked) {
+       if (!isLiked && post.authorId !== currentUser.uid) {
          createNotification({
           recipientId: post.authorId,
           actorId: currentUser.uid,
@@ -103,16 +103,7 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
           if (hasSaved) {
               await unsavePost(currentUser.uid, post.id);
           } else {
-              await savePost(currentUser.uid, post.id);
-               createNotification({
-                  recipientId: post.authorId,
-                  actorId: currentUser.uid,
-                  actorName: currentUser.username || currentUser.displayName || 'A user',
-                  actorAvatarUrl: currentUser.photoURL || undefined,
-                  type: 'save',
-                  postId: post.id,
-                  postTextSnippet: post.text.substring(0, 50)
-              });
+              await savePost(currentUser.uid, post.id, post.authorId, post.text);
           }
       } catch (e) {
           console.error("Error saving post", e);
