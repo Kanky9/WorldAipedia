@@ -31,14 +31,13 @@ interface Particle {
 
 export default function HomePage() {
   const { t } = useLanguage();
-  const [mounted, setMounted] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [errorLoadingPosts, setErrorLoadingPosts] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    // Generate particles only on the client-side to avoid hydration errors
     const generatedParticles = Array.from({ length: 15 }).map((_, i) => ({
       key: i,
       style: {
@@ -76,7 +75,7 @@ export default function HomePage() {
   return (
     <div className="space-y-8">
       <section className="relative py-8 md:py-12 text-center rounded-xl overflow-hidden shadow-lg bg-card animate-hero-background-gradient">
-        {mounted && particles.length > 0 && (
+        {particles.length > 0 && (
           <div className="hero-particles">
             {particles.map((particle) => (
               <div
