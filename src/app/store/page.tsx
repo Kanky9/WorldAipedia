@@ -31,9 +31,6 @@ export default function StorePage() {
     fetchProducts();
   }, []);
 
-  const amazonProducts = products.filter(product => product.source === 'amazon');
-  const mercadoLibreProducts = products.filter(product => product.source === 'mercadolibre');
-
   return (
     <div className="space-y-12 animate-fade-in">
       <section className="text-center py-8">
@@ -44,7 +41,7 @@ export default function StorePage() {
           {t('storePageTitle', 'Official Store')}
         </h1>
         <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-          {t('storePageSubtitle', 'A curated collection of recommended products.')}
+          {t('storePageSubtitle', 'A curated collection of recommended products from Amazon.')}
         </p>
       </section>
 
@@ -58,37 +55,19 @@ export default function StorePage() {
           <p className="text-destructive text-lg">{error}</p>
         </div>
       ) : (
-        <>
-          {amazonProducts.length > 0 && (
-            <section>
-              <h2 className="text-2xl sm:text-3xl font-headline font-semibold mb-6 text-primary/90">{t('amazonProductsTitle', 'From Amazon')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                {amazonProducts.map((product, index) => (
-                  <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {mercadoLibreProducts.length > 0 && (
-            <section>
-              <h2 className="text-2xl sm:text-3xl font-headline font-semibold mb-6 text-primary/90">{t('mercadolibreProductsTitle', 'From MercadoLibre')}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-                {mercadoLibreProducts.map((product, index) => (
-                   <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-          
-          {products.length === 0 && (
+        <section>
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+              {products.map((product, index) => (
+                <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </div>
+          ) : (
              <p className="text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
           )}
-        </>
+        </section>
       )}
     </div>
   );

@@ -73,7 +73,7 @@ export interface Product {
   imageUrl: string;
   imageHint?: string;
   link: string;
-  source: 'amazon' | 'mercadolibre';
+  source: 'amazon';
   createdAt: Timestamp | Date;
 }
 

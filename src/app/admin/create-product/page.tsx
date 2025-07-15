@@ -59,7 +59,6 @@ export default function CreateProductPage() {
   const [localizedContent, setLocalizedContent] = useState<LocalizedContent>(initialLocalizedContent);
 
   const [link, setLink] = useState('');
-  const [source, setSource] = useState<'amazon' | 'mercadolibre' | ''>('');
   const [imageDataUri, setImageDataUri] = useState<string>('');
   const [imageUrlForPreview, setImageUrlForPreview] = useState<string>(DEFAULT_PRODUCT_PLACEHOLDER);
   const [imageHint, setImageHint] = useState('');
@@ -68,7 +67,6 @@ export default function CreateProductPage() {
   const resetForm = () => {
     setLocalizedContent(initialLocalizedContent);
     setLink('');
-    setSource('');
     clearImage();
     setImageHint('');
   };
@@ -106,7 +104,6 @@ export default function CreateProductPage() {
           setImageUrlForPreview(product.imageUrl || DEFAULT_PRODUCT_PLACEHOLDER);
           setImageHint(product.imageHint || '');
           setLink(product.link);
-          setSource(product.source);
         } else {
             toast({ variant: 'destructive', title: 'Product not found' });
             router.push('/admin/manage-products');
@@ -143,8 +140,8 @@ export default function CreateProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser?.isAdmin || !localizedContent.en?.title?.trim() || !source || !link) {
-      toast({ variant: "destructive", title: "Missing Fields", description: "English title, source, and link are required." });
+    if (!currentUser?.isAdmin || !localizedContent.en?.title?.trim() || !link) {
+      toast({ variant: "destructive", title: "Missing Fields", description: "English title and link are required." });
       return;
     }
     
@@ -163,7 +160,7 @@ export default function CreateProductPage() {
       imageUrl: imageDataUri || imageUrlForPreview,
       imageHint,
       link,
-      source,
+      source: 'amazon' as const,
     };
 
     try {
@@ -197,7 +194,7 @@ export default function CreateProductPage() {
       <Card>
         <CardHeader>
           <CardTitle>{isEditMode ? t('adminEditProductTitle', 'Edit Product') : t('adminCreateProductTitle', 'Create New Product')}</CardTitle>
-          <CardDescription>Fill in the product details below.</CardDescription>
+          <CardDescription>Fill in the product details below. All products will be listed as from Amazon.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
@@ -234,17 +231,7 @@ export default function CreateProductPage() {
 
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="source">{t('adminProductSourceLabel', 'Source')}</Label>
-                  <Select value={source} onValueChange={(v) => setSource(v as any)} required disabled={isSubmitting}>
-                    <SelectTrigger><SelectValue placeholder={t('adminProductSelectSourcePlaceholder', 'Select a source')} /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="amazon">{t('adminProductSourceAmazon', 'Amazon')}</SelectItem>
-                      <SelectItem value="mercadolibre">{t('adminProductSourceMercadoLibre', 'MercadoLibre')}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="link">{t('adminProductLinkLabel', 'Purchase Link')}</Label>
+                  <Label htmlFor="link">{t('adminProductLinkLabel', 'Amazon Purchase Link')}</Label>
                   <Input id="link" value={link} onChange={e => setLink(e.target.value)} placeholder={t('adminProductLinkPlaceholder', 'https://...')} required disabled={isSubmitting} />
                 </div>
               </div>

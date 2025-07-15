@@ -45,9 +45,7 @@ export type CoreTranslationKey =
   | 'storePageTitle'
   | 'storePageSubtitle'
   | 'amazonProductsTitle'
-  | 'mercadolibreProductsTitle'
   | 'buyOnAmazonButton'
-  | 'buyOnMercadoLibreButton'
   | 'adminNoProducts'
   // Post Card
   | 'readMoreButton'
@@ -179,7 +177,6 @@ export type CoreTranslationKey =
   | 'adminProductLinkLabel'
   | 'adminProductSelectSourcePlaceholder'
   | 'adminProductSourceAmazon'
-  | 'adminProductSourceMercadoLibre'
   | 'adminProductLinkPlaceholder'
   | 'adminCreateProductTitle'
   | 'adminEditProductTitle'
@@ -366,11 +363,9 @@ export const translations: Translations = {
     allPostsTitle: 'All Blog Posts',
     allPostsSubtitle: 'Browse through our complete collection of articles and insights on AI.',
     storePageTitle: 'Official Store',
-    storePageSubtitle: 'A curated collection of recommended products.',
+    storePageSubtitle: 'A curated collection of recommended products from Amazon.',
     amazonProductsTitle: 'From Amazon',
-    mercadolibreProductsTitle: 'From MercadoLibre',
     buyOnAmazonButton: 'Buy on Amazon',
-    buyOnMercadoLibreButton: 'Buy on MercadoLibre',
     adminNoProducts: 'No products found.',
     readMoreButton: 'Read More',
     laceChatTitle: 'Chat with Lace',
@@ -493,7 +488,6 @@ export const translations: Translations = {
     adminProductLinkLabel: 'Purchase Link',
     adminProductSelectSourcePlaceholder: 'Select a source',
     adminProductSourceAmazon: 'Amazon',
-    adminProductSourceMercadoLibre: 'MercadoLibre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: 'Create New Product',
     adminEditProductTitle: 'Edit Product',
@@ -650,11 +644,9 @@ export const translations: Translations = {
     allPostsTitle: 'Todas las Publicaciones del Blog',
     allPostsSubtitle: 'Navega por nuestra colección completa de artículos e ideas sobre IA.',
     storePageTitle: 'Tienda Oficial',
-    storePageSubtitle: 'Una colección seleccionada de productos recomendados.',
+    storePageSubtitle: 'Una colección seleccionada de productos recomendados de Amazon.',
     amazonProductsTitle: 'De Amazon',
-    mercadolibreProductsTitle: 'De MercadoLibre',
     buyOnAmazonButton: 'Comprar en Amazon',
-    buyOnMercadoLibreButton: 'Comprar en MercadoLibre',
     adminNoProducts: 'No se encontraron productos.',
     readMoreButton: 'Leer Más',
     laceChatTitle: 'Chatear con Lace',
@@ -777,7 +769,6 @@ export const translations: Translations = {
     adminProductLinkLabel: 'Enlace de Compra',
     adminProductSelectSourcePlaceholder: 'Seleccione una fuente',
     adminProductSourceAmazon: 'Amazon',
-    adminProductSourceMercadoLibre: 'MercadoLibre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: 'Crear Nuevo Producto',
     adminEditProductTitle: 'Editar Producto',
@@ -934,11 +925,9 @@ export const translations: Translations = {
     allPostsTitle: 'Tutti i Post del Blog',
     allPostsSubtitle: 'Sfoglia la nostra collezione completa di articoli e approfondimenti sull\'IA.',
     storePageTitle: 'Negozio Ufficiale',
-    storePageSubtitle: 'Una raccolta curata di prodotti consigliati.',
+    storePageSubtitle: 'Una raccolta curata di prodotti consigliati da Amazon.',
     amazonProductsTitle: 'Da Amazon',
-    mercadolibreProductsTitle: 'Da MercadoLibre',
     buyOnAmazonButton: 'Compra su Amazon',
-    buyOnMercadoLibreButton: 'Compra su MercadoLibre',
     adminNoProducts: 'Nessun prodotto trovato.',
     readMoreButton: 'Leggi di più',
     laceChatTitle: 'Chatta con Lace',
@@ -1061,7 +1050,6 @@ export const translations: Translations = {
     adminProductLinkLabel: 'Link Acquisto',
     adminProductSelectSourcePlaceholder: 'Seleziona una fonte',
     adminProductSourceAmazon: 'Amazon',
-    adminProductSourceMercadoLibre: 'MercadoLibre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: 'Crea Nuovo Prodotto',
     adminEditProductTitle: 'Modifica Prodotto',
@@ -1218,11 +1206,9 @@ export const translations: Translations = {
     allPostsTitle: '所有博客帖子',
     allPostsSubtitle: '浏览我们所有关于AI的文章和见解。',
     storePageTitle: '官方商店',
-    storePageSubtitle: '精选的推荐产品。',
+    storePageSubtitle: '精选的亚马逊推荐产品。',
     amazonProductsTitle: '来自亚马逊',
-    mercadolibreProductsTitle: '来自MercadoLibre',
     buyOnAmazonButton: '在亚马逊购买',
-    buyOnMercadoLibreButton: '在MercadoLibre购买',
     adminNoProducts: '未找到产品。',
     readMoreButton: '阅读更多',
     laceChatTitle: '与Lace聊天',
@@ -1345,7 +1331,6 @@ export const translations: Translations = {
     adminProductLinkLabel: '购买链接',
     adminProductSelectSourcePlaceholder: '选择一个来源',
     adminProductSourceAmazon: '亚马逊',
-    adminProductSourceMercadoLibre: 'MercadoLibre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: '创建新产品',
     adminEditProductTitle: '编辑产品',
@@ -1502,11 +1487,9 @@ export const translations: Translations = {
     allPostsTitle: 'すべてのブログ記事',
     allPostsSubtitle: 'AIに関する記事や洞察の完全なコレクションをご覧ください。',
     storePageTitle: '公式ストア',
-    storePageSubtitle: '厳選されたおすすめ商品のコレクション。',
+    storePageSubtitle: 'Amazonからのおすすめ商品の厳選コレクション。',
     amazonProductsTitle: 'Amazonから',
-    mercadolibreProductsTitle: 'MercadoLibreから',
     buyOnAmazonButton: 'Amazonで購入',
-    buyOnMercadoLibreButton: 'MercadoLibreで購入',
     adminNoProducts: '商品が見つかりません。',
     readMoreButton: '続きを読む',
     laceChatTitle: 'Laceとチャット',
@@ -1629,7 +1612,6 @@ export const translations: Translations = {
     adminProductLinkLabel: '購入リンク',
     adminProductSelectSourcePlaceholder: 'ソースを選択',
     adminProductSourceAmazon: 'Amazon',
-    adminProductSourceMercadoLibre: 'MercadoLibre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: '新しい商品を作成',
     adminEditProductTitle: '商品を編集',
@@ -1786,11 +1768,9 @@ export const translations: Translations = {
     allPostsTitle: 'Todas as Postagens do Blog',
     allPostsSubtitle: 'Navegue por nossa coleção completa de artigos e insights sobre IA.',
     storePageTitle: 'Loja Oficial',
-    storePageSubtitle: 'Uma coleção selecionada de produtos recomendados.',
+    storePageSubtitle: 'Uma coleção selecionada de produtos recomendados da Amazon.',
     amazonProductsTitle: 'Da Amazon',
-    mercadolibreProductsTitle: 'Do MercadoLivre',
     buyOnAmazonButton: 'Comprar na Amazon',
-    buyOnMercadoLibreButton: 'Comprar no MercadoLivre',
     adminNoProducts: 'Nenhum produto encontrado.',
     readMoreButton: 'Leia Mais',
     laceChatTitle: 'Conversar com Lace',
@@ -1913,7 +1893,6 @@ export const translations: Translations = {
     adminProductLinkLabel: 'Link de Compra',
     adminProductSelectSourcePlaceholder: 'Selecione uma fonte',
     adminProductSourceAmazon: 'Amazon',
-    adminProductSourceMercadoLibre: 'MercadoLivre',
     adminProductLinkPlaceholder: 'https://...',
     adminCreateProductTitle: 'Criar Novo Produto',
     adminEditProductTitle: 'Editar Produto',
