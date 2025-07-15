@@ -136,8 +136,8 @@ const Mascot = () => {
     }
   };
 
-  const authPages = ['/login', '/register', '/publications'];
-  if (pathname.startsWith('/admin') || authPages.includes(pathname)) {
+  const pagesToHideOn = ['/login', '/register', '/publications', '/store'];
+  if (pathname.startsWith('/admin') || pagesToHideOn.includes(pathname)) {
     return null;
   }
 
