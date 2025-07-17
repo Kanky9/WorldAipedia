@@ -7,23 +7,13 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { PartyPopper, TriangleAlert } from 'lucide-react';
 
-const WELCOME_MODAL_SESSION_KEY = 'welcomeModalShown';
-
 export default function WelcomeDialog() {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const hasBeenShown = sessionStorage.getItem(WELCOME_MODAL_SESSION_KEY);
-      if (!hasBeenShown) {
-        setIsOpen(true);
-        sessionStorage.setItem(WELCOME_MODAL_SESSION_KEY, 'true');
-      }
-    } catch (error) {
-      console.warn("Could not access sessionStorage. Welcome modal might appear on every refresh.");
-      setIsOpen(true); // Fallback for environments where sessionStorage is blocked
-    }
+    // Show the dialog every time the component mounts (page loads)
+    setIsOpen(true);
   }, []);
 
   useEffect(() => {
@@ -42,7 +32,7 @@ export default function WelcomeDialog() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <PartyPopper className="h-6 w-6 text-primary" />
-            {t('welcomeModalTitle', 'Welcome to WorldAIPedia!')}
+            {t('welcomeModalTitle', 'Welcome to WorldAI!')}
           </DialogTitle>
           <DialogDescription className="pt-2 text-base">
             {t('welcomeModalBeta', "We're excited to have you here! Please note that our site is currently in a beta version, so you might encounter some unexpected behavior as we continue to improve.")}

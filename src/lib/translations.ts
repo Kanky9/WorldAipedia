@@ -605,7 +605,7 @@ export const translations: Translations = {
     likeButton: "Like",
     commentButton: "Comment",
     noPublicationsYet: "No publications yet. Be the first to post!",
-    welcomeModalTitle: 'Welcome to WorldAIPedia!',
+    welcomeModalTitle: 'Welcome to WorldAI!',
     welcomeModalBeta: "We're excited to have you here! Please note that our site is currently in a beta version, so you might encounter some unexpected behavior as we continue to improve.",
     welcomeModalTranslateTitle: 'Translation Notice',
     welcomeModalTranslateWarning: "Using your browser's automatic translation feature may cause display issues on the site. For the best experience, we recommend using our built-in language switcher.",
@@ -891,7 +891,7 @@ export const translations: Translations = {
     likeButton: "Me gusta",
     commentButton: "Comentar",
     noPublicationsYet: "Aún no hay publicaciones. ¡Sé el primero en publicar!",
-    welcomeModalTitle: '¡Bienvenido a WorldAIPedia!',
+    welcomeModalTitle: '¡Bienvenido a WorldAI!',
     welcomeModalBeta: "¡Estamos encantados de tenerte aquí! Ten en cuenta que nuestro sitio se encuentra actualmente en una versión beta, por lo que podrías encontrar algún comportamiento inesperado mientras seguimos mejorando.",
     welcomeModalTranslateTitle: 'Aviso de Traducción',
     welcomeModalTranslateWarning: "El uso de la función de traducción automática de tu navegador puede causar problemas de visualización en el sitio. Para la mejor experiencia, recomendamos usar nuestro selector de idioma integrado.",
@@ -1177,7 +1177,7 @@ export const translations: Translations = {
     likeButton: "Mi piace",
     commentButton: "Commenta",
     noPublicationsYet: "Nessuna pubblicazione ancora. Sii il primo a pubblicare!",
-    welcomeModalTitle: 'Benvenuto a WorldAIPedia!',
+    welcomeModalTitle: 'Benvenuto a WorldAI!',
     welcomeModalBeta: "Siamo entusiasti di averti qui! Tieni presente che il nostro sito è attualmente in versione beta, quindi potresti riscontrare comportamenti imprevisti mentre continuiamo a migliorare.",
     welcomeModalTranslateTitle: 'Avviso di Traduzione',
     welcomeModalTranslateWarning: "L'uso della funzione di traduzione automatica del tuo browser potrebbe causare problemi di visualizzazione sul sito. Per la migliore esperienza, consigliamo di utilizzare il nostro selettore di lingua integrato.",
@@ -1463,7 +1463,7 @@ export const translations: Translations = {
     likeButton: "赞",
     commentButton: "评论",
     noPublicationsYet: "暂无出版物。成为第一个发布的人！",
-    welcomeModalTitle: '欢迎来到 WorldAIPedia！',
+    welcomeModalTitle: '欢迎来到 WorldAI！',
     welcomeModalBeta: "我们很高兴您能来！请注意，我们的网站目前处于测试版，因此在我们不断改进的过程中，您可能会遇到一些意想不到的行为。",
     welcomeModalTranslateTitle: '翻译通知',
     welcomeModalTranslateWarning: "使用浏览器的自动翻译功能可能会导致网站显示问题。为获得最佳体验，我们建议您使用我们内置的语言切换器。",
@@ -1749,7 +1749,7 @@ export const translations: Translations = {
     likeButton: "いいね！",
     commentButton: "コメント",
     noPublicationsYet: "まだ出版物がありません。最初に投稿してください！",
-    welcomeModalTitle: 'WorldAIPediaへようこそ！',
+    welcomeModalTitle: 'WorldAIへようこそ！',
     welcomeModalBeta: "ご来訪いただきありがとうございます！当サイトは現在ベータ版であり、改善を続けているため、予期しない動作が発生する可能性があります。",
     welcomeModalTranslateTitle: '翻訳に関する通知',
     welcomeModalTranslateWarning: "ブラウザの自動翻訳機能を使用すると、サイトの表示に問題が生じる場合があります。最適な体験のために、組み込みの言語スイッチャーを使用することをお勧めします。",
@@ -2035,7 +2035,7 @@ export const translations: Translations = {
     likeButton: "Gostar",
     commentButton: "Comentar",
     noPublicationsYet: "Nenhuma publicação ainda. Seja o primeiro a postar!",
-    welcomeModalTitle: 'Bem-vindo ao WorldAIPedia!',
+    welcomeModalTitle: 'Bem-vindo ao WorldAI!',
     welcomeModalBeta: "Estamos felizes em tê-lo aqui! Observe que nosso site está atualmente em uma versão beta, então você pode encontrar algum comportamento inesperado enquanto continuamos a melhorar.",
     welcomeModalTranslateTitle: 'Aviso de Tradução',
     welcomeModalTranslateWarning: "O uso do recurso de tradução automática do seu navegador pode causar problemas de exibição no site. Para a melhor experiência, recomendamos o uso do nosso seletor de idioma integrado.",
@@ -2069,4 +2069,5 @@ export type LocalizedString =
     });
 
     
+
 
