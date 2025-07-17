@@ -49,6 +49,7 @@ import { cn } from '@/lib/utils';
 import UserSearch from '@/components/publications/UserSearch';
 import NotificationsPanel from '@/components/publications/NotificationsPanel';
 import UserProfileDialog from '@/components/publications/UserProfileDialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
@@ -295,6 +296,56 @@ export default function PublicationsPage() {
     return <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]"><Loader2 className="h-12 w-12 animate-spin" /></div>;
   }
   
+  const renderFilterOptions = (isDropdown = false) => {
+    const commonClass = "w-full justify-start hover:bg-primary/20 hover:text-primary";
+    const activeClass = "bg-primary/20 text-primary";
+    
+    const itemContent = (Icon: any, label: string, filterType: typeof filter) => (
+        <>
+            <Icon className="mr-2 h-4 w-4" /> {label}
+        </>
+    );
+
+    const notificationItem = (
+      <button onClick={openNotificationsPanel} disabled={!isUserPro} className={cn("w-full justify-start hover:bg-primary/20 hover:text-primary relative flex items-center p-2 rounded-md", isDropdown ? "text-sm" : "")}>
+        <Bell className="mr-2 h-4 w-4" />
+        <span>Notifications</span>
+        {unreadNotifications > 0 && (
+          <span className="absolute top-1 right-2 flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+          </span>
+        )}
+      </button>
+    );
+    
+    if (isDropdown) {
+        return (
+            <>
+                <DropdownMenuItem onClick={() => setFilter('all')} disabled={!isUserPro}>{itemContent(List, "All", "all")}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilter('mine')} disabled={!isUserPro}>{itemContent(UserIcon, "My Publications", "mine")}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes", "liked")}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves", "saved")}</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>{notificationItem}</DropdownMenuItem>
+            </>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-2 w-full">
+            <Button variant='ghost' onClick={() => setFilter('all')} disabled={!isUserPro} className={cn(commonClass, filter === 'all' && activeClass)}>{itemContent(List, "All", "all")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('mine')} disabled={!isUserPro} className={cn(commonClass, filter === 'mine' && activeClass)}>{itemContent(UserIcon, "My Publications", "mine")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, "My Likes", "liked")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, "My Saves", "saved")}</Button>
+            <div className="mt-4">{notificationItem}</div>
+            <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro} className="w-full justify-start mt-4 bg-primary/20 text-primary hover:bg-primary/30">
+                <PlusCircle className="mr-2 h-4 w-4"/> New Publication
+            </Button>
+        </div>
+    );
+  };
+  
   return (
     <>
       <div className="py-8 relative">
@@ -303,80 +354,40 @@ export default function PublicationsPage() {
           <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
           <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
         </div>
+        
+        {/* Mobile FAB for New Post */}
+        {isUserPro && (
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="lg:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg">
+                <PlusCircle className="h-6 w-6" />
+            </Button>
+        )}
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8">
+        {/* Mobile Dropdown Filters */}
+        <div className="lg:hidden mb-4">
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                       <ChevronDown className="mr-2 h-4 w-4"/>
+                       <span>
+                         {filter === 'all' && 'All'}
+                         {filter === 'mine' && 'My Publications'}
+                         {filter === 'liked' && 'My Likes'}
+                         {filter === 'saved' && 'My Saves'}
+                       </span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[calc(100vw-2rem)]">
+                    {renderFilterOptions(true)}
+                </DropdownMenuContent>
+             </DropdownMenu>
+        </div>
+
+        <div className={cn("relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8", !isUserPro && "pointer-events-none")}>
             <aside className="hidden lg:block sticky top-24 self-start">
-                <div className="flex flex-col gap-2 w-full">
-                    <Button 
-                        variant={filter === 'all' ? 'ghost' : 'ghost'} 
-                        onClick={() => setFilter('all')} 
-                        disabled={!isUserPro} 
-                        className={cn(
-                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
-                            filter === 'all' ? 'bg-primary/20 text-primary' : ''
-                        )}
-                    >
-                        <List className="mr-2 h-4 w-4"/> All
-                    </Button>
-                    <Button 
-                        variant={filter === 'mine' ? 'ghost' : 'ghost'} 
-                        onClick={() => setFilter('mine')} 
-                        disabled={!isUserPro} 
-                        className={cn(
-                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
-                            filter === 'mine' ? 'bg-primary/20 text-primary' : ''
-                        )}
-                    >
-                        <UserIcon className="mr-2 h-4 w-4"/> My Publications
-                    </Button>
-                     <Button 
-                        variant={filter === 'liked' ? 'ghost' : 'ghost'} 
-                        onClick={() => setFilter('liked')} 
-                        disabled={!isUserPro} 
-                        className={cn(
-                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
-                            filter === 'liked' ? 'bg-primary/20 text-primary' : ''
-                        )}
-                     >
-                        <Heart className="mr-2 h-4 w-4"/> My Likes
-                    </Button>
-                    <Button 
-                        variant={filter === 'saved' ? 'ghost' : 'ghost'} 
-                        onClick={() => setFilter('saved')} 
-                        disabled={!isUserPro} 
-                        className={cn(
-                            "w-full justify-start hover:bg-primary/20 hover:text-primary", 
-                            filter === 'saved' ? 'bg-primary/20 text-primary' : ''
-                        )}
-                     >
-                        <Bookmark className="mr-2 h-4 w-4"/> My Saves
-                    </Button>
-                     <Button 
-                        variant="ghost"
-                        onClick={openNotificationsPanel}
-                        disabled={!isUserPro} 
-                        className="w-full justify-start hover:bg-primary/20 hover:text-primary mt-4 relative"
-                     >
-                        <Bell className="mr-2 h-4 w-4"/>
-                        <span>Notifications</span>
-                        {unreadNotifications > 0 && (
-                            <span className="absolute top-1 right-2 flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                            </span>
-                        )}
-                    </Button>
-                    <Button 
-                        onClick={() => setIsCreateDialogOpen(true)} 
-                        disabled={!isUserPro} 
-                        className="w-full justify-start mt-4 bg-primary/20 text-primary hover:bg-primary/30"
-                    >
-                        <PlusCircle className="mr-2 h-4 w-4"/> New Publication
-                    </Button>
-                </div>
+                {renderFilterOptions(false)}
             </aside>
 
-            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
+            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm")}>
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
