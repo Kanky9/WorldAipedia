@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { PartyPopper, TriangleAlert } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function WelcomeDialog() {
   const { t } = useLanguage();
@@ -39,9 +40,10 @@ export default function WelcomeDialog() {
           </div>
         </div>
 
-        <DialogFooter className="mt-4">
+        <DialogFooter className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-between w-full">
+          <LanguageSwitcher />
           <DialogClose asChild>
-            <Button type="button" className="w-full">
+            <Button type="button" className="sm:ml-auto">
               {t('welcomeModalButton', 'Got it, let\'s explore!')}
             </Button>
           </DialogClose>
