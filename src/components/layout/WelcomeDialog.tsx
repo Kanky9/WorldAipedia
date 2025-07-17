@@ -16,16 +16,6 @@ export default function WelcomeDialog() {
     setIsOpen(true);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        setIsOpen(false);
-      }, 7000); // Auto-close after 7 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
