@@ -48,12 +48,13 @@ import CommentSection from '@/components/publications/CommentSection';
 import { cn } from '@/lib/utils';
 import UserSearch from '@/components/publications/UserSearch';
 import NotificationsPanel from '@/components/publications/NotificationsPanel';
+import UserProfileDialog from '@/components/publications/UserProfileDialog';
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
 };
 
-function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string) => void; }) {
+function PostCard({ post, onDelete, onProfileClick }: { post: ProPost; onDelete: (postId: string) => void; onProfileClick: (userId: string) => void; }) {
   const { currentUser } = useAuth();
   const { t, language } = useLanguage();
   const [showComments, setShowComments] = useState(false);
@@ -117,12 +118,14 @@ function PostCard({ post, onDelete }: { post: ProPost; onDelete: (postId: string
   return (
     <Card>
       <CardHeader className="flex flex-row items-start gap-4 p-4">
-        <Avatar>
-          <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} data-ai-hint="user avatar" />
-          <AvatarFallback>{post.authorName.substring(0, 2).toUpperCase()}</AvatarFallback>
-        </Avatar>
+        <button onClick={() => onProfileClick(post.authorId)} className="cursor-pointer">
+          <Avatar>
+            <AvatarImage src={post.authorAvatarUrl} alt={post.authorName} data-ai-hint="user avatar" />
+            <AvatarFallback>{post.authorName.substring(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+        </button>
         <div className="flex-1 flex flex-col">
-          <span className="font-semibold">{post.authorName}</span>
+          <button onClick={() => onProfileClick(post.authorId)} className="font-semibold text-left hover:underline">{post.authorName}</button>
           <span className="text-xs text-muted-foreground">
             {post.createdAt && formatDistanceToNow( (post.createdAt as any).toDate(), { addSuffix: true, locale: localeMap[language] || enUS })}
           </span>
@@ -178,6 +181,9 @@ export default function PublicationsPage() {
   const [filter, setFilter] = useState<'all' | 'mine' | 'liked' | 'saved'>('all');
   const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+  const [viewingUserId, setViewingUserId] = useState<string | null>(null);
   
   const fetchAllPosts = useCallback(() => {
     setIsLoadingPosts(true);
@@ -278,6 +284,11 @@ export default function PublicationsPage() {
     setUnreadNotifications(0); // Immediately reset UI indicator
   }
 
+  const handleProfileClick = (userId: string) => {
+    setViewingUserId(userId);
+    setIsProfileDialogOpen(true);
+  };
+
   const isUserPro = currentUser?.isSubscribed === true;
 
   if (loading) {
@@ -369,7 +380,7 @@ export default function PublicationsPage() {
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
-                filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} />)
+                filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} onProfileClick={handleProfileClick} />)
               ) : (
                 <div className="text-center text-muted-foreground py-10">
                   <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : filter === 'liked' ? 'You have not liked any publications yet.' : 'You have not saved any publications yet.'}</p>
@@ -400,6 +411,8 @@ export default function PublicationsPage() {
       </div>
       
       <CreatePublicationDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
+      
+      {viewingUserId && <UserProfileDialog userId={viewingUserId} open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen} />}
 
       <AlertDialog open={!!postToDelete} onOpenChange={(isOpen) => !isOpen && setPostToDelete(null)}>
         <AlertDialogContent>
@@ -421,5 +434,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    

@@ -188,6 +188,20 @@ export const deletePublicationFromFirestore = async (postId: string): Promise<vo
   await deleteDoc(postRef);
 };
 
+export const getPostsByAuthorId = async (authorId: string): Promise<ProPost[]> => {
+    const postsCol = collection(db, 'pro-posts');
+    const q = query(postsCol, where('authorId', '==', authorId), orderBy('createdAt', 'desc'), limit(20));
+    const querySnapshot = await getDocs(q);
+    const postsList = querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        if (data.createdAt && data.createdAt instanceof Timestamp) {
+            data.createdAt = data.createdAt.toDate();
+        }
+        return { id: docSnap.id, ...data } as ProPost;
+    });
+    return postsList;
+};
+
 // Product Firestore Functions
 export const addProductToFirestore = async (productData: Omit<ProductType, 'id' | 'createdAt'> & { id?: string }): Promise<string> => {
   const productId = productData.id || doc(collection(db, 'products')).id;
@@ -347,6 +361,16 @@ export const unfollowUser = async (currentUserId: string, targetUserId: string) 
     batch.update(targetUserRef, { followers: arrayRemove(currentUserId) });
 
     await batch.commit();
+};
+
+export const getUserById = async (uid: string): Promise<User | null> => {
+    if (!uid) return null;
+    const userRef = doc(db, 'users', uid);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+        return { uid: userSnap.id, ...userSnap.data() } as User;
+    }
+    return null;
 };
 
 export const getUsersByIds = async (uids: string[]): Promise<User[]> => {
