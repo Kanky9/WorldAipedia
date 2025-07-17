@@ -362,8 +362,8 @@ export default function PublicationsPage() {
             </Button>
         )}
 
-        {/* Mobile Dropdown Filters */}
-        <div className="lg:hidden mb-4">
+        {/* Mobile-specific Controls */}
+        <div className="lg:hidden mb-4 space-y-4">
              <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="w-full">
@@ -380,7 +380,9 @@ export default function PublicationsPage() {
                     {renderFilterOptions(true)}
                 </DropdownMenuContent>
              </DropdownMenu>
+            {isUserPro && <UserSearch />}
         </div>
+
 
         <div className={cn("relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8", !isUserPro && "pointer-events-none")}>
             <aside className="hidden lg:block sticky top-24 self-start">
