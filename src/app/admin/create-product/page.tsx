@@ -22,7 +22,7 @@ import {
   updateProductInFirestore,
   db,
 } from '@/lib/firebase';
-import { doc, collection as firestoreCollection } from 'firestore';
+import { doc, collection as firestoreCollection } from 'firebase/firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
 import { languages as appLanguagesObject } from '@/lib/translations';
@@ -181,7 +181,7 @@ export default function CreateProductPage() {
         await updateProductInFirestore(productId, productDetails as any);
         toast({ title: t('adminProductUpdatedSuccess', "Product Updated") });
       } else {
-        const newProductId = doc(collection(db, 'products')).id;
+        const newProductId = doc(firestoreCollection(db, 'products')).id;
         await addProductToFirestore({ ...productDetails, id: newProductId } as any);
         toast({ title: t('adminProductCreatedSuccess', "Product Created") });
       }
@@ -277,5 +277,3 @@ export default function CreateProductPage() {
     </div>
   );
 }
-
-    
