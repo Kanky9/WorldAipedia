@@ -38,7 +38,6 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
       const finalPostData: Omit<ProPost, 'id'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous PRO',
-        authorAvatarUrl: currentUser.photoURL || undefined,
         text: text.trim(),
         likes: [],
         likeCount: 0,
@@ -46,6 +45,10 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
         saveCount: 0,
         commentCount: 0,
         createdAt: serverTimestamp(),
+      };
+      
+      if (currentUser.photoURL) {
+        finalPostData.authorAvatarUrl = currentUser.photoURL;
       }
       
       const newPostRef = await addDoc(collection(db, 'pro-posts'), finalPostData);
