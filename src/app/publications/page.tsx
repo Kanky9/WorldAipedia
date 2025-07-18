@@ -357,7 +357,7 @@ export default function PublicationsPage() {
         
         {/* Mobile FAB for New Post */}
         {isUserPro && (
-            <Button onClick={() => setIsCreateDialogOpen(true)} className="lg:hidden fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="lg:hidden fixed bottom-24 right-6 z-40 h-14 w-14 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
                 <PlusCircle className="h-6 w-6" />
             </Button>
         )}
@@ -447,5 +447,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    
