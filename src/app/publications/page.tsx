@@ -30,7 +30,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, ShieldAlert, Trash2, Heart, MessageCircle, Send, PlusCircle, User as UserIcon, List, UserPlus, Check, ChevronDown, ChevronUp, Bookmark, Bell } from 'lucide-react';
 import Link from 'next/link';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, Locale } from 'date-fns';
 import { es, enUS, it, ja, pt, zhCN } from 'date-fns/locale';
 import {
   AlertDialog,
