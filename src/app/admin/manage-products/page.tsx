@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 export default function ManageProductsPage() {
-  const { t } = useLanguage();
+  const { t: t } = useLanguage();
   const { toast } = useToast();
   const { currentUser, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -192,5 +192,3 @@ export default function ManageProductsPage() {
     </div>
   );
 }
-
-    
