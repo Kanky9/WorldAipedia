@@ -306,6 +306,12 @@ export type CoreTranslationKey =
   | 'errorDefaultDesc'
   | 'accessDeniedTitle'
   | 'accessDeniedDescription'
+  // Product Categories
+  | 'Books'
+  | 'Notebooks'
+  | 'Smartphones'
+  | 'PC Components'
+  | 'Peripherals'
   // Tag Keys - ensure these are valid string literals
   | 'Programming'
   | 'IDE'
@@ -615,6 +621,11 @@ export const translations: Translations = {
     errorDefaultDesc: 'An unexpected error occurred.',
     accessDeniedTitle: 'Access Denied',
     accessDeniedDescription: 'You do not have permission to perform this action.',
+    Books: 'Books',
+    Notebooks: 'Notebooks',
+    Smartphones: 'Smartphones',
+    'PC Components': 'PC Components',
+    Peripherals: 'Peripherals',
     'Programming': 'Programming',
     'IDE': 'IDE',
     'Agile Development': 'Agile Development',
@@ -901,6 +912,11 @@ export const translations: Translations = {
     errorDefaultDesc: 'Ocurrió un error inesperado.',
     accessDeniedTitle: 'Acceso Denegado',
     accessDeniedDescription: 'No tienes permiso para realizar esta acción.',
+    Books: 'Libros',
+    Notebooks: 'Portátiles',
+    Smartphones: 'Smartphones',
+    'PC Components': 'Componentes de PC',
+    Peripherals: 'Periféricos',
     'Programming': 'Programación',
     'IDE': 'IDE',
     'Agile Development': 'Desarrollo Ágil',
@@ -1187,6 +1203,11 @@ export const translations: Translations = {
     errorDefaultDesc: 'Si è verificato un errore imprevisto.',
     accessDeniedTitle: 'Accesso Negato',
     accessDeniedDescription: 'Non hai il permesso di eseguire questa azione.',
+    Books: 'Libri',
+    Notebooks: 'Portatili',
+    Smartphones: 'Smartphone',
+    'PC Components': 'Componenti PC',
+    Peripherals: 'Periferiche',
     'Programming': 'Programmazione',
     'IDE': 'IDE',
     'Agile Development': 'Sviluppo Agile',
@@ -1473,6 +1494,11 @@ export const translations: Translations = {
     errorDefaultDesc: '发生意外错误。',
     accessDeniedTitle: '访问被拒绝',
     accessDeniedDescription: '您无权执行此操作。',
+    Books: '书籍',
+    Notebooks: '笔记本电脑',
+    Smartphones: '智能手机',
+    'PC Components': '电脑组件',
+    Peripherals: '外围设备',
     'Programming': '编程',
     'IDE': 'IDE',
     'Agile Development': '敏捷开发',
@@ -1759,6 +1785,11 @@ export const translations: Translations = {
     errorDefaultDesc: '予期しないエラーが発生しました。',
     accessDeniedTitle: 'アクセス拒否',
     accessDeniedDescription: 'この操作を実行する権限がありません。',
+    Books: '本',
+    Notebooks: 'ノートパソコン',
+    Smartphones: 'スマートフォン',
+    'PC Components': 'PCコンポーネント',
+    Peripherals: '周辺機器',
     'Programming': 'プログラミング',
     'IDE': 'IDE',
     'Agile Development': 'アジャイル開発',
@@ -2045,6 +2076,11 @@ export const translations: Translations = {
     errorDefaultDesc: 'Ocorreu um erro inesperado.',
     accessDeniedTitle: 'Acesso Negado',
     accessDeniedDescription: 'Você não tem permissão para realizar esta ação.',
+    Books: 'Livros',
+    Notebooks: 'Notebooks',
+    Smartphones: 'Smartphones',
+    'PC Components': 'Componentes de PC',
+    Peripherals: 'Periféricos',
     'Programming': 'Programação',
     'IDE': 'IDE',
     'Agile Development': 'Desenvolvimento Ágil',
@@ -2071,3 +2107,6 @@ export type LocalizedString =
     
 
 
+
+
+    

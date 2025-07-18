@@ -142,6 +142,7 @@ export default function ManageProductsPage() {
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Image</th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Title</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Category</th>
                     <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
@@ -150,6 +151,7 @@ export default function ManageProductsPage() {
                     <tr key={product.id} className="md:table-row flex flex-col md:flex-row p-4 md:p-0 mb-4 md:mb-0 border rounded-lg md:border-none">
                       <td className="px-6 py-4 whitespace-nowrap md:table-cell"><span className="font-bold md:hidden">Image: </span><Image src={product.imageUrl} alt={t(product.title)} width={40} height={60} className="h-16 w-auto object-contain rounded inline-block"/></td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground md:table-cell"><span className="font-bold md:hidden">Title: </span>{t(product.title)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground md:table-cell"><span className="font-bold md:hidden">Category: </span><Badge variant="secondary">{product.category}</Badge></td>
                       <td className="px-6 py-4 whitespace-nowrap text-left md:text-right text-sm font-medium space-x-2 md:table-cell">
                         <span className="font-bold md:hidden">Actions: </span>
                         <Button variant="outline" size="sm" asChild>
@@ -190,3 +192,5 @@ export default function ManageProductsPage() {
     </div>
   );
 }
+
+    

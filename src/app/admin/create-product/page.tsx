@@ -22,10 +22,11 @@ import {
   updateProductInFirestore,
   db,
 } from '@/lib/firebase';
-import { doc, collection as firestoreCollection } from 'firebase/firestore';
+import { doc, collection as firestoreCollection } from 'firestore';
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
 import { languages as appLanguagesObject } from '@/lib/translations';
+import { categories as productCategories } from '@/data/products';
 
 const DEFAULT_PRODUCT_PLACEHOLDER = 'https://placehold.co/400x400.png';
 
@@ -62,11 +63,13 @@ export default function CreateProductPage() {
   const [imageDataUri, setImageDataUri] = useState<string>('');
   const [imageUrlForPreview, setImageUrlForPreview] = useState<string>(DEFAULT_PRODUCT_PLACEHOLDER);
   const [imageHint, setImageHint] = useState('');
+  const [category, setCategory] = useState('');
   const imageFileRef = useRef<HTMLInputElement>(null);
   
   const resetForm = () => {
     setLocalizedContent(initialLocalizedContent);
     setLink('');
+    setCategory('');
     clearImage();
     setImageHint('');
   };
@@ -104,6 +107,7 @@ export default function CreateProductPage() {
           setImageUrlForPreview(product.imageUrl || DEFAULT_PRODUCT_PLACEHOLDER);
           setImageHint(product.imageHint || '');
           setLink(product.link);
+          setCategory(product.categorySlug);
         } else {
             toast({ variant: 'destructive', title: 'Product not found' });
             router.push('/admin/manage-products');
@@ -140,12 +144,19 @@ export default function CreateProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser?.isAdmin || !localizedContent.en?.title?.trim() || !link) {
-      toast({ variant: "destructive", title: "Missing Fields", description: "English title and link are required." });
+    if (!currentUser?.isAdmin || !localizedContent.en?.title?.trim() || !link || !category) {
+      toast({ variant: "destructive", title: "Missing Fields", description: "English title, link, and category are required." });
       return;
     }
     
     setIsSubmitting(true);
+    
+    const selectedCategory = productCategories.find(c => c.slug === category);
+    if (!selectedCategory) {
+        toast({ variant: "destructive", title: "Invalid Category", description: "Please select a valid category." });
+        setIsSubmitting(false);
+        return;
+    }
 
     const finalTranslations: { title: Partial<Record<LanguageCode, string>>; description: Partial<Record<LanguageCode, string>>; } = { title: {}, description: {} };
     for (const langCode in localizedContent) {
@@ -160,6 +171,8 @@ export default function CreateProductPage() {
       imageUrl: imageDataUri || imageUrlForPreview,
       imageHint,
       link,
+      category: selectedCategory.name.en, // Storing english name for consistency
+      categorySlug: selectedCategory.slug,
       source: 'amazon' as const,
     };
 
@@ -168,7 +181,7 @@ export default function CreateProductPage() {
         await updateProductInFirestore(productId, productDetails as any);
         toast({ title: t('adminProductUpdatedSuccess', "Product Updated") });
       } else {
-        const newProductId = doc(firestoreCollection(db, 'products')).id;
+        const newProductId = doc(collection(db, 'products')).id;
         await addProductToFirestore({ ...productDetails, id: newProductId } as any);
         toast({ title: t('adminProductCreatedSuccess', "Product Created") });
       }
@@ -224,12 +237,27 @@ export default function CreateProductPage() {
                   <Input type="file" accept="image/*" ref={imageFileRef} onChange={handleImageFileChange} className="hidden" />
                   {imageUrlForPreview !== DEFAULT_PRODUCT_PLACEHOLDER && <Button type="button" variant="ghost" size="sm" onClick={clearImage} disabled={isSubmitting}><Trash2 className="mr-1 h-4 w-4" /> Clear</Button>}
                 </div>
-                {imageUrlForPreview && <Image src={imageUrlForPreview} alt="Product image preview" width={200} height={200} className="mt-2 rounded border object-cover aspect-square" />}
+                {imageUrlForPreview && <Image src={imageUrlForPreview} alt="Product image preview" width={200} height={200} className="mt-2 rounded border object-cover aspect-square" data-ai-hint={imageHint || "product image"} />}
                 <Label htmlFor="image-hint">{t('adminPostMainImageHintLabel', 'Image AI Hint')}</Label>
                 <Input id="image-hint" value={imageHint} onChange={e => setImageHint(e.target.value)} placeholder={t('adminPostMainImageHintPlaceholder', 'e.g., modern coffee maker')} disabled={isSubmitting} />
               </div>
 
               <div className="space-y-6">
+                 <div>
+                    <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
+                    <Select value={category} onValueChange={setCategory} required disabled={isSubmitting}>
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder', 'Select a category')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {productCategories.map(cat => (
+                          <SelectItem key={cat.slug} value={cat.slug}>
+                            {t(cat.name)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 <div>
                   <Label htmlFor="link">{t('adminProductLinkLabel', 'Amazon Purchase Link')}</Label>
                   <Input id="link" value={link} onChange={e => setLink(e.target.value)} placeholder={t('adminProductLinkPlaceholder', 'https://...')} required disabled={isSubmitting} />
@@ -249,3 +277,5 @@ export default function CreateProductPage() {
     </div>
   );
 }
+
+    

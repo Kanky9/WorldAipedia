@@ -73,6 +73,8 @@ export interface Product {
   imageUrl: string;
   imageHint?: string;
   link: string;
+  category: string;
+  categorySlug: string;
   source: 'amazon';
   createdAt: Timestamp | Date;
 }
@@ -148,3 +150,5 @@ export interface Notification {
   read: boolean;
   createdAt: Timestamp | Date;
 }
+
+    
