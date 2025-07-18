@@ -48,7 +48,7 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || !currentUser || isSubmitting) return;
+    if ((!text.trim() && !image) || !currentUser || isSubmitting) return;
     setIsSubmitting(true);
 
     try {
@@ -103,6 +103,8 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
       setIsSubmitting(false);
     }
   };
+  
+  const canSubmit = (text.trim() || image) && !isSubmitting;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -128,7 +130,10 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
                 variant="destructive"
                 size="icon"
                 className="absolute top-1 right-1 h-6 w-6 rounded-full"
-                onClick={() => setImage(null)}
+                onClick={() => {
+                  setImage(null);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
                 disabled={isSubmitting}
               >
                 <X className="h-4 w-4" />
@@ -136,15 +141,19 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
             </div>
           )}
           <div className="flex justify-between items-center">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isSubmitting}
-            >
-              <ImageIcon className="h-5 w-5 text-muted-foreground" />
-            </Button>
+            {!image && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isSubmitting}
+              >
+                <ImageIcon className="h-5 w-5 text-muted-foreground" />
+              </Button>
+            )}
+            {/* This empty div is a spacer to keep the buttons on the right */}
+            {image && <div />} 
             <input
               type="file"
               ref={fileInputRef}
@@ -156,7 +165,7 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
                 <DialogClose asChild>
                     <Button type="button" variant="ghost">Cancel</Button>
                 </DialogClose>
-                <Button type="submit" disabled={!text.trim() || isSubmitting}>
+                <Button type="submit" disabled={!canSubmit}>
                   {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
                   {t('createPublicationButton')}
                 </Button>
