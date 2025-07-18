@@ -46,16 +46,7 @@ export default function StorePage() {
   }, [selectedCategory, products]);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold mb-3 text-primary">
-          {t('storePageTitle', 'Official Store')}
-        </h1>
-        <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-          {t('storePageSubtitle', 'A curated collection of recommended products from Amazon.')}
-        </p>
-      </section>
-
+    <div className="space-y-8 animate-fade-in py-8">
       {/* Category Filter Buttons */}
       <div className="flex justify-center flex-wrap gap-2 pb-6">
         <Button
