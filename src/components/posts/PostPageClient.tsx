@@ -233,8 +233,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
 
 
   return (
-    <div className={
-`relative space-y-8 ${pageAnimationClass}`}>
+    <div className={`relative space-y-8 ${pageAnimationClass}`}>
       <ScrollDownIndicator />
       <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">
@@ -259,7 +258,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
             />
           </div>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-headline font-bold mb-2 text-primary">{localizedPostTitle}</h1>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
@@ -270,8 +269,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
             {categoryData && (
               <div className="flex items-center gap-1.5">
                 <CategoryIcon categoryName={typeof categoryData.name === 'string' ? categoryData.name : categoryData.name.en!} className="h-4 w-4 text-primary" />
-                <Link href={
-`/categories/${categoryData.slug}`} className="hover:underline">{localizedCategoryName}</Link>
+                <Link href={`/categories/${categoryData.slug}`} className="hover:underline">{localizedCategoryName}</Link>
               </div>
             )}
           </div>
