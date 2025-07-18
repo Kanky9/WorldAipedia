@@ -62,10 +62,13 @@ function Comment({ comment, postId, postAuthorId }: CommentProps) {
         const newReply: Omit<ProReply, 'id'> = {
             authorId: currentUser.uid,
             authorName: currentUser.username || currentUser.displayName || 'Anonymous',
-            authorAvatarUrl: currentUser.photoURL || undefined,
             text: replyText,
             createdAt: serverTimestamp(),
         };
+
+        if (currentUser.photoURL) {
+            newReply.authorAvatarUrl = currentUser.photoURL;
+        }
         
         const batch = writeBatch(db);
         batch.set(doc(repliesRef), newReply);
@@ -198,11 +201,14 @@ export default function CommentSection({ postId, postAuthorId }: { postId: strin
     const newCommentData: Omit<ProComment, 'id'> = {
         authorId: currentUser.uid,
         authorName: currentUser.username || currentUser.displayName || 'Anonymous',
-        authorAvatarUrl: currentUser.photoURL || undefined,
         text: newComment,
         createdAt: serverTimestamp(),
         replyCount: 0,
     };
+
+    if (currentUser.photoURL) {
+      newCommentData.authorAvatarUrl = currentUser.photoURL;
+    }
     
     const batch = writeBatch(db);
     batch.set(doc(commentsRef), newCommentData);
