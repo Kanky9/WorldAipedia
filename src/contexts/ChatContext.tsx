@@ -1,5 +1,6 @@
 
 'use client';
+
 import type { ReactNode } from 'react';
 import { createContext, useState, useCallback, useContext } from 'react';
 import type { AiToolChatContext as AiToolChatContextType } from '@/lib/types'; // Renamed import to avoid conflict
