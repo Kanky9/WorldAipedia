@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
@@ -19,20 +19,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Star, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { updateUserToPro } from '@/lib/firebase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import type { OnApproveData, CreateSubscriptionActions } from "@paypal/paypal-js";
 
-// Extend window type to include paypal
-declare global {
-  interface Window {
-    paypal?: any;
-  }
-}
 
 interface UpgradeProDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const PAYPAL_CONTAINER_ID = 'paypal-button-container-P-7W9736313L373491LNBTLTLI';
 
 const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange }) => {
   const { t } = useLanguage();
@@ -42,24 +36,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
-  const [isPaypalSDKReady, setIsPaypalSDKReady] = useState(false);
-  
-  useEffect(() => {
-    if (open) {
-      setError(''); // Reset error on open
-      if (window.paypal) {
-        setIsPaypalSDKReady(true);
-        return;
-      }
-      const interval = setInterval(() => {
-        if (window.paypal) {
-          setIsPaypalSDKReady(true);
-          clearInterval(interval);
-        }
-      }, 500);
-      return () => clearInterval(interval);
-    }
-  }, [open]);
+  const [{ isPending }] = usePayPalScriptReducer();
 
   const handleSuccess = useCallback(async (subscriptionId?: string) => {
     if (!currentUser) return;
@@ -81,7 +58,6 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     }
   }, [currentUser, onOpenChange, t, toast]);
 
-
   const handleLoginRedirect = useCallback(() => {
     toast({
       title: t('loginRequiredForProTitle', 'Login Required'),
@@ -91,54 +67,33 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     onOpenChange(false);
     router.push('/login');
   }, [onOpenChange, router, t, toast]);
-
-  useEffect(() => {
-    if (open && isPaypalSDKReady && window.paypal && !isProcessing) {
-      const paypalButtonContainer = document.getElementById(PAYPAL_CONTAINER_ID);
-      const PAYPAL_PLAN_ID = process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID;
-
-      if (!PAYPAL_PLAN_ID) {
-        setError("PayPal Plan ID is not configured. Please contact support.");
-        console.error("PayPal Plan ID environment variable is not set.");
-        return;
-      }
-      
-      if (paypalButtonContainer) {
-        paypalButtonContainer.innerHTML = ''; // Clear previous instances
-        try {
-            window.paypal.Buttons({
-              style: {
-                  shape: 'pill',
-                  color: 'gold',
-                  layout: 'vertical',
-                  label: 'subscribe'
-              },
-              createSubscription: (data: any, actions: any) => {
-                if (!currentUser) { 
-                  handleLoginRedirect(); 
-                  return Promise.reject(new Error("User not logged in")); 
-                }
-                return actions.subscription.create({
-                  plan_id: PAYPAL_PLAN_ID
-                });
-              },
-              onApprove: (data: any, actions: any) => {
-                return handleSuccess(data.subscriptionID);
-              },
-              onError: (err: any) => {
-                console.error("PayPal button error:", err);
-                setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
-                setIsProcessing(false);
-              }
-            }).render(`#${PAYPAL_CONTAINER_ID}`);
-        } catch (e) {
-            console.error("Failed to render PayPal buttons", e);
-            setError(t('paymentErrorTitle', "Could not render PayPal buttons."));
-        }
-      }
-    }
-  }, [open, isPaypalSDKReady, isProcessing, currentUser, handleLoginRedirect, t, handleSuccess]);
   
+  const createSubscription = (data: Record<string, unknown>, actions: CreateSubscriptionActions) => {
+      if (!currentUser) { 
+        handleLoginRedirect(); 
+        return Promise.reject(new Error("User not logged in")); 
+      }
+      const PAYPAL_PLAN_ID = process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID;
+      if(!PAYPAL_PLAN_ID) {
+          setError("PayPal Plan ID is not configured. Please contact support.");
+          console.error("PayPal Plan ID environment variable is not set.");
+          return Promise.reject(new Error("PayPal plan not configured"));
+      }
+      return actions.subscription.create({
+          plan_id: PAYPAL_PLAN_ID
+      });
+  };
+  
+  const onApprove = (data: OnApproveData) => {
+      return handleSuccess(data.subscriptionID);
+  };
+  
+  const onError = (err: any) => {
+    console.error("PayPal button error:", err);
+    setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
+    setIsProcessing(false);
+  }
+
   const proBenefits = [
     t('proBenefit1', "Full access to all AI tools & posts"),
     t('proBenefit2', "Comment and rate AI tools"),
@@ -159,10 +114,10 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
         </DialogHeader>
 
         <div className="relative py-4 space-y-4">
-          {isProcessing && (
+          {(isProcessing || isPending) && (
             <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
-                <p className="text-sm text-muted-foreground">{t('processingPayment', 'Processing your payment...')}</p>
+                <p className="text-sm text-muted-foreground">{isPending ? "Loading payment options..." : t('processingPayment', 'Processing your payment...')}</p>
             </div>
           )}
           <div>
@@ -177,13 +132,27 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
           </div>
           
           <div className="border-t pt-4">
-            <p className="text-center text-sm text-muted-foreground mb-4">
+             <p className="text-center text-sm text-muted-foreground mb-4">
               {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
             </p>
+            
+            {!isPending && !process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
+                <Alert variant="destructive" className="mt-4">
+                    <XCircle className="h-4 w-4"/>
+                    <AlertTitle>Configuration Error</AlertTitle>
+                    <AlertDescription>PayPal payments cannot be processed at this time. Please contact support.</AlertDescription>
+                </Alert>
+            )}
 
-            <div id={PAYPAL_CONTAINER_ID} className="min-h-[120px] flex flex-col justify-center">
-                {(!isPaypalSDKReady || !process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID) && <Loader2 className="mx-auto h-8 w-8 animate-spin text-muted-foreground"/>}
-            </div>
+            {!isPending && process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
+                <PayPalButtons
+                  style={{ layout: "vertical", shape: "pill", color: "gold", tagline: false }}
+                  createSubscription={createSubscription}
+                  onApprove={onApprove}
+                  onError={onError}
+                  disabled={isProcessing}
+                />
+            )}
             
             {error && (
               <Alert variant="destructive" className="mt-4">
