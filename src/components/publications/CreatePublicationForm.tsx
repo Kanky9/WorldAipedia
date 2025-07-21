@@ -86,7 +86,7 @@ export default function CreatePublicationForm() {
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={t('createPublicationPlaceholder', { username: currentUser.username || 'member' })}
+            placeholder="What's on your mind?"
             rows={2}
             className="flex-1 resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-lg"
             disabled={isSubmitting}
