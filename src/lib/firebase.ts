@@ -1,4 +1,5 @@
 
+
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -350,6 +351,19 @@ export const followUser = async (currentUserId: string, targetUserId: string) =>
     batch.update(targetUserRef, { followers: arrayUnion(currentUserId) });
     
     await batch.commit();
+
+    // Create notification after successfully following
+    const currentUserSnap = await getDoc(currentUserRef);
+    if(currentUserSnap.exists()) {
+        const currentUserData = currentUserSnap.data() as User;
+        createNotification({
+            recipientId: targetUserId,
+            actorId: currentUserId,
+            actorName: currentUserData.username || currentUserData.displayName || 'A user',
+            actorAvatarUrl: currentUserData.photoURL || undefined,
+            type: 'follow'
+        });
+    }
 };
 
 export const unfollowUser = async (currentUserId: string, targetUserId: string) => {
