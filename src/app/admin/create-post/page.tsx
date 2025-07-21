@@ -338,15 +338,12 @@ export default function CreatePostPage() {
     onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onClearImage: () => void;
     fileRef: React.RefObject<HTMLInputElement>;
-    hintValue: string; onHintChange: (value: string) => void;
-    hintLabelKey: string; hintDefaultLabel: string; hintPlaceholderKey: string; hintDefaultPlaceholder: string;
     aspectRatio?: string;
     previewSize?: {width: number, height: number};
   }
 
   const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
     labelKey, defaultLabel, imageUrlForPreview, onFileChange, onClearImage, fileRef,
-    hintValue, onHintChange, hintLabelKey, hintDefaultLabel, hintPlaceholderKey, hintDefaultPlaceholder,
     aspectRatio = "aspect-video", previewSize = {width:200, height:112}
   }) => (
     <div className="space-y-2">
@@ -370,15 +367,11 @@ export default function CreatePostPage() {
             width={previewSize.width}
             height={previewSize.height}
             className="object-cover w-full h-full"
-            data-ai-hint={hintValue || (imageUrlForPreview.startsWith('blob:') || imageUrlForPreview.startsWith('data:') ? "uploaded image" : "image")}
+            data-ai-hint={imageUrlForPreview.startsWith('blob:') || imageUrlForPreview.startsWith('data:') ? "uploaded image" : "image"}
             unoptimized={imageUrlForPreview.startsWith('blob:') || imageUrlForPreview.startsWith('data:')}
           />
         </div>
       )}
-      <div className="mt-2">
-        <Label htmlFor={`${labelKey}-hint`}>{t(hintLabelKey, hintDefaultLabel)}</Label>
-        <Input id={`${labelKey}-hint`} value={hintValue} onChange={(e) => onHintChange(e.target.value)} placeholder={t(hintPlaceholderKey, hintDefaultPlaceholder)} disabled={isSubmitting || isLoadingData} />
-      </div>
     </div>
   );
 
@@ -487,9 +480,6 @@ export default function CreatePostPage() {
                 onFileChange={(e) => handleImageFileChange(e, setMainImageDataUri, setMainImageUrlForPreview)}
                 onClearImage={() => clearImageHelper(setMainImageDataUri, setMainImageUrlForPreview, mainImageFileRef, DEFAULT_MAIN_PLACEHOLDER)}
                 fileRef={mainImageFileRef}
-                hintValue={mainImageHint} onHintChange={setMainImageHint}
-                hintLabelKey="adminPostMainImageHintLabel" hintDefaultLabel="Main Image AI Hint"
-                hintPlaceholderKey="adminPostMainImageHintPlaceholder" hintDefaultPlaceholder="e.g., abstract technology"
                 previewSize={{width: 300, height: 200}}
               />
             </div>
@@ -502,9 +492,6 @@ export default function CreatePostPage() {
                 onFileChange={(e) => handleImageFileChange(e, setDetailImage1DataUri, setDetailImage1UrlForPreview)}
                 onClearImage={() => clearImageHelper(setDetailImage1DataUri, setDetailImage1UrlForPreview, detailImage1FileRef, DEFAULT_DETAIL_PLACEHOLDER)}
                 fileRef={detailImage1FileRef}
-                hintValue={detailImageHint1} onHintChange={setDetailImageHint1}
-                hintLabelKey="adminPostDetailImageHint1Label" hintDefaultLabel="Visual Insight 1 AI Hint"
-                hintPlaceholderKey="adminPostDetailImageHint1Placeholder" hintDefaultPlaceholder="e.g., interface screenshot"
                 previewSize={{width:250, height:187}}
               />
               <ImageUploadSection
@@ -513,9 +500,6 @@ export default function CreatePostPage() {
                 onFileChange={(e) => handleImageFileChange(e, setDetailImage2DataUri, setDetailImage2UrlForPreview)}
                 onClearImage={() => clearImageHelper(setDetailImage2DataUri, setDetailImage2UrlForPreview, detailImage2FileRef, DEFAULT_DETAIL_PLACEHOLDER)}
                 fileRef={detailImage2FileRef}
-                hintValue={detailImageHint2} onHintChange={setDetailImageHint2}
-                hintLabelKey="adminPostDetailImageHint2Label" hintDefaultLabel="Visual Insight 2 AI Hint"
-                hintPlaceholderKey="adminPostDetailImageHint2Placeholder" hintDefaultPlaceholder="e.g., concept art"
                 previewSize={{width:250, height:187}}
               />
             </div>
