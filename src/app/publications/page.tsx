@@ -43,7 +43,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import CreatePublicationDialog from '@/components/publications/CreatePublicationDialog';
+import CreatePublicationForm from '@/components/publications/CreatePublicationForm';
 import CommentSection from '@/components/publications/CommentSection';
 import { cn } from '@/lib/utils';
 import UserSearch from '@/components/publications/UserSearch';
@@ -178,7 +178,6 @@ export default function PublicationsPage() {
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
   const [postToDelete, setPostToDelete] = useState<ProPost | null>(null);
   
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [filter, setFilter] = useState<'all' | 'mine' | 'liked' | 'saved'>('all');
   const [isNotificationsPanelOpen, setIsNotificationsPanelOpen] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
@@ -339,9 +338,6 @@ export default function PublicationsPage() {
             <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, "My Likes", "liked")}</Button>
             <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, "My Saves", "saved")}</Button>
             <div className="mt-4">{notificationItem}</div>
-            <Button onClick={() => setIsCreateDialogOpen(true)} disabled={!isUserPro} className="w-full justify-start mt-4 bg-primary/20 text-primary hover:bg-primary/30">
-                <PlusCircle className="mr-2 h-4 w-4"/> New Publication
-            </Button>
         </div>
     );
   };
@@ -350,17 +346,6 @@ export default function PublicationsPage() {
     <>
       <div className="py-8 relative">
         <NotificationsPanel isOpen={isNotificationsPanelOpen} onClose={() => setIsNotificationsPanelOpen(false)} />
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-headline font-bold text-primary">{t('publicationsTitle')}</h1>
-          <p className="text-muted-foreground">{t('publicationsSubtitle')}</p>
-        </div>
-        
-        {/* Mobile FAB for New Post */}
-        {isUserPro && (
-            <Button onClick={() => setIsCreateDialogOpen(true)} className="lg:hidden fixed bottom-24 right-6 z-40 h-14 w-14 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
-                <PlusCircle className="h-6 w-6" />
-            </Button>
-        )}
 
         {/* Mobile-specific Controls */}
         <div className="lg:hidden mb-4 space-y-4">
@@ -390,6 +375,11 @@ export default function PublicationsPage() {
             </aside>
 
             <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm")}>
+              {isUserPro && (
+                <div className="mb-6">
+                  <CreatePublicationForm />
+                </div>
+              )}
               {isLoadingPosts ? (
                 <div className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto" /></div>
               ) : filteredPosts.length > 0 ? (
@@ -422,8 +412,6 @@ export default function PublicationsPage() {
             )}
         </div>
       </div>
-      
-      <CreatePublicationDialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen} />
       
       {viewingUserId && <UserProfileDialog userId={viewingUserId} open={isProfileDialogOpen} onOpenChange={setIsProfileDialogOpen} />}
 

@@ -1,9 +1,8 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -12,22 +11,15 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db, createNotification } from '@/lib/firebase';
 import type { ProPost } from '@/lib/types';
 import { Loader2, Send } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
-interface CreatePublicationDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export default function CreatePublicationDialog({ open, onOpenChange }: CreatePublicationDialogProps) {
+export default function CreatePublicationForm() {
   const { currentUser } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const resetForm = () => {
-    setText('');
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +45,6 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
       
       const newPostRef = await addDoc(collection(db, 'pro-posts'), finalPostData);
       
-      // Create notifications for followers
       if (currentUser.followers && currentUser.followers.length > 0) {
         currentUser.followers.forEach(followerId => {
           createNotification({
@@ -68,8 +59,7 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
         });
       }
       
-      resetForm();
-      onOpenChange(false);
+      setText('');
       toast({ title: t('publicationPostedSuccess') });
     } catch (error) {
       console.error("Error creating post:", error);
@@ -81,40 +71,37 @@ export default function CreatePublicationDialog({ open, onOpenChange }: CreatePu
   
   const canSubmit = text.trim() && !isSubmitting;
 
+  if (!currentUser) {
+    return null; // Don't render the form if not logged in
+  }
+
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-        onOpenChange(isOpen);
-        if (!isOpen) {
-            resetForm();
-        }
-    }}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create New Publication</DialogTitle>
-          <DialogDescription>Share your thoughts with the community.</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div className="p-4 border border-border rounded-lg bg-card">
+      <form onSubmit={handleSubmit}>
+        <div className="flex items-start gap-4">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={currentUser.photoURL || undefined} alt={currentUser.username || 'user'} data-ai-hint="user avatar" />
+            <AvatarFallback>{(currentUser.username || currentUser.displayName || 'U').substring(0, 1)}</AvatarFallback>
+          </Avatar>
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={t('createPublicationPlaceholder', { username: currentUser?.username || 'member' })}
-            rows={4}
-            className="resize-none"
+            placeholder={t('createPublicationPlaceholder', { username: currentUser.username || 'member' })}
+            rows={2}
+            className="flex-1 resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-lg"
             disabled={isSubmitting}
           />
-          <div className="flex justify-end items-center">
-             <div className="flex items-center gap-2">
-                <DialogClose asChild>
-                    <Button type="button" variant="ghost">Cancel</Button>
-                </DialogClose>
-                <Button type="submit" disabled={!canSubmit}>
-                  {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-                  {t('createPublicationButton')}
-                </Button>
-            </div>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+        <div className="flex justify-end items-center mt-2 pt-2 border-t border-border">
+          <Button type="submit" disabled={!canSubmit} size="sm" className="rounded-full font-bold">
+            {isSubmitting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              t('createPublicationButton')
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
