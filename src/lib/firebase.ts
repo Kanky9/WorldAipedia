@@ -487,12 +487,14 @@ export const createNotification = async (notification: Omit<Notification, 'id' |
 
 export const getNotifications = async (userId: string): Promise<Notification[]> => {
     const notifsRef = collection(db, 'notifications');
-    const q = query(notifsRef, where('recipientId', '==', userId), orderBy('createdAt', 'desc'), limit(50));
+    const q = query(notifsRef, where('recipientId', '==', userId), limit(50));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const notifications = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
     } as Notification));
+    // Manual sort after fetching
+    return notifications.sort((a, b) => (b.createdAt as Timestamp).toMillis() - (a.createdAt as Timestamp).toMillis());
 };
 
 export const getUnreadNotificationsCount = async (userId: string): Promise<number> => {
