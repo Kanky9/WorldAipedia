@@ -92,21 +92,24 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
         ) : notifications.length > 0 ? (
           <div className="divide-y">
             {notifications.map(notif => (
-              <Link key={notif.id} href={notif.postId ? `/publications#${notif.postId}` : `/account`} onClick={onClose} legacyBehavior>
-                <a className="block p-4 hover:bg-muted/50">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={notif.actorAvatarUrl} />
-                      <AvatarFallback>{notif.actorName.substring(0, 1)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <NotificationText notif={notif} />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDistanceToNow((notif.createdAt as any).toDate(), { addSuffix: true, locale: localeMap[language] || enUS })}
-                      </p>
-                    </div>
+              <Link
+                key={notif.id}
+                href={notif.postId ? `/publications#${notif.postId}` : `/account`}
+                onClick={onClose}
+                className="block p-4 hover:bg-muted/50"
+              >
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src={notif.actorAvatarUrl} />
+                    <AvatarFallback>{notif.actorName.substring(0, 1)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <NotificationText notif={notif} />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatDistanceToNow((notif.createdAt as any).toDate(), { addSuffix: true, locale: localeMap[language] || enUS })}
+                    </p>
                   </div>
-                </a>
+                </div>
               </Link>
             ))}
           </div>
@@ -117,4 +120,3 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
     </div>
   );
 }
-
