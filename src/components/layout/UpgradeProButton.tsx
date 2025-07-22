@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -8,6 +9,18 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import UpgradeProDialog from './UpgradeProDialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+
+const initialPayPalOptions = {
+    "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+    "enable-funding": "card",
+    "disable-funding": "venmo",
+    "data-sdk-integration-source": "integrationbuilder_ac",
+    currency: "USD",
+    intent: "subscription",
+    "vault": true,
+};
+
 
 const UpgradeProButton = () => {
   const { t } = useLanguage();
@@ -29,7 +42,7 @@ const UpgradeProButton = () => {
   }
 
   return (
-    <>
+    <PayPalScriptProvider options={initialPayPalOptions}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -48,7 +61,7 @@ const UpgradeProButton = () => {
         </Tooltip>
       </TooltipProvider>
       <UpgradeProDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} />
-    </>
+    </PayPalScriptProvider>
   );
 };
 
