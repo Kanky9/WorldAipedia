@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
-import { ShoppingCart, Loader2, AlertTriangle } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { ShoppingCart, Loader2, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { getAllProductsFromFirestore } from '@/lib/firebase';
 import type { Product } from '@/lib/types';
@@ -18,6 +18,10 @@ export default function StorePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -44,28 +48,88 @@ export default function StorePage() {
       setFilteredProducts(products.filter(p => p.categorySlug === selectedCategory));
     }
   }, [selectedCategory, products]);
+  
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      // Initial check
+      handleScroll();
+      
+      // Check on resize
+      const resizeObserver = new ResizeObserver(handleScroll);
+      resizeObserver.observe(container);
+
+      return () => {
+        container.removeEventListener('scroll', handleScroll);
+        resizeObserver.disconnect();
+      };
+    }
+  }, [products]); // Re-check when products load/change
+  
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = scrollContainerRef.current.clientWidth * 0.8;
+      scrollContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   return (
     <div className="space-y-8 animate-fade-in py-8">
-      {/* Category Filter Buttons */}
-      <div className="flex justify-center flex-wrap gap-2 pb-6">
-        <Button
-          variant={selectedCategory === 'all' ? 'default' : 'outline'}
-          className={cn("rounded-full", selectedCategory === 'all' && "bg-primary hover:bg-primary/90")}
-          onClick={() => setSelectedCategory('all')}
-        >
-          All
-        </Button>
-        {productCategories.map(category => (
+      <div className="relative flex items-center">
+        {showLeftArrow && (
           <Button
-            key={category.slug}
-            variant={selectedCategory === category.slug ? 'default' : 'outline'}
-            className={cn("rounded-full", selectedCategory === category.slug && "bg-primary hover:bg-primary/90")}
-            onClick={() => setSelectedCategory(category.slug)}
+            variant="ghost"
+            size="icon"
+            className="absolute -left-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+            onClick={() => scroll('left')}
           >
-            {t(category.name)}
+            <ChevronLeft className="h-5 w-5" />
           </Button>
-        ))}
+        )}
+        <div
+          ref={scrollContainerRef}
+          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide"
+        >
+          <Button
+            variant={selectedCategory === 'all' ? 'default' : 'outline'}
+            className={cn("rounded-full shrink-0", selectedCategory === 'all' && "bg-primary hover:bg-primary/90")}
+            onClick={() => setSelectedCategory('all')}
+          >
+            All
+          </Button>
+          {productCategories.map(category => (
+            <Button
+              key={category.slug}
+              variant={selectedCategory === category.slug ? 'default' : 'outline'}
+              className={cn("rounded-full shrink-0", selectedCategory === category.slug && "bg-primary hover:bg-primary/90")}
+              onClick={() => setSelectedCategory(category.slug)}
+            >
+              {t(category.name)}
+            </Button>
+          ))}
+        </div>
+         {showRightArrow && (
+           <Button
+            variant="ghost"
+            size="icon"
+            className="absolute -right-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+            onClick={() => scroll('right')}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
