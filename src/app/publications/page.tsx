@@ -214,7 +214,7 @@ export default function PublicationsPage() {
     } else if (!loading && !currentUser?.isSubscribed) {
         setIsLoadingPosts(false);
     }
-  }, [fetchAllPosts, loading, currentUser]);
+  }, [loading, currentUser, fetchAllPosts]);
 
 
   const fetchAndSetSavedPosts = useCallback(async () => {
@@ -435,3 +435,5 @@ export default function PublicationsPage() {
     </>
   );
 }
+
+    
