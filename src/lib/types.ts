@@ -101,6 +101,7 @@ export interface User {
   username?: string; // Custom username from Firestore
   displayName?: string | null; // From Firebase Auth Profile (e.g., Google name)
   photoURL?: string | null; // From Firebase Auth Profile (e.g., Google avatar)
+  description?: string; // User's bio/description
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
   subscriptionPlan?: string; // For display

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { getUsersByIds, updateUsernameAcrossPublications } from "@/lib/firebase";
 import type { User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function AccountPage() {
   const { t, language } = useLanguage();
@@ -28,6 +30,7 @@ export default function AccountPage() {
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [description, setDescription] = useState('');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   
   const [showFollowingDialog, setShowFollowingDialog] = useState(false);
@@ -42,6 +45,7 @@ export default function AccountPage() {
     if (currentUser) {
       setUsername(currentUser.username || currentUser.displayName || '');
       setEmail(currentUser.email || '');
+      setDescription(currentUser.description || '');
     }
   }, [currentUser, authLoading, router]);
   
@@ -62,15 +66,30 @@ export default function AccountPage() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser || isUpdatingProfile || !username.trim() || username.trim() === currentUser.username) return;
+    if (!currentUser || isUpdatingProfile) return;
     
+    // Check if there are any changes
+    const isUsernameChanged = username.trim() !== (currentUser.username || '');
+    const isDescriptionChanged = description !== (currentUser.description || '');
+    if (!isUsernameChanged && !isDescriptionChanged) return;
+
     setIsUpdatingProfile(true);
     try {
-      await updateUserProfileInFirestore(currentUser.uid, { username });
-      // After successfully updating the profile, propagate the username change.
-      await updateUsernameAcrossPublications(currentUser.uid, username);
-      
-      toast({ title: t('profileUpdatedSuccessTitle', "Profile Updated"), description: t('profileUpdatedSuccessDesc', "Your profile has been successfully updated.")});
+      const dataToUpdate: Partial<UserType> = {};
+      if (isUsernameChanged && username.trim()) {
+        dataToUpdate.username = username.trim();
+      }
+      if (isDescriptionChanged) {
+        dataToUpdate.description = description;
+      }
+
+      if (Object.keys(dataToUpdate).length > 0) {
+        await updateUserProfileInFirestore(currentUser.uid, dataToUpdate);
+        if (dataToUpdate.username) {
+            await updateUsernameAcrossPublications(currentUser.uid, dataToUpdate.username);
+        }
+        toast({ title: t('profileUpdatedSuccessTitle', "Profile Updated"), description: t('profileUpdatedSuccessDesc', "Your profile has been successfully updated.")});
+      }
     } catch (error: any) {
       console.error("Profile update error:", error);
       toast({ variant: "destructive", title: t('profileUpdateErrorTitle', "Update Failed"), description: error.message || t('profileUpdateErrorDesc', "Could not update profile.")});
@@ -100,6 +119,13 @@ export default function AccountPage() {
     const date = memberSince instanceof Date ? memberSince : memberSince.toDate();
     return format(date, 'PP', { locale: getLocaleForDate() });
   };
+
+  const hasProfileChanged = () => {
+    if (!currentUser) return false;
+    const usernameChanged = username.trim() !== (currentUser.username || '');
+    const descriptionChanged = description !== (currentUser.description || '');
+    return usernameChanged || descriptionChanged;
+  }
 
 
   if (authLoading || !currentUser) {
@@ -179,7 +205,11 @@ export default function AccountPage() {
                     <Input id="email" type="email" value={email} readOnly disabled />
                   </div>
                 </div>
-                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile || !username.trim() || username.trim() === currentUser.username}>
+                <div>
+                    <Label htmlFor="description">Bio / Description</Label>
+                    <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Tell us a little about yourself..." disabled={isUpdatingProfile} rows={3} />
+                </div>
+                <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={isUpdatingProfile || !hasProfileChanged()}>
                   {isUpdatingProfile ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : null}
                   {t('updateProfileButton', 'Update Profile')}
                 </Button>
