@@ -84,7 +84,7 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                             <DialogDescription className="sr-only">View user details and their description.</DialogDescription>
                         </DialogHeader>
 
-                        <div className="flex flex-col items-center text-center space-y-4 -mt-4">
+                        <div className="flex flex-col items-center text-center space-y-4 pt-4">
                             <Avatar className="h-24 w-24 border-2 border-primary">
                                 <AvatarImage src={profileUser.photoURL || undefined} alt={profileUser.username} />
                                 <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
