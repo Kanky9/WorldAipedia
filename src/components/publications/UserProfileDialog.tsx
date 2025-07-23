@@ -87,8 +87,8 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                     </div>
                 ) : profileUser ? (
                     <>
-                        <DialogHeader className="pt-6 text-left">
-                           <div className="flex items-center gap-4">
+                        <DialogHeader>
+                            <div className="flex items-center gap-4">
                                 <Avatar className="h-20 w-20 border-2 border-primary">
                                     <AvatarImage src={profileUser.photoURL || undefined} />
                                     <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
@@ -101,13 +101,15 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                                     </DialogDescription>
                                 </div>
                             </div>
-                             {currentUser && currentUser.uid !== profileUser.uid && (
-                                <Button onClick={handleFollowToggle} disabled={isFollowLoading} size="sm" className="mt-4 w-full">
-                                    {isFollowLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (isFollowing ? <UserCheck className="mr-2 h-4 w-4"/> : <UserPlus className="mr-2 h-4 w-4"/>)}
-                                    {isFollowing ? 'Following' : 'Follow'}
-                                </Button>
-                            )}
                         </DialogHeader>
+
+                        {currentUser && currentUser.uid !== profileUser.uid && (
+                            <Button onClick={handleFollowToggle} disabled={isFollowLoading} size="sm" className="mt-4 w-full">
+                                {isFollowLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (isFollowing ? <UserCheck className="mr-2 h-4 w-4"/> : <UserPlus className="mr-2 h-4 w-4"/>)}
+                                {isFollowing ? 'Following' : 'Follow'}
+                            </Button>
+                        )}
+                        
                         <div className="flex-grow overflow-y-auto mt-4 pr-4 -mr-6 space-y-2">
                             <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2"><FileText className="h-4 w-4"/> Publications</h3>
                             {userPosts.length > 0 ? (

@@ -191,7 +191,7 @@ export const deletePublicationFromFirestore = async (postId: string): Promise<vo
 
 export const getPostsByAuthorId = async (authorId: string): Promise<ProPost[]> => {
     const postsCol = collection(db, 'pro-posts');
-    const q = query(postsCol, where('authorId', '==', authorId), orderBy('createdAt', 'desc'), limit(20));
+    const q = query(postsCol, where('authorId', '==', authorId), limit(20));
     const querySnapshot = await getDocs(q);
     const postsList = querySnapshot.docs.map(docSnap => {
         const data = docSnap.data();
@@ -487,14 +487,13 @@ export const createNotification = async (notification: Omit<Notification, 'id' |
 
 export const getNotifications = async (userId: string): Promise<Notification[]> => {
     const notifsRef = collection(db, 'notifications');
-    const q = query(notifsRef, where('recipientId', '==', userId), limit(50));
+    const q = query(notifsRef, where('recipientId', '==', userId), orderBy('createdAt', 'desc'), limit(50));
     const querySnapshot = await getDocs(q);
     const notifications = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
     } as Notification));
-    // Manual sort after fetching
-    return notifications.sort((a, b) => (b.createdAt as Timestamp).toMillis() - (a.createdAt as Timestamp).toMillis());
+    return notifications;
 };
 
 export const getUnreadNotificationsCount = async (userId: string): Promise<number> => {
