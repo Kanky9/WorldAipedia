@@ -58,6 +58,7 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
         if (open) {
             fetchProfileData();
         } else {
+            // Reset state when dialog closes to ensure fresh data on reopen
             setProfileUser(null);
             setUserPosts([]);
             setIsLoading(true);
@@ -84,7 +85,8 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
     
     const formatDate = (dateValue: Date | Timestamp) => {
         if (!dateValue) return '';
-        const date = dateValue instanceof Date ? dateValue : dateValue.toDate();
+        // Check if it's a Firestore Timestamp and convert, otherwise assume it's a Date
+        const date = (dateValue as Timestamp)?.toDate ? (dateValue as Timestamp).toDate() : (dateValue as Date);
         return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
     };
 
@@ -98,17 +100,22 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                 ) : profileUser ? (
                     <>
                         <DialogHeader>
+                            {/* The DialogTitle and DialogDescription must be direct children for accessibility */}
+                            <DialogTitle className="sr-only">Profile of {profileUser.username}</DialogTitle>
+                            <DialogDescription className="sr-only">View user details and their latest publications.</DialogDescription>
+                            
+                            {/* Visual layout container */}
                             <div className="flex items-start gap-4">
                                 <Avatar className="h-20 w-20 border-2 border-primary flex-shrink-0">
                                     <AvatarImage src={profileUser.photoURL || undefined} />
                                     <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                                 </Avatar>
                                 <div className="space-y-1 mt-2">
-                                    <DialogTitle className="text-2xl">{profileUser.username}</DialogTitle>
-                                    <DialogDescription className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground pt-1">
+                                    <h2 className="text-2xl font-semibold leading-none tracking-tight">{profileUser.username}</h2>
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground pt-1">
                                         <span><span className="font-bold text-foreground">{profileUser.followers?.length || 0}</span> Followers</span>
                                         <span><span className="font-bold text-foreground">{profileUser.following?.length || 0}</span> Following</span>
-                                    </DialogDescription>
+                                    </div>
                                 </div>
                             </div>
                         </DialogHeader>
