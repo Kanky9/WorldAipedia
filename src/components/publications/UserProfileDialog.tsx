@@ -9,14 +9,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Users, FileText, UserPlus, UserCheck } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { formatDistanceToNow, Locale } from 'date-fns';
+import { es, enUS, it, ja, pt, zhCN } from 'date-fns/locale';
+import type { Timestamp } from 'firebase/firestore';
 
 interface UserProfileDialogProps {
     userId: string;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
+
+const localeMap: { [key: string]: Locale } = {
+  es, en: enUS, it, ja, pt, zh: zhCN
+};
 
 export default function UserProfileDialog({ userId, open, onOpenChange }: UserProfileDialogProps) {
     const { currentUser } = useAuth();
@@ -53,7 +58,6 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
         if (open) {
             fetchProfileData();
         } else {
-            // Reset state when dialog closes
             setProfileUser(null);
             setUserPosts([]);
             setIsLoading(true);
@@ -77,6 +81,12 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
             setIsFollowLoading(false);
         }
     };
+    
+    const formatDate = (dateValue: Date | Timestamp) => {
+        if (!dateValue) return '';
+        const date = dateValue instanceof Date ? dateValue : dateValue.toDate();
+        return formatDistanceToNow(date, { addSuffix: true, locale: enUS });
+    };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -88,14 +98,14 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                 ) : profileUser ? (
                     <>
                         <DialogHeader>
-                            <div className="flex items-center gap-4">
-                                <Avatar className="h-20 w-20 border-2 border-primary">
+                            <div className="flex items-start gap-4">
+                                <Avatar className="h-20 w-20 border-2 border-primary flex-shrink-0">
                                     <AvatarImage src={profileUser.photoURL || undefined} />
                                     <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                                 </Avatar>
-                                <div className="space-y-1">
+                                <div className="space-y-1 mt-2">
                                     <DialogTitle className="text-2xl">{profileUser.username}</DialogTitle>
-                                    <DialogDescription className="flex items-center gap-4 text-sm text-muted-foreground">
+                                    <DialogDescription className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground pt-1">
                                         <span><span className="font-bold text-foreground">{profileUser.followers?.length || 0}</span> Followers</span>
                                         <span><span className="font-bold text-foreground">{profileUser.following?.length || 0}</span> Following</span>
                                     </DialogDescription>
@@ -104,19 +114,19 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                         </DialogHeader>
 
                         {currentUser && currentUser.uid !== profileUser.uid && (
-                            <Button onClick={handleFollowToggle} disabled={isFollowLoading} size="sm" className="mt-4 w-full">
+                            <Button onClick={handleFollowToggle} disabled={isFollowLoading} size="sm" className="mt-2 w-full">
                                 {isFollowLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (isFollowing ? <UserCheck className="mr-2 h-4 w-4"/> : <UserPlus className="mr-2 h-4 w-4"/>)}
                                 {isFollowing ? 'Following' : 'Follow'}
                             </Button>
                         )}
                         
-                        <div className="flex-grow overflow-y-auto mt-4 pr-4 -mr-6 space-y-2">
+                        <div className="flex-grow overflow-y-auto mt-2 pr-4 -mr-6 space-y-2">
                             <h3 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-2"><FileText className="h-4 w-4"/> Publications</h3>
                             {userPosts.length > 0 ? (
                                 userPosts.map(post => (
                                     <div key={post.id} className="p-3 border rounded-lg text-sm bg-muted/50">
-                                        <p>{post.text}</p>
-                                        <p className="text-xs text-muted-foreground mt-1">{formatDistanceToNow((post.createdAt as any).toDate(), { addSuffix: true, locale: enUS })}</p>
+                                        <p className="whitespace-pre-wrap">{post.text}</p>
+                                        <p className="text-xs text-muted-foreground mt-1">{formatDate(post.createdAt)}</p>
                                     </div>
                                 ))
                             ) : (
