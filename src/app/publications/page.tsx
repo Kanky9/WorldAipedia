@@ -365,7 +365,7 @@ export default function PublicationsPage() {
                     {renderFilterOptions(true)}
                 </DropdownMenuContent>
              </DropdownMenu>
-            {isUserPro && <UserSearch />}
+            {isUserPro && <UserSearch onProfileClick={handleProfileClick} />}
         </div>
 
 
@@ -391,7 +391,7 @@ export default function PublicationsPage() {
               )}
             </main>
             
-            {isUserPro && <aside className="hidden lg:block sticky top-24 self-start"><UserSearch /></aside>}
+            {isUserPro && <aside className="hidden lg:block sticky top-24 self-start"><UserSearch onProfileClick={handleProfileClick} /></aside>}
             
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm col-span-full">
@@ -435,5 +435,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    

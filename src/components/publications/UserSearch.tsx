@@ -10,7 +10,11 @@ import { searchUsersByUsername, followUser, unfollowUser } from '@/lib/firebase'
 import type { User } from '@/lib/types';
 import { debounce } from 'lodash';
 
-export default function UserSearch() {
+interface UserSearchProps {
+  onProfileClick: (userId: string) => void;
+}
+
+export default function UserSearch({ onProfileClick }: UserSearchProps) {
   const { currentUser, loading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState<User[]>([]);
@@ -51,7 +55,8 @@ export default function UserSearch() {
     return () => debouncedSearch.cancel();
   }, [searchTerm, debouncedSearch]);
 
-  const handleFollowToggle = async (targetUserId: string) => {
+  const handleFollowToggle = async (e: React.MouseEvent, targetUserId: string) => {
+    e.stopPropagation(); // Prevent the dialog from opening when clicking the button
     if (!currentUser) return;
 
     const isCurrentlyFollowing = localFollowing.includes(targetUserId);
@@ -86,7 +91,11 @@ export default function UserSearch() {
             if (user.uid === currentUser?.uid) return null; // Don't show current user
             const isFollowing = localFollowing.includes(user.uid);
             return (
-              <div key={user.uid} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
+              <div 
+                key={user.uid} 
+                className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 cursor-pointer"
+                onClick={() => onProfileClick(user.uid)}
+              >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
                     <AvatarImage src={user.photoURL || undefined} />
@@ -101,9 +110,9 @@ export default function UserSearch() {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleFollowToggle(user.uid)}
+                  onClick={(e) => handleFollowToggle(e, user.uid)}
                   disabled={authLoading}
-                  className={`p-2 rounded-full transition-colors ${
+                  className={`p-2 rounded-full transition-colors z-10 relative ${
                     isFollowing 
                       ? 'bg-primary/20 text-primary hover:bg-primary/30' 
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
