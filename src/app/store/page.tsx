@@ -87,7 +87,7 @@ export default function StorePage() {
 
   return (
     <div className="space-y-8 animate-fade-in py-8">
-      <div className="relative flex items-center md:justify-center">
+      <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button
             variant="ghost"
@@ -100,7 +100,7 @@ export default function StorePage() {
         )}
         <div
           ref={scrollContainerRef}
-          className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide"
+          className="flex items-center gap-2 overflow-x-auto scrollbar-hide md:justify-center"
         >
           <Button
             variant={selectedCategory === 'all' ? 'default' : 'outline'}
