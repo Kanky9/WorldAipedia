@@ -87,21 +87,21 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                     </div>
                 ) : profileUser ? (
                     <>
-                        <DialogHeader className="pt-6">
-                            <div className="flex items-center gap-4">
+                        <DialogHeader className="pt-6 text-left">
+                           <div className="flex items-center gap-4">
                                 <Avatar className="h-20 w-20 border-2 border-primary">
                                     <AvatarImage src={profileUser.photoURL || undefined} />
                                     <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
                                 </Avatar>
                                 <div className="space-y-1">
                                     <DialogTitle className="text-2xl">{profileUser.username}</DialogTitle>
-                                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                                    <DialogDescription className="flex items-center gap-4 text-sm text-muted-foreground">
                                         <span><span className="font-bold text-foreground">{profileUser.followers?.length || 0}</span> Followers</span>
                                         <span><span className="font-bold text-foreground">{profileUser.following?.length || 0}</span> Following</span>
-                                    </div>
+                                    </DialogDescription>
                                 </div>
                             </div>
-                            {currentUser && currentUser.uid !== profileUser.uid && (
+                             {currentUser && currentUser.uid !== profileUser.uid && (
                                 <Button onClick={handleFollowToggle} disabled={isFollowLoading} size="sm" className="mt-4 w-full">
                                     {isFollowLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (isFollowing ? <UserCheck className="mr-2 h-4 w-4"/> : <UserPlus className="mr-2 h-4 w-4"/>)}
                                     {isFollowing ? 'Following' : 'Follow'}
