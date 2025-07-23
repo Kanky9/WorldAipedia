@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -332,4 +331,3 @@ body {
 .animate-pulse-glow-subtle {
   animation: pulse-glow-subtle 3s infinite ease-in-out;
 }
-    
