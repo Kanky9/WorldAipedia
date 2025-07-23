@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
@@ -86,12 +87,12 @@ export default function StorePage() {
 
   return (
     <div className="space-y-8 animate-fade-in py-8">
-      <div className="relative flex items-center">
+      <div className="relative flex items-center md:justify-center">
         {showLeftArrow && (
           <Button
             variant="ghost"
             size="icon"
-            className="absolute -left-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+            className="absolute -left-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm md:hidden"
             onClick={() => scroll('left')}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -123,7 +124,7 @@ export default function StorePage() {
            <Button
             variant="ghost"
             size="icon"
-            className="absolute -right-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+            className="absolute -right-4 z-10 h-8 w-8 rounded-full bg-background/80 hover:bg-background/90 backdrop-blur-sm md:hidden"
             onClick={() => scroll('right')}
           >
             <ChevronRight className="h-5 w-5" />
