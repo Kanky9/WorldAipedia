@@ -3,15 +3,12 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { getUserById, getPostsByAuthorId, followUser, unfollowUser } from '@/lib/firebase';
-import type { User, ProPost } from '@/lib/types';
+import { getUserById, followUser, unfollowUser } from '@/lib/firebase';
+import type { User } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Loader2, Users, FileText, UserPlus, UserCheck } from 'lucide-react';
-import { formatDistanceToNow, Locale } from 'date-fns';
-import { es, enUS, it, ja, pt, zhCN } from 'date-fns/locale';
-import type { Timestamp } from 'firebase/firestore';
+import { Loader2, UserPlus, UserCheck } from 'lucide-react';
 
 interface UserProfileDialogProps {
     userId: string;
@@ -82,9 +79,12 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                     </div>
                 ) : profileUser ? (
                     <>
-                        <DialogHeader className="items-center text-center space-y-4">
-                             <DialogTitle className="sr-only">Profile of {profileUser.username}</DialogTitle>
-                             <DialogDescription className="sr-only">View user details and their description.</DialogDescription>
+                        <DialogHeader>
+                            <DialogTitle className="sr-only">Profile of {profileUser.username}</DialogTitle>
+                            <DialogDescription className="sr-only">View user details and their description.</DialogDescription>
+                        </DialogHeader>
+
+                        <div className="flex flex-col items-center text-center space-y-4 -mt-4">
                             <Avatar className="h-24 w-24 border-2 border-primary">
                                 <AvatarImage src={profileUser.photoURL || undefined} alt={profileUser.username} />
                                 <AvatarFallback>{profileUser.username?.substring(0, 2).toUpperCase() || 'U'}</AvatarFallback>
@@ -96,10 +96,10 @@ export default function UserProfileDialog({ userId, open, onOpenChange }: UserPr
                                     <span><span className="font-bold text-foreground">{profileUser.following?.length || 0}</span> Following</span>
                                 </div>
                             </div>
-                        </DialogHeader>
+                        </div>
 
                         {profileUser.description && (
-                            <div className="text-center text-muted-foreground text-sm my-4 p-3 bg-muted/50 rounded-lg">
+                            <div className="text-center text-muted-foreground text-sm my-2 p-3 bg-muted/50 rounded-lg">
                                 {profileUser.description}
                             </div>
                         )}
