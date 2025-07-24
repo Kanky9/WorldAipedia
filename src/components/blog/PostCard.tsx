@@ -37,7 +37,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
   return (
     <Card className="flex flex-col overflow-hidden h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 rounded-xl group bg-card">
       <Link href={`/posts/${post.id}`} className="block">
-        <div className="relative w-full h-48">
+        <div className="relative w-full h-28 sm:h-48">
           <Image
             src={post.imageUrl}
             alt={t(post.title, post.id)}
@@ -45,38 +45,29 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
             style={{ objectFit: 'cover' }}
             className="rounded-t-xl group-hover:scale-105 transition-transform duration-300"
             data-ai-hint={post.imageHint || "technology concept"}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 50vw, 33vw"
             unoptimized={post.imageUrl.startsWith('data:')}
           />
         </div>
       </Link>
-      <CardHeader className="pt-4">
+      <CardHeader className="p-3 sm:p-4">
         <Link href={`/posts/${post.id}`} className="block">
-          <CardTitle className="font-headline text-lg sm:text-xl group-hover:text-primary transition-colors">{t(post.title)}</CardTitle>
+          <CardTitle className="font-headline text-base sm:text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
         </Link>
-        <div className="flex items-center text-xs text-muted-foreground mt-1 gap-2">
-          <CalendarDays className="h-3.5 w-3.5" />
-          <span>{postDateLocale ? format(new Date(post.publishedDate as Date), 'MMM d, yyyy', { locale: postDateLocale }) : new Date(post.publishedDate as Date).toLocaleDateString()}</span>
+        <div className="flex items-center text-xs text-muted-foreground pt-1 gap-2">
+           {category && (
+              <Badge variant="secondary" className="w-fit text-xs hover:bg-primary/20 transition-colors">
+                  <CategoryIcon categoryName={post.category} className="h-3 w-3 mr-1 text-primary" />
+                  {localizedCategoryName}
+              </Badge>
+          )}
         </div>
-        {category && (
-          <Link href={`/categories/${category.slug}`} className="w-fit">
-            <Badge variant="secondary" className="w-fit mt-2 text-xs sm:text-sm hover:bg-primary/20 transition-colors">
-                <CategoryIcon categoryName={post.category} className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 text-primary" />
-                {localizedCategoryName}
-            </Badge>
-          </Link>
-        )}
       </CardHeader>
-      <CardContent className="flex-grow pt-2">
-        <CardDescription className="text-sm sm:text-base">{t(post.shortDescription)}</CardDescription>
+      <CardContent className="flex-grow p-3 pt-0">
+        <CardDescription className="text-xs sm:text-sm line-clamp-3">{t(post.shortDescription)}</CardDescription>
       </CardContent>
-      <CardFooter className="flex-col items-start">
-        <div className="flex flex-wrap gap-1 mb-3">
-          {post.tags.slice(0, 3).map(tag => (
-            <Badge key={tag} variant="outline" className="text-xs"><Tag className="h-3 w-3 mr-1"/>{t(tag as CoreTranslationKey, tag)}</Badge>
-          ))}
-        </div>
-        <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
+      <CardFooter className="p-3 pt-0">
+        <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 rounded-md">
           <Link href={`/posts/${post.id}`}>{t('readMoreButton', 'Read More')}</Link>
         </Button>
       </CardFooter>
