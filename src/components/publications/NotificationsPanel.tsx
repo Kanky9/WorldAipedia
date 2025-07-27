@@ -14,6 +14,8 @@ import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useOnClickOutside } from '@/hooks/use-on-click-outside';
 import { cn } from '@/lib/utils';
+import type { Timestamp } from 'firebase/firestore';
+
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zh: zhCN
@@ -69,6 +71,10 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
     }
   }, [isOpen, currentUser]);
 
+  const getNotificationDate = (timestamp: Timestamp | Date): Date => {
+    return timestamp instanceof Date ? timestamp : timestamp.toDate();
+  }
+
   return (
     <div 
       ref={panelRef}
@@ -106,7 +112,7 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
                   <div className="flex-1">
                     <NotificationText notif={notif} />
                     <p className="text-xs text-muted-foreground mt-1">
-                      {formatDistanceToNow((notif.createdAt as any).toDate(), { addSuffix: true, locale: localeMap[language] || enUS })}
+                      {formatDistanceToNow(getNotificationDate(notif.createdAt), { addSuffix: true, locale: localeMap[language] || enUS })}
                     </p>
                   </div>
                 </div>
@@ -120,3 +126,5 @@ export default function NotificationsPanel({ isOpen, onClose }: NotificationsPan
     </div>
   );
 }
+
+    

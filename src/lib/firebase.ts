@@ -1,5 +1,4 @@
 
-
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -491,12 +490,28 @@ export const createNotification = async (notification: Omit<Notification, 'id' |
 
 export const getNotifications = async (userId: string): Promise<Notification[]> => {
     const notifsRef = collection(db, 'notifications');
-    const q = query(notifsRef, where('recipientId', '==', userId), orderBy('createdAt', 'desc'), limit(50));
+    const q = query(notifsRef, where('recipientId', '==', userId), limit(50));
     const querySnapshot = await getDocs(q);
-    const notifications = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    } as Notification));
+    const notifications = querySnapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        const notification = {
+            id: docSnap.id,
+            ...data
+        } as Notification;
+
+        // Manually sort by date descending after fetching, as a temporary workaround.
+        if (notification.createdAt && notification.createdAt instanceof Timestamp) {
+            notification.createdAt = notification.createdAt.toDate();
+        }
+        return notification;
+    });
+
+    notifications.sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+        const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+        return dateB - dateA;
+    });
+    
     return notifications;
 };
 
@@ -567,5 +582,5 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
-
+    
     
