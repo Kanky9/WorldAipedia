@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, ShoppingCart, Share2 } from 'lucide-react';
+import { BrainCircuit, Menu, X, UserCircle, LogOut, Star, Settings, ListOrdered, UserPlus, LogIn, ShieldCheck, ShoppingCart, Share2, HandHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -43,6 +43,7 @@ const Header = () => {
     { href: "/categories", labelKey: "navCategories", icon: Settings },
     { href: "/store", labelKey: "navStore", icon: ShoppingCart },
     { href: "/publications", labelKey: "navPublications", icon: Share2 },
+    { href: "/donations", labelKey: "navDonations", icon: HandHeart },
   ];
 
   return (

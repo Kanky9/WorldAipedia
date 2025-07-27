@@ -44,7 +44,7 @@ import {
   type StorageReference
 } from 'firebase/storage';
 
-import type { Post as PostType, GameHighScore, Product as ProductType, ProPost, User, Notification } from './types';
+import type { Post as PostType, GameHighScore, Product as ProductType, ProPost, User, Notification, DonationSettings } from './types';
 import type { LanguageCode } from './translations';
 
 
@@ -512,6 +512,23 @@ export const markNotificationsAsRead = async (notificationIds: string[]) => {
     });
     await batch.commit();
 };
+
+
+// --- Site Settings (like Donations) ---
+export const getDonationSettings = async (): Promise<DonationSettings | null> => {
+    const settingsRef = doc(db, 'settings', 'donations');
+    const docSnap = await getDoc(settingsRef);
+    if (docSnap.exists()) {
+        return docSnap.data() as DonationSettings;
+    }
+    return null;
+}
+
+export const updateDonationSettings = async (settings: DonationSettings): Promise<void> => {
+    const settingsRef = doc(db, 'settings', 'donations');
+    await setDoc(settingsRef, settings, { merge: true });
+}
+
 
 export {
   app,

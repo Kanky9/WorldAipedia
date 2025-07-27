@@ -152,4 +152,7 @@ export interface Notification {
   createdAt: Timestamp | Date;
 }
 
-    
+export interface DonationSettings {
+    paypalInfo?: string;
+    mercadoPagoAlias?: string;
+}

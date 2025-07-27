@@ -16,6 +16,7 @@ export type CoreTranslationKey =
   | 'navCategories'
   | 'navStore'
   | 'navPublications'
+  | 'navDonations'
   | 'tooltipLanguageSwitcher'
   | 'loginButton'
   | 'logoutButton'
@@ -186,6 +187,27 @@ export type CoreTranslationKey =
   | 'adminProductDeleteSuccessDesc'
   | 'adminProductDeleteErrorTitle'
   | 'deleteProductConfirm'
+  // Admin Settings
+  | 'adminSettingsTitle'
+  | 'adminSettingsDescription'
+  | 'adminSettingsButton'
+  | 'adminDonationSettingsTitle'
+  | 'adminDonationSettingsDescription'
+  | 'adminPaypalInfoLabel'
+  | 'adminPaypalInfoPlaceholder'
+  | 'adminMercadoPagoAliasLabel'
+  | 'adminMercadoPagoAliasPlaceholder'
+  | 'adminSettingsSaveButton'
+  | 'adminSettingsSaveSuccess'
+  | 'adminSettingsSaveError'
+  // Donations Page
+  | 'donationsPageTitle'
+  | 'donationsPageDescription'
+  | 'donationsPayPalButton'
+  | 'donationsMercadoPagoButton'
+  | 'donationsPayPalInfoTitle'
+  | 'donationsMercadoPagoAliasTitle'
+  | 'donationsInfoCopied'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -352,6 +374,7 @@ export const translations: Translations = {
     navCategories: 'Categories',
     navStore: 'Store',
     navPublications: 'Publications',
+    navDonations: 'Donations',
     tooltipLanguageSwitcher: 'Change language',
     loginButton: 'Login',
     logoutButton: 'Logout',
@@ -509,6 +532,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: 'Product "{title}" has been deleted.',
     adminProductDeleteErrorTitle: 'Delete Failed',
     deleteProductConfirm: 'Are you sure you want to delete the product "{title}"?',
+    adminSettingsTitle: 'Site Settings',
+    adminSettingsDescription: 'Manage global settings for your site.',
+    adminSettingsButton: 'Settings',
+    adminDonationSettingsTitle: 'Donation Settings',
+    adminDonationSettingsDescription: 'Set your PayPal and MercadoPago details for donations.',
+    adminPaypalInfoLabel: 'PayPal Donation Info',
+    adminPaypalInfoPlaceholder: 'e.g., your paypal.me link or email',
+    adminMercadoPagoAliasLabel: 'MercadoPago Alias',
+    adminMercadoPagoAliasPlaceholder: 'e.g., your.mp.alias',
+    adminSettingsSaveButton: 'Save Settings',
+    adminSettingsSaveSuccess: 'Settings saved successfully!',
+    adminSettingsSaveError: 'Error saving settings.',
+    donationsPageTitle: 'Support World AI',
+    donationsPageDescription: 'If you find our content valuable, please consider supporting the project. Your donation helps us continue creating and sharing knowledge about the world of AI.',
+    donationsPayPalButton: 'Donate with PayPal',
+    donationsMercadoPagoButton: 'Donate with MercadoPago',
+    donationsPayPalInfoTitle: 'PayPal Information',
+    donationsMercadoPagoAliasTitle: 'MercadoPago Alias',
+    donationsInfoCopied: 'Copied to clipboard!',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -643,6 +685,7 @@ export const translations: Translations = {
     navCategories: 'Categorías',
     navStore: 'Tienda',
     navPublications: 'Publicaciones',
+    navDonations: 'Donaciones',
     tooltipLanguageSwitcher: 'Cambiar idioma',
     loginButton: 'Iniciar Sesión',
     logoutButton: 'Cerrar Sesión',
@@ -800,6 +843,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: 'El producto "{title}" ha sido eliminado.',
     adminProductDeleteErrorTitle: 'Error al Eliminar',
     deleteProductConfirm: '¿Estás seguro de que quieres eliminar el producto "{title}"?',
+    adminSettingsTitle: 'Configuración del Sitio',
+    adminSettingsDescription: 'Gestiona la configuración global de tu sitio.',
+    adminSettingsButton: 'Configuración',
+    adminDonationSettingsTitle: 'Configuración de Donaciones',
+    adminDonationSettingsDescription: 'Establece tus detalles de PayPal y MercadoPago para las donaciones.',
+    adminPaypalInfoLabel: 'Información de Donación de PayPal',
+    adminPaypalInfoPlaceholder: 'ej., tu enlace de paypal.me o correo',
+    adminMercadoPagoAliasLabel: 'Alias de MercadoPago',
+    adminMercadoPagoAliasPlaceholder: 'ej., tu.alias.mp',
+    adminSettingsSaveButton: 'Guardar Configuración',
+    adminSettingsSaveSuccess: '¡Configuración guardada con éxito!',
+    adminSettingsSaveError: 'Error al guardar la configuración.',
+    donationsPageTitle: 'Apoya a World AI',
+    donationsPageDescription: 'Si encuentras valioso nuestro contenido, por favor considera apoyar el proyecto. Tu donación nos ayuda a seguir creando y compartiendo conocimiento sobre el mundo de la IA.',
+    donationsPayPalButton: 'Donar con PayPal',
+    donationsMercadoPagoButton: 'Donar con MercadoPago',
+    donationsPayPalInfoTitle: 'Información de PayPal',
+    donationsMercadoPagoAliasTitle: 'Alias de MercadoPago',
+    donationsInfoCopied: '¡Copiado al portapapeles!',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -934,6 +996,7 @@ export const translations: Translations = {
     navCategories: 'Categorie',
     navStore: 'Negozio',
     navPublications: 'Pubblicazioni',
+    navDonations: 'Donazioni',
     tooltipLanguageSwitcher: 'Cambia lingua',
     loginButton: 'Accedi',
     logoutButton: 'Esci',
@@ -1091,6 +1154,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: 'Il prodotto "{title}" è stato eliminato.',
     adminProductDeleteErrorTitle: 'Eliminazione Fallita',
     deleteProductConfirm: 'Sei sicuro di voler eliminare il prodotto "{title}"?',
+    adminSettingsTitle: 'Impostazioni Sito',
+    adminSettingsDescription: 'Gestisci le impostazioni globali del tuo sito.',
+    adminSettingsButton: 'Impostazioni',
+    adminDonationSettingsTitle: 'Impostazioni Donazioni',
+    adminDonationSettingsDescription: 'Imposta i tuoi dettagli PayPal e MercadoPago per le donazioni.',
+    adminPaypalInfoLabel: 'Info Donazione PayPal',
+    adminPaypalInfoPlaceholder: 'es. il tuo link paypal.me o email',
+    adminMercadoPagoAliasLabel: 'Alias MercadoPago',
+    adminMercadoPagoAliasPlaceholder: 'es. il.tuo.alias.mp',
+    adminSettingsSaveButton: 'Salva Impostazioni',
+    adminSettingsSaveSuccess: 'Impostazioni salvate con successo!',
+    adminSettingsSaveError: 'Errore nel salvataggio delle impostazioni.',
+    donationsPageTitle: 'Sostieni World AI',
+    donationsPageDescription: 'Se trovi prezioso il nostro contenuto, considera di sostenere il progetto. La tua donazione ci aiuta a continuare a creare e condividere conoscenza sul mondo dell\'IA.',
+    donationsPayPalButton: 'Dona con PayPal',
+    donationsMercadoPagoButton: 'Dona con MercadoPago',
+    donationsPayPalInfoTitle: 'Informazioni PayPal',
+    donationsMercadoPagoAliasTitle: 'Alias MercadoPago',
+    donationsInfoCopied: 'Copiato negli appunti!',
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -1225,6 +1307,7 @@ export const translations: Translations = {
     navCategories: '分类',
     navStore: '商店',
     navPublications: '出版物',
+    navDonations: '捐赠',
     tooltipLanguageSwitcher: '更改语言',
     loginButton: '登录',
     logoutButton: '登出',
@@ -1382,6 +1465,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: '产品 "{title}" 已删除。',
     adminProductDeleteErrorTitle: '删除失败',
     deleteProductConfirm: '您确定要删除产品“{title}”吗？',
+    adminSettingsTitle: '网站设置',
+    adminSettingsDescription: '管理您网站的全局设置。',
+    adminSettingsButton: '设置',
+    adminDonationSettingsTitle: '捐赠设置',
+    adminDonationSettingsDescription: '设置您的PayPal和MercadoPago捐赠详情。',
+    adminPaypalInfoLabel: 'PayPal捐赠信息',
+    adminPaypalInfoPlaceholder: '例如，您的paypal.me链接或电子邮件',
+    adminMercadoPagoAliasLabel: 'MercadoPago别名',
+    adminMercadoPagoAliasPlaceholder: '例如，您的.mp.别名',
+    adminSettingsSaveButton: '保存设置',
+    adminSettingsSaveSuccess: '设置已成功保存！',
+    adminSettingsSaveError: '保存设置时出错。',
+    donationsPageTitle: '支持World AI',
+    donationsPageDescription: '如果您认为我们的内容有价值，请考虑支持该项目。您的捐赠帮助我们继续创造和分享关于人工智能世界的知识。',
+    donationsPayPalButton: '使用PayPal捐赠',
+    donationsMercadoPagoButton: '使用MercadoPago捐赠',
+    donationsPayPalInfoTitle: 'PayPal信息',
+    donationsMercadoPagoAliasTitle: 'MercadoPago别名',
+    donationsInfoCopied: '已复制到剪贴板！',
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -1516,6 +1618,7 @@ export const translations: Translations = {
     navCategories: 'カテゴリー',
     navStore: 'ストア',
     navPublications: '出版物',
+    navDonations: '寄付',
     tooltipLanguageSwitcher: '言語を変更',
     loginButton: 'ログイン',
     logoutButton: 'ログアウト',
@@ -1673,6 +1776,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: '商品 "{title}" が削除されました。',
     adminProductDeleteErrorTitle: '削除に失敗しました',
     deleteProductConfirm: '商品「{title}」を削除してもよろしいですか？',
+    adminSettingsTitle: 'サイト設定',
+    adminSettingsDescription: 'サイトのグローバル設定を管理します。',
+    adminSettingsButton: '設定',
+    adminDonationSettingsTitle: '寄付設定',
+    adminDonationSettingsDescription: '寄付用のPayPalとMercadoPagoの詳細を設定します。',
+    adminPaypalInfoLabel: 'PayPal寄付情報',
+    adminPaypalInfoPlaceholder: '例：paypal.meのリンクまたはメールアドレス',
+    adminMercadoPagoAliasLabel: 'MercadoPagoエイリアス',
+    adminMercadoPagoAliasPlaceholder: '例：your.mp.alias',
+    adminSettingsSaveButton: '設定を保存',
+    adminSettingsSaveSuccess: '設定が正常に保存されました！',
+    adminSettingsSaveError: '設定の保存中にエラーが発生しました。',
+    donationsPageTitle: 'World AIをサポート',
+    donationsPageDescription: '私たちのコンテンツが価値あるものだと感じたら、プロジェクトのサポートをご検討ください。あなたの寄付は、AIの世界に関する知識の創造と共有を続けるのに役立ちます。',
+    donationsPayPalButton: 'PayPalで寄付する',
+    donationsMercadoPagoButton: 'MercadoPagoで寄付する',
+    donationsPayPalInfoTitle: 'PayPal情報',
+    donationsMercadoPagoAliasTitle: 'MercadoPagoエイリアス',
+    donationsInfoCopied: 'クリップボードにコピーしました！',
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -1807,6 +1929,7 @@ export const translations: Translations = {
     navCategories: 'Categorias',
     navStore: 'Loja',
     navPublications: 'Publicações',
+    navDonations: 'Doações',
     tooltipLanguageSwitcher: 'Mudar idioma',
     loginButton: 'Entrar',
     logoutButton: 'Sair',
@@ -1964,6 +2087,25 @@ export const translations: Translations = {
     adminProductDeleteSuccessDesc: 'O produto "{title}" foi excluído.',
     adminProductDeleteErrorTitle: 'Falha ao Excluir',
     deleteProductConfirm: 'Tem certeza de que deseja excluir o produto "{title}"?',
+    adminSettingsTitle: 'Configurações do Site',
+    adminSettingsDescription: 'Gerencie as configurações globais do seu site.',
+    adminSettingsButton: 'Configurações',
+    adminDonationSettingsTitle: 'Configurações de Doação',
+    adminDonationSettingsDescription: 'Defina seus detalhes do PayPal e MercadoPago para doações.',
+    adminPaypalInfoLabel: 'Informações de Doação do PayPal',
+    adminPaypalInfoPlaceholder: 'ex., seu link paypal.me ou e-mail',
+    adminMercadoPagoAliasLabel: 'Alias do MercadoPago',
+    adminMercadoPagoAliasPlaceholder: 'ex., seu.alias.mp',
+    adminSettingsSaveButton: 'Salvar Configurações',
+    adminSettingsSaveSuccess: 'Configurações salvas com sucesso!',
+    adminSettingsSaveError: 'Erro ao salvar as configurações.',
+    donationsPageTitle: 'Apoie o World AI',
+    donationsPageDescription: 'Se você considera nosso conteúdo valioso, por favor, considere apoiar o projeto. Sua doação nos ajuda a continuar criando e compartilhando conhecimento sobre o mundo da IA.',
+    donationsPayPalButton: 'Doar com PayPal',
+    donationsMercadoPagoButton: 'Doar com MercadoPago',
+    donationsPayPalInfoTitle: 'Informações do PayPal',
+    donationsMercadoPagoAliasTitle: 'Alias do MercadoPago',
+    donationsInfoCopied: 'Copiado para a área de transferência!',
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',
