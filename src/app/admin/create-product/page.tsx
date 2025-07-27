@@ -35,12 +35,11 @@ const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
 type LocalizedContent = {
   [key in LanguageCode]?: {
     title: string;
-    description: string;
   };
 };
 
 const initialLocalizedContent: LocalizedContent = allAppLanguageCodes.reduce((acc, langCode) => {
-  acc[langCode] = { title: '', description: '' };
+  acc[langCode] = { title: '' };
   return acc;
 }, {} as LocalizedContent);
 
@@ -99,8 +98,7 @@ export default function CreateProductPage() {
             const contentToLoad: LocalizedContent = {};
             allAppLanguageCodes.forEach(langCode => {
                 contentToLoad[langCode] = {
-                    title: product.title?.[langCode] || '',
-                    description: product.description?.[langCode] || '',
+                    title: typeof product.title === 'object' && product.title[langCode] ? product.title[langCode]! : (typeof product.title === 'string' && langCode === 'en' ? product.title : ''),
                 };
             });
             setLocalizedContent(contentToLoad);
@@ -129,7 +127,7 @@ export default function CreateProductPage() {
     }
   };
 
-  const handleLocalizedContentChange = (langCode: LanguageCode, field: 'title' | 'description', value: string) => {
+  const handleLocalizedContentChange = (langCode: LanguageCode, field: 'title', value: string) => {
     setLocalizedContent(prev => ({
       ...prev,
       [langCode]: { ...prev[langCode], [field]: value },
@@ -158,16 +156,14 @@ export default function CreateProductPage() {
         return;
     }
 
-    const finalTranslations: { title: Partial<Record<LanguageCode, string>>; description: Partial<Record<LanguageCode, string>>; } = { title: {}, description: {} };
+    const finalTranslations: { title: Partial<Record<LanguageCode, string>>; } = { title: {} };
     for (const langCode in localizedContent) {
         const content = localizedContent[langCode as LanguageCode];
         if (content?.title?.trim()) finalTranslations.title[langCode as LanguageCode] = content.title;
-        if (content?.description?.trim()) finalTranslations.description[langCode as LanguageCode] = content.description;
     }
 
     const productDetails = {
       title: finalTranslations.title,
-      description: finalTranslations.description,
       imageUrl: imageDataUri || imageUrlForPreview,
       imageHint,
       link,
@@ -220,10 +216,6 @@ export default function CreateProductPage() {
                   <div>
                     <Label htmlFor={`title-${code}`}>Title ({code.toUpperCase()})</Label>
                     <Input id={`title-${code}`} value={localizedContent[code]?.title || ''} onChange={e => handleLocalizedContentChange(code, 'title', e.target.value)} required={code === 'en'} disabled={isSubmitting} />
-                  </div>
-                  <div>
-                    <Label htmlFor={`description-${code}`}>Description ({code.toUpperCase()})</Label>
-                    <Textarea id={`description-${code}`} value={localizedContent[code]?.description || ''} onChange={e => handleLocalizedContentChange(code, 'description', e.target.value)} disabled={isSubmitting} />
                   </div>
                 </TabsContent>
               ))}

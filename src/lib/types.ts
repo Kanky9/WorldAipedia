@@ -69,7 +69,7 @@ export interface ProReply {
 export interface Product {
   id: string;
   title: LocalizedString;
-  description: LocalizedString;
+  description?: LocalizedString;
   imageUrl: string;
   imageHint?: string;
   link: string;

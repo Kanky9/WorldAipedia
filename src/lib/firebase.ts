@@ -360,13 +360,15 @@ export const followUser = async (currentUserId: string, targetUserId: string) =>
     await batch.commit();
     
     // Create notification after successfully following
-    createNotification({
-        recipientId: targetUserId,
-        actorId: currentUserId,
-        actorName: currentUserData.username || currentUserData.displayName || 'A user',
-        actorAvatarUrl: currentUserData.photoURL || undefined,
-        type: 'follow'
-    });
+    if (currentUserId !== targetUserId) {
+        createNotification({
+            recipientId: targetUserId,
+            actorId: currentUserId,
+            actorName: currentUserData.username || currentUserData.displayName || 'A user',
+            actorAvatarUrl: currentUserData.photoURL || undefined,
+            type: 'follow'
+        });
+    }
 };
 
 export const unfollowUser = async (currentUserId: string, targetUserId: string) => {
