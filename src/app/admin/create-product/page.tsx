@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
 import Link from 'next/link';
@@ -23,26 +21,10 @@ import {
   db,
 } from '@/lib/firebase';
 import { doc, collection as firestoreCollection } from 'firebase/firestore';
-import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
-import { languages as appLanguagesObject } from '@/lib/translations';
 import { categories as productCategories } from '@/data/products';
 
 const DEFAULT_PRODUCT_PLACEHOLDER = 'https://placehold.co/400x400.png';
-
-const allAppLanguageCodes = Object.keys(appLanguagesObject) as LanguageCode[];
-
-type LocalizedContent = {
-  [key in LanguageCode]?: {
-    title: string;
-  };
-};
-
-const initialLocalizedContent: LocalizedContent = allAppLanguageCodes.reduce((acc, langCode) => {
-  acc[langCode] = { title: '' };
-  return acc;
-}, {} as LocalizedContent);
-
 
 export default function CreateProductPage() {
   const { t } = useLanguage();
@@ -56,8 +38,7 @@ export default function CreateProductPage() {
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [localizedContent, setLocalizedContent] = useState<LocalizedContent>(initialLocalizedContent);
-
+  const [title, setTitle] = useState('');
   const [link, setLink] = useState('');
   const [imageDataUri, setImageDataUri] = useState<string>('');
   const [imageUrlForPreview, setImageUrlForPreview] = useState<string>(DEFAULT_PRODUCT_PLACEHOLDER);
@@ -66,7 +47,7 @@ export default function CreateProductPage() {
   const imageFileRef = useRef<HTMLInputElement>(null);
   
   const resetForm = () => {
-    setLocalizedContent(initialLocalizedContent);
+    setTitle('');
     setLink('');
     setCategory('');
     clearImage();
@@ -95,13 +76,7 @@ export default function CreateProductPage() {
       setIsLoadingData(true);
       getProductFromFirestore(productId).then(product => {
         if (product) {
-            const contentToLoad: LocalizedContent = {};
-            allAppLanguageCodes.forEach(langCode => {
-                contentToLoad[langCode] = {
-                    title: typeof product.title === 'object' && product.title[langCode] ? product.title[langCode]! : (typeof product.title === 'string' && langCode === 'en' ? product.title : ''),
-                };
-            });
-            setLocalizedContent(contentToLoad);
+          setTitle(product.title);
           setImageUrlForPreview(product.imageUrl || DEFAULT_PRODUCT_PLACEHOLDER);
           setImageHint(product.imageHint || '');
           setLink(product.link);
@@ -127,13 +102,6 @@ export default function CreateProductPage() {
     }
   };
 
-  const handleLocalizedContentChange = (langCode: LanguageCode, field: 'title', value: string) => {
-    setLocalizedContent(prev => ({
-      ...prev,
-      [langCode]: { ...prev[langCode], [field]: value },
-    }));
-  };
-
   const clearImage = () => {
     setImageDataUri('');
     setImageUrlForPreview(DEFAULT_PRODUCT_PLACEHOLDER);
@@ -142,8 +110,8 @@ export default function CreateProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser?.isAdmin || !localizedContent.en?.title?.trim() || !link || !category) {
-      toast({ variant: "destructive", title: "Missing Fields", description: "English title, link, and category are required." });
+    if (!currentUser?.isAdmin || !title.trim() || !link || !category) {
+      toast({ variant: "destructive", title: "Missing Fields", description: "Title, link, and category are required." });
       return;
     }
     
@@ -156,14 +124,8 @@ export default function CreateProductPage() {
         return;
     }
 
-    const finalTranslations: { title: Partial<Record<LanguageCode, string>>; } = { title: {} };
-    for (const langCode in localizedContent) {
-        const content = localizedContent[langCode as LanguageCode];
-        if (content?.title?.trim()) finalTranslations.title[langCode as LanguageCode] = content.title;
-    }
-
     const productDetails = {
-      title: finalTranslations.title,
+      title,
       imageUrl: imageDataUri || imageUrlForPreview,
       imageHint,
       link,
@@ -207,20 +169,12 @@ export default function CreateProductPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-8">
-            <Tabs defaultValue="en" className="w-full">
-              <TabsList className="flex-wrap h-auto justify-start">
-                {allAppLanguageCodes.map(code => <TabsTrigger key={code} value={code}>{appLanguagesObject[code].flag} {appLanguagesObject[code].name}</TabsTrigger>)}
-              </TabsList>
-              {allAppLanguageCodes.map(code => (
-                <TabsContent key={code} value={code} className="space-y-4 mt-4">
-                  <div>
-                    <Label htmlFor={`title-${code}`}>Title ({code.toUpperCase()})</Label>
-                    <Input id={`title-${code}`} value={localizedContent[code]?.title || ''} onChange={e => handleLocalizedContentChange(code, 'title', e.target.value)} required={code === 'en'} disabled={isSubmitting} />
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
 
+            <div className="space-y-4">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" value={title} onChange={e => setTitle(e.target.value)} required disabled={isSubmitting} />
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>{t('adminPostMainImageLabel', 'Product Image')}</Label>
