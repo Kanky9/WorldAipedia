@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -84,10 +85,12 @@ const Mascot = () => {
           setCurrentBubbleText(t('mascotCategoriesGreeting2'));
         }
       }, 3000);
-    } else if (pathname === '/books' && !isChatOpen && isMascotVisible) {
+    } else if (pathname === '/donations' && !isChatOpen && isMascotVisible) {
+        setCurrentBubbleText(t('mascotDonationsGreeting'));
+    } else if (pathname === '/store' && !isChatOpen && isMascotVisible) {
       setCurrentBubbleText(t('mascotBooksGreeting1'));
       messageTimer = setTimeout(() => {
-        if (pathname === '/books' && !isChatOpen && isMascotVisible) {
+        if (pathname === '/store' && !isChatOpen && isMascotVisible) {
           setCurrentBubbleText(t('mascotBooksGreeting2'));
         }
       }, 3000);
