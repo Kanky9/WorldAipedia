@@ -343,27 +343,31 @@ export const updateUsernameAcrossPublications = async (userId: string, newUserna
 
 
 export const followUser = async (currentUserId: string, targetUserId: string) => {
-    const batch = writeBatch(db);
     const currentUserRef = doc(db, 'users', currentUserId);
     const targetUserRef = doc(db, 'users', targetUserId);
+    
+    // Use a transaction to get the current user's data and perform writes atomically
+    const currentUserSnap = await getDoc(currentUserRef);
+    if (!currentUserSnap.exists()) {
+        console.error("Current user not found in Firestore.");
+        return;
+    }
+    const currentUserData = currentUserSnap.data() as User;
 
+    const batch = writeBatch(db);
     batch.update(currentUserRef, { following: arrayUnion(targetUserId) });
     batch.update(targetUserRef, { followers: arrayUnion(currentUserId) });
-    
-    await batch.commit();
 
+    await batch.commit();
+    
     // Create notification after successfully following
-    const currentUserSnap = await getDoc(currentUserRef);
-    if(currentUserSnap.exists()) {
-        const currentUserData = currentUserSnap.data() as User;
-        createNotification({
-            recipientId: targetUserId,
-            actorId: currentUserId,
-            actorName: currentUserData.username || currentUserData.displayName || 'A user',
-            actorAvatarUrl: currentUserData.photoURL || undefined,
-            type: 'follow'
-        });
-    }
+    createNotification({
+        recipientId: targetUserId,
+        actorId: currentUserId,
+        actorName: currentUserData.username || currentUserData.displayName || 'A user',
+        actorAvatarUrl: currentUserData.photoURL || undefined,
+        type: 'follow'
+    });
 };
 
 export const unfollowUser = async (currentUserId: string, targetUserId: string) => {
@@ -563,3 +567,5 @@ export {
   getDownloadURL as getStorageDownloadURL, 
   deleteFirebaseStorageObject
 };
+
+    
