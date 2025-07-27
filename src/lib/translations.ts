@@ -197,8 +197,8 @@ export type CoreTranslationKey =
   | 'adminDonationSettingsDescription'
   | 'adminPaypalInfoLabel'
   | 'adminPaypalInfoPlaceholder'
-  | 'adminMercadoPagoAliasLabel'
-  | 'adminMercadoPagoAliasPlaceholder'
+  | 'adminMercadoPagoLinkLabel'
+  | 'adminMercadoPagoLinkPlaceholder'
   | 'adminSettingsSaveButton'
   | 'adminSettingsSaveSuccess'
   | 'adminSettingsSaveError'
@@ -542,8 +542,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: 'Set your PayPal and MercadoPago details for donations.',
     adminPaypalInfoLabel: 'PayPal Donation Info',
     adminPaypalInfoPlaceholder: 'e.g., your paypal.me link or email',
-    adminMercadoPagoAliasLabel: 'MercadoPago Alias',
-    adminMercadoPagoAliasPlaceholder: 'e.g., your.mp.alias',
+    adminMercadoPagoLinkLabel: 'MercadoPago Link',
+    adminMercadoPagoLinkPlaceholder: 'e.g., your mercado pago link',
     adminSettingsSaveButton: 'Save Settings',
     adminSettingsSaveSuccess: 'Settings saved successfully!',
     adminSettingsSaveError: 'Error saving settings.',
@@ -854,8 +854,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: 'Establece tus detalles de PayPal y MercadoPago para las donaciones.',
     adminPaypalInfoLabel: 'Información de Donación de PayPal',
     adminPaypalInfoPlaceholder: 'ej., tu enlace de paypal.me o correo',
-    adminMercadoPagoAliasLabel: 'Alias de MercadoPago',
-    adminMercadoPagoAliasPlaceholder: 'ej., tu.alias.mp',
+    adminMercadoPagoLinkLabel: 'Enlace de MercadoPago',
+    adminMercadoPagoLinkPlaceholder: 'ej., tu enlace de mercado pago',
     adminSettingsSaveButton: 'Guardar Configuración',
     adminSettingsSaveSuccess: '¡Configuración guardada con éxito!',
     adminSettingsSaveError: 'Error al guardar la configuración.',
@@ -1166,8 +1166,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: 'Imposta i tuoi dettagli PayPal e MercadoPago per le donazioni.',
     adminPaypalInfoLabel: 'Info Donazione PayPal',
     adminPaypalInfoPlaceholder: 'es. il tuo link paypal.me o email',
-    adminMercadoPagoAliasLabel: 'Alias MercadoPago',
-    adminMercadoPagoAliasPlaceholder: 'es. il.tuo.alias.mp',
+    adminMercadoPagoLinkLabel: 'Link MercadoPago',
+    adminMercadoPagoLinkPlaceholder: 'es. il tuo link mercado pago',
     adminSettingsSaveButton: 'Salva Impostazioni',
     adminSettingsSaveSuccess: 'Impostazioni salvate con successo!',
     adminSettingsSaveError: 'Errore nel salvataggio delle impostazioni.',
@@ -1478,8 +1478,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: '设置您的PayPal和MercadoPago捐赠详情。',
     adminPaypalInfoLabel: 'PayPal捐赠信息',
     adminPaypalInfoPlaceholder: '例如，您的paypal.me链接或电子邮件',
-    adminMercadoPagoAliasLabel: 'MercadoPago别名',
-    adminMercadoPagoAliasPlaceholder: '例如，您的.mp.别名',
+    adminMercadoPagoLinkLabel: 'MercadoPago链接',
+    adminMercadoPagoLinkPlaceholder: '例如，您的mercado pago链接',
     adminSettingsSaveButton: '保存设置',
     adminSettingsSaveSuccess: '设置已成功保存！',
     adminSettingsSaveError: '保存设置时出错。',
@@ -1790,8 +1790,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: '寄付用のPayPalとMercadoPagoの詳細を設定します。',
     adminPaypalInfoLabel: 'PayPal寄付情報',
     adminPaypalInfoPlaceholder: '例：paypal.meのリンクまたはメールアドレス',
-    adminMercadoPagoAliasLabel: 'MercadoPagoエイリアス',
-    adminMercadoPagoAliasPlaceholder: '例：your.mp.alias',
+    adminMercadoPagoLinkLabel: 'MercadoPagoリンク',
+    adminMercadoPagoLinkPlaceholder: '例：mercado pagoのリンク',
     adminSettingsSaveButton: '設定を保存',
     adminSettingsSaveSuccess: '設定が正常に保存されました！',
     adminSettingsSaveError: '設定の保存中にエラーが発生しました。',
@@ -2102,8 +2102,8 @@ export const translations: Translations = {
     adminDonationSettingsDescription: 'Defina seus detalhes do PayPal e MercadoPago para doações.',
     adminPaypalInfoLabel: 'Informações de Doação do PayPal',
     adminPaypalInfoPlaceholder: 'ex., seu link paypal.me ou e-mail',
-    adminMercadoPagoAliasLabel: 'Alias do MercadoPago',
-    adminMercadoPagoAliasPlaceholder: 'ex., seu.alias.mp',
+    adminMercadoPagoLinkLabel: 'Link do MercadoPago',
+    adminMercadoPagoLinkPlaceholder: 'ex., seu link do mercado pago',
     adminSettingsSaveButton: 'Salvar Configurações',
     adminSettingsSaveSuccess: 'Configurações salvas com sucesso!',
     adminSettingsSaveError: 'Erro ao salvar as configurações.',

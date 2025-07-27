@@ -154,5 +154,5 @@ export interface Notification {
 
 export interface DonationSettings {
     paypalInfo?: string;
-    mercadoPagoAlias?: string;
+    mercadoPagoLink?: string;
 }

@@ -80,12 +80,14 @@ export default function DonationsPage() {
             </CardHeader>
             <CardContent>
                <Button 
-                onClick={() => settings?.mercadoPagoAlias && handleCopy(settings.mercadoPagoAlias, t('donationsMercadoPagoAliasTitle'))}
-                disabled={!settings?.mercadoPagoAlias}
+                asChild
+                disabled={!settings?.mercadoPagoLink}
                 className="w-full"
               >
-                <Copy className="mr-2 h-4 w-4" />
-                {t('donationsMercadoPagoAliasTitle')}
+                <a href={settings?.mercadoPagoLink || '#'} target="_blank" rel="noopener noreferrer">
+                    <SiMercadopago className="mr-2 h-4 w-4" />
+                    {t('donationsMercadoPagoButton')}
+                </a>
               </Button>
             </CardContent>
           </Card>

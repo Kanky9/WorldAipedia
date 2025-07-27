@@ -22,7 +22,7 @@ export default function AdminSettingsPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [settings, setSettings] = useState<DonationSettings>({ paypalInfo: '', mercadoPagoAlias: '' });
+  const [settings, setSettings] = useState<DonationSettings>({ paypalInfo: '', mercadoPagoLink: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -111,12 +111,12 @@ export default function AdminSettingsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="mercadoPagoAlias">{t('adminMercadoPagoAliasLabel', 'MercadoPago Alias')}</Label>
+                <Label htmlFor="mercadoPagoLink">{t('adminMercadoPagoLinkLabel', 'MercadoPago Link')}</Label>
                 <Input
-                  id="mercadoPagoAlias"
-                  value={settings.mercadoPagoAlias || ''}
-                  onChange={(e) => setSettings(s => ({ ...s, mercadoPagoAlias: e.target.value }))}
-                  placeholder={t('adminMercadoPagoAliasPlaceholder', 'e.g., your.mp.alias')}
+                  id="mercadoPagoLink"
+                  value={settings.mercadoPagoLink || ''}
+                  onChange={(e) => setSettings(s => ({ ...s, mercadoPagoLink: e.target.value }))}
+                  placeholder={t('adminMercadoPagoLinkPlaceholder', 'e.g., your mercado pago link')}
                   disabled={isSaving}
                 />
               </div>
