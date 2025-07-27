@@ -64,11 +64,6 @@ const Mascot = () => {
       if (adHocMessageTimerRef.current) clearTimeout(adHocMessageTimerRef.current);
     };
 
-    if (isSmallScreen) {
-        setCurrentBubbleText('');
-        return;
-    }
-
     if (mascotDisplayMode === 'chat_contextual') {
       setCurrentBubbleText(t('mascotChatGreeting1'));
       messageTimer = setTimeout(() => {
@@ -119,7 +114,7 @@ const Mascot = () => {
     }
 
     return () => clearTimers();
-  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode, isSmallScreen]);
+  }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode]);
 
 
   useEffect(() => {
@@ -130,12 +125,8 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (!isChatOpen && mascotDisplayMode === 'default' && !isSmallScreen) {
-       if (currentBubbleText === t('mascotGreeting')) {
-           setCurrentBubbleText('');
-       } else {
-           setCurrentBubbleText(t('mascotGreeting'));
-       }
+    if (currentBubbleText) {
+      setCurrentBubbleText('');
     }
   };
 
@@ -150,7 +141,7 @@ const Mascot = () => {
 
   if (!isMascotVisible && !isChatOpen) return null;
 
-  const shouldShowSpeechBubble = !!currentBubbleText && !isSmallScreen;
+  const shouldShowSpeechBubble = !!currentBubbleText;
 
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
@@ -186,7 +177,7 @@ const Mascot = () => {
         <div
           className={cn(
             "absolute left-1/2 -translate-x-1/2 w-max max-w-[180px] z-10",
-            "bottom-[115px]",
+            isSmallScreen ? "bottom-[85px]" : "bottom-[115px]",
             shouldShowSpeechBubble ? 'speech-bubble-enter' : 'speech-bubble-exit'
           )}
           style={{ pointerEvents: shouldShowSpeechBubble ? 'auto' : 'none' }}
