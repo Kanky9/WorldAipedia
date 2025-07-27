@@ -25,6 +25,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { categories as productCategories } from '@/data/products';
 
 const DEFAULT_PRODUCT_PLACEHOLDER = 'https://placehold.co/400x400.png';
+const MAX_DATA_URI_LENGTH = 1024 * 1024; // Approx 1MB
 
 export default function CreateProductPage() {
   const { t } = useLanguage();
@@ -124,9 +125,17 @@ export default function CreateProductPage() {
         return;
     }
 
+    let finalImageUrl = imageDataUri || imageUrlForPreview;
+    if (finalImageUrl.startsWith('data:image') && finalImageUrl.length > MAX_DATA_URI_LENGTH) {
+      toast({ variant: "destructive", title: t('adminPostImageTooLarge', "Product Image Too Large"), description: t('adminPostImageSizeHint', `Using placeholder. Max ~1MB for direct save.`) });
+      finalImageUrl = DEFAULT_PRODUCT_PLACEHOLDER;
+    } else if (finalImageUrl === DEFAULT_PRODUCT_PLACEHOLDER && !imageDataUri) {
+      finalImageUrl = '';
+    }
+
     const productDetails = {
       title,
-      imageUrl: imageDataUri || imageUrlForPreview,
+      imageUrl: finalImageUrl,
       imageHint,
       link,
       category: selectedCategory.name.en, // Storing english name for consistency
