@@ -24,6 +24,7 @@ const Mascot = () => {
 
   const [isMascotVisible, setIsMascotVisible] = useState(false);
   const [currentBubbleText, setCurrentBubbleText] = useState('');
+  const [isBubbleDismissed, setIsBubbleDismissed] = useState(false);
   
   const adHocMessageIndexRef = useRef(0);
   const adHocMessageTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -44,6 +45,10 @@ const Mascot = () => {
         return () => window.removeEventListener('resize', handleResize);
     }
   }, []);
+  
+  useEffect(() => {
+      setIsBubbleDismissed(false);
+  }, [pathname]);
 
   // Initial visibility timer
   useEffect(() => {
@@ -125,9 +130,7 @@ const Mascot = () => {
 
 
   const handleMascotClick = () => {
-    if (currentBubbleText) {
-      setCurrentBubbleText('');
-    }
+    setIsBubbleDismissed(prev => !prev);
   };
 
   const pagesToHideOn = ['/login', '/register', '/publications', '/store'];
@@ -141,7 +144,7 @@ const Mascot = () => {
 
   if (!isMascotVisible && !isChatOpen) return null;
 
-  const shouldShowSpeechBubble = !!currentBubbleText;
+  const shouldShowSpeechBubble = !!currentBubbleText && !isBubbleDismissed;
 
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
   const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
