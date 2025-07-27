@@ -62,13 +62,11 @@ export default function DonationsPage() {
               <CardTitle className="mt-4">{t('donationsPayPalButton')}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Button 
-                onClick={() => settings?.paypalInfo && handleCopy(settings.paypalInfo, t('donationsPayPalInfoTitle'))}
-                disabled={!settings?.paypalInfo}
-                className="w-full"
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                {t('donationsPayPalInfoTitle')}
+              <Button asChild disabled={!settings?.paypalInfo} className="w-full">
+                <a href={settings?.paypalInfo || '#'} target="_blank" rel="noopener noreferrer">
+                    <SiPaypal className="mr-2 h-4 w-4" />
+                    {t('donationsPayPalButton')}
+                </a>
               </Button>
             </CardContent>
           </Card>
