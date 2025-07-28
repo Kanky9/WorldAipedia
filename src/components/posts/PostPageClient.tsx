@@ -29,6 +29,7 @@ import CommentCard from '@/components/ai/CommentCard';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from "@/hooks/use-toast";
+import AdSenseUnit from '@/components/ads/AdSenseUnit';
 
 interface PostPageClientProps {
   postId: string;
@@ -288,10 +289,22 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
             />
           )}
 
+          <div className="my-6">
+            <div className="ads-content">
+              {/* Placeholder para anuncio dentro del contenido */}
+            </div>
+          </div>
+
           <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('postContentTitle', 'Post Content')}</h2>
           <article className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none text-foreground/80 leading-relaxed whitespace-pre-wrap">
             {t(post.longDescription)}
           </article>
+
+          <div className="my-6">
+            <div className="ads-content">
+                {/* Placeholder para anuncio dentro del contenido */}
+            </div>
+          </div>
 
           {(post.detailImageUrl1 || post.detailImageUrl2) && (
             <div className="mt-10">

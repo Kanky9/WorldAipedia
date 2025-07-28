@@ -14,9 +14,7 @@ import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
 import WelcomeDialog from '@/components/layout/WelcomeDialog';
 import { Inter, Space_Grotesk } from 'next/font/google';
-
-// Note: Metadata export is not supported in Client Components.
-// For SEO, this would typically be moved to a parent server component or configured differently.
+import AdSenseUnit from '@/components/ads/AdSenseUnit';
 
 // Setup fonts with next/font
 const inter = Inter({
@@ -47,6 +45,9 @@ export default function RootLayout({
           <AuthProvider>
             <ChatProvider>
               <Header />
+              <div id="ads-header" className="text-center my-4 container mx-auto">
+                 {/* Placeholder para el anuncio de la cabecera */}
+              </div>
               <main className="flex-grow container mx-auto px-4 py-3">
                 {children}
               </main>
