@@ -289,10 +289,8 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
             />
           )}
 
-          <div className="my-6">
-            <div className="ads-content">
-              {/* Placeholder para anuncio dentro del contenido */}
-            </div>
+          <div className="ads-content my-6 flex justify-center">
+            {/* Placeholder para anuncio dentro del contenido */}
           </div>
 
           <h2 className="text-xl sm:text-2xl font-headline font-semibold mt-8 mb-3">{t('postContentTitle', 'Post Content')}</h2>
@@ -300,10 +298,8 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
             {t(post.longDescription)}
           </article>
 
-          <div className="my-6">
-            <div className="ads-content">
-                {/* Placeholder para anuncio dentro del contenido */}
-            </div>
+          <div className="ads-content my-6 flex justify-center">
+              {/* Placeholder para anuncio dentro del contenido */}
           </div>
 
           {(post.detailImageUrl1 || post.detailImageUrl2) && (
