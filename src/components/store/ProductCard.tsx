@@ -17,30 +17,32 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
   const buttonDefaultText = product.source === 'amazon' ? 'Buy on Amazon' : 'Buy on MercadoLibre';
 
   return (
-    <div className="flex flex-col h-full group">
-      <a href={product.link} target="_blank" rel="noopener noreferrer" className="block bg-background rounded-lg">
-        <div className="relative w-full aspect-square bg-white rounded-lg overflow-hidden p-2">
+    <Card className="flex flex-col h-full group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <a href={product.link} target="_blank" rel="noopener noreferrer" className="block p-2">
+        <div className="relative w-full aspect-square bg-white rounded-md overflow-hidden">
           <Image
             src={product.imageUrl}
             alt={t(product.title)}
             fill
             style={{ objectFit: 'contain' }}
-            className="transition-transform duration-300"
+            className="group-hover:scale-105 transition-transform duration-300"
             data-ai-hint={product.imageHint || "product image"}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
             unoptimized={product.imageUrl.startsWith('data:')}
           />
         </div>
       </a>
-      <div className="p-2 flex flex-col flex-grow">
-        <h3 className="font-semibold text-sm sm:text-base leading-tight text-foreground group-hover:text-primary transition-colors flex-grow">{t(product.title)}</h3>
+      <CardContent className="p-3 pt-0 flex flex-col flex-grow">
+        <h3 className="font-semibold text-sm sm:text-base leading-snug text-foreground flex-grow line-clamp-2">{t(product.title)}</h3>
+      </CardContent>
+      <CardFooter className="p-3 pt-0">
         <Button asChild size="sm" className="w-full mt-2 bg-primary/90 text-primary-foreground hover:bg-primary shadow-md">
           <a href={product.link} target="_blank" rel="noopener noreferrer">
             <ShoppingCart className="mr-2 h-4 w-4" /> {t(buttonTextKey, buttonDefaultText)}
           </a>
         </Button>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 
