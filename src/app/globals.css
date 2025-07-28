@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: 'Inter', sans-serif; /* Ensure Inter is primary body font */
+  /* Font family is now set via Tailwind config and CSS variables */
 }
 
 @layer base {
