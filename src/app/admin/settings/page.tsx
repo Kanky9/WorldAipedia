@@ -75,7 +75,7 @@ export default function AdminSettingsPage() {
   }
   
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto pt-8 px-4">
       <Button variant="outline" asChild className="mb-6">
         <Link href="/admin">
           <ArrowLeft className="mr-2 h-4 w-4" />

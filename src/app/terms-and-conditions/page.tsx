@@ -1,3 +1,4 @@
+
 // src/app/terms-and-conditions/page.tsx
 import { Metadata } from 'next';
 import Link from 'next/link';

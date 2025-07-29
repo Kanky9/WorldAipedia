@@ -37,7 +37,7 @@ export default function DonationsPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-2xl py-8 px-4">
+    <div className="container mx-auto max-w-2xl pt-8 px-4">
       <div className="text-center mb-10">
         <HandHeart className="mx-auto h-12 w-12 text-primary mb-4" />
         <h1 className="text-3xl sm:text-4xl font-headline font-bold text-primary">

@@ -73,7 +73,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pt-4">
       <section className="relative py-8 md:py-12 text-center rounded-xl overflow-hidden shadow-lg bg-card animate-hero-background-gradient">
         {particles.length > 0 && (
           <div className="hero-particles">

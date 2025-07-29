@@ -344,7 +344,7 @@ export default function PublicationsPage() {
   
   return (
     <>
-      <div className="py-8 relative">
+      <div className="relative pt-4">
         <NotificationsPanel isOpen={isNotificationsPanelOpen} onClose={() => setIsNotificationsPanelOpen(false)} />
 
         {/* Mobile-specific Controls */}

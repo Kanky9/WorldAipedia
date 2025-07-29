@@ -192,7 +192,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
 
   if (post === undefined && !authLoading) { // Still loading post data
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pt-4">
         <Skeleton className="h-8 w-28 sm:h-10 sm:w-32 mb-4" />
         <Card className="overflow-hidden shadow-lg rounded-xl bg-card">
           <CardHeader className="p-0">
@@ -234,7 +234,7 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
 
 
   return (
-    <div className={`relative space-y-8 ${pageAnimationClass}`}>
+    <div className={`relative space-y-8 ${pageAnimationClass} pt-4`}>
       <ScrollDownIndicator />
       <Button variant="outline" asChild className="mb-4 text-xs px-3 py-1.5 sm:text-sm sm:px-4 sm:py-2 rounded-md">
         <Link href="/" className="flex items-center gap-2">

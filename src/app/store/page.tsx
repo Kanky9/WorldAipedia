@@ -86,7 +86,7 @@ export default function StorePage() {
   };
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in pt-4">
       <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button

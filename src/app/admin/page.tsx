@@ -146,7 +146,7 @@ export default function AdminPage() {
   
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto pt-8 px-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary">{t('adminPanelTitle', 'Admin Panel')}</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">

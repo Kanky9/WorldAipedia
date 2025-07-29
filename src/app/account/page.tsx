@@ -138,7 +138,7 @@ export default function AccountPage() {
 
   return (
     <>
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto pt-8 px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-headline font-bold text-primary">{t('accountPageTitle', 'My Account')}</h1>
         <p className="text-muted-foreground">{t('accountPageSubtitle', 'Manage your profile, subscription, and settings.')}</p>

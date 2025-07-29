@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -58,7 +59,7 @@ export default function LoginPage() {
   const isLoading = isSubmitting || authLoading;
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl sm:text-3xl font-headline text-primary">{t('loginPageTitle', 'Welcome Back!')}</CardTitle>

@@ -38,8 +38,8 @@ export default function AllPostsPage() {
   }, []);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <section className="text-center py-8">
+    <div className="space-y-8 animate-fade-in pt-8">
+      <section className="text-center">
         <div className="flex justify-center items-center mb-4">
           <BookCopy className="h-10 w-10 md:h-12 md:w-12 text-primary" />
         </div>

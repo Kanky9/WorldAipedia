@@ -59,7 +59,7 @@ export default function CategoryDetailPageClient({ categorySlug }: CategoryDetai
 
   if (isLoading || category === undefined) {
      return (
-      <div className="space-y-8">
+      <div className="space-y-8 pt-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-3 mb-2">
@@ -97,7 +97,7 @@ export default function CategoryDetailPageClient({ categorySlug }: CategoryDetai
   const localizedCategoryDescription = t(category.description);
 
   return (
-    <div className={`space-y-8 ${animationClass}`}>
+    <div className={`space-y-8 ${animationClass} pt-8`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
