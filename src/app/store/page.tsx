@@ -86,7 +86,7 @@ export default function StorePage() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in py-8">
+    <div className="space-y-8 animate-fade-in">
       <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button
@@ -142,7 +142,7 @@ export default function StorePage() {
           <p className="text-destructive text-lg">{error}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mt-8">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product, index) => (
               <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
