@@ -86,7 +86,7 @@ export default function StorePage() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="animate-fade-in">
       <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button
@@ -132,28 +132,30 @@ export default function StorePage() {
         )}
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      ) : error ? (
-        <div className="text-center py-20">
-          <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <p className="text-destructive text-lg">{error}</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 mt-8">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product, index) => (
-              <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
-                <ProductCard product={product} />
-              </div>
-            ))
-          ) : (
-             <p className="col-span-full text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
-          )}
-        </div>
-      )}
+      <div className="mt-8">
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <p className="text-destructive text-lg">{error}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product, index) => (
+                <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
+                  <ProductCard product={product} />
+                </div>
+              ))
+            ) : (
+               <p className="col-span-full text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
