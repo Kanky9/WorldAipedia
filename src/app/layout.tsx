@@ -45,9 +45,9 @@ export default function RootLayout({
           <AuthProvider>
             <ChatProvider>
               <Header />
-              <div id="ads-header" className="text-center my-4 container mx-auto min-h-[100px] flex items-center justify-center">
-                 {/* Placeholder para el anuncio de la cabecera */}
-              </div>
+              {/* <div id="ads-header" className="text-center my-4 container mx-auto min-h-[100px] flex items-center justify-center">
+                 
+              </div> */}
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
