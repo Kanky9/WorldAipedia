@@ -51,7 +51,7 @@ export default function RootLayout({
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
-              <Footer />
+              {/* <Footer /> */}
               <ClientOnly>
                 <Mascot />
                 <WelcomeDialog />
