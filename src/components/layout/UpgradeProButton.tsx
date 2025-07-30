@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -12,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const initialPayPalOptions = {
-    "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test",
+    "client-id": "AawNqjRyKwRCZ5SKI8G1_AZO60WduRtM3upWJXaEP5YefZ3qMOe0auGUj4lVQMh3J1BiyQwapKT4_Y3n",
     "enable-funding": "card",
     "disable-funding": "venmo",
     "data-sdk-integration-source": "integrationbuilder_ac",

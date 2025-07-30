@@ -85,7 +85,8 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   };
   
   const onApprove = (data: OnApproveData) => {
-      return handleSuccess(data.subscriptionID);
+      handleSuccess(data.subscriptionID);
+      return Promise.resolve();
   };
   
   const onError = (err: any) => {
@@ -144,7 +145,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 </Alert>
             )}
 
-            {!isPending && process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
+            {!isPending && currentUser && process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
                 <PayPalButtons
                   style={{ layout: "vertical", shape: "pill", color: "gold", tagline: false }}
                   createSubscription={createSubscription}
@@ -154,6 +155,12 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
                 />
             )}
             
+            {!isPending && !currentUser && (
+                <Button onClick={handleLoginRedirect} className="w-full">
+                    {t('loginButton', 'Login to Continue')}
+                </Button>
+            )}
+
             {error && (
               <Alert variant="destructive" className="mt-4">
                 <XCircle className="h-4 w-4"/>
@@ -175,4 +182,5 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     </Dialog>
   );
 };
+
 export default UpgradeProDialog;
