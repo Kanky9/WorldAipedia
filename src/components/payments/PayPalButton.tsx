@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef } from 'react';
@@ -55,7 +54,7 @@ export default function PayPalButton({ onSuccess }: PayPalButtonProps) {
       if (loaded && window.paypal) {
         try {
           window.paypal.Buttons({
-            createOrder: (_data, actions) => {
+            createOrder: (_data: any, actions: { order: { create: (arg0: { purchase_units: { amount: { value: string; }; }[]; application_context: { brand_name: string; user_action: string; shipping_preference: string; }; }) => any; }; }) => {
               return actions.order.create({
                 purchase_units: [{
                   amount: {
@@ -69,7 +68,7 @@ export default function PayPalButton({ onSuccess }: PayPalButtonProps) {
                 }
               });
             },
-            onApprove: (_data, actions) => {
+            onApprove: (_data: any, actions: { order: any; }) => {
               return actions.order!.capture().then(async (details) => {
                  if (!currentUser) {
                     setError('User not logged in. Cannot complete purchase.');

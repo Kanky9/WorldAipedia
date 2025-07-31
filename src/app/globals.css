@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  /* Font family is now set via Tailwind config and CSS variables */
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%; /* White */

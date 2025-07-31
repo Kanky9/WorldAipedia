@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -22,7 +21,6 @@ const initialPayPalOptions = {
     intent: "subscription",
     "vault": true,
 };
-
 
 const UpgradeProButton = () => {
   const { t } = useLanguage();
