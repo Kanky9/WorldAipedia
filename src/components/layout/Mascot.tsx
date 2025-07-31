@@ -7,6 +7,7 @@ import { useChat, type MascotAdHocMessage } from '@/contexts/ChatContext';
 import type { CoreTranslationKey } from '@/lib/translations';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { getCategoryBySlug } from '@/data/posts';
 
 const DIALOG_MAX_WIDTH_PX = 525; // Max width of the chat dialog
 const MASCOT_SVG_HEIGHT_PX = 110;
@@ -78,6 +79,13 @@ const Mascot = () => {
         }
       }, 3000);
 
+    } else if (pathname.startsWith('/categories/') && !isChatOpen && isMascotVisible) {
+        const categorySlug = pathname.split('/')[2];
+        const category = getCategoryBySlug(categorySlug);
+        if (category) {
+            const categoryName = t(category.name);
+            setCurrentBubbleText(`${categoryName}, ¡buena elección!`);
+        }
     } else if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
       setCurrentBubbleText(t('mascotCategoriesGreeting1'));
       messageTimer = setTimeout(() => {
