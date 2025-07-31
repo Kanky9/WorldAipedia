@@ -4,9 +4,9 @@ import Link from 'next/link';
 const Footer = () => {
   return (
     <>
-      <div id="ads-footer" className="text-center my-4 container mx-auto min-h-[100px] flex items-center justify-center">
-        {/* Placeholder para el anuncio del pie de página */}
-      </div>
+      {/* <div id="ads-footer" className="text-center my-4 container mx-auto min-h-[100px] flex items-center justify-center">
+        Placeholder para el anuncio del pie de página
+      </div> */}
       <footer className="bg-muted/50 border-t border-border py-6 text-center text-sm text-muted-foreground">
         <div className="container mx-auto px-4">
           <p>&copy; {new Date().getFullYear()} WorldAIPedia. All rights reserved.</p>
