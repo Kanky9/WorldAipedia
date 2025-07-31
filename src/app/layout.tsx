@@ -1,4 +1,3 @@
-
 'use client'; // This directive marks the entire layout as a Client Component
 
 import './globals.css';
@@ -51,7 +50,7 @@ export default function RootLayout({
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
-              {/* <Footer /> */}
+              <Footer />
               <ClientOnly>
                 <Mascot />
                 <WelcomeDialog />
