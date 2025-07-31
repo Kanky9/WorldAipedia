@@ -15,13 +15,8 @@ import {
 } from "@/components/ui/dialog";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from "@/hooks/use-toast";
-import { Star, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { updateUserToPro } from '@/lib/firebase';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
-import type { OnApproveData, CreateSubscriptionActions } from "@paypal/paypal-js";
-
+import { Star } from 'lucide-react';
+import PayPalButton from '@/components/payments/PayPalButton'; // Import the new component
 
 interface UpgradeProDialogProps {
   open: boolean;
@@ -31,69 +26,12 @@ interface UpgradeProDialogProps {
 const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange }) => {
   const { t } = useLanguage();
   const { currentUser } = useAuth();
-  const { toast } = useToast();
   const router = useRouter();
 
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState('');
-  const [{ isPending }] = usePayPalScriptReducer();
-
-  const handleSuccess = useCallback(async (subscriptionId?: string) => {
-    if (!currentUser) return;
-    setIsProcessing(true);
-    setError('');
-    try {
-      await updateUserToPro(currentUser.uid, 'paypal', subscriptionId);
-      toast({
-        title: t('upgradeSuccessTitle', 'Upgrade Successful!'),
-        description: t('upgradeSuccessDescription', 'Welcome to World AI PRO! Your new features are now active.'),
-        action: <CheckCircle className="text-green-500" />
-      });
-      onOpenChange(false);
-    } catch (err) {
-      console.error("Upgrade failed:", err);
-      setError(t('upgradeFailedDescription', 'Could not update your profile. Please contact support.'));
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [currentUser, onOpenChange, t, toast]);
-
   const handleLoginRedirect = useCallback(() => {
-    toast({
-      title: t('loginRequiredForProTitle', 'Login Required'),
-      description: t('loginRequiredForProDescription', 'Please log in or create an account to upgrade to PRO.'),
-      variant: 'destructive',
-    });
     onOpenChange(false);
     router.push('/login');
-  }, [onOpenChange, router, t, toast]);
-  
-  const createSubscription = (data: Record<string, unknown>, actions: CreateSubscriptionActions) => {
-      if (!currentUser) { 
-        handleLoginRedirect(); 
-        return Promise.reject(new Error("User not logged in")); 
-      }
-      const PAYPAL_PLAN_ID = process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID;
-      if(!PAYPAL_PLAN_ID) {
-          setError("PayPal Plan ID is not configured. Please contact support.");
-          console.error("PayPal Plan ID environment variable is not set.");
-          return Promise.reject(new Error("PayPal plan not configured"));
-      }
-      return actions.subscription.create({
-          plan_id: PAYPAL_PLAN_ID
-      });
-  };
-  
-  const onApprove = (data: OnApproveData) => {
-      handleSuccess(data.subscriptionID);
-      return Promise.resolve();
-  };
-  
-  const onError = (err: any) => {
-    console.error("PayPal button error:", err);
-    setError(t('paymentErrorTitle', "An error occurred with PayPal. Please try again."));
-    setIsProcessing(false);
-  }
+  }, [onOpenChange, router]);
 
   const proBenefits = [
     t('proBenefit1', "Full access to all AI tools & posts"),
@@ -114,13 +52,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
           </DialogDescription>
         </DialogHeader>
 
-        <div className="relative py-4 space-y-4">
-          {(isProcessing || isPending) && (
-            <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center z-20 rounded-md">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2"/>
-                <p className="text-sm text-muted-foreground">{isPending ? "Loading payment options..." : t('processingPayment', 'Processing your payment...')}</p>
-            </div>
-          )}
+        <div className="py-4 space-y-4">
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-2">{t('upgradeToProBenefits', "PRO Benefits:")}</h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-foreground/80">
@@ -137,43 +69,19 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
               {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
             </p>
             
-            {!isPending && !process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
-                <Alert variant="destructive" className="mt-4">
-                    <XCircle className="h-4 w-4"/>
-                    <AlertTitle>Configuration Error</AlertTitle>
-                    <AlertDescription>PayPal payments cannot be processed at this time. Please contact support.</AlertDescription>
-                </Alert>
-            )}
-
-            {!isPending && currentUser && process.env.NEXT_PUBLIC_PAYPAL_PLAN_ID && (
-                <PayPalButtons
-                  style={{ layout: "vertical", shape: "pill", color: "gold", tagline: false }}
-                  createSubscription={createSubscription}
-                  onApprove={onApprove}
-                  onError={onError}
-                  disabled={isProcessing}
-                />
-            )}
-            
-            {!isPending && !currentUser && (
-                <Button onClick={handleLoginRedirect} className="w-full">
-                    {t('loginButton', 'Login to Continue')}
-                </Button>
-            )}
-
-            {error && (
-              <Alert variant="destructive" className="mt-4">
-                <XCircle className="h-4 w-4"/>
-                <AlertTitle>{t('paymentErrorTitle', 'Payment Error')}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
+            {currentUser ? (
+              <PayPalButton onSuccess={() => onOpenChange(false)} />
+            ) : (
+               <Button onClick={handleLoginRedirect} className="w-full">
+                  {t('loginButton', 'Login to Continue')}
+              </Button>
             )}
           </div>
         </div>
 
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
-            <Button type="button" variant="ghost" disabled={isProcessing}>
+            <Button type="button" variant="ghost">
               {t('cancelButton', "Cancel")}
             </Button>
           </DialogClose>
