@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useLanguage } from '@/hooks/useLanguage';
@@ -83,7 +84,7 @@ const Mascot = () => {
         const category = getCategoryBySlug(categorySlug);
         if (category) {
             const categoryName = t(category.name);
-            setCurrentBubbleText(`${categoryName}, ¡buena elección!`);
+            setCurrentBubbleText(`${categoryName}, buena elección!`);
         }
     } else if (pathname === '/categories' && !isChatOpen && isMascotVisible) {
       setCurrentBubbleText(t('mascotCategoriesGreeting1'));
@@ -129,18 +130,11 @@ const Mascot = () => {
   }, [mascotDisplayMode, isChatOpen, isMascotVisible, t, mascotAdHocMessages, setMascotAdHocMessages, language, pathname, setMascotDisplayMode]);
 
 
-  useEffect(() => {
-    if (isChatOpen) {
-      setIsMascotVisible(true);
-    }
-  }, [isChatOpen]);
-
-
   const handleMascotClick = () => {
     setIsBubbleDismissed(prev => !prev);
   };
 
-  const pagesToHideOn = ['/login', '/register', '/publications', '/store'];
+  const pagesToHideOn = ['/login', '/register', '/publications'];
   if (pathname.startsWith('/admin') || pagesToHideOn.includes(pathname)) {
     return null;
   }
@@ -149,33 +143,24 @@ const Mascot = () => {
     return null;
   }
 
-  if (!isMascotVisible && !isChatOpen) return null;
+  // Hide mascot when chat is open
+  if (isChatOpen) {
+    return null;
+  }
+
+  if (!isMascotVisible) return null;
 
   const shouldShowSpeechBubble = !!currentBubbleText && !isBubbleDismissed;
 
   const mascotBaseClasses = "fixed z-[60] flex flex-col items-center group transition-all duration-500 ease-in-out";
-  const mascotAnimation = (isMascotVisible || isChatOpen) ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
-  const mascotOpacity = (isMascotVisible || isChatOpen) ? 1 : 0;
+  const mascotAnimation = isMascotVisible ? 'mascotAppearAnimation 0.5s ease-out forwards' : 'none';
+  const mascotOpacity = isMascotVisible ? 1 : 0;
 
-  let positionSpecificStyle: React.CSSProperties = {};
-  if (isChatOpen) {
-    if (isSmallScreen) {
-      positionSpecificStyle = {
-        top: '3vh', left: '50%', transform: 'translateX(-50%)', right: 'auto', bottom: 'auto',
-      };
-    } else {
-      positionSpecificStyle = {
-        top: `calc(50vh - ${MASCOT_SVG_HEIGHT_PX / 2}px)`,
-        left: `calc(50vw + ${DIALOG_MAX_WIDTH_PX / 2}px + 20px)`,
-        right: 'auto', bottom: 'auto', transform: 'none',
-      };
-    }
-  } else {
-    const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + (isSmallScreen ? 0.5 : 1);
-    positionSpecificStyle = {
-      bottom: '1.25rem', right: `${mascotRightOffsetRem}rem`, top: 'auto', left: 'auto', transform: 'none',
-    };
-  }
+  const mascotRightOffsetRem = CHAT_BUTTON_OFFSET_REM + CHAT_BUTTON_SIZE_REM + (isSmallScreen ? 0.5 : 1);
+  const positionSpecificStyle: React.CSSProperties = {
+    bottom: '1.25rem', right: `${mascotRightOffsetRem}rem`, top: 'auto', left: 'auto', transform: 'none',
+  };
+  
   const mascotPositionStyle: React.CSSProperties = { animation: mascotAnimation, opacity: mascotOpacity, ...positionSpecificStyle };
 
   const mascotWidth = isSmallScreen ? MASCOT_SVG_MOBILE_WIDTH_PX : MASCOT_SVG_WIDTH_PX;
