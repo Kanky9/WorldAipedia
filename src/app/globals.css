@@ -357,13 +357,14 @@
 
 /* Store Page Carousel Styles */
 @keyframes scroll {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
-    transform: translateX(calc(-250px * 7)); /* (image width + gap) * number of original images */
+  to {
+    transform: translateX(-50%);
   }
 }
+
 .scroller-animation {
   animation: scroll 40s linear infinite;
 }

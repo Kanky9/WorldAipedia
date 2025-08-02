@@ -112,7 +112,7 @@ export default function StorePage() {
                   alt={t(product.title)}
                   width={200}
                   height={200}
-                  className="w-full h-full object-contain rounded-lg transition-transform duration-300 hover:scale-105"
+                  className="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105"
                   data-ai-hint={product.imageHint || "product image"}
                   unoptimized={product.imageUrl.startsWith('data:')}
                 />
