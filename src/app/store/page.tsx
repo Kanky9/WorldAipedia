@@ -104,7 +104,12 @@ export default function StorePage() {
         >
           <Button
             variant={selectedCategory === 'all' ? 'default' : 'outline'}
-            className={cn("rounded-full shrink-0", selectedCategory === 'all' && "bg-primary hover:bg-primary/90")}
+            className={cn(
+              "rounded-full shrink-0 border-primary/20", 
+              selectedCategory === 'all' 
+                ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                : "bg-primary/10 text-primary hover:bg-primary/20"
+            )}
             onClick={() => setSelectedCategory('all')}
           >
             All
@@ -113,7 +118,12 @@ export default function StorePage() {
             <Button
               key={category.slug}
               variant={selectedCategory === category.slug ? 'default' : 'outline'}
-              className={cn("rounded-full shrink-0", selectedCategory === category.slug && "bg-primary hover:bg-primary/90")}
+              className={cn(
+                "rounded-full shrink-0 border-primary/20",
+                selectedCategory === category.slug
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-primary/10 text-primary hover:bg-primary/20"
+              )}
               onClick={() => setSelectedCategory(category.slug)}
             >
               {t(category.name)}
@@ -143,7 +153,7 @@ export default function StorePage() {
             <p className="text-destructive text-lg">{error}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product, index) => (
                 <div key={product.id} className="animate-fadeInUp" style={{animationDelay: `${index * 0.05}s`}}>
