@@ -94,6 +94,34 @@ export default function StorePage() {
 
   return (
     <div className="animate-fade-in">
+      {/* Image Carousel */}
+      <div className="mb-8 w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+        {shuffledProducts.length > 0 && (
+          <div className="flex w-max animate-scroll scroller-animation hover:[animation-play-state:paused]">
+            {/* Render the list twice for seamless looping */}
+            {[...shuffledProducts, ...shuffledProducts].map((product, index) => (
+               <a 
+                href={product.link} 
+                key={`${product.id}-${index}`}
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-[200px] h-[200px] mx-4 shrink-0"
+              >
+                <Image
+                  src={product.imageUrl}
+                  alt={t(product.title)}
+                  width={200}
+                  height={200}
+                  className="w-full h-full object-contain rounded-lg transition-transform duration-300 hover:scale-105"
+                  data-ai-hint={product.imageHint || "product image"}
+                  unoptimized={product.imageUrl.startsWith('data:')}
+                />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button
@@ -115,7 +143,7 @@ export default function StorePage() {
                "rounded-full shrink-0 text-primary-foreground", 
                selectedCategory === 'all' 
                  ? "bg-primary hover:bg-primary/90" 
-                 : "bg-primary/10 border-primary/30 hover:bg-primary/20"
+                 : "bg-primary/10 border-primary/30 hover:bg-primary/20 text-white"
              )}
             onClick={() => setSelectedCategory('all')}
           >
@@ -129,7 +157,7 @@ export default function StorePage() {
                 "rounded-full shrink-0 text-primary-foreground",
                 selectedCategory === category.slug
                   ? "bg-primary hover:bg-primary/90"
-                  : "bg-primary/10 border-primary/30 hover:bg-primary/20"
+                  : "bg-primary/10 border-primary/30 hover:bg-primary/20 text-white"
               )}
               onClick={() => setSelectedCategory(category.slug)}
             >
@@ -170,34 +198,6 @@ export default function StorePage() {
             ) : (
                <p className="col-span-full text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
             )}
-          </div>
-        )}
-      </div>
-
-      {/* Image Carousel */}
-      <div className="mt-12 w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
-        {shuffledProducts.length > 0 && (
-          <div className="flex w-max animate-scroll scroller-animation hover:[animation-play-state:paused]">
-            {/* Render the list twice for seamless looping */}
-            {[...shuffledProducts, ...shuffledProducts].map((product, index) => (
-               <a 
-                href={product.link} 
-                key={`${product.id}-${index}`}
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-[200px] h-[200px] mx-4 shrink-0"
-              >
-                <Image
-                  src={product.imageUrl}
-                  alt={t(product.title)}
-                  width={200}
-                  height={200}
-                  className="w-full h-full object-contain rounded-lg transition-transform duration-300 hover:scale-105"
-                  data-ai-hint={product.imageHint || "product image"}
-                  unoptimized={product.imageUrl.startsWith('data:')}
-                />
-              </a>
-            ))}
           </div>
         )}
       </div>
