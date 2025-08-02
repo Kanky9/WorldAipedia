@@ -37,7 +37,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
   return (
     <Card className="flex flex-col overflow-hidden h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 rounded-xl group bg-card">
       <Link href={`/posts/${post.id}`} className="block">
-        <div className="relative w-full h-28 sm:h-48">
+        <div className="relative w-full h-28 sm:h-32">
           <Image
             src={post.imageUrl}
             alt={t(post.title, post.id)}
@@ -50,13 +50,13 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
           />
         </div>
       </Link>
-      <CardHeader className="p-3 sm:p-4">
+      <CardHeader className="p-3">
         <Link href={`/posts/${post.id}`} className="block">
-          <CardTitle className="font-headline text-base sm:text-xl leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
+          <CardTitle className="font-headline text-base leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
         </Link>
         <div className="flex items-center text-xs text-muted-foreground pt-1 gap-2">
            {category && (
-              <Badge variant="secondary" className="w-fit text-xs hover:bg-primary/20 transition-colors">
+              <Badge variant="secondary" className="w-fit text-xs hover:bg-primary/20 transition-colors bg-primary/10">
                   <CategoryIcon categoryName={post.category} className="h-3 w-3 mr-1 text-primary" />
                   {localizedCategoryName}
               </Badge>
@@ -64,7 +64,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-3 pt-0">
-        <CardDescription className="text-xs sm:text-sm line-clamp-3">{t(post.shortDescription)}</CardDescription>
+        <CardDescription className="text-xs line-clamp-3">{t(post.shortDescription)}</CardDescription>
       </CardContent>
       <CardFooter className="p-3 pt-0">
         <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 rounded-md">
