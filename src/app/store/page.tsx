@@ -105,7 +105,7 @@ export default function StorePage() {
                 key={`${product.id}-${index}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-[200px] h-[200px] mx-4 shrink-0"
+                className="w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] md:w-[200px] md:h-[200px] mx-4 shrink-0"
               >
                 <Image
                   src={product.imageUrl}
