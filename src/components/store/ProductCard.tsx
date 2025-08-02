@@ -36,7 +36,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
         <h3 className="font-semibold text-base leading-snug text-foreground/90 flex-grow line-clamp-2">{t(product.title)}</h3>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button asChild size="sm" className="w-full mt-2 bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 shadow-md">
+        <Button asChild size="sm" className="w-full mt-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
           <a href={product.link} target="_blank" rel="noopener noreferrer">
             <ShoppingCart className="mr-2 h-4 w-4" /> {t(buttonTextKey, buttonDefaultText)}
           </a>
