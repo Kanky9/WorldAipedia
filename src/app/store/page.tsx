@@ -86,7 +86,7 @@ export default function StorePage() {
   };
 
   return (
-    <div className="animate-fade-in pt-4">
+    <div className="animate-fade-in">
       <div className="relative flex items-center md:justify-center pb-2">
         {showLeftArrow && (
           <Button
@@ -103,13 +103,13 @@ export default function StorePage() {
           className="flex items-center gap-2 overflow-x-auto scrollbar-hide md:justify-center"
         >
           <Button
-            variant={selectedCategory === 'all' ? 'default' : 'outline'}
-            className={cn(
-              "rounded-full shrink-0 border-primary/20", 
-              selectedCategory === 'all' 
-                ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                : "bg-primary/10 text-primary hover:bg-primary/20"
-            )}
+             variant={selectedCategory === 'all' ? 'default' : 'outline'}
+             className={cn(
+               "rounded-full shrink-0", 
+               selectedCategory === 'all' 
+                 ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                 : "bg-primary/10 text-primary-foreground border-primary/30 hover:bg-primary/20"
+             )}
             onClick={() => setSelectedCategory('all')}
           >
             All
@@ -119,10 +119,10 @@ export default function StorePage() {
               key={category.slug}
               variant={selectedCategory === category.slug ? 'default' : 'outline'}
               className={cn(
-                "rounded-full shrink-0 border-primary/20",
+                "rounded-full shrink-0",
                 selectedCategory === category.slug
                   ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "bg-primary/10 text-primary hover:bg-primary/20"
+                  : "bg-primary/10 text-primary-foreground border-primary/30 hover:bg-primary/20"
               )}
               onClick={() => setSelectedCategory(category.slug)}
             >
