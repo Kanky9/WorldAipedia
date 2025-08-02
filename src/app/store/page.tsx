@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { ShoppingCart, Loader2, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { getAllProductsFromFirestore } from '@/lib/firebase';
@@ -10,10 +10,17 @@ import ProductCard from '@/components/store/ProductCard';
 import { categories as productCategories } from '@/data/products';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+
+// Helper function to shuffle an array
+const shuffleArray = <T,>(array: T[]): T[] => {
+  return [...array].sort(() => Math.random() - 0.5);
+};
 
 export default function StorePage() {
   const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
+  const [shuffledProducts, setShuffledProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,23 +30,24 @@ export default function StorePage() {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const fetchedProducts = await getAllProductsFromFirestore();
-        setProducts(fetchedProducts);
-        setFilteredProducts(fetchedProducts);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setError("Failed to load products. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProducts();
+  const fetchProducts = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetchedProducts = await getAllProductsFromFirestore();
+      setProducts(fetchedProducts);
+      setShuffledProducts(shuffleArray(fetchedProducts)); // Shuffle once on fetch
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError("Failed to load products. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   useEffect(() => {
     if (selectedCategory === 'all') {
@@ -64,7 +72,6 @@ export default function StorePage() {
       // Initial check
       handleScroll();
       
-      // Check on resize
       const resizeObserver = new ResizeObserver(handleScroll);
       resizeObserver.observe(container);
 
@@ -73,7 +80,7 @@ export default function StorePage() {
         resizeObserver.disconnect();
       };
     }
-  }, [products]); // Re-check when products load/change
+  }, [products]);
   
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -105,10 +112,10 @@ export default function StorePage() {
           <Button
              variant={selectedCategory === 'all' ? 'default' : 'outline'}
              className={cn(
-               "rounded-full shrink-0", 
+               "rounded-full shrink-0 text-primary-foreground", 
                selectedCategory === 'all' 
-                 ? "bg-primary text-primary-foreground hover:bg-primary/90" 
-                 : "bg-primary/10 text-primary-foreground border-primary/30 hover:bg-primary/20"
+                 ? "bg-primary hover:bg-primary/90" 
+                 : "bg-primary/10 border-primary/30 hover:bg-primary/20"
              )}
             onClick={() => setSelectedCategory('all')}
           >
@@ -119,10 +126,10 @@ export default function StorePage() {
               key={category.slug}
               variant={selectedCategory === category.slug ? 'default' : 'outline'}
               className={cn(
-                "rounded-full shrink-0",
+                "rounded-full shrink-0 text-primary-foreground",
                 selectedCategory === category.slug
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "bg-primary/10 text-primary-foreground border-primary/30 hover:bg-primary/20"
+                  ? "bg-primary hover:bg-primary/90"
+                  : "bg-primary/10 border-primary/30 hover:bg-primary/20"
               )}
               onClick={() => setSelectedCategory(category.slug)}
             >
@@ -163,6 +170,34 @@ export default function StorePage() {
             ) : (
                <p className="col-span-full text-center text-muted-foreground py-10">{t('adminNoProducts', 'No products found.')}</p>
             )}
+          </div>
+        )}
+      </div>
+
+      {/* Image Carousel */}
+      <div className="mt-12 w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+        {shuffledProducts.length > 0 && (
+          <div className="flex w-max animate-scroll scroller-animation hover:[animation-play-state:paused]">
+            {/* Render the list twice for seamless looping */}
+            {[...shuffledProducts, ...shuffledProducts].map((product, index) => (
+               <a 
+                href={product.link} 
+                key={`${product.id}-${index}`}
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-[200px] h-[200px] mx-4 shrink-0"
+              >
+                <Image
+                  src={product.imageUrl}
+                  alt={t(product.title)}
+                  width={200}
+                  height={200}
+                  className="w-full h-full object-contain rounded-lg transition-transform duration-300 hover:scale-105"
+                  data-ai-hint={product.imageHint || "product image"}
+                  unoptimized={product.imageUrl.startsWith('data:')}
+                />
+              </a>
+            ))}
           </div>
         )}
       </div>
