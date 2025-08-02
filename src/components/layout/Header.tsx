@@ -52,7 +52,7 @@ const Header = () => {
                       md:max-w-4xl lg:max-w-5xl md:rounded-full md:border md:bg-card/80 md:px-6 md:shadow-lg md:backdrop-blur-md">
         
         <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-          <BrainCircuit className="h-8 w-8 text-primary transition-transform group-hover:rotate-[15deg] duration-300" />
+          <BrainCircuit className="h-8 w-8 sm:h-8 sm:w-8 text-primary transition-transform group-hover:rotate-[15deg] duration-300" />
           <h1 className="text-xl sm:text-2xl font-headline font-bold text-primary transition-colors group-hover:text-primary/80 hidden sm:block">World AI</h1>
         </Link>
         
