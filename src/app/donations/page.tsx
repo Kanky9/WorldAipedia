@@ -55,13 +55,13 @@ export default function DonationsPage() {
       ) : (
         <div className="flex flex-col sm:flex-row justify-center items-stretch gap-6">
           <Card className="flex flex-col p-6 text-center flex-1">
-            <CardHeader className="flex flex-col items-center justify-center">
+            <CardHeader className="flex flex-col items-center justify-center flex-grow">
               <div className="mx-auto bg-blue-100 p-3 rounded-full mb-4">
                 <SiPaypal className="h-6 w-6 sm:h-8 sm:w-8 text-[#00457C]" />
               </div>
               <CardTitle>{t('donationsPayPalButton')}</CardTitle>
             </CardHeader>
-            <CardContent className="w-full pt-6 flex flex-col flex-grow justify-end">
+            <CardContent className="w-full pt-6">
               <Button asChild disabled={!settings?.paypalInfo} className="w-full">
                 <a href={settings?.paypalInfo || '#'} target="_blank" rel="noopener noreferrer">
                     <SiPaypal className="mr-2 h-4 w-4" />
@@ -72,13 +72,13 @@ export default function DonationsPage() {
           </Card>
           
           <Card className="flex flex-col p-6 text-center flex-1">
-            <CardHeader className="flex flex-col items-center justify-center">
+            <CardHeader className="flex flex-col items-center justify-center flex-grow">
               <div className="mx-auto bg-sky-100 p-3 rounded-full mb-4">
                 <SiMercadopago className="h-6 w-6 sm:h-8 sm:w-8 text-[#00A650]" />
               </div>
               <CardTitle>{t('donationsMercadoPagoButton')}</CardTitle>
             </CardHeader>
-            <CardContent className="w-full pt-6 flex flex-col flex-grow justify-end">
+            <CardContent className="w-full pt-6">
                <Button 
                 asChild
                 disabled={!settings?.mercadoPagoLink}
