@@ -21,7 +21,6 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "AawNqjRyKwRCZ5SKI8G1_AZO60WduRtM3upWJXaEP5YefZ3qMOe0auGUj4lVQMh3J1BiyQwapKT4_Y3n";
 
-// These options are for a one-time payment
 const initialOptions = {
     "client-id": PAYPAL_CLIENT_ID,
     currency: "USD",

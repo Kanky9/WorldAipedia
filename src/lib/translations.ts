@@ -288,6 +288,7 @@ export type CoreTranslationKey =
   | 'upgradeFailedDescription'
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
+  | 'monthlyAccessLabel'
   // Lace Jump Game
   | 'laceJumpGameTitle'
   | 'laceJumpGameAreaLabel'
@@ -615,6 +616,7 @@ export const translations: Translations = {
     proBenefit2: "Comment and rate AI tools",
     proBenefit3: "Priority support",
     upgradeToProPrice: "Just $1.00!",
+    monthlyAccessLabel: '(for one month of access)',
     paymentMethodsTitle: "Choose Your Payment Method",
     paymentErrorTitle: "Payment Error",
     processingPayment: "Processing your payment...",
@@ -928,6 +930,7 @@ export const translations: Translations = {
     proBenefit2: "Comenta y califica herramientas de IA",
     proBenefit3: "Soporte prioritario",
     upgradeToProPrice: "¡Solo $1.00!",
+    monthlyAccessLabel: '(por un mes de acceso)',
     paymentMethodsTitle: "Elige tu método de pago",
     paymentErrorTitle: "Error de Pago",
     processingPayment: "Procesando tu pago...",
@@ -1241,6 +1244,7 @@ export const translations: Translations = {
     proBenefit2: "Commenta e valuta gli strumenti AI",
     proBenefit3: "Supporto prioritario",
     upgradeToProPrice: "Solo $1.00!",
+    monthlyAccessLabel: '(per un mese di accesso)',
     paymentMethodsTitle: "Scegli il tuo metodo di pagamento",
     paymentErrorTitle: "Errore di Pagamento",
     processingPayment: "Elaborazione del pagamento...",
@@ -1554,6 +1558,7 @@ export const translations: Translations = {
     proBenefit2: "评论和评价AI工具",
     proBenefit3: "优先支持",
     upgradeToProPrice: "仅需 $1.00！",
+    monthlyAccessLabel: '(每月访问)',
     paymentMethodsTitle: "选择您的支付方式",
     paymentErrorTitle: "支付错误",
     processingPayment: "正在处理您的付款...",
@@ -1867,6 +1872,7 @@ export const translations: Translations = {
     proBenefit2: "AIツールのコメントと評価",
     proBenefit3: "優先サポート",
     upgradeToProPrice: "わずか $1.00！",
+    monthlyAccessLabel: '（1ヶ月のアクセス）',
     paymentMethodsTitle: "お支払い方法を選択",
     paymentErrorTitle: "支払いエラー",
     processingPayment: "支払いを処理中...",
@@ -1984,7 +1990,7 @@ export const translations: Translations = {
     laceChatErrorWelcomeGeneral: "Olá! Sou a Lace, sua assistente de IA. Como posso ajudar hoje?",
     laceChatErrorWelcomeTool: "Estou com um pouco de dificuldade para apresentar esta ferramenta, mas sinta-se à vontade para me perguntar qualquer coisa sobre ela ou outros tópicos!",
     categoriesTitle: 'Explore Postagens por Categoria',
-    categoriesSubtitle: 'Encontre postagens personalizadas para seus interesses, organizadas em categorias relevantes para facilitar a navegação.',
+    categoriesSubtitle: 'Encontre postagens personalizadas for seus interesses, organizadas em categorias relevantes para facilitar a navegação.',
     viewPostsButton: 'Ver Postagens',
     noCategoriesAvailable: 'Nenhuma categoria disponível no momento.',
     newPostsInCategoryTooltip: 'Novas postagens nesta categoria!',
@@ -2180,6 +2186,7 @@ export const translations: Translations = {
     proBenefit2: "Comente e avalie ferramentas de IA",
     proBenefit3: "Suporte prioritário",
     upgradeToProPrice: "Apenas $1.00!",
+    monthlyAccessLabel: '(para um mês de acesso)',
     paymentMethodsTitle: "Escolha seu método de pagamento",
     paymentErrorTitle: "Erro de Pagamento",
     processingPayment: "Processando seu pagamento...",
