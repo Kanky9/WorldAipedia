@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -26,15 +25,15 @@ export default function DonationsPage() {
   const handleCopy = (text: string, title: string) => {
     navigator.clipboard.writeText(text);
     toast({
-        title: title,
-        description: (
-            <div className="flex flex-col">
-                <span className="font-mono bg-muted p-2 rounded-md my-2">{text}</span>
-                <span>{t('donationsInfoCopied')}</span>
-            </div>
-        )
+      title,
+      description: (
+        <div className="flex flex-col">
+          <span className="font-mono bg-muted p-2 rounded-md my-2">{text}</span>
+          <span>{t('donationsInfoCopied')}</span>
+        </div>
+      )
     });
-  }
+  };
 
   return (
     <div className="container mx-auto max-w-2xl pt-8 px-4">
@@ -53,8 +52,16 @@ export default function DonationsPage() {
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="flex flex-col sm:flex-row justify-center items-stretch gap-6">
-          <Card className="flex flex-col p-6 text-center flex-1">
+        <div 
+          className="
+            grid 
+            grid-cols-1 sm:grid-cols-2 
+            gap-6 
+            auto-rows-[minmax(0,1fr)]
+          "
+        >
+          {/* PayPal Card */}
+          <Card className="flex flex-col p-6 text-center flex-1 h-full">
             <CardHeader className="flex flex-col items-center justify-center flex-grow">
               <div className="mx-auto bg-blue-100 p-3 rounded-full mb-4">
                 <SiPaypal className="h-6 w-6 sm:h-8 sm:w-8 text-[#00457C]" />
@@ -64,41 +71,44 @@ export default function DonationsPage() {
             <CardContent className="w-full pt-6">
               <Button asChild disabled={!settings?.paypalInfo} className="w-full">
                 <a href={settings?.paypalInfo || '#'} target="_blank" rel="noopener noreferrer">
-                    <SiPaypal className="mr-2 h-4 w-4" />
-                    {t('donationsPayPalButton')}
+                  <SiPaypal className="mr-2 h-4 w-4" />
+                  {t('donationsPayPalButton')}
                 </a>
               </Button>
             </CardContent>
           </Card>
           
-          <Card className="flex flex-col p-6 text-center flex-1">
+          {/* MercadoPago Card */}
+          <Card className="flex flex-col p-6 text-center flex-1 h-full">
             <CardHeader className="flex flex-col items-center justify-center flex-grow">
               <div className="mx-auto bg-sky-100 p-3 rounded-full mb-4">
                 <SiMercadopago className="h-6 w-6 sm:h-8 sm:w-8 text-[#00A650]" />
               </div>
               <CardTitle>{t('donationsMercadoPagoButton')}</CardTitle>
             </CardHeader>
-            <CardContent className="w-full pt-6">
-               <Button 
+            <CardContent className="w-full pt-6 flex flex-col">
+              <Button 
                 asChild
                 disabled={!settings?.mercadoPagoLink}
                 className="w-full"
               >
                 <a href={settings?.mercadoPagoLink || '#'} target="_blank" rel="noopener noreferrer">
-                    <SiMercadopago className="mr-2 h-4 w-4" />
-                    {t('donationsMercadoPagoButton')}
+                  <SiMercadopago className="mr-2 h-4 w-4" />
+                  {t('donationsMercadoPagoButton')}
                 </a>
               </Button>
-               <div className="mt-4">
-                    <p className="text-xs text-muted-foreground mb-2">{t('orCopyAlias', 'Or copy alias:')}</p>
-                    <button 
-                        onClick={() => handleCopy('jemabello.mp', t('donationsMercadoPagoAliasTitle'))}
-                        className="inline-flex items-center gap-2 text-sm font-mono bg-muted p-2 rounded-md hover:bg-muted/80 transition-colors"
-                    >
-                        jemabello.mp
-                        <Copy className="h-4 w-4 text-muted-foreground"/>
-                    </button>
-                </div>
+              <div className="mt-4">
+                <p className="text-xs text-muted-foreground mb-2">
+                  {t('orCopyAlias', 'Or copy alias:')}
+                </p>
+                <button 
+                  onClick={() => handleCopy('jemabello.mp', t('donationsMercadoPagoAliasTitle'))}
+                  className="inline-flex items-center gap-2 text-sm font-mono bg-muted p-2 rounded-md hover:bg-muted/80 transition-colors"
+                >
+                  jemabello.mp
+                  <Copy className="h-4 w-4 text-muted-foreground"/>
+                </button>
+              </div>
             </CardContent>
           </Card>
         </div>
