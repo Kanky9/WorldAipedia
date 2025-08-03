@@ -27,7 +27,6 @@ const initialOptions = {
     "vault": true,
 };
 
-
 interface UpgradeProDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

@@ -305,17 +305,20 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
     status: 'active',
     method,
     renewedAt: serverTimestamp(),
-    subscriptionId: subscriptionId || null,
+    paypalSubscriptionID: subscriptionId || null,
   };
   
-  // Update the subcollection
-  await setDoc(subRef, subscriptionData, { merge: true });
+  // Use a batch to update both documents atomically
+  const batch = writeBatch(db);
   
-  // Also update the main user document for easy access in the app
-  await updateDoc(userRef, {
+  batch.set(subRef, subscriptionData, { merge: true });
+  batch.update(userRef, {
     isSubscribed: true,
     subscriptionPlan: `PRO Monthly (${method})`,
+    paypalSubscriptionID: subscriptionId || null,
   });
+
+  await batch.commit();
 };
 
 // Follow System, User Search, and Username Propagation
