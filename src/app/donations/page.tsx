@@ -89,6 +89,16 @@ export default function DonationsPage() {
                     {t('donationsMercadoPagoButton')}
                 </a>
               </Button>
+               <div className="mt-4">
+                    <p className="text-xs text-muted-foreground mb-2">{t('orCopyAlias', 'Or copy alias:')}</p>
+                    <button 
+                        onClick={() => handleCopy('jemabello.mp', t('donationsMercadoPagoAliasTitle'))}
+                        className="inline-flex items-center gap-2 text-sm font-mono bg-muted p-2 rounded-md hover:bg-muted/80 transition-colors"
+                    >
+                        jemabello.mp
+                        <Copy className="h-4 w-4 text-muted-foreground"/>
+                    </button>
+                </div>
             </CardContent>
           </Card>
         </div>

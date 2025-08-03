@@ -210,6 +210,7 @@ export type CoreTranslationKey =
   | 'donationsPayPalInfoTitle'
   | 'donationsMercadoPagoAliasTitle'
   | 'donationsInfoCopied'
+  | 'orCopyAlias'
   // Account Page
   | 'accountPageTitle'
   | 'accountPageSubtitle'
@@ -554,6 +555,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'PayPal Information',
     donationsMercadoPagoAliasTitle: 'MercadoPago Alias',
     donationsInfoCopied: 'Copied to clipboard!',
+    orCopyAlias: 'Or copy alias:',
     accountPageTitle: 'My Account',
     accountPageSubtitle: 'Manage your profile, subscription, and settings.',
     changeProfilePictureButton: 'Change Picture',
@@ -866,6 +868,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'Información de PayPal',
     donationsMercadoPagoAliasTitle: 'Alias de MercadoPago',
     donationsInfoCopied: '¡Copiado al portapapeles!',
+    orCopyAlias: 'O copia el alias:',
     accountPageTitle: 'Mi Cuenta',
     accountPageSubtitle: 'Gestiona tu perfil, suscripción y configuraciones.',
     changeProfilePictureButton: 'Cambiar Foto',
@@ -1178,6 +1181,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'Informazioni PayPal',
     donationsMercadoPagoAliasTitle: 'Alias MercadoPago',
     donationsInfoCopied: 'Copiato negli appunti!',
+    orCopyAlias: 'Oppure copia l\'alias:',
     accountPageTitle: 'Il Mio Account',
     accountPageSubtitle: 'Gestisci il tuo profilo, abbonamento e impostazioni.',
     changeProfilePictureButton: 'Cambia Immagine',
@@ -1490,6 +1494,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'PayPal信息',
     donationsMercadoPagoAliasTitle: 'MercadoPago别名',
     donationsInfoCopied: '已复制到剪贴板！',
+    orCopyAlias: '或复制别名：',
     accountPageTitle: '我的账户',
     accountPageSubtitle: '管理您的个人资料、订阅和设置。',
     changeProfilePictureButton: '更改图片',
@@ -1802,6 +1807,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'PayPal情報',
     donationsMercadoPagoAliasTitle: 'MercadoPagoエイリアス',
     donationsInfoCopied: 'クリップボードにコピーしました！',
+    orCopyAlias: 'またはエイリアスをコピー:',
     accountPageTitle: 'マイアカウント',
     accountPageSubtitle: 'プロフィール、サブスクリプション、設定を管理します。',
     changeProfilePictureButton: '画像を変更',
@@ -2114,6 +2120,7 @@ export const translations: Translations = {
     donationsPayPalInfoTitle: 'Informações do PayPal',
     donationsMercadoPagoAliasTitle: 'Alias do MercadoPago',
     donationsInfoCopied: 'Copiado para a área de transferência!',
+    orCopyAlias: 'Ou copie o alias:',
     accountPageTitle: 'Minha Conta',
     accountPageSubtitle: 'Gerencie seu perfil, assinatura e configurações.',
     changeProfilePictureButton: 'Mudar Foto',
