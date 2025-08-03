@@ -15,7 +15,18 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
 import { Star } from 'lucide-react';
-import PayPalButton from '@/components/payments/PayPalButton'; // Import the new component
+import PayPalButton from '@/components/payments/PayPalButton';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "AawNqjRyKwRCZ5SKI8G1_AZO60WduRtM3upWJXaEP5YefZ3qMOe0auGUj4lVQMh3J1BiyQwapKT4_Y3n";
+
+const initialOptions = {
+    "client-id": PAYPAL_CLIENT_ID,
+    currency: "USD",
+    intent: "subscription",
+    "vault": true,
+};
+
 
 interface UpgradeProDialogProps {
   open: boolean;
@@ -69,7 +80,9 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
             </p>
             
             {currentUser ? (
-              <PayPalButton onSuccess={() => onOpenChange(false)} />
+              <PayPalScriptProvider options={initialOptions}>
+                <PayPalButton onSuccess={() => onOpenChange(false)} />
+              </PayPalScriptProvider>
             ) : (
                <Button onClick={handleLoginRedirect} className="w-full">
                   {t('loginButton', 'Login to Continue')}
