@@ -34,13 +34,13 @@ export default function TermsAndConditionsPage() {
             <strong>Benefits:</strong> The PRO Subscription grants you access to extra benefits which may include, but are not limited to, the ability to comment on posts, access to exclusive content sections, and an ad-reduced or ad-free browsing experience. Specific benefits will be detailed on the subscription sign-up page.
           </li>
           <li>
-            <strong>Payment:</strong> Payments for the PRO Subscription are processed through third-party payment processors such as Stripe or Ko-fi. By subscribing, you agree to the terms and conditions of the respective payment processor. We do not store your full payment card details.
+            <strong>Payment:</strong> Payments for the PRO Subscription are processed through third-party payment processors such as Stripe or PayPal. By subscribing, you agree to the terms and conditions of the respective payment processor. We do not store your full payment card details.
           </li>
           <li>
-            <strong>Subscription Term & Renewal:</strong> Your subscription is monthly and will automatically renew each month unless cancelled.
+            <strong>Subscription Term:</strong> Your subscription is monthly. Currently, automatic renewal is not enabled. You may be required to make a manual payment each month to maintain PRO access.
           </li>
           <li>
-            <strong>Cancellation Policy:</strong> You may cancel your PRO Subscription at any time through your account settings on our Site or by contacting us. The cancellation will take effect at the end of your current paid billing cycle. You will continue to have access to PRO benefits until the end of that period.
+            <strong>Cancellation Policy:</strong> You may cancel your PRO Subscription at any time through your account settings on our Site or by contacting us. Since payments are not automatically recurring, cancellation primarily means you will not make future manual payments and your PRO access will expire at the end of your current paid period.
           </li>
           <li>
             <strong>No Refunds:</strong> Payments for the PRO Subscription are non-refundable. We do not provide refunds or credits for any partial subscription periods or unused benefits.

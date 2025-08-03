@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useCallback } from 'react';
@@ -20,11 +21,11 @@ import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "AawNqjRyKwRCZ5SKI8G1_AZO60WduRtM3upWJXaEP5YefZ3qMOe0auGUj4lVQMh3J1BiyQwapKT4_Y3n";
 
+// These options are for a one-time payment
 const initialOptions = {
     "client-id": PAYPAL_CLIENT_ID,
     currency: "USD",
-    intent: "subscription",
-    "vault": true,
+    intent: "capture",
 };
 
 interface UpgradeProDialogProps {
@@ -71,6 +72,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
 
           <div className="text-center my-4">
             <p className="text-3xl font-bold text-primary">{t('upgradeToProPrice', "Just $1.00!")}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('monthlyAccessLabel', '(for one month of access)')}</p>
           </div>
           
           <div className="border-t pt-4">
@@ -78,7 +80,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
               {t('paypalGatewayInfo', "All payments are processed securely through PayPal. You can use your PayPal balance or any major credit/debit card.")}
             </p>
             
-            {currentUser ? (
+            {currentUser && open ? (
               <PayPalScriptProvider options={initialOptions}>
                 <PayPalButton onSuccess={() => onOpenChange(false)} />
               </PayPalScriptProvider>

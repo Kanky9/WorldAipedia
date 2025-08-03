@@ -1,3 +1,4 @@
+
 "use client";
 
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
@@ -11,30 +12,42 @@ interface PayPalButtonProps {
     onSuccess: () => void;
 }
 
-// This is a pre-configured Plan ID on PayPal for a $1.00 USD monthly subscription.
-const PAYPAL_PLAN_ID = 'P-35G735787Y247515UMUCN7IA';
-
 const PayPalButton = ({ onSuccess }: PayPalButtonProps) => {
     const [{ isPending }] = usePayPalScriptReducer();
     const { currentUser } = useAuth();
     const { toast } = useToast();
     const { t } = useLanguage();
 
-    const createSubscription = (data: any, actions: any) => {
-        return actions.subscription.create({
-            'plan_id': PAYPAL_PLAN_ID
+    const createOrder = (data: any, actions: any) => {
+        return actions.order.create({
+            purchase_units: [
+                {
+                    description: "World AI PRO - 1 Month Access",
+                    amount: {
+                        value: "1.00",
+                        currency_code: "USD",
+                    },
+                },
+            ],
+            application_context: {
+                shipping_preference: "NO_SHIPPING",
+            },
         });
     };
 
-    const onApprove = (data: any, actions: any) => {
+    const onApprove = async (data: any, actions: any) => {
         if (!currentUser) {
             toast({ variant: 'destructive', title: t('errorDefaultTitle'), description: 'User not logged in.' });
             return Promise.resolve();
         }
+        
         try {
+            // It's good practice to capture the order on the server, but for simplicity here we assume client-side capture.
+            const details = await actions.order.capture();
+            
             // The approval is successful, now update the user's status in Firestore.
-            // The `data.subscriptionID` is the unique identifier for this new subscription.
-             updateUserToPro(currentUser.uid, 'paypal', data.subscriptionID);
+            const transactionId = details.id; // The PayPal transaction ID.
+            updateUserToPro(currentUser.uid, 'paypal', transactionId);
             toast({
                 title: t('upgradeSuccessTitle'),
                 description: t('upgradeSuccessDescription'),
@@ -45,7 +58,6 @@ const PayPalButton = ({ onSuccess }: PayPalButtonProps) => {
             console.error("Error updating user to PRO:", updateError);
             toast({ variant: 'destructive', title: t('upgradeFailedTitle'), description: 'Payment successful, but failed to update account. Please contact support.' });
         }
-        // It's important to return a promise here, even if it's just resolving.
         return Promise.resolve();
     };
     
@@ -60,8 +72,8 @@ const PayPalButton = ({ onSuccess }: PayPalButtonProps) => {
 
     return (
         <PayPalButtons
-            style={{ layout: "vertical", label: "subscribe" }}
-            createSubscription={createSubscription}
+            style={{ layout: "vertical", label: "pay" }}
+            createOrder={createOrder}
             onApprove={onApprove}
             onError={onError}
         />
