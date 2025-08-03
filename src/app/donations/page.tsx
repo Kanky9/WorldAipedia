@@ -43,7 +43,7 @@ export default function DonationsPage() {
         <h1 className="text-3xl sm:text-4xl font-headline font-bold text-primary">
           {t('donationsPageTitle')}
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground">
+        <p className="mt-4 text-base sm:text-lg text-muted-foreground">
           {t('donationsPageDescription')}
         </p>
       </div>
@@ -57,7 +57,7 @@ export default function DonationsPage() {
           <Card className="flex flex-col p-6 text-center flex-1">
             <CardHeader className="flex-grow flex flex-col items-center justify-center">
               <div className="mx-auto bg-blue-100 p-3 rounded-full mb-4">
-                <SiPaypal className="h-8 w-8 text-[#00457C]" />
+                <SiPaypal className="h-6 w-6 sm:h-8 sm:w-8 text-[#00457C]" />
               </div>
               <CardTitle>{t('donationsPayPalButton')}</CardTitle>
             </CardHeader>
@@ -74,7 +74,7 @@ export default function DonationsPage() {
           <Card className="flex flex-col p-6 text-center flex-1">
             <CardHeader className="flex-grow flex flex-col items-center justify-center">
               <div className="mx-auto bg-sky-100 p-3 rounded-full mb-4">
-                <SiMercadopago className="h-8 w-8 text-[#00A650]" />
+                <SiMercadopago className="h-6 w-6 sm:h-8 sm:w-8 text-[#00A650]" />
               </div>
               <CardTitle>{t('donationsMercadoPagoButton')}</CardTitle>
             </CardHeader>
