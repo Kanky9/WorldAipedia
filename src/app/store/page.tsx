@@ -138,12 +138,12 @@ export default function StorePage() {
           className="flex items-center gap-2 overflow-x-auto scrollbar-hide md:justify-center"
         >
           <Button
-             variant={selectedCategory === 'all' ? 'default' : 'outline'}
+             variant={selectedCategory === 'all' ? 'default' : 'ghost'}
              className={cn(
-               "rounded-full shrink-0 text-primary-foreground", 
+               "rounded-full shrink-0", 
                selectedCategory === 'all' 
-                 ? "bg-primary hover:bg-primary/90" 
-                 : "bg-primary/10 border-primary/30 hover:bg-primary/20 text-white"
+                 ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                 : "bg-primary/10 text-primary hover:bg-primary/20"
              )}
             onClick={() => setSelectedCategory('all')}
           >
@@ -152,12 +152,12 @@ export default function StorePage() {
           {productCategories.map(category => (
             <Button
               key={category.slug}
-              variant={selectedCategory === category.slug ? 'default' : 'outline'}
+              variant={selectedCategory === category.slug ? 'default' : 'ghost'}
               className={cn(
-                "rounded-full shrink-0 text-primary-foreground",
+                "rounded-full shrink-0",
                 selectedCategory === category.slug
-                  ? "bg-primary hover:bg-primary/90"
-                  : "bg-primary/10 border-primary/30 hover:bg-primary/20 text-white"
+                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                  : "bg-primary/10 text-primary hover:bg-primary/20"
               )}
               onClick={() => setSelectedCategory(category.slug)}
             >
