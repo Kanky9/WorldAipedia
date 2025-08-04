@@ -17,7 +17,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
   const buttonDefaultText = product.source === 'amazon' ? 'Buy on Amazon' : 'Buy on MercadoLibre';
 
   return (
-    <Card className="flex flex-col h-full group overflow-hidden transition-all duration-300 bg-card/5 border border-primary/20 backdrop-blur-sm hover:border-primary/40 hover:bg-card/10">
+    <Card className="flex flex-col h-full group overflow-hidden transition-all duration-300 bg-card/5 backdrop-blur-sm hover:bg-card/10 rounded-lg">
       <a href={product.link} target="_blank" rel="noopener noreferrer" className="block p-4">
         <div className="relative w-full aspect-square overflow-hidden rounded-md">
           <Image
