@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,15 +6,29 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { PartyPopper, TriangleAlert } from 'lucide-react';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function WelcomeDialog() {
   const { t } = useLanguage();
+  const { currentUser, loading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Show the dialog every time the component mounts (page loads)
-    setIsOpen(true);
-  }, []);
+    // Only decide whether to show the dialog once the auth state is confirmed
+    if (!loading) {
+      // Show the dialog only if the user is not logged in
+      if (!currentUser) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    }
+  }, [loading, currentUser]);
+
+  // Don't render anything if the dialog shouldn't be open
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
