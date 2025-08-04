@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -28,6 +27,8 @@ interface Particle {
   key: number;
   style: ParticleStyle;
 }
+
+//Comentario de prueba
 
 export default function HomePage() {
   const { t } = useLanguage();
