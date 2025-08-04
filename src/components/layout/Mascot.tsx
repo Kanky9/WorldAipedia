@@ -19,7 +19,7 @@ const CHAT_BUTTON_OFFSET_REM = 1.5; // bottom-6 right-6 (24px)
 
 const Mascot = () => {
   const { t, language } = useLanguage();
-  const { isChatOpen, mascotDisplayMode, setMascotDisplayMode, mascotAdHocMessages, setMascotAdHocMessages } = useChat();
+  const { isChatOpen, isUpgradeDialogOpen, mascotDisplayMode, setMascotDisplayMode, mascotAdHocMessages, setMascotAdHocMessages } = useChat();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
@@ -143,8 +143,8 @@ const Mascot = () => {
     return null;
   }
 
-  // Hide mascot when chat is open
-  if (isChatOpen) {
+  // Hide mascot when chat or upgrade dialog is open
+  if (isChatOpen || isUpgradeDialogOpen) {
     return null;
   }
 

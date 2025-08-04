@@ -15,9 +15,12 @@ export interface MascotAdHocMessage {
 
 interface ChatContextValue {
   isChatOpen: boolean;
+  isUpgradeDialogOpen: boolean;
   aiContextForChat: AiToolChatContextType | null;
   openChat: (context?: AiToolChatContextType) => void;
   closeChat: () => void;
+  openUpgradeDialog: () => void;
+  closeUpgradeDialog: () => void;
   mascotDisplayMode: MascotDisplayMode;
   setMascotDisplayMode: (mode: MascotDisplayMode) => void;
   mascotAdHocMessages: MascotAdHocMessage[];
@@ -28,6 +31,7 @@ export const ChatContext = createContext<ChatContextValue | undefined>(undefined
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
   const [aiContextForChat, setAiContextForChat] = useState<AiToolChatContextType | null>(null);
   const [mascotDisplayMode, setMascotDisplayModeState] = useState<MascotDisplayMode>('default');
   const [mascotAdHocMessages, setMascotAdHocMessagesState] = useState<MascotAdHocMessage[]>([]);
@@ -48,6 +52,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     setMascotDisplayModeState('default'); // Reset mascot mode when chat closes
   }, []);
   
+  const openUpgradeDialog = useCallback(() => {
+    setIsUpgradeDialogOpen(true);
+  }, []);
+
+  const closeUpgradeDialog = useCallback(() => {
+    setIsUpgradeDialogOpen(false);
+  }, []);
+
   const setMascotDisplayMode = useCallback((mode: MascotDisplayMode) => {
     setMascotDisplayModeState(mode);
   }, []);
@@ -71,9 +83,12 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   return (
     <ChatContext.Provider value={{ 
       isChatOpen, 
+      isUpgradeDialogOpen,
       aiContextForChat, 
       openChat, 
       closeChat, 
+      openUpgradeDialog,
+      closeUpgradeDialog,
       mascotDisplayMode, 
       setMascotDisplayMode,
       mascotAdHocMessages,
