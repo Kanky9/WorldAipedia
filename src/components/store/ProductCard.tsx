@@ -1,3 +1,4 @@
+
 import type { FC } from 'react';
 import Image from 'next/image';
 import type { Product } from '@/lib/types';
@@ -36,7 +37,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
         <h3 className="font-semibold text-base leading-snug text-foreground/90 flex-grow line-clamp-2">{t(product.title)}</h3>
       </CardContent>
       <CardFooter className="p-4 pt-0 justify-center">
-        <Button asChild size="sm" className="mt-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-9">
+        <Button asChild variant="outline" size="sm" className="mt-2 border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs sm:text-sm px-3 sm:px-4 h-8 sm:h-9">
           <a href={product.link} target="_blank" rel="noopener noreferrer">
             <ShoppingCart className="mr-1.5 h-3.5 w-3.5 sm:mr-2 sm:h-4 sm:w-4" /> {t(buttonTextKey, buttonDefaultText)}
           </a>
