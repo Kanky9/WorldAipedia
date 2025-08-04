@@ -27,23 +27,20 @@ export default function TermsAndConditionsPage() {
       </section>
 
       <section className="space-y-4 mb-8">
-        <h2 className="text-2xl font-headline font-semibold text-primary/90 mb-3">2. Optional PRO Subscription</h2>
-        <p>We offer an optional "PRO Subscription" at a fee of USD 1 per month (or the equivalent in your local currency, subject to change with notice).</p>
+        <h2 className="text-2xl font-headline font-semibold text-primary/90 mb-3">2. Optional PRO Access</h2>
+        <p>We offer an optional "PRO Access" tier, which can be acquired via a one-time payment for a set period (e.g., one month). This is not an automatically recurring subscription.</p>
         <ul className="list-disc list-inside space-y-2 pl-4 text-foreground/80">
           <li>
-            <strong>Benefits:</strong> The PRO Subscription grants you access to extra benefits which may include, but are not limited to, the ability to comment on posts, access to exclusive content sections, and an ad-reduced or ad-free browsing experience. Specific benefits will be detailed on the subscription sign-up page.
+            <strong>Benefits:</strong> PRO Access grants you extra benefits which may include, but are not limited to, the ability to comment on posts, access to exclusive content sections, and an ad-reduced or ad-free browsing experience. Specific benefits will be detailed on the purchase page.
           </li>
           <li>
-            <strong>Payment:</strong> Payments for the PRO Subscription are processed through third-party payment processors such as Stripe or PayPal. By subscribing, you agree to the terms and conditions of the respective payment processor. We do not store your full payment card details.
+            <strong>Payment:</strong> Payments for PRO Access are processed through third-party payment processors like PayPal. By making a purchase, you agree to the terms and conditions of the respective payment processor. We do not store your full payment card details.
           </li>
           <li>
-            <strong>Subscription Term:</strong> Your subscription is monthly. Currently, automatic renewal is not enabled. You may be required to make a manual payment each month to maintain PRO access.
+            <strong>Access Period:</strong> Your PRO Access is valid for the period specified at the time of purchase (e.g., one month). It does not automatically renew. To continue your PRO access, a new payment is required at the end of the term.
           </li>
           <li>
-            <strong>Cancellation Policy:</strong> You may cancel your PRO Subscription at any time through your account settings on our Site or by contacting us. Since payments are not automatically recurring, cancellation primarily means you will not make future manual payments and your PRO access will expire at the end of your current paid period.
-          </li>
-          <li>
-            <strong>No Refunds:</strong> Payments for the PRO Subscription are non-refundable. We do not provide refunds or credits for any partial subscription periods or unused benefits.
+            <strong>No Refunds:</strong> Payments for PRO Access are non-refundable. We do not provide refunds or credits for any partial access periods or unused benefits.
           </li>
         </ul>
       </section>

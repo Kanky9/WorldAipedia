@@ -19,13 +19,7 @@ import { Star } from 'lucide-react';
 import PayPalButton from '@/components/payments/PayPalButton';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
-const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "AawNqjRyKwRCZ5SKI8G1_AZO60WduRtM3upWJXaEP5YefZ3qMOe0auGUj4lVQMh3J1BiyQwapKT4_Y3n";
-
-const initialOptions = {
-    "client-id": PAYPAL_CLIENT_ID,
-    currency: "USD",
-    intent: "capture",
-};
+const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
 
 interface UpgradeProDialogProps {
   open: boolean;
@@ -47,6 +41,23 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     t('proBenefit2', "Comment and rate AI tools"),
     t('proBenefit3', "Priority support"),
   ];
+
+  if (!PAYPAL_CLIENT_ID) {
+    console.error("PayPal Client ID is not configured. Please set NEXT_PUBLIC_PAYPAL_CLIENT_ID in your environment variables.");
+    // Fallback or disable payment functionality if ID is missing
+    return (
+       <Dialog open={open} onOpenChange={onOpenChange}>
+         <DialogContent>
+           <DialogHeader>
+             <DialogTitle>Payment Error</DialogTitle>
+             <DialogDescription>
+               The payment system is currently unavailable. Please contact support.
+             </DialogDescription>
+           </DialogHeader>
+         </DialogContent>
+       </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,7 +91,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
             </p>
             
             {currentUser && open ? (
-              <PayPalScriptProvider options={initialOptions}>
+              <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
                 <PayPalButton onSuccess={() => onOpenChange(false)} />
               </PayPalScriptProvider>
             ) : (
