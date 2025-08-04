@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import CategoryIcon from '../ai/CategoryIcon';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/hooks/useLanguage';
-import { getCategoryByName } from '@/data/posts';
+import { getCategoryBySlug } from '@/data/posts';
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; // Direct import of locales
 import { CalendarDays, Tag } from 'lucide-react';
@@ -19,19 +19,6 @@ interface PostCardProps {
 
 const PostCard: FC<PostCardProps> = ({ post }) => {
   const { t, language } = useLanguage();
-  const category = getCategoryByName(post.category);
-  const localizedCategoryName = category ? t(category.name) : post.category;
-
-  const getPostDateLocale = () => {
-    switch (language) {
-      case 'es':
-        return es;
-      case 'en':
-      default:
-        return enUS;
-    }
-  };
-  const postDateLocale = getPostDateLocale();
 
   return (
     <Card className="flex flex-col overflow-hidden h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 rounded-xl group bg-card">
@@ -53,13 +40,18 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
         <Link href={`/posts/${post.id}`} className="block">
           <CardTitle className="font-headline text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
         </Link>
-        <div className="flex items-center text-xs text-muted-foreground pt-1 gap-2">
-           {category && (
-              <Badge variant="secondary" className="w-fit text-xs hover:bg-primary/20 transition-colors bg-primary/10">
-                  <CategoryIcon categoryName={post.category} className="h-3 w-3 mr-1 text-primary" />
-                  {localizedCategoryName}
-              </Badge>
-          )}
+        <div className="flex items-center text-xs text-muted-foreground pt-1 gap-2 flex-wrap">
+           {post.categorySlugs?.map(slug => {
+                const category = getCategoryBySlug(slug);
+                if (!category) return null;
+                const localizedCategoryName = t(category.name);
+                return (
+                    <Badge key={slug} variant="secondary" className="w-fit text-xs hover:bg-primary/20 transition-colors bg-primary/10">
+                        <CategoryIcon categoryName={typeof category.name === 'object' ? category.name.en : category.name} className="h-3 w-3 mr-1 text-primary" />
+                        {localizedCategoryName}
+                    </Badge>
+                )
+           })}
         </div>
       </CardHeader>
       <CardContent className="flex-grow p-4 pt-0">

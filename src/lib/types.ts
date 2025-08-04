@@ -18,8 +18,7 @@ export interface Post {
   longDescription: { [key in LanguageCode]?: string; en: string; }; // Stored as a map
   imageUrl: string; // URL or Data URI
   imageHint?: string;
-  category: string; // English name of category, from categories.name.en
-  categorySlug: string;
+  categorySlugs: string[];
   tags: string[];
   publishedDate: Timestamp | Date; // Firestore Timestamp when read/saved, Date when manipulated in forms
   link: string;

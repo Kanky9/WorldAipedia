@@ -3,14 +3,14 @@
 
 import Image from 'next/image';
 import { notFound, useRouter } from 'next/navigation'; // useParams is no longer needed if id is passed as prop
-import { getCategoryByName } from '@/data/posts';
+import { getCategoryBySlug } from '@/data/posts';
 // getAllPostsFromFirestore is not needed here as it's for generateStaticParams
 import { getPostFromFirestore, deleteCommentFromFirestore, db, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp, Timestamp } from '@/lib/firebase';
 import AILink from '@/components/ai/AILink';
 import CategoryIcon from '@/components/ai/CategoryIcon';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import Link from 'next/link';
-import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, CalendarDays, MessageSquare, Star, Tag, UserCircle, Loader2, AlertTriangle, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useAuth } from '@/contexts/AuthContext';
@@ -228,8 +228,6 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
     );
   }
 
-  const categoryData = getCategoryByName(post.category);
-  const localizedCategoryName = categoryData ? t(categoryData.name) : post.category;
   const localizedPostTitle = t(post.title);
 
 
@@ -267,12 +265,21 @@ export default function PostPageClient({ postId }: PostPageClientProps) {
               <CalendarDays className="h-4 w-4" />
               <span>{post.publishedDate instanceof Date && postDateLocale ? format(post.publishedDate, 'PPP', { locale: postDateLocale }) : new Date(post.publishedDate as Date).toLocaleDateString()}</span>
             </div>
-            {categoryData && (
-              <div className="flex items-center gap-1.5">
-                <CategoryIcon categoryName={typeof categoryData.name === 'string' ? categoryData.name : categoryData.name.en!} className="h-4 w-4 text-primary" />
-                <Link href={`/categories/${categoryData.slug}`} className="hover:underline">{localizedCategoryName}</Link>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5">
+                <Layers className="h-4 w-4 text-primary" />
+                <div className="flex flex-wrap items-center gap-1.5">
+                    {post.categorySlugs?.map((slug, index) => {
+                        const categoryData = getCategoryBySlug(slug);
+                        if (!categoryData) return null;
+                        const localizedCategoryName = t(categoryData.name);
+                        return (
+                            <Link key={slug} href={`/categories/${slug}`} className="hover:underline">
+                                {localizedCategoryName}{index < post.categorySlugs.length - 1 ? ', ' : ''}
+                            </Link>
+                        )
+                    })}
+                </div>
+            </div>
           </div>
            {post.tags && post.tags.length > 0 && (
             <div className="mb-6 flex flex-wrap gap-2">

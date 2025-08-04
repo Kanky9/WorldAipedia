@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from '@/hooks/useLanguage';
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +26,8 @@ import { doc, collection as firestoreCollection, Timestamp } from 'firebase/fire
 import type { LanguageCode } from '@/lib/translations';
 import { useAuth } from '@/contexts/AuthContext';
 import { languages as appLanguagesObject } from '@/lib/translations';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 
 const DEFAULT_MAIN_PLACEHOLDER = 'https://placehold.co/600x400.png';
 const DEFAULT_DETAIL_PLACEHOLDER = 'https://placehold.co/400x300.png';
@@ -64,7 +65,7 @@ export default function CreatePostPage() {
   const [localizedContent, setLocalizedContent] = useState<LocalizedContent>(initialLocalizedContent);
 
   // State for common fields
-  const [category, setCategory] = useState('');
+  const [selectedCategorySlugs, setSelectedCategorySlugs] = useState<string[]>([]);
   const [tags, setTags] = useState('');
   const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
   const [linkTool, setLinkTool] = useState('');
@@ -83,7 +84,7 @@ export default function CreatePostPage() {
 
   const resetForm = () => {
     setLocalizedContent(initialLocalizedContent);
-    setCategory('');
+    setSelectedCategorySlugs([]);
     setTags('');
     setPublishedDate(new Date().toISOString().split('T')[0]);
     setLinkTool('');
@@ -141,7 +142,7 @@ export default function CreatePostPage() {
           setDetailImage2UrlForPreview(existingPost.detailImageUrl2 || DEFAULT_DETAIL_PLACEHOLDER);
           setDetailImage2DataUri(existingPost.detailImageUrl2 || '');
           setDetailImageHint2(existingPost.detailImageHint2 || '');
-          setCategory(existingPost.categorySlug);
+          setSelectedCategorySlugs(existingPost.categorySlugs || []);
           setTags(existingPost.tags.join(', '));
           let pDate = existingPost.publishedDate;
           if (pDate instanceof Timestamp) pDate = pDate.toDate();
@@ -201,6 +202,16 @@ export default function CreatePostPage() {
       },
     }));
   };
+  
+  const handleCategoryChange = (slug: string, checked: boolean) => {
+    setSelectedCategorySlugs(prev => {
+        if (checked) {
+            return [...prev, slug];
+        } else {
+            return prev.filter(s => s !== slug);
+        }
+    });
+  };
 
   const clearImageHelper = (
     setDataUriState: React.Dispatch<React.SetStateAction<string>>,
@@ -229,11 +240,11 @@ export default function CreatePostPage() {
       return;
     }
 
-    if (!category || !publishedDate) {
+    if (selectedCategorySlugs.length === 0 || !publishedDate) {
          toast({
             variant: "destructive",
             title: t('adminPostRequiredFields', "Missing Required Field"),
-            description: "Please select a category and a published date.",
+            description: "Please select at least one category and a published date.",
          });
          return;
     }
@@ -287,8 +298,7 @@ export default function CreatePostPage() {
       longDescription: finalTranslations.longDescription as Record<LanguageCode, string> & { en: string },
       imageUrl: finalMainImageUrl,
       imageHint: mainImageHint,
-      category: allCategories.find(c => c.slug === category)?.name.en || 'Information',
-      categorySlug: category,
+      categorySlugs: selectedCategorySlugs,
       tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
       publishedDate: new Date(publishedDate),
       link: linkTool,
@@ -360,7 +370,7 @@ export default function CreatePostPage() {
         )}
       </div>
       {imageUrlForPreview && (
-        <div className={`mt-2 rounded border overflow-hidden ${aspectRatio}`} style={{maxWidth: `${previewSize.width}px`}}>
+        <div className={cn('mt-2 rounded border overflow-hidden', aspectRatio)} style={{maxWidth: `${previewSize.width}px`}}>
           <Image
             src={imageUrlForPreview}
             alt={t(labelKey, defaultLabel) + " preview"}
@@ -505,20 +515,21 @@ export default function CreatePostPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="category">{t('adminPostCategoryLabel', 'Category')}</Label>
-                <Select value={category} onValueChange={setCategory} required disabled={isProcessRunning}>
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder={t('adminPostSelectCategoryPlaceholder', 'Select a category')} />
-                  </SelectTrigger>
-                  <SelectContent>
+              <div className="space-y-2">
+                <Label>{t('adminPostCategoryLabel', 'Category')}</Label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2 p-4 border rounded-md max-h-48 overflow-y-auto">
                     {allCategories.map(cat => (
-                      <SelectItem key={cat.slug} value={cat.slug}>
-                        {t(cat.name)}
-                      </SelectItem>
+                        <div key={cat.slug} className="flex items-center gap-2">
+                            <Checkbox
+                                id={`category-${cat.slug}`}
+                                checked={selectedCategorySlugs.includes(cat.slug)}
+                                onCheckedChange={(checked) => handleCategoryChange(cat.slug, !!checked)}
+                                disabled={isProcessRunning}
+                            />
+                            <Label htmlFor={`category-${cat.slug}`} className="font-normal cursor-pointer">{t(cat.name)}</Label>
+                        </div>
                     ))}
-                  </SelectContent>
-                </Select>
+                </div>
               </div>
 
               <div>
