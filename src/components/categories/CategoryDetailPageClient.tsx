@@ -38,7 +38,13 @@ export default function CategoryDetailPageClient({ categorySlug }: CategoryDetai
       if (currentCategory) {
         try {
           const posts = await getPostsByCategorySlugFromFirestore(currentCategory.slug);
-          setPostsInCategory(posts);
+          // Sort posts by date on the client-side
+          const sortedPosts = posts.sort((a, b) => {
+            const dateA = a.publishedDate instanceof Date ? a.publishedDate.getTime() : 0;
+            const dateB = b.publishedDate instanceof Date ? b.publishedDate.getTime() : 0;
+            return dateB - dateA;
+          });
+          setPostsInCategory(sortedPosts);
           setAnimationClass('animate-fade-in');
         } catch (err) {
           console.error("Error fetching posts for category:", err);

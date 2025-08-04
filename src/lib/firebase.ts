@@ -141,7 +141,9 @@ export const getAllPostsFromFirestore = async (): Promise<PostType[]> => {
 
 export const getPostsByCategorySlugFromFirestore = async (categorySlug: string): Promise<PostType[]> => {
   const postsCol = collection(db, 'posts');
-  const q = query(postsCol, where('categorySlugs', 'array-contains', categorySlug), orderBy('publishedDate', 'desc'));
+  // The orderBy clause was removed to prevent the composite index error.
+  // Sorting will be handled on the client-side.
+  const q = query(postsCol, where('categorySlugs', 'array-contains', categorySlug));
   const postsSnapshot = await getDocs(q);
   const postsList = postsSnapshot.docs.map(docSnap => {
     const data = docSnap.data();
