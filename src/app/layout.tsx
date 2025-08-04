@@ -13,7 +13,7 @@ import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
 import WelcomeDialog from '@/components/layout/WelcomeDialog';
 import { Inter, Space_Grotesk } from 'next/font/google';
-import AdSenseUnit from '@/components/ads/AdSenseUnit';
+
 
 // Setup fonts with next/font
 const inter = Inter({
