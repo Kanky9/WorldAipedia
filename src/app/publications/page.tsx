@@ -299,14 +299,22 @@ export default function PublicationsPage() {
     const commonClass = "w-full justify-start hover:bg-primary/20 hover:text-primary";
     const activeClass = "bg-primary/20 text-primary";
     
-    const itemContent = (Icon: any, label: string, filterType: typeof filter) => (
+    const itemContent = (Icon: any, label: string) => (
         <>
             <Icon className="mr-2 h-4 w-4" /> {label}
         </>
     );
 
     const notificationItem = (
-      <button onClick={openNotificationsPanel} disabled={!isUserPro} className={cn("w-full justify-start hover:bg-primary/20 hover:text-primary relative flex items-center p-2 rounded-md", isDropdown ? "text-sm" : "")}>
+      <button 
+        onClick={openNotificationsPanel} 
+        disabled={!isUserPro} 
+        className={cn(
+          "relative flex items-center p-2 rounded-md w-full justify-start",
+          "hover:bg-primary text-primary-foreground",
+          isDropdown ? "text-sm" : ""
+        )}
+      >
         <Bell className="mr-2 h-4 w-4" />
         <span>Notifications</span>
         {unreadNotifications > 0 && (
@@ -321,22 +329,22 @@ export default function PublicationsPage() {
     if (isDropdown) {
         return (
             <>
-                <DropdownMenuItem onClick={() => setFilter('all')} disabled={!isUserPro}>{itemContent(List, "All", "all")}</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilter('mine')} disabled={!isUserPro}>{itemContent(UserIcon, "My Publications", "mine")}</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes", "liked")}</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves", "saved")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('all')} disabled={!isUserPro}>{itemContent(List, "All")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('mine')} disabled={!isUserPro}>{itemContent(UserIcon, "My Publications")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves")}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>{notificationItem}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openNotificationsPanel(); }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
             </>
         );
     }
 
     return (
         <div className="flex flex-col gap-2 w-full">
-            <Button variant='ghost' onClick={() => setFilter('all')} disabled={!isUserPro} className={cn(commonClass, filter === 'all' && activeClass)}>{itemContent(List, "All", "all")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('mine')} disabled={!isUserPro} className={cn(commonClass, filter === 'mine' && activeClass)}>{itemContent(UserIcon, "My Publications", "mine")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, "My Likes", "liked")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, "My Saves", "saved")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('all')} disabled={!isUserPro} className={cn(commonClass, filter === 'all' && activeClass)}>{itemContent(List, "All")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('mine')} disabled={!isUserPro} className={cn(commonClass, filter === 'mine' && activeClass)}>{itemContent(UserIcon, "My Publications")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, "My Likes")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, "My Saves")}</Button>
             <div className="mt-4">{notificationItem}</div>
         </div>
     );
