@@ -1,4 +1,3 @@
-
 import type { FC } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -37,7 +36,7 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
   return (
     <Card className="flex flex-col overflow-hidden h-full transform transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 rounded-xl group bg-card">
       <Link href={`/posts/${post.id}`} className="block">
-        <div className="relative w-full h-28 sm:h-32">
+        <div className="relative w-full h-40 sm:h-48">
           <Image
             src={post.imageUrl}
             alt={t(post.title, post.id)}
@@ -50,9 +49,9 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
           />
         </div>
       </Link>
-      <CardHeader className="p-3">
+      <CardHeader className="p-4">
         <Link href={`/posts/${post.id}`} className="block">
-          <CardTitle className="font-headline text-base leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
+          <CardTitle className="font-headline text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2">{t(post.title)}</CardTitle>
         </Link>
         <div className="flex items-center text-xs text-muted-foreground pt-1 gap-2">
            {category && (
@@ -63,11 +62,11 @@ const PostCard: FC<PostCardProps> = ({ post }) => {
           )}
         </div>
       </CardHeader>
-      <CardContent className="flex-grow p-3 pt-0">
-        <CardDescription className="text-xs line-clamp-3">{t(post.shortDescription)}</CardDescription>
+      <CardContent className="flex-grow p-4 pt-0">
+        <CardDescription className="text-sm line-clamp-3">{t(post.shortDescription)}</CardDescription>
       </CardContent>
-      <CardFooter className="p-3 pt-0">
-        <Button asChild variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-xs px-3 py-1.5 rounded-md">
+      <CardFooter className="p-4 pt-2">
+        <Button asChild variant="outline" className="w-full border-primary/50 text-primary hover:bg-primary hover:text-primary-foreground hover:shadow-md text-sm px-4 py-2 rounded-lg">
           <Link href={`/posts/${post.id}`}>{t('readMoreButton', 'Read More')}</Link>
         </Button>
       </CardFooter>
