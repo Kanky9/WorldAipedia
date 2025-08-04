@@ -311,7 +311,7 @@ export default function PublicationsPage() {
         disabled={!isUserPro} 
         className={cn(
           "relative flex items-center p-2 rounded-md w-full justify-start",
-          "hover:bg-primary text-primary-foreground",
+          "bg-primary hover:bg-primary/90 text-primary-foreground",
           isDropdown ? "text-sm" : ""
         )}
       >
@@ -334,7 +334,7 @@ export default function PublicationsPage() {
                 <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes")}</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves")}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openNotificationsPanel(); }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={openNotificationsPanel}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
             </>
         );
     }
@@ -443,3 +443,5 @@ export default function PublicationsPage() {
     </>
   );
 }
+
+    
