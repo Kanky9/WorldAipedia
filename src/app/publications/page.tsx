@@ -50,6 +50,7 @@ import UserSearch from '@/components/publications/UserSearch';
 import NotificationsPanel from '@/components/publications/NotificationsPanel';
 import UserProfileDialog from '@/components/publications/UserProfileDialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { useChat } from '@/contexts/ChatContext';
 
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
@@ -172,6 +173,7 @@ export default function PublicationsPage() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
+  const { openUpgradeDialog } = useChat();
   
   const [allPosts, setAllPosts] = useState<ProPost[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<ProPost[]>([]);
@@ -408,7 +410,7 @@ export default function PublicationsPage() {
                    {currentUser ? (
                      <>
                         <p className="text-muted-foreground mb-4">{t('publicationsUpgradePrompt')}</p>
-                        <Button asChild><Link href="/account">{t('upgradeToProButton')}</Link></Button>
+                        <Button onClick={openUpgradeDialog}>{t('upgradeToProButton')}</Button>
                      </>
                    ) : (
                      <>
@@ -443,5 +445,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    
