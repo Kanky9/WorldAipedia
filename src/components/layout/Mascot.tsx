@@ -134,7 +134,7 @@ const Mascot = () => {
     setIsBubbleDismissed(prev => !prev);
   };
 
-  const pagesToHideOn = ['/login', '/register', '/publications'];
+  const pagesToHideOn = ['/login', '/register', '/publications', '/donations'];
   if (pathname.startsWith('/admin') || pagesToHideOn.includes(pathname)) {
     return null;
   }
