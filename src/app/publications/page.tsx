@@ -336,7 +336,7 @@ export default function PublicationsPage() {
                 <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes")}</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves")}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={openNotificationsPanel}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={(e) => { openNotificationsPanel() }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
             </>
         );
     }
@@ -359,29 +359,33 @@ export default function PublicationsPage() {
 
         {/* Mobile-specific Controls */}
         <div className="lg:hidden mb-4 space-y-4">
-             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full">
-                       <ChevronDown className="mr-2 h-4 w-4"/>
-                       <span>
-                         {filter === 'all' && 'All'}
-                         {filter === 'mine' && 'My Publications'}
-                         {filter === 'liked' && 'My Likes'}
-                         {filter === 'saved' && 'My Saves'}
-                       </span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-[calc(100vw-2rem)]">
-                    {renderFilterOptions(true)}
-                </DropdownMenuContent>
-             </DropdownMenu>
+             {isUserPro && (
+               <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        <ChevronDown className="mr-2 h-4 w-4"/>
+                        <span>
+                          {filter === 'all' && 'All'}
+                          {filter === 'mine' && 'My Publications'}
+                          {filter === 'liked' && 'My Likes'}
+                          {filter === 'saved' && 'My Saves'}
+                        </span>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-[calc(100vw-2rem)]">
+                      {renderFilterOptions(true)}
+                  </DropdownMenuContent>
+               </DropdownMenu>
+             )}
             {isUserPro && <UserSearch onProfileClick={handleProfileClick} />}
         </div>
 
 
         <div className="relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8">
-            <aside className={cn("hidden lg:block sticky top-24 self-start", !isUserPro && "pointer-events-none")}>
-                {renderFilterOptions(false)}
+            <aside className={cn("hidden lg:block sticky top-24 self-start pointer-events-none")}>
+                <div className={cn(isUserPro && "pointer-events-auto")}>
+                    {renderFilterOptions(false)}
+                </div>
             </aside>
 
             <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
@@ -401,23 +405,25 @@ export default function PublicationsPage() {
               )}
             </main>
             
-            {isUserPro && <aside className={cn("hidden lg:block sticky top-24 self-start", !isUserPro && "pointer-events-none")}><UserSearch onProfileClick={handleProfileClick} /></aside>}
+            {isUserPro && <aside className={cn("hidden lg:block sticky top-24 self-start pointer-events-none")}><div className={cn(isUserPro && "pointer-events-auto")}><UserSearch onProfileClick={handleProfileClick} /></div></aside>}
             
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm col-span-full">
-                   <ShieldAlert className="h-16 w-16 text-destructive mb-4" />
-                   <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
-                   {currentUser ? (
-                     <>
-                        <p className="text-muted-foreground mb-4">{t('publicationsUpgradePrompt')}</p>
-                        <Button onClick={openUpgradeDialog}>{t('upgradeToProButton')}</Button>
-                     </>
-                   ) : (
-                     <>
-                        <p className="text-muted-foreground mb-4">{t('publicationsLoginPrompt')}</p>
-                        <Button asChild><Link href="/login">{t('loginButton')}</Link></Button>
-                     </>
-                   )}
+                   <div className="pointer-events-auto">
+                     <ShieldAlert className="h-16 w-16 text-destructive mb-4 mx-auto" />
+                     <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
+                     {currentUser ? (
+                       <>
+                          <p className="text-muted-foreground mb-4">{t('publicationsUpgradePrompt')}</p>
+                          <Button onClick={openUpgradeDialog}>{t('upgradeToProButton')}</Button>
+                       </>
+                     ) : (
+                       <>
+                          <p className="text-muted-foreground mb-4">{t('publicationsLoginPrompt')}</p>
+                          <Button asChild><Link href="/login">{t('loginButton')}</Link></Button>
+                       </>
+                     )}
+                   </div>
                 </div>
             )}
         </div>
