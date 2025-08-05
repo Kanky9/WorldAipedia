@@ -26,6 +26,8 @@ export type CoreTranslationKey =
   | 'navAdmin'
   | 'navAccount'
   | 'proMemberLabel'
+  // Footer
+  | 'footerFounders'
   // Mascot
   | 'mascotGreeting'
   | 'mascotChatGreeting1'
@@ -287,10 +289,6 @@ export type CoreTranslationKey =
   | 'applePayLabel'
   | 'googlePayLabel'
   | 'upgradeNowButton'
-  | 'upgradeSuccessTitle'
-  | 'upgradeSuccessDescription'
-  | 'upgradeFailedTitle'
-  | 'upgradeFailedDescription'
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
   | 'monthlyAccessLabel'
@@ -354,7 +352,11 @@ export type CoreTranslationKey =
   | 'Asistente'
   | 'AI'
   | 'Machine Learning'
-  | 'NLP';
+  | 'NLP'
+  | 'upgradeSuccessTitle'
+  | 'upgradeSuccessDescription'
+  | 'upgradeFailedTitle'
+  | 'upgradeFailedDescription';
 
 export type TranslationSet = {
   [key in CoreTranslationKey]?: string;
@@ -392,6 +394,7 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'My Account',
     proMemberLabel: 'PRO Member',
+    footerFounders: 'Founders',
     mascotGreeting: 'Hi, I\'m Lace! Ready to explore AI?',
     mascotChatGreeting1: 'You can chat with me here!',
     mascotCategoriesGreeting1: 'This is the categories section',
@@ -711,6 +714,7 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Mi Cuenta',
     proMemberLabel: 'Miembro PRO',
+    footerFounders: 'Fundadores',
     mascotGreeting: '¡Hola, soy Lace! ¿Listo para explorar la IA?',
     mascotChatGreeting1: '¡Aquí puedes chatear conmigo!',
     mascotCategoriesGreeting1: 'Este es el apartado de categorías',
@@ -1030,6 +1034,7 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Il Mio Account',
     proMemberLabel: 'Membro PRO',
+    footerFounders: 'Fondatori',
     mascotGreeting: "Ciao, sono Lace! Pronto a esplorare l'IA?",
     mascotChatGreeting1: "Puoi chattare con me qui!",
     mascotCategoriesGreeting1: 'Questa è la sezione delle categorie',
@@ -1349,6 +1354,7 @@ export const translations: Translations = {
     navAdmin: '管理',
     navAccount: '我的账户',
     proMemberLabel: 'PRO会员',
+    footerFounders: '创始人',
     mascotGreeting: "你好，我是Lace！准备好探索AI了吗？",
     mascotChatGreeting1: "你可以在这里跟我聊天！",
     mascotCategoriesGreeting1: '这里是分类区',
@@ -1668,6 +1674,7 @@ export const translations: Translations = {
     navAdmin: '管理',
     navAccount: 'マイアカウント',
     proMemberLabel: 'PROメンバー',
+    footerFounders: '創設者',
     mascotGreeting: "こんにちは、レースです！AIを探求する準備はできましたか？",
     mascotChatGreeting1: "ここで私とチャットできます！",
     mascotCategoriesGreeting1: 'ここはカテゴリーのセクションです',
@@ -1987,6 +1994,7 @@ export const translations: Translations = {
     navAdmin: 'Admin',
     navAccount: 'Minha Conta',
     proMemberLabel: 'Membro PRO',
+    footerFounders: 'Fundadores',
     mascotGreeting: "Olá, sou a Lace! Pronto para explorar a IA?",
     mascotChatGreeting1: "Você pode conversar comigo aqui!",
     mascotCategoriesGreeting1: 'Esta é a seção de categorias',
@@ -2309,4 +2317,3 @@ export type LocalizedString =
 
 
     
-
