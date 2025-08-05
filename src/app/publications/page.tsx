@@ -336,7 +336,7 @@ export default function PublicationsPage() {
                 <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes")}</DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves")}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={(e) => { openNotificationsPanel() }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => { openNotificationsPanel() }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
             </>
         );
     }
@@ -409,7 +409,7 @@ export default function PublicationsPage() {
             
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm col-span-full">
-                   <div className="pointer-events-auto">
+                   <div className="pointer-events-auto mt-12">
                      <ShieldAlert className="h-16 w-16 text-destructive mb-4 mx-auto" />
                      <h2 className="text-2xl font-bold mb-2">{t('publicationsAccessDenied')}</h2>
                      {currentUser ? (
@@ -451,5 +451,3 @@ export default function PublicationsPage() {
     </>
   );
 }
-
-    
