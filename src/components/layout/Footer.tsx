@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
+import { Linkedin } from 'lucide-react';
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -11,7 +12,32 @@ const Footer = () => {
           <p>&copy; {new Date().getFullYear()} WorldAIPedia. All rights reserved.</p>
           <p className="mt-1">Exploring the frontiers of Artificial Intelligence.</p>
         </div>
-        <div className="flex flex-wrap justify-center gap-4">
+
+        <div className="mt-2">
+            <h4 className="font-semibold text-foreground mb-2">{t('footerFounders', 'Founders')}</h4>
+            <div className="flex items-center justify-center gap-4">
+                <a 
+                    href="https://www.linkedin.com/in/joaquin-bello-b681842b0" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 bg-slate-700 rounded-lg shadow-md border-b-4 border-slate-800 text-white transform transition-all duration-150 ease-in-out hover:bg-slate-600 hover:border-b-2 active:translate-y-1 active:border-b-0"
+                    aria-label="Joaquín Bello's LinkedIn Profile"
+                >
+                    <Linkedin className="h-5 w-5" />
+                </a>
+                <a 
+                    href="https://www.linkedin.com/in/santino-bournot" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 bg-slate-700 rounded-lg shadow-md border-b-4 border-slate-800 text-white transform transition-all duration-150 ease-in-out hover:bg-slate-600 hover:border-b-2 active:translate-y-1 active:border-b-0"
+                    aria-label="Santino Bournot's LinkedIn Profile"
+                >
+                    <Linkedin className="h-5 w-5" />
+                </a>
+            </div>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-4 mt-2">
           <Link href="/privacy-policy" className="text-primary hover:underline">
             Privacy Policy
           </Link>
