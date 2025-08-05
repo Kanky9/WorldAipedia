@@ -36,9 +36,10 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
   }, [onOpenChange, router]);
 
   const proBenefits = [
-    t('proBenefit1', "Full access to all AI tools & posts"),
-    t('proBenefit2', "Comment and rate AI tools"),
-    t('proBenefit3', "Priority support"),
+    t('proBenefit1'),
+    t('proBenefit2'),
+    t('proBenefit3'),
+    t('proBenefit4'),
   ];
 
   if (!PAYPAL_CLIENT_ID) {

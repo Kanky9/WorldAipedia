@@ -276,6 +276,7 @@ export type CoreTranslationKey =
   | 'proBenefit1'
   | 'proBenefit2'
   | 'proBenefit3'
+  | 'proBenefit4'
   | 'upgradeToProPrice'
   | 'paymentMethodsTitle'
   | 'paymentErrorTitle'
@@ -623,6 +624,7 @@ export const translations: Translations = {
     proBenefit1: 'Full access to all tools on the page',
     proBenefit2: 'Access to comment and rate the published AIs',
     proBenefit3: 'Publications section',
+    proBenefit4: 'Ability to make posts and comment on other users',
     upgradeToProPrice: "Just $1.00!",
     monthlyAccessLabel: '(for one month of access)',
     paymentMethodsTitle: "Choose Your Payment Method",
@@ -941,6 +943,7 @@ export const translations: Translations = {
     proBenefit1: 'Disponibilidad completa a todas las herramientas de la página',
     proBenefit2: 'Acceso a poder comentar y calificar las IA publicadas',
     proBenefit3: 'Apartado de publicaciones',
+    proBenefit4: 'Poder realizar publicaciones y comentar a otros usuarios',
     upgradeToProPrice: "¡Solo $1.00!",
     monthlyAccessLabel: '(por un mes de acceso)',
     paymentMethodsTitle: "Elige tu método de pago",
@@ -1256,9 +1259,10 @@ export const translations: Translations = {
     upgradeToProTitleDialog: "Passa a World AI PRO",
     upgradeToProDescriptionDialog: "Sblocca funzionalità esclusive, supporto avanzato e un'esperienza migliore.",
     upgradeToProBenefits: "Benefici PRO:",
-    proBenefit1: 'Piena disponibilità di tutti gli strumenti della pagina',
+    proBenefit1: 'Disponibilità completa di tutti gli strumenti sulla pagina',
     proBenefit2: 'Accesso per commentare e valutare le IA pubblicate',
     proBenefit3: 'Sezione pubblicazioni',
+    proBenefit4: 'Possibilità di creare post e commentare altri utenti',
     upgradeToProPrice: "Solo $1.00!",
     monthlyAccessLabel: '(per un mese di accesso)',
     paymentMethodsTitle: "Scegli il tuo metodo di pagamento",
@@ -1577,6 +1581,7 @@ export const translations: Translations = {
     proBenefit1: '完全访问页面上的所有工具',
     proBenefit2: '可以评论和评价已发布的AI',
     proBenefit3: '“出版物”部分',
+    proBenefit4: '能够发表帖子并评论其他用户',
     upgradeToProPrice: "仅需 $1.00！",
     monthlyAccessLabel: '（每月访问）',
     paymentMethodsTitle: "选择您的支付方式",
@@ -1895,6 +1900,7 @@ export const translations: Translations = {
     proBenefit1: 'ページ上のすべてのツールへの完全なアクセス',
     proBenefit2: '公開されたAIにコメントし、評価するアクセス',
     proBenefit3: '「出版物」セクション',
+    proBenefit4: '投稿を作成し、他のユーザーにコメントする機能',
     upgradeToProPrice: "わずか $1.00！",
     monthlyAccessLabel: '（1ヶ月のアクセス）',
     paymentMethodsTitle: "お支払い方法を選択",
@@ -2213,6 +2219,7 @@ export const translations: Translations = {
     proBenefit1: 'Disponibilidade total de todas as ferramentas na página',
     proBenefit2: 'Acesso para comentar e avaliar as IAs publicadas',
     proBenefit3: 'Seção de publicações',
+    proBenefit4: 'Poder fazer publicações e comentar outros usuários',
     upgradeToProPrice: "Apenas $1.00!",
     monthlyAccessLabel: '(para um mês de acesso)',
     paymentMethodsTitle: "Escolha seu método de pagamento",
@@ -2302,3 +2309,4 @@ export type LocalizedString =
 
 
     
+
