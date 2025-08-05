@@ -17,7 +17,7 @@ import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; 
 import type { Timestamp } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { getUsersByIds, updateUsernameAcrossPublications } from "@/lib/firebase";
+import { getUsersByIds, updateUsernameAcrossPublications, cancelUserSubscription } from "@/lib/firebase";
 import type { User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,6 +34,7 @@ export default function AccountPage() {
   const [email, setEmail] = useState('');
   const [description, setDescription] = useState('');
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [isCancellingSubscription, setIsCancellingSubscription] = useState(false);
   
   const [showFollowingDialog, setShowFollowingDialog] = useState(false);
   const [followingList, setFollowingList] = useState<UserType[]>([]);
@@ -101,8 +102,21 @@ export default function AccountPage() {
   };
 
 
-  const handleCancelSubscription = () => {
-    toast({ title: t('cancelSubscriptionSimulated', "Subscription cancellation (simulated).") });
+  const handleCancelSubscription = async () => {
+    if (!currentUser || isCancellingSubscription) return;
+    
+    setIsCancellingSubscription(true);
+    try {
+      await cancelUserSubscription(currentUser.uid);
+      // Manually update local user state to reflect cancellation immediately
+      await updateUserProfileInFirestore(currentUser.uid, { isSubscribed: false, subscriptionPlan: null });
+      toast({ title: t('cancelSubscriptionSuccessTitle', "Subscription Cancelled"), description: t('cancelSubscriptionSuccessDesc', "Your PRO subscription has been cancelled.") });
+    } catch (error) {
+      console.error("Error cancelling subscription:", error);
+      toast({ variant: "destructive", title: t('cancelSubscriptionErrorTitle', "Cancellation Failed"), description: t('cancelSubscriptionErrorDesc', "Could not cancel your subscription. Please contact support.") });
+    } finally {
+      setIsCancellingSubscription(false);
+    }
   }
   
   const handleUpgradeToPro = () => {
@@ -231,7 +245,10 @@ export default function AccountPage() {
                   <p>{t('paymentMethodLabel', 'Payment Method')}: Visa **** 1234 (Simulated)</p>
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
                     <Button variant="outline" onClick={() => toast({description: t('paymentMethodLabel', "Payment method update (simulated).") }) }>{t('updatePaymentButton', 'Update Payment Method')}</Button>
-                    <Button variant="destructive" onClick={handleCancelSubscription}>{t('cancelSubscriptionButton', 'Cancel Subscription')}</Button>
+                    <Button variant="destructive" onClick={handleCancelSubscription} disabled={isCancellingSubscription}>
+                      {isCancellingSubscription && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                      {t('cancelSubscriptionButton', 'Cancel Subscription')}
+                    </Button>
                   </div>
                 </>
               ) : (

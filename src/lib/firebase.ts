@@ -1,4 +1,5 @@
 
+
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
@@ -322,6 +323,29 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
 
   await batch.commit();
 };
+
+export const cancelUserSubscription = async (uid: string) => {
+  const userRef = doc(db, 'users', uid);
+  const subRef = doc(db, 'users', uid, 'subscription', 'current');
+  
+  const batch = writeBatch(db);
+
+  // Update main user document
+  batch.update(userRef, {
+    isSubscribed: false,
+    subscriptionPlan: null, // or "Cancelled"
+    paypalSubscriptionID: null,
+  });
+
+  // Update subscription sub-collection document
+  batch.set(subRef, {
+    status: 'cancelled',
+    cancelledAt: serverTimestamp(),
+  }, { merge: true });
+
+  await batch.commit();
+};
+
 
 // Follow System, User Search, and Username Propagation
 export const isUsernameTaken = async (username: string): Promise<boolean> => {

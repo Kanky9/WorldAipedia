@@ -87,7 +87,8 @@ export interface Category {
 export interface Subscription {
     status: 'active' | 'cancelled' | 'incomplete';
     method: 'paypal' | 'stripe';
-    renewedAt: Timestamp | Date;
+    renewedAt?: Timestamp | Date;
+    cancelledAt?: Timestamp | Date;
     subscriptionId?: string; // from PayPal or Stripe
 }
 
@@ -102,8 +103,8 @@ export interface User {
   description?: string; // User's bio/description
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
-  subscriptionPlan?: string; // For display
-  paypalSubscriptionID?: string; // For PayPal integration
+  subscriptionPlan?: string | null; // For display
+  paypalSubscriptionID?: string | null; // For PayPal integration
   isAdmin?: boolean; // Added for admin role
   followers?: string[]; // Array of UIDs of users following this user
   following?: string[]; // Array of UIDs of users this user is following
