@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useCallback } from 'react';
@@ -49,7 +48,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
        <Dialog open={open} onOpenChange={onOpenChange}>
          <DialogContent>
            <DialogHeader>
-             <DialogTitle>Payment Error</DialogTitle>
+             <DialogTitle>{t('paymentErrorTitle', 'Payment Error')}</DialogTitle>
              <DialogDescription>
                The payment system is currently unavailable. Please contact support.
              </DialogDescription>
@@ -96,7 +95,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
               </PayPalScriptProvider>
             ) : (
                <Button onClick={handleLoginRedirect} className="w-full">
-                  {t('loginButton', 'Login to Continue')}
+                  {t('loginButton', 'Login')}
               </Button>
             )}
           </div>
