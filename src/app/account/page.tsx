@@ -21,12 +21,14 @@ import { getUsersByIds, updateUsernameAcrossPublications } from "@/lib/firebase"
 import type { User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import { useChat } from "@/contexts/ChatContext";
 
 export default function AccountPage() {
   const { t, language } = useLanguage();
   const { currentUser, loading: authLoading, updateUserProfileInFirestore } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+  const { openUpgradeDialog } = useChat();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -104,7 +106,7 @@ export default function AccountPage() {
   }
   
   const handleUpgradeToPro = () => {
-    toast({ title: t('upgradeToProSimulated', "Upgrade to PRO (simulated payment flow).") });
+    openUpgradeDialog();
   }
 
   const getLocaleForDate = () => {
