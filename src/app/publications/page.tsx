@@ -308,7 +308,7 @@ export default function PublicationsPage() {
     );
 
     const notificationItem = (
-      <button 
+      <Button 
         onClick={openNotificationsPanel} 
         disabled={!isUserPro} 
         className={cn(
@@ -325,7 +325,7 @@ export default function PublicationsPage() {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
           </span>
         )}
-      </button>
+      </Button>
     );
     
     if (isDropdown) {
@@ -379,12 +379,12 @@ export default function PublicationsPage() {
         </div>
 
 
-        <div className={cn("relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8", !isUserPro && "pointer-events-none")}>
-            <aside className="hidden lg:block sticky top-24 self-start">
+        <div className="relative grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-8">
+            <aside className={cn("hidden lg:block sticky top-24 self-start", !isUserPro && "pointer-events-none")}>
                 {renderFilterOptions(false)}
             </aside>
 
-            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm")}>
+            <main className={cn("flex-1 space-y-6", !isUserPro && "blur-sm pointer-events-none")}>
               {isUserPro && (
                 <div className="mb-6">
                   <CreatePublicationForm />
@@ -401,7 +401,7 @@ export default function PublicationsPage() {
               )}
             </main>
             
-            {isUserPro && <aside className="hidden lg:block sticky top-24 self-start"><UserSearch onProfileClick={handleProfileClick} /></aside>}
+            {isUserPro && <aside className={cn("hidden lg:block sticky top-24 self-start", !isUserPro && "pointer-events-none")}><UserSearch onProfileClick={handleProfileClick} /></aside>}
             
             {!isUserPro && (
                 <div className="absolute inset-0 bg-background/80 flex flex-col items-center justify-center text-center z-10 rounded-lg backdrop-blur-sm col-span-full">
@@ -445,3 +445,5 @@ export default function PublicationsPage() {
     </>
   );
 }
+
+    
