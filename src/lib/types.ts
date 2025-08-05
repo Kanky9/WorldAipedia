@@ -1,4 +1,5 @@
 
+
 import type { LucideIcon } from 'lucide-react';
 import type { LanguageCode } from '@/lib/translations';
 import type { Timestamp } from 'firebase/firestore';
@@ -85,7 +86,7 @@ export interface Category {
 }
 
 export interface Subscription {
-    status: 'active' | 'cancelled' | 'incomplete';
+    status: 'active' | 'cancelled' | 'incomplete' | 'cancelled_at_period_end';
     method: 'paypal' | 'stripe';
     renewedAt?: Timestamp | Date;
     cancelledAt?: Timestamp | Date;
@@ -104,6 +105,8 @@ export interface User {
   isSubscribed?: boolean; // From Firestore
   memberSince?: Timestamp | Date; // From Firestore
   subscriptionPlan?: string | null; // For display
+  nextBillingDate?: string | null; // For display
+  subscriptionStatus?: 'active' | 'cancelled_at_period_end'; // To manage cancellation intent
   paypalSubscriptionID?: string | null; // For PayPal integration
   isAdmin?: boolean; // Added for admin role
   followers?: string[]; // Array of UIDs of users following this user

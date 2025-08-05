@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useAuth } from "@/contexts/AuthContext";
-import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2, Users, UserCheck } from "lucide-react";
+import { User, ShieldCheck, CreditCard, Settings, LogOut, Star, Pencil, Loader2, Users, UserCheck, AlertTriangle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,16 @@ import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale'; 
 import type { Timestamp } from 'firebase/firestore';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { getUsersByIds, updateUsernameAcrossPublications, cancelUserSubscription } from "@/lib/firebase";
 import type { User as UserType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -39,6 +49,8 @@ export default function AccountPage() {
   const [showFollowingDialog, setShowFollowingDialog] = useState(false);
   const [followingList, setFollowingList] = useState<UserType[]>([]);
   const [isLoadingFollowing, setIsLoadingFollowing] = useState(false);
+  
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
 
   useEffect(() => {
@@ -102,20 +114,21 @@ export default function AccountPage() {
   };
 
 
-  const handleCancelSubscription = async () => {
+  const handleConfirmCancelSubscription = async () => {
     if (!currentUser || isCancellingSubscription) return;
     
     setIsCancellingSubscription(true);
     try {
       await cancelUserSubscription(currentUser.uid);
-      // Manually update local user state to reflect cancellation immediately
-      await updateUserProfileInFirestore(currentUser.uid, { isSubscribed: false, subscriptionPlan: null });
-      toast({ title: t('cancelSubscriptionSuccessTitle', "Subscription Cancelled"), description: t('cancelSubscriptionSuccessDesc', "Your PRO subscription has been cancelled.") });
+      // Manually update local user state to reflect cancellation intent
+      await updateUserProfileInFirestore(currentUser.uid, { subscriptionStatus: 'cancelled_at_period_end' });
+      toast({ title: t('cancelSubscriptionSuccessTitle', "Subscription Cancelled"), description: t('cancelSubscriptionSuccessDesc', "Your PRO subscription will be active until the end of the current period.") });
     } catch (error) {
       console.error("Error cancelling subscription:", error);
       toast({ variant: "destructive", title: t('cancelSubscriptionErrorTitle', "Cancellation Failed"), description: t('cancelSubscriptionErrorDesc', "Could not cancel your subscription. Please contact support.") });
     } finally {
       setIsCancellingSubscription(false);
+      setShowCancelConfirm(false);
     }
   }
   
@@ -151,6 +164,8 @@ export default function AccountPage() {
       </div>
     );
   }
+
+  const hasCancelled = currentUser?.subscriptionStatus === 'cancelled_at_period_end';
 
   return (
     <>
@@ -240,13 +255,18 @@ export default function AccountPage() {
             <CardContent className="space-y-3">
               {currentUser.isSubscribed ? (
                 <>
+                  {hasCancelled && (
+                    <div className="p-3 mb-3 rounded-md bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 text-sm flex items-center gap-2">
+                       <AlertTriangle className="h-5 w-5"/> 
+                       <div>Your subscription has been cancelled and will remain active until {currentUser.nextBillingDate || "the end of the period"}.</div>
+                    </div>
+                  )}
                   <p>{t('currentPlanLabel', 'Current Plan')}: <span className="font-semibold text-primary">{currentUser.subscriptionPlan || 'PRO Plan'}</span></p>
-                  <p>{t('nextBillingDateLabel', 'Next Billing Date')}: {currentUser.nextBillingDate || "August 15, 2024 (Simulated)"}</p>
+                  <p>{t('nextBillingDateLabel', 'Access valid until')}: {currentUser.nextBillingDate || "August 15, 2024 (Simulated)"}</p>
                   <p>{t('paymentMethodLabel', 'Payment Method')}: Visa **** 1234 (Simulated)</p>
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
                     <Button variant="outline" onClick={() => toast({description: t('paymentMethodLabel', "Payment method update (simulated).") }) }>{t('updatePaymentButton', 'Update Payment Method')}</Button>
-                    <Button variant="destructive" onClick={handleCancelSubscription} disabled={isCancellingSubscription}>
-                      {isCancellingSubscription && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                    <Button variant="destructive" onClick={() => setShowCancelConfirm(true)} disabled={hasCancelled}>
                       {t('cancelSubscriptionButton', 'Cancel Subscription')}
                     </Button>
                   </div>
@@ -289,6 +309,28 @@ export default function AccountPage() {
             )}
         </DialogContent>
     </Dialog>
+    
+    <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to cancel?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Your PRO access will remain active until the end of your current billing period. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmCancelSubscription}
+              className="bg-destructive hover:bg-destructive/90"
+              disabled={isCancellingSubscription}
+            >
+              {isCancellingSubscription && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+              Yes, cancel subscription
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

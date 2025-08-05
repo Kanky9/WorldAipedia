@@ -304,14 +304,17 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
   const userRef = doc(db, 'users', uid);
   const subRef = doc(db, 'users', uid, 'subscription', 'current');
   
+  const nextBillingDate = new Date();
+  nextBillingDate.setDate(nextBillingDate.getDate() + 30);
+
   const subscriptionData = {
     status: 'active',
     method,
     renewedAt: serverTimestamp(),
     paypalSubscriptionID: subscriptionId || null,
+    nextBillingDate: Timestamp.fromDate(nextBillingDate),
   };
   
-  // Use a batch to update both documents atomically
   const batch = writeBatch(db);
   
   batch.set(subRef, subscriptionData, { merge: true });
@@ -319,10 +322,13 @@ export const updateUserToPro = async (uid: string, method: 'paypal', subscriptio
     isSubscribed: true,
     subscriptionPlan: `PRO Monthly (${method})`,
     paypalSubscriptionID: subscriptionId || null,
+    nextBillingDate: Timestamp.fromDate(nextBillingDate),
+    subscriptionStatus: 'active',
   });
 
   await batch.commit();
 };
+
 
 export const cancelUserSubscription = async (uid: string) => {
   const userRef = doc(db, 'users', uid);
@@ -330,18 +336,15 @@ export const cancelUserSubscription = async (uid: string) => {
   
   const batch = writeBatch(db);
 
-  // Update main user document
+  // Set flags to indicate cancellation at period end, but don't remove access yet.
   batch.update(userRef, {
-    isSubscribed: false,
-    subscriptionPlan: null, // or "Cancelled"
-    paypalSubscriptionID: null,
+    subscriptionStatus: 'cancelled_at_period_end',
   });
-
-  // Update subscription sub-collection document
-  batch.set(subRef, {
-    status: 'cancelled',
+  
+  batch.update(subRef, {
+    status: 'cancelled_at_period_end',
     cancelledAt: serverTimestamp(),
-  }, { merge: true });
+  });
 
   await batch.commit();
 };

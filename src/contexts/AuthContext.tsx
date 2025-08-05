@@ -74,6 +74,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await setDoc(userRef, newFirestoreUser, { merge: true });
           userData = newFirestoreUser;
         }
+        
+        // Handle subscription expiration
+        if (userData.isSubscribed && userData.nextBillingDate) {
+          const nextBillingDate = (typeof userData.nextBillingDate === 'string') ? new Date(userData.nextBillingDate) : (userData.nextBillingDate as Timestamp).toDate();
+          if (new Date() > nextBillingDate) {
+            // Subscription has expired
+            userData.isSubscribed = false;
+            userData.subscriptionStatus = undefined;
+            userData.subscriptionPlan = undefined;
+            await updateDoc(userRef, {
+              isSubscribed: false,
+              subscriptionStatus: null,
+              subscriptionPlan: null,
+            });
+          }
+        }
+        
         setCurrentUser(userData);
         return userData;
       } catch (error) {
