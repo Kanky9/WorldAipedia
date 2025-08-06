@@ -23,7 +23,7 @@ export default {
     },
     extend: {
       screens: {
-        "xs": "461px",
+        "xs": "466px",
       },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
