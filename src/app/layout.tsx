@@ -38,6 +38,7 @@ export default function RootLayout({
       <head>
         <title>World AI - Your Guide to Artificial Intelligence</title>
         <meta name="description" content="Discover news and information about existing and emerging AI tools, categorized for easy exploration." />
+        <meta name="google-site-verification" content="dEZUcgyZjbl3TqKcOhMC9TpwmAA1iUkGhOZoviJcp24" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         <LanguageProvider>
