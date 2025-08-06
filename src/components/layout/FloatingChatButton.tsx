@@ -12,7 +12,7 @@ export default function FloatingChatButton() {
   const { t } = useLanguage();
   const pathname = usePathname();
 
-  const pagesToHideOn = ['/login', '/register', '/publications', '/donations', '/store'];
+  const pagesToHideOn = ['/login', '/register', '/publications', '/donations'];
   if (pathname.startsWith('/admin') || pagesToHideOn.includes(pathname)) {
     return null;
   }
