@@ -200,7 +200,7 @@ export default function PublicationsPage() {
         toast({ 
           variant: 'destructive', 
           title: t('errorText'), 
-          description: "Could not load publications. A Firestore index is likely missing. Check the browser console for a link to create it.",
+          description: t('firestoreIndexErrorDesc'),
         });
         setIsLoadingPosts(false);
     });
@@ -231,11 +231,11 @@ export default function PublicationsPage() {
           setFilteredPosts(saved);
       } catch (e) {
           console.error("Error fetching saved posts", e);
-          toast({ variant: 'destructive', title: "Error", description: "Could not fetch saved posts." });
+          toast({ variant: 'destructive', title: t('errorText'), description: t('fetchSavedPostsErrorDesc') });
       } finally {
           setIsLoadingPosts(false);
       }
-  }, [currentUser, toast]);
+  }, [currentUser, toast, t]);
 
   useEffect(() => {
     setIsLoadingPosts(true);
@@ -272,10 +272,10 @@ export default function PublicationsPage() {
     if (!postToDelete) return;
     try {
       await deletePublicationFromFirestore(postToDelete.id);
-      toast({ title: "Publication Deleted", description: "The publication has been successfully removed." });
+      toast({ title: t('publicationDeletedTitle'), description: t('publicationDeletedDesc') });
     } catch (error) {
       console.error("Error deleting publication:", error);
-      toast({ variant: "destructive", title: "Deletion Failed", description: "Could not delete the publication." });
+      toast({ variant: "destructive", title: t('publicationDeleteErrorTitle'), description: t('publicationDeleteErrorDesc') });
     } finally {
       setPostToDelete(null);
     }
@@ -318,7 +318,7 @@ export default function PublicationsPage() {
         )}
       >
         <Bell className="mr-2 h-4 w-4" />
-        <span>Notifications</span>
+        <span>{t('notificationsTitle')}</span>
         {unreadNotifications > 0 && (
           <span className="absolute top-1 right-2 flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -331,22 +331,22 @@ export default function PublicationsPage() {
     if (isDropdown) {
         return (
             <>
-                <DropdownMenuItem onSelect={() => setFilter('all')} disabled={!isUserPro}>{itemContent(List, "All")}</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setFilter('mine')} disabled={!isUserPro}>{itemContent(UserIcon, "My Publications")}</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, "My Likes")}</DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, "My Saves")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('all')} disabled={!isUserPro}>{itemContent(List, t('filterAll'))}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('mine')} disabled={!isUserPro}>{itemContent(UserIcon, t('filterMyPublications'))}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('liked')} disabled={!isUserPro}>{itemContent(Heart, t('filterMyLikes'))}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setFilter('saved')} disabled={!isUserPro}>{itemContent(Bookmark, t('filterMySaves'))}</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={() => { openNotificationsPanel() }}>{itemContent(Bell, "Notifications")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => { openNotificationsPanel() }}>{itemContent(Bell, t('notificationsTitle'))}</DropdownMenuItem>
             </>
         );
     }
 
     return (
         <div className="flex flex-col gap-2 w-full">
-            <Button variant='ghost' onClick={() => setFilter('all')} disabled={!isUserPro} className={cn(commonClass, filter === 'all' && activeClass)}>{itemContent(List, "All")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('mine')} disabled={!isUserPro} className={cn(commonClass, filter === 'mine' && activeClass)}>{itemContent(UserIcon, "My Publications")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, "My Likes")}</Button>
-            <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, "My Saves")}</Button>
+            <Button variant='ghost' onClick={() => setFilter('all')} disabled={!isUserPro} className={cn(commonClass, filter === 'all' && activeClass)}>{itemContent(List, t('filterAll'))}</Button>
+            <Button variant='ghost' onClick={() => setFilter('mine')} disabled={!isUserPro} className={cn(commonClass, filter === 'mine' && activeClass)}>{itemContent(UserIcon, t('filterMyPublications'))}</Button>
+            <Button variant='ghost' onClick={() => setFilter('liked')} disabled={!isUserPro} className={cn(commonClass, filter === 'liked' && activeClass)}>{itemContent(Heart, t('filterMyLikes'))}</Button>
+            <Button variant='ghost' onClick={() => setFilter('saved')} disabled={!isUserPro} className={cn(commonClass, filter === 'saved' && activeClass)}>{itemContent(Bookmark, t('filterMySaves'))}</Button>
             <div className="mt-4">{notificationItem}</div>
         </div>
     );
@@ -365,10 +365,10 @@ export default function PublicationsPage() {
                       <Button variant="outline" className="w-full">
                         <ChevronDown className="mr-2 h-4 w-4"/>
                         <span>
-                          {filter === 'all' && 'All'}
-                          {filter === 'mine' && 'My Publications'}
-                          {filter === 'liked' && 'My Likes'}
-                          {filter === 'saved' && 'My Saves'}
+                          {filter === 'all' && t('filterAll')}
+                          {filter === 'mine' && t('filterMyPublications')}
+                          {filter === 'liked' && t('filterMyLikes')}
+                          {filter === 'saved' && t('filterMySaves')}
                         </span>
                       </Button>
                   </DropdownMenuTrigger>
@@ -400,7 +400,12 @@ export default function PublicationsPage() {
                 filteredPosts.map(post => <PostCard key={post.id} post={post} onDelete={handleDeleteClick} onProfileClick={handleProfileClick} />)
               ) : (
                 <div className="text-center text-muted-foreground py-10">
-                  <p>{filter === 'all' ? t('noPublicationsYet') : filter === 'mine' ? 'You have not created any publications yet.' : filter === 'liked' ? 'You have not liked any publications yet.' : 'You have not saved any publications yet.'}</p>
+                  <p>{
+                    filter === 'all' ? t('noPublicationsYet') :
+                    filter === 'mine' ? t('noMyPublicationsYet') :
+                    filter === 'liked' ? t('noLikedPublicationsYet') :
+                    t('noSavedPublicationsYet')
+                  }</p>
                 </div>
               )}
             </main>
@@ -434,16 +439,13 @@ export default function PublicationsPage() {
       <AlertDialog open={!!postToDelete} onOpenChange={(isOpen) => !isOpen && setPostToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-
-            <AlertDialogDescription>
-              Are you sure you want to delete this publication? This action cannot be undone.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('deletePublicationConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('deletePublicationConfirmDesc')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPostToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setPostToDelete(null)}>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
-              Delete
+              {t('deleteButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -451,3 +453,4 @@ export default function PublicationsPage() {
     </>
   );
 }
+    

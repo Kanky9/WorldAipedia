@@ -327,6 +327,22 @@ export type CoreTranslationKey =
   | 'likeButton'
   | 'commentButton'
   | 'noPublicationsYet'
+  | 'firestoreIndexErrorDesc'
+  | 'fetchSavedPostsErrorDesc'
+  | 'publicationDeletedTitle'
+  | 'publicationDeletedDesc'
+  | 'publicationDeleteErrorTitle'
+  | 'publicationDeleteErrorDesc'
+  | 'filterAll'
+  | 'filterMyPublications'
+  | 'filterMyLikes'
+  | 'filterMySaves'
+  | 'notificationsTitle'
+  | 'noMyPublicationsYet'
+  | 'noLikedPublicationsYet'
+  | 'noSavedPublicationsYet'
+  | 'deletePublicationConfirmTitle'
+  | 'deletePublicationConfirmDesc'
   // Welcome Dialog
   | 'welcomeModalTitle'
   | 'welcomeModalBeta'
@@ -679,6 +695,22 @@ export const translations: Translations = {
     likeButton: "Like",
     commentButton: "Comment",
     noPublicationsYet: "No publications yet. Be the first to post!",
+    firestoreIndexErrorDesc: "Could not load publications. A Firestore index is likely missing. Check the browser console for a link to create it.",
+    fetchSavedPostsErrorDesc: "Could not fetch saved posts.",
+    publicationDeletedTitle: "Publication Deleted",
+    publicationDeletedDesc: "The publication has been successfully removed.",
+    publicationDeleteErrorTitle: "Deletion Failed",
+    publicationDeleteErrorDesc: "Could not delete the publication.",
+    filterAll: "All",
+    filterMyPublications: "My Publications",
+    filterMyLikes: "My Likes",
+    filterMySaves: "My Saves",
+    notificationsTitle: "Notifications",
+    noMyPublicationsYet: "You have not created any publications yet.",
+    noLikedPublicationsYet: "You have not liked any publications yet.",
+    noSavedPublicationsYet: "You have not saved any publications yet.",
+    deletePublicationConfirmTitle: "Confirm Deletion",
+    deletePublicationConfirmDesc: "Are you sure you want to delete this publication? This action cannot be undone.",
     welcomeModalTitle: 'Welcome to WorldAI!',
     welcomeModalBeta: "We're excited to have you here! Please note that our site is currently in a beta version, so you might encounter some unexpected behavior as we continue to improve.",
     welcomeModalTranslateTitle: 'Translation Notice',
@@ -1000,6 +1032,22 @@ export const translations: Translations = {
     likeButton: "Me gusta",
     commentButton: "Comentar",
     noPublicationsYet: "Aún no hay publicaciones. ¡Sé el primero en publicar!",
+    firestoreIndexErrorDesc: "No se pudieron cargar las publicaciones. Es probable que falte un índice de Firestore. Revisa la consola del navegador para ver un enlace para crearlo.",
+    fetchSavedPostsErrorDesc: "No se pudieron obtener las publicaciones guardadas.",
+    publicationDeletedTitle: "Publicación Eliminada",
+    publicationDeletedDesc: "La publicación ha sido eliminada exitosamente.",
+    publicationDeleteErrorTitle: "Error al Eliminar",
+    publicationDeleteErrorDesc: "No se pudo eliminar la publicación.",
+    filterAll: "Todos",
+    filterMyPublications: "Mis Publicaciones",
+    filterMyLikes: "Mis Me Gusta",
+    filterMySaves: "Mis Guardados",
+    notificationsTitle: "Notificaciones",
+    noMyPublicationsYet: "Aún no has creado ninguna publicación.",
+    noLikedPublicationsYet: "Aún no te ha gustado ninguna publicación.",
+    noSavedPublicationsYet: "Aún no has guardado ninguna publicación.",
+    deletePublicationConfirmTitle: "Confirmar Eliminación",
+    deletePublicationConfirmDesc: "¿Estás seguro de que quieres eliminar esta publicación? Esta acción no se puede deshacer.",
     welcomeModalTitle: '¡Bienvenido a WorldAI!',
     welcomeModalBeta: "¡Estamos encantados de tenerte aquí! Ten en cuenta que nuestro sitio se encuentra actualmente en una versión beta, por lo que podrías encontrar algún comportamiento inesperado mientras seguimos mejorando.",
     welcomeModalTranslateTitle: 'Aviso de Traducción',
@@ -1321,6 +1369,22 @@ export const translations: Translations = {
     likeButton: "Mi piace",
     commentButton: "Commenta",
     noPublicationsYet: "Nessuna pubblicazione ancora. Sii il primo a pubblicare!",
+    firestoreIndexErrorDesc: "Impossibile caricare le pubblicazioni. Probabilmente manca un indice Firestore. Controlla la console del browser per un link per crearlo.",
+    fetchSavedPostsErrorDesc: "Impossibile recuperare le pubblicazioni salvate.",
+    publicationDeletedTitle: "Pubblicazione Eliminata",
+    publicationDeletedDesc: "La pubblicazione è stata rimossa con successo.",
+    publicationDeleteErrorTitle: "Eliminazione Fallita",
+    publicationDeleteErrorDesc: "Impossibile eliminare la pubblicazione.",
+    filterAll: "Tutti",
+    filterMyPublications: "Le mie Pubblicazioni",
+    filterMyLikes: "I miei Mi Piace",
+    filterMySaves: "I miei Salvati",
+    notificationsTitle: "Notifiche",
+    noMyPublicationsYet: "Non hai ancora creato nessuna pubblicazione.",
+    noLikedPublicationsYet: "Non hai ancora messo 'mi piace' a nessuna pubblicazione.",
+    noSavedPublicationsYet: "Non hai ancora salvato nessuna pubblicazione.",
+    deletePublicationConfirmTitle: "Conferma Eliminazione",
+    deletePublicationConfirmDesc: "Sei sicuro di voler eliminare questa pubblicazione? Questa azione non può essere annullata.",
     welcomeModalTitle: 'Benvenuto a WorldAI!',
     welcomeModalBeta: "Siamo entusiasti di averti qui! Tieni presente che il nostro sito è attualmente in versione beta, quindi potresti riscontrare comportamenti imprevisti mentre continuiamo a migliorare.",
     welcomeModalTranslateTitle: 'Avviso di Traduzione',
@@ -1642,6 +1706,22 @@ export const translations: Translations = {
     likeButton: "赞",
     commentButton: "评论",
     noPublicationsYet: "暂无出版物。成为第一个发布的人！",
+    firestoreIndexErrorDesc: "无法加载出版物。可能缺少Firestore索引。请检查浏览器控制台以获取创建链接。",
+    fetchSavedPostsErrorDesc: "无法获取已保存的出版物。",
+    publicationDeletedTitle: "出版物已删除",
+    publicationDeletedDesc: "出版物已成功删除。",
+    publicationDeleteErrorTitle: "删除失败",
+    publicationDeleteErrorDesc: "无法删除出版物。",
+    filterAll: "全部",
+    filterMyPublications: "我的出版物",
+    filterMyLikes: "我的赞",
+    filterMySaves: "我的收藏",
+    notificationsTitle: "通知",
+    noMyPublicationsYet: "您还没有创建任何出版物。",
+    noLikedPublicationsYet: "您还没有赞过任何出版物。",
+    noSavedPublicationsYet: "您还没有保存任何出版物。",
+    deletePublicationConfirmTitle: "确认删除",
+    deletePublicationConfirmDesc: "您确定要删除此出版物吗？此操作无法撤销。",
     welcomeModalTitle: '欢迎来到 WorldAI！',
     welcomeModalBeta: "我们很高兴您能来！请注意，我们的网站目前处于测试版，因此在我们不断改进的过程中，您可能会遇到一些意想不到的行为。",
     welcomeModalTranslateTitle: '翻译通知',
@@ -1963,6 +2043,22 @@ export const translations: Translations = {
     likeButton: "いいね！",
     commentButton: "コメント",
     noPublicationsYet: "まだ出版物がありません。最初に投稿してください！",
+    firestoreIndexErrorDesc: "出版物を読み込めませんでした。Firestoreのインデックスが不足している可能性があります。ブラウザのコンソールで作成用のリンクを確認してください。",
+    fetchSavedPostsErrorDesc: "保存された出版物を取得できませんでした。",
+    publicationDeletedTitle: "出版物が削除されました",
+    publicationDeletedDesc: "出版物は正常に削除されました。",
+    publicationDeleteErrorTitle: "削除に失敗しました",
+    publicationDeleteErrorDesc: "出版物を削除できませんでした。",
+    filterAll: "すべて",
+    filterMyPublications: "私の出版物",
+    filterMyLikes: "私のいいね",
+    filterMySaves: "私の保存",
+    notificationsTitle: "通知",
+    noMyPublicationsYet: "まだ出版物を作成していません。",
+    noLikedPublicationsYet: "まだいいねした出版物はありません。",
+    noSavedPublicationsYet: "まだ保存した出版物はありません。",
+    deletePublicationConfirmTitle: "削除の確認",
+    deletePublicationConfirmDesc: "この出版物を削除してもよろしいですか？この操作は元に戻せません。",
     welcomeModalTitle: 'WorldAIへようこそ！',
     welcomeModalBeta: "ご来訪いただきありがとうございます！当サイトは現在ベータ版であり、改善を続けているため、予期しない動作が発生する可能性があります。",
     welcomeModalTranslateTitle: '翻訳に関する通知',
@@ -2284,6 +2380,22 @@ export const translations: Translations = {
     likeButton: "Gostar",
     commentButton: "Comentar",
     noPublicationsYet: "Nenhuma publicação ainda. Seja o primeiro a postar!",
+    firestoreIndexErrorDesc: "Não foi possível carregar as publicações. Um índice do Firestore provavelmente está faltando. Verifique o console do navegador para um link para criá-lo.",
+    fetchSavedPostsErrorDesc: "Não foi possível buscar as publicações salvas.",
+    publicationDeletedTitle: "Publicação Excluída",
+    publicationDeletedDesc: "A publicação foi removida com sucesso.",
+    publicationDeleteErrorTitle: "Falha ao Excluir",
+    publicationDeleteErrorDesc: "Não foi possível excluir a publicação.",
+    filterAll: "Todos",
+    filterMyPublications: "Minhas Publicações",
+    filterMyLikes: "Minhas Curtidas",
+    filterMySaves: "Meus Salvos",
+    notificationsTitle: "Notificações",
+    noMyPublicationsYet: "Você ainda não criou nenhuma publicação.",
+    noLikedPublicationsYet: "Você ainda não curtiu nenhuma publicação.",
+    noSavedPublicationsYet: "Você ainda não salvou nenhuma publicação.",
+    deletePublicationConfirmTitle: "Confirmar Exclusão",
+    deletePublicationConfirmDesc: "Tem certeza de que deseja excluir esta publicação? Esta ação não pode ser desfeita.",
     welcomeModalTitle: 'Bem-vindo ao WorldAI!',
     welcomeModalBeta: "Estamos felizes em tê-lo aqui! Observe que nosso site está atualmente em uma versão beta, então você pode encontrar algum comportamento inesperado enquanto continuamos a melhorar.",
     welcomeModalTranslateTitle: 'Aviso de Tradução',
@@ -2329,3 +2441,6 @@ export type LocalizedString =
 
     
 
+
+
+    
