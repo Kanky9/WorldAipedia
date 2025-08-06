@@ -12,7 +12,6 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "xs": "401px",
         "sm": "640px",
         "md": "768px",
         "lg": "1024px",
@@ -21,6 +20,9 @@ export default {
       },
     },
     extend: {
+      screens: {
+        "xs": "401px",
+      },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
         headline: ['var(--font-space-grotesk)', 'sans-serif'],
