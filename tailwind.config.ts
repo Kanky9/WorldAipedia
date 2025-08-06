@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -7,6 +8,7 @@ export default {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  
   theme: {
     container: {
       center: true,
@@ -21,7 +23,7 @@ export default {
     },
     extend: {
       screens: {
-        "xs": "465px",
+        "xs": "461px",
       },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
