@@ -147,7 +147,7 @@ export default function StorePage() {
              )}
             onClick={() => setSelectedCategory('all')}
           >
-            All
+            {t('filterAll', 'All')}
           </Button>
           {productCategories.map(category => (
             <Button
