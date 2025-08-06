@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Linkedin, Instagram } from 'lucide-react';
+import { Linkedin, Instagram, Globe } from 'lucide-react';
 
 const Footer = () => {
   const { t } = useLanguage();
@@ -42,6 +42,15 @@ const Footer = () => {
                     aria-label="Lace Labs Instagram Profile"
                 >
                     <Instagram className="h-5 w-5" />
+                </a>
+                 <a 
+                    href="https://lacelabs-dab81.web.app/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center p-2 bg-gray-600 rounded-lg shadow-md border-b-4 border-gray-700 text-white transform transition-all duration-150 ease-in-out hover:bg-gray-500 hover:border-b-2 active:translate-y-1 active:border-b-0"
+                    aria-label="Lace Labs Website"
+                >
+                    <Globe className="h-5 w-5" />
                 </a>
             </div>
         </div>
