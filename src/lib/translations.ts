@@ -279,6 +279,7 @@ export type CoreTranslationKey =
   | 'proBenefit2'
   | 'proBenefit3'
   | 'proBenefit4'
+  | 'proBenefit5'
   | 'upgradeToProPrice'
   | 'paymentMethodsTitle'
   | 'paymentErrorTitle'
@@ -289,6 +290,10 @@ export type CoreTranslationKey =
   | 'applePayLabel'
   | 'googlePayLabel'
   | 'upgradeNowButton'
+  | 'upgradeSuccessTitle'
+  | 'upgradeSuccessDescription'
+  | 'upgradeFailedTitle'
+  | 'upgradeFailedDescription'
   | 'loginRequiredForProTitle'
   | 'loginRequiredForProDescription'
   | 'monthlyAccessLabel'
@@ -628,6 +633,7 @@ export const translations: Translations = {
     proBenefit2: 'Access to comment and rate the published AIs',
     proBenefit3: 'Publications section',
     proBenefit4: 'Ability to make posts and comment on other users',
+    proBenefit5: 'Compete in the minigame',
     upgradeToProPrice: "Just $1.00!",
     monthlyAccessLabel: '(for one month of access)',
     paymentMethodsTitle: "Choose Your Payment Method",
@@ -948,6 +954,7 @@ export const translations: Translations = {
     proBenefit2: 'Acceso a poder comentar y calificar las IA publicadas',
     proBenefit3: 'Apartado de publicaciones',
     proBenefit4: 'Poder realizar publicaciones y comentar a otros usuarios',
+    proBenefit5: 'Competir en el minijuego',
     upgradeToProPrice: "¡Solo $1.00!",
     monthlyAccessLabel: '(por un mes de acceso)',
     paymentMethodsTitle: "Elige tu método de pago",
@@ -1268,6 +1275,7 @@ export const translations: Translations = {
     proBenefit2: 'Accesso per commentare e valutare le IA pubblicate',
     proBenefit3: 'Sezione pubblicazioni',
     proBenefit4: 'Possibilità di creare post e commentare altri utenti',
+    proBenefit5: 'Competere nel minigioco',
     upgradeToProPrice: "Solo $1.00!",
     monthlyAccessLabel: '(per un mese di accesso)',
     paymentMethodsTitle: "Scegli il tuo metodo di pagamento",
@@ -1588,6 +1596,7 @@ export const translations: Translations = {
     proBenefit2: '可以评论和评价已发布的AI',
     proBenefit3: '“出版物”部分',
     proBenefit4: '能够发表帖子并评论其他用户',
+    proBenefit5: '在迷你游戏中竞争',
     upgradeToProPrice: "仅需 $1.00！",
     monthlyAccessLabel: '（每月访问）',
     paymentMethodsTitle: "选择您的支付方式",
@@ -1908,6 +1917,7 @@ export const translations: Translations = {
     proBenefit2: '公開されたAIにコメントし、評価するアクセス',
     proBenefit3: '「出版物」セクション',
     proBenefit4: '投稿を作成し、他のユーザーにコメントする機能',
+    proBenefit5: 'ミニゲームで競争する',
     upgradeToProPrice: "わずか $1.00！",
     monthlyAccessLabel: '（1ヶ月のアクセス）',
     paymentMethodsTitle: "お支払い方法を選択",
@@ -2228,6 +2238,7 @@ export const translations: Translations = {
     proBenefit2: 'Acesso para comentar e avaliar as IAs publicadas',
     proBenefit3: 'Seção de publicações',
     proBenefit4: 'Poder fazer publicações e comentar outros usuários',
+    proBenefit5: 'Competir no minijogo',
     upgradeToProPrice: "Apenas $1.00!",
     monthlyAccessLabel: '(para um mês de acesso)',
     paymentMethodsTitle: "Escolha seu método de pagamento",
@@ -2317,3 +2328,4 @@ export type LocalizedString =
 
 
     
+

@@ -40,6 +40,7 @@ const UpgradeProDialog: React.FC<UpgradeProDialogProps> = ({ open, onOpenChange 
     t('proBenefit2'),
     t('proBenefit3'),
     t('proBenefit4'),
+    t('proBenefit5'),
   ];
 
   if (!PAYPAL_CLIENT_ID) {
