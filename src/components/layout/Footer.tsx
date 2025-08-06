@@ -30,13 +30,13 @@ const Footer = () => {
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="flex items-center justify-center p-2 bg-slate-700 rounded-lg shadow-md border-b-4 border-slate-800 text-white transform transition-all duration-150 ease-in-out hover:bg-slate-600 hover:border-b-2 active:translate-y-1 active:border-b-0"
-                          aria-label="Joaquín Bello's LinkedIn Profile"
+                          aria-label="Joaquin Bello's LinkedIn Profile"
                       >
                           <Linkedin className="h-5 w-5" />
                       </a>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Joaquín Bello</p>
+                      <p>Joaquin Bello</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
