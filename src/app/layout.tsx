@@ -13,6 +13,7 @@ import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
 import WelcomeDialog from '@/components/layout/WelcomeDialog';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import { usePathname } from 'next/navigation';
 
 
 // Setup fonts with next/font
@@ -33,6 +34,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const hideFooterOnPages = ['/admin/dashboard'];
+  const shouldShowFooter = !hideFooterOnPages.includes(pathname);
+
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <head>
@@ -51,7 +56,7 @@ export default function RootLayout({
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
-              <Footer />
+              {shouldShowFooter && <Footer />}
               <ClientOnly>
                 <Mascot />
                 <WelcomeDialog />
