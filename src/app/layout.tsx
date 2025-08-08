@@ -1,3 +1,4 @@
+
 'use client'; // This directive marks the entire layout as a Client Component
 
 import './globals.css';
@@ -13,8 +14,6 @@ import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
 import WelcomeDialog from '@/components/layout/WelcomeDialog';
 import { Inter, Space_Grotesk } from 'next/font/google';
-import { usePathname } from 'next/navigation';
-
 
 // Setup fonts with next/font
 const inter = Inter({
@@ -34,10 +33,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const hideFooterOnPages = ['/admin/dashboard'];
-  const shouldShowFooter = !hideFooterOnPages.includes(pathname);
-
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <head>
@@ -56,7 +51,7 @@ export default function RootLayout({
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
-              {shouldShowFooter && <Footer />}
+              <Footer />
               <ClientOnly>
                 <Mascot />
                 <WelcomeDialog />

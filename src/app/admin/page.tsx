@@ -150,12 +150,6 @@ export default function AdminPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <h1 className="text-2xl sm:text-3xl font-headline font-bold text-primary">{t('adminPanelTitle', 'Admin Panel')}</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link href="/admin/dashboard">
-              <LayoutDashboard className="mr-2 h-5 w-5" />
-              Dashboard
-            </Link>
-          </Button>
           <Button asChild variant="ghost" className="w-full sm:w-auto">
             <Link href="/admin/settings">
               <Settings className="mr-2 h-5 w-5" />
