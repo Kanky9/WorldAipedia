@@ -140,11 +140,6 @@ export default function AdminDashboardPage() {
                 <div className="w-48 h-auto sm:w-56">
                     <LaceRobotSVG />
                 </div>
-                <div className="mt-4">
-                    <Link href="https://lacelabs-dab81.web.app/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">
-                        lacelabs-dab81.web.app
-                    </Link>
-                </div>
             </div>
         </div>
     );
