@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -127,14 +128,7 @@ export default function AdminDashboardPage() {
     }
     
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-15rem)] text-center p-4">
-            <Button variant="outline" asChild className="absolute top-4 left-4">
-                <Link href="/admin">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver a Admin
-                </Link>
-            </Button>
-
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center p-4">
             <div className="flex flex-col items-center justify-center space-y-6">
                 <SpeechBubble text={messages[currentMessageIndex]} />
                 <div className="w-48 h-auto sm:w-56">
