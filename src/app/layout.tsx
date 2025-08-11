@@ -14,6 +14,7 @@ import UpgradeProButton from '@/components/layout/UpgradeProButton';
 import ClientOnly from '@/components/layout/ClientOnly';
 import WelcomeDialog from '@/components/layout/WelcomeDialog';
 import { Inter, Space_Grotesk } from 'next/font/google';
+import { usePathname } from 'next/navigation';
 
 // Setup fonts with next/font
 const inter = Inter({
@@ -28,13 +29,23 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
 });
 
+function SiteFooter() {
+    const pathname = usePathname();
+    const hideFooterOn = ['/admin/dashboard'];
+
+    if (hideFooterOn.includes(pathname)) {
+        return null;
+    }
+    return <Footer />;
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
+    <html lang="es" className={`${inter.variable} ${spaceGrotesk.variable} dark`}>
       <head>
         <title>World AI - Your Guide to Artificial Intelligence</title>
         <meta name="description" content="Discover news and information about existing and emerging AI tools, categorized for easy exploration." />
@@ -51,7 +62,7 @@ export default function RootLayout({
               <main className="flex-grow container mx-auto px-4 pb-3">
                 {children}
               </main>
-              <Footer />
+              <SiteFooter />
               <ClientOnly>
                 <Mascot />
                 <WelcomeDialog />

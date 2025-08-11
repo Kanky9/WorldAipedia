@@ -20,7 +20,7 @@ interface LanguageProviderProps {
 }
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [language, setLanguage] = useState<LanguageCode>('en');
+  const [language, setLanguage] = useState<LanguageCode>('es');
 
   const t = useCallback((input: CoreTranslationKey | LocalizedString, fallback?: string, interpolations: Record<string, string> = {}): string => {
     let translatedString: string | undefined;
