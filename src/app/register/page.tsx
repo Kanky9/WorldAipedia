@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -14,6 +13,8 @@ import { UserPlus, Mail, KeyRound, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 const GoogleIcon = () => <svg className="h-5 w-5" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.19,4.73C15.59,4.73 17.93,7.55 17.93,7.55L19.81,5.82C19.81,5.82 17.34,3 12.19,3C6.42,3 2.03,7.8 2.03,12C2.03,16.2 6.42,21 12.19,21C18.08,21 21.54,15.97 21.54,11.42C21.54,11.31 21.35,11.1 21.35,11.1V11.1Z" /></svg>;
+
+/* Register */
 
 export default function RegisterPage() {
   const { t } = useLanguage();
