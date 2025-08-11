@@ -142,7 +142,7 @@ const Mascot = () => {
     return null;
   }
 
-  // Hide mascot when chat or upgrade dialog is open
+  // * Hide mascot when chat or upgrade dialog is open
   if (isChatOpen || isUpgradeDialogOpen) {
     return null;
   }

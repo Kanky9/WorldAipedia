@@ -1,5 +1,4 @@
-
-'use client'; // This directive marks the entire layout as a Client Component
+'use client';
 
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
