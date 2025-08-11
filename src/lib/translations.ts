@@ -1,8 +1,8 @@
 
 
 export const languages = {
-  en: { name: 'English', flag: '🇬🇧' },
   es: { name: 'Español', flag: '🇪🇸' },
+  en: { name: 'English', flag: '🇬🇧' },
   it: { name: 'Italiano', flag: '🇮🇹' },
   zh: { name: '中文', flag: '🇨🇳' },
   ja: { name: '日本語', flag: '🇯🇵' },

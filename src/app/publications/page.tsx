@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -55,6 +54,8 @@ import { useChat } from '@/contexts/ChatContext';
 const localeMap: { [key: string]: Locale } = {
   es, en: enUS, it, ja, pt, zhCN
 };
+
+/* Pagetsx */
 
 function PostCard({ post, onDelete, onProfileClick }: { post: ProPost; onDelete: (postId: string) => void; onProfileClick: (userId: string) => void; }) {
   const { currentUser } = useAuth();
