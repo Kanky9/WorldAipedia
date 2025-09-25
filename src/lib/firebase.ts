@@ -49,12 +49,12 @@ import type { LanguageCode } from './translations';
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDpPy6-b9DhCjZizVDZXP4vE3EfG4AcNPk",
-  authDomain: "worldaipedia.firebaseapp.com",
-  projectId: "worldaipedia",
-  storageBucket: "worldaipedia.appspot.com",
-  messagingSenderId: "124464012147",
-  appId: "1:124464012147:web:9380bde3f055bd4d784306"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
